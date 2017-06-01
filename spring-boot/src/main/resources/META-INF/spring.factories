@@ -1,0 +1,3 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.holonplatform.spring.boot.EnableBeanContextAutoConfiguration,\
+com.holonplatform.spring.boot.TenantScopeAutoConfiguration

@@ -1,0 +1,69 @@
+== Configuration and parameters
+
+Holon platform relies on some common structures to define and provide configuration properties and parameters used by platform modules.
+
+=== Configuration
+
+Configuration properties definition, provision and management is supported by the following three API interfaces:
+
+* `ConfigProperty`: represents a configuration property, identified by a String _key_ and with a specified _type_;
+* `ConfigPropertyProvider`: provides the values for a set of configuration properties:
+* `ConfigPropertySet`: a configuration property set definition, bound to one or more providers to provide the property values.
+
+==== Configuration property
+
+A configuration property is represented by the link:{apidir}/com/holonplatform/core/config/ConfigProperty.html[ConfigProperty^] interface. A configuration property is identified by a String *key* and is bound to a predefined *type*.
+
+[source, java]
+.ConfigProperty definition
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleConfig.java[tag=prop,indent=0]
+----
+<1> Create a configuration property of String type with given _key_
+<2> Get the configuration property key
+<3> Get the configuration property type
+
+==== Configuration property provider
+
+The link:{apidir}/com/holonplatform/core/config/ConfigPropertyProvider.html[ConfigPropertyProvider^] interface represents a  value provider for a set of configuration properties, allowing to read the configuration properties values from different sources.
+
+Each concrete implementation is able to read configuration properties values from a specific source, for example an in-memory key-value map or a _properties_ file. Automatic type conversions from String property source values to required configuration property types are performed when applicable.
+
+The platform provides some useful builtin property values providers as shown below:
+
+[source, java]
+.Builtin configuration property providers
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleConfig.java[tag=provider,indent=0]
+----
+<1> Provider which uses an in memory key-value map as property values source
+<2> Provider which uses a `Properties` instance as property values source
+<3> Provider which uses a _properties_ File as property values source
+<4> Provider which uses Java `System` properties as property values source
+
+==== Configuration property set
+
+The link:{apidir}/com/holonplatform/core/config/ConfigPropertySet.html[ConfigPropertySet^] interface represents a configuration property set bound to one or more `ConfigPropertyProvider` property source.
+
+Each set is identified by a String *name*, used as a prefix for all the configuration properties of the set. Property name segments are separated by convention by a dot, so, for each property key, the property set will lookup for a property named *set_name*_._*property_name* in the property source.
+
+Platform elements which support a configuration property set provide a specific `ConfigPropertySet` extension to list all supported configuration properties and, in some cases, helper methods to obtain frequently used configuration properties values.
+
+[[ParameterSet]]
+=== ParameterSet
+
+A link:{apidir}/com/holonplatform/core/config/ParameterSet.html[ParameterSet^] is the representation of a generic parameter name and value map.
+
+It provides methods to inspect the parameter set and obtain parameter values of a specific type and completely supports `ConfigProperty`
+representation as a parameter reference.
+
+[source, java]
+.ParameterSet examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleConfig.java[tag=params,indent=0]
+----
+<1> Add a `Long` value parameter using a `String` parameter name
+<2> Add a parameter value using a `ConfigProperty`. Since the configuration property is of `String` type, only a `String` type value is admitted
+<3> Check if the parameter set contains a parameter identified by a name
+<4> Check if the parameter set contains a parameter identified by a name and it's value is not null
+<5> Check if the parameter set contains a parameter identified by given configuration property: if present, perform an operation

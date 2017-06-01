@@ -1,0 +1,21 @@
+[[SpringTenantScope]]
+== Spring _tenant_ scope
+
+The Holon platform provides a Spring *tenant scope* which provides different bean instances depending on the current _tenant id_. 
+
+This scope relies on the default link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] interface to obtain the current tenant id.
+
+A bean of `TenantResolver` type must be configured and available in the current `BeanFactory` (i.e. in the current `ApplicationContext`) to use the scope. That bean will be used to obtain the current *tenant id*, using the `getTenantId()` method.
+
+To enable the tenant scope, use the `@EnableTenantScope` annotation on Spring configuration classes.
+
+The scope name is `tenant`, so Spring beans can be registered with this scope using either:
+
+* The default Spring `@Scope("tenant")` annotation
+* The convenience `@ScopeTenant` annotation
+
+[source, java]
+.Spring tenant scope example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=tenant,indent=0]
+----

@@ -1,0 +1,85 @@
+= Holon Platform Core
+:revnumber: {project-version}
+:!sectnums:
+
+The Holon Platform *Core* module represents the platform foundation, providing the definition of the main platform concepts and architecture, base structures and APIs.
+
+== Sections
+
+* link:core.html[Core]
++
+*Core API:* Context resources, configuration structures, data validation, internationalization support, _property_ architecture, _Datastore_ and _Query_ abstractions, multi-tenancy and core utilities.
+
+* link:http.html[HTTP support]
++
+*HTTP protocol support:* HTTP messages representation and handling, _RESTful_ web services client.
+
+* link:auth.html[Authentication and Authorization]
++
+*Authentication and Authorization:* Authentication and authorization support, credentials management, _JWT_ support.
+
+* link:spring.html[Spring integration]
++
+*Spring and Spring Boot integration:* Integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^].
+
+== Obtaining the artifacts
+
+The Holon Platform uses https://maven.apache.org[Maven^] as project definition and build system. All the platform artifacts are published in the *Maven Central Repository*, so there is no need to explicitly declare additional repositories in your project `pom` file.
+
+At the top of each _section_ of this documentation you will find the Maven _coordinates_ (group id, artifact id and version) to obtain the artifact(s) as a dependency for your project.
+
+A *BOM (Bill Of Materials)* `pom` is provided to import the available dependencies for a specific version in your projects. The Maven coordinates for the core BOM are the following:
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-bom</artifactId>
+<version>{revnumber}</version>
+----
+
+The BOM can be imported an used in a Maven project in the following way:
+
+[source, xml, subs="verbatim,quotes,attributes+"]
+----
+<project>
+
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-bom</artifactId>
+			<version>{revnumber}</version>
+			*<type>pom</type>*
+			*<scope>import</scope>*
+		</dependency>
+	</dependencies>
+</dependencyManagement>
+
+<dependencies>
+	<dependency>
+		<groupId>com.holon-platform.core</groupId>
+		<artifactId>holon-core</artifactId>
+	</dependency>
+</dependencies>
+
+</project>
+----
+
+== Loggers
+
+By default, the Holon platform uses the https://www.slf4j.org[SLF4J^] API for logging. The use of SLF4J is optional: it is enabled when the presence of SLF4J is detected in the classpath. Otherwise, logging will fall back to JUL (`java.util.logging`).
+
+The following logger names are available:
+
+* `com.holonplatform.core`: the root *core* logger
+** `presentation`: for logs related to values presentation
+** `i18n`: for logs related to localization and internationalization
+** `beans`: for logs related to bean inspection and bean properties
+** `property`: for logs related to the `Property` architecture, including `PropertyBox`, property presenters and renderers
+** `query`: for logs related to `Query` definition and execution
+** `datastore`: for logs related to `Datastore` configuration and operation execution
+* `com.holonplatform.jdbc`: for logs related to *JDBC* support classes, such as DataSource builders
+* `com.holonplatform.http`: for logs related to *HTTP* support classes, such as `RestClient`
+* `com.holonplatform.spring`: for logs related to https://spring.io[Spring^] integration
+

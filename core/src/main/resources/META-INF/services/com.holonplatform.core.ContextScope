@@ -1,0 +1,2 @@
+com.holonplatform.core.internal.ClassLoaderScope
+com.holonplatform.core.internal.ThreadScope

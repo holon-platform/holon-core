@@ -1,0 +1,7 @@
+com.holonplatform.core.internal.beans.BeanPropertySequencePostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyCaptionPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyConverterPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyValidationPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyBeanValidationPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyConfigPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyTemporalPostProcessor

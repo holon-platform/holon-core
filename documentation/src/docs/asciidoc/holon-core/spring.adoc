@@ -1,0 +1,29 @@
+= Spring framework integration
+:revnumber: {project-version}
+:apidir: ../../api/holon-core
+:linkattrs:
+:sectnums:
+:toc: left
+:toclevels: 3
+
+== Introduction
+
+The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^] for the Holon platform core module.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-spring</artifactId>
+<version>{revnumber}</version>
+----
+
+include::holon-core/spring/_context.adoc[]
+
+include::holon-core/spring/_tenant.adoc[]
+
+include::holon-core/spring/_datastore.adoc[]
+
+include::holon-core/spring/_restclient.adoc[]
+
+include::holon-core/spring/_boot.adoc[]

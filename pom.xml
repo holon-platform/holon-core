@@ -1,0 +1,155 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.holon-platform</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<groupId>com.holon-platform.core</groupId>
+	<artifactId>holon-root</artifactId>
+	<version>5.0.0-SNAPSHOT</version>
+
+	<packaging>pom</packaging>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+
+	<description>Holon core root pom</description>
+	<url>https://holon-platform.com</url>
+
+	<organization>
+		<name>Holon TDCN</name>
+		<url>https://holon-platform.com</url>
+	</organization>
+
+	<licenses>
+		<license>
+			<name>Apache License Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<name>Holon development team</name>
+			<email>dev@holon-platform.com</email>
+			<organization>Holon TDCN</organization>
+			<organizationUrl>https://holon-platform.com</organizationUrl>
+		</developer>
+	</developers>
+
+	<issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/holon-platform/holon/issues</url>
+	</issueManagement>
+
+	<scm>
+		<!-- <connection>scm:https:https://github.com/holon-platform/holon-core.git</connection> -->
+		<!-- <developerConnection>scm:https:https://github.com/holon-platform/holon-core.git</developerConnection> -->
+		<!-- <url>https://github.com/holon-platform/holon-core</url> -->
+		<developerConnection>scm:svn:svn://aximisvn/holon/holon/trunk</developerConnection>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<!-- Annotation api -->
+		<annotation-api.version>1.2</annotation-api.version>
+
+		<!-- slf4j -->
+		<slf4j.version>1.7.22</slf4j.version>
+
+		<!-- Apache commons -->
+		<commons.lang.version>3.5</commons.lang.version>
+
+		<!-- Bean validation -->
+		<bean.validation.version>1.1.0.Final</bean.validation.version>
+
+		<!-- Spring -->
+		<spring.version>4.3.8.RELEASE</spring.version>
+
+		<!-- Spring Boot -->
+		<spring.boot.version>1.5.3.RELEASE</spring.boot.version>
+
+	</properties>
+
+	<modules>
+		<module>core</module>
+		<module>http</module>
+		<module>auth</module>
+		<module>auth-jwt</module>
+		<module>spring</module>
+		<module>spring-boot</module>
+		<module>starter</module>
+		<module>starter-test</module>
+		<module>bom</module>
+		<module>bom-platform</module>
+		<module>documentation</module>
+	</modules>
+
+	<!-- Javadocs generation and aggregation -->
+	<profiles>
+		<profile>
+			<id>apidocs</id>
+			<build>
+				<plugins>
+					<!-- javadoc -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>module-javadocs</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+								<configuration>
+									<verbose>false</verbose>
+								</configuration>
+							</execution>
+							<execution>
+								<id>aggregate</id>
+								<inherited>false</inherited>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>aggregate</goal>
+								</goals>
+								<configuration>
+									<show>public</show>
+									<excludePackageNames>*.internal.*;*.examples.*</excludePackageNames>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<!-- Assembly -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<configuration>
+							<appendAssemblyId>false</appendAssemblyId>
+							<finalName>${project.artifactId}-${project.version}</finalName>
+							<descriptors>
+								<descriptor>${project.basedir}/javadocs-assembly.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<id>assembly-docs</id>
+								<inherited>false</inherited>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>

@@ -1,0 +1,39 @@
+= Core
+:revnumber: {project-version}
+:apidir: ../../api/holon-core
+:linkattrs:
+:sectnums:
+:toc: left
+:toclevels: 3
+
+== Introduction
+
+The `holon-core` artifact is the Holon platform *core* API and implementation asset, defining and providing the main platform architecture concepts and structures. All other platform artifacts derive from this one and declares it as a dependency.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-core</artifactId>
+<version>{revnumber}</version>
+----
+
+include::holon-core/core/_context.adoc[]
+
+include::holon-core/core/_config.adoc[]
+
+include::holon-core/core/_validation.adoc[]
+
+include::holon-core/core/_presenter.adoc[]
+
+include::holon-core/core/_i18n.adoc[]
+
+include::holon-core/core/_properties.adoc[]
+
+include::holon-core/core/_beans.adoc[]
+
+include::holon-core/core/_datastore.adoc[]
+
+include::holon-core/core/_tenancy.adoc[]
+
+include::holon-core/core/_utils.adoc[]

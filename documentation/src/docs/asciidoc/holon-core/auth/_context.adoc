@@ -1,0 +1,33 @@
+[[AuthContext]]
+== AuthContext
+
+The link:{apidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] interface can be used to represent the current authentication/authorization context, i.e. acts as a holder of the current `Authentication`, if available, and provides methods to perform the actual authentication operations, relying on a specific `Realm` istance.
+
+For its nature, an `AuthContext` is tipically bound to an application _session_ or to the current request context for a backend services layer.
+
+It provides methods to:
+
+* *Check* if a _principal_ is currently authenticated in context and if so *obtain* the corresponding `Authentication`
+* Perform *authentication* on the reference `Realm`, either using an `AuthenticationToken` or a `Message`
+* *De-authenticate* the context, removing current `Authentication`
+* Perform *authorization* control on current `Authentication`, using the reference `Realm` authorizers
+
+See the <<Realm>> section for detailed information about authenticators and authorizers.
+
+TIP: When an `AuthContext` is *de-authenticated*, any Realm registered `AuthenticationListener` is notified, invoking `onAuthentication(Authentication authentication)` listeners method with a _null_ `authentication` parameter value.
+
+[source, java]
+.Authorization example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[tag=authctx,indent=0]
+----
+<1> Create an `AccountProvider` to provide the `Account` instances according to the _account id_
+<2> Create a `Realm` with default authorizer and register an account `Authenticator` which uses the previously defined `AccountProvider`
+<3> Create an `AuthContext` backed by the created realm
+<4> Add an `AuthenticationListener` to the context
+<5> Perform authentication by using an _account credentials_ authentication token
+<6> Get the current context `Authentication`
+<7> Check if the current context `Authentication` has the permission named `role1`
+<8> Unauthenticate the context, i.e. remove the current `Authentication`
+
+TIP: The `AuthContext` interface provides a convenience `getCurrent()` static method allowing to obtain the current `AuthContext` instance which is made available as `Context`resource, using the default ClassLoader. See link:core.html#Context[Context] section for further information about context resources.

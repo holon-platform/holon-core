@@ -1,0 +1,23 @@
+= Http
+:revnumber: {project-version}
+:apidir: ../../api/holon-core
+:linkattrs:
+:sectnums:
+:toc: left
+:toclevels: 3
+
+== Introduction
+
+The `holon-http` artifact provides base *HTTP* protocol support to the Holon platform, dealing with HTTP _messages_ and providing support for _RESTful_ web services invocation through a _client_ API.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-http</artifactId>
+<version>{revnumber}</version>
+----
+
+include::holon-core/http/_messages.adoc[]
+
+include::holon-core/http/_restclient.adoc[]

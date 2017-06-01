@@ -1,0 +1,7 @@
+== @Authenticate annotation
+
+The link:{apidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] can be used on classes or methods to require authentication for resource access.
+
+The support for this annotation must be documented and it is available for other modules of the Holon platform.
+
+The annotation supports optional *schemes* specification to provide the allowed authentication schemes to be used to perform principal authentication, and an optional *redirectURI* which can be used to redirect user interaction when the authentication succeeds or fails (the semantic and behaviour associated to the redirect URI is specific for every authentication delegate).

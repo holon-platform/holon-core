@@ -1,0 +1,62 @@
+[[Validators]]
+== Data validation
+
+The main entry point to configure and perform data validation in Holon Platform is the link:{apidir}/com/holonplatform/core/Validator.html[Validator^] interface.
+
+[[Validator]]
+=== Validator
+
+A link:{apidir}/com/holonplatform/core/Validator.html[Validator^] is an interface implemented by a class which performs the validation of a value. The `Validator` is generalized on the value type which the validator is able to validate and can be used as a _functional interface_, providing the single method `validate(T value)`, which is responsible for the actual validation operation and throws a `ValidationException` if the given value is not valid.
+
+The link:{apidir}/com/holonplatform/core/Validator.ValidationException.html[ValidationException^] is _localizable_, supporting invalid value message localization and can act as a container for multiple validation exceptions.
+
+[source, java]
+.Example validators
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleValidator.java[tag=validator,indent=0]
+----
+<1> Create a Validator for `String` value types which checks if the value is at least 10 characters long
+<2> Create the same Validator created using the `Validator.create()` builder method
+<3> Create the same Validator created using the `Validator.create()` builder method and providing an invalid value message localization code
+
+=== Bultin validators
+
+The platform provides a set of validators for the most common use cases. Each of the builtin validators supports a localizable invalid value message or provides a default invalid value message if a custom one is not specified.
+
+The available bultin validators can be obtained using the corresponding static builder method of the `Validator` interface:
+
+* `isNull`: checks that the value is _null_
+* `notNull`:  checks that the value is not _null_
+* `notEmpty`: checks that the value is neither _null_ nor empty
+* `notBlank`: checks that the value is neither _null_ nor empty, trimming spaces
+* `max`: checks that the value is lower than or equal to a _max_ value (for Strings, arrays and collections the size/length is checked against given _max_ value)
+* `min`: checks that the value is greater than or equal to a _min_ value (for Strings, arrays and collections the size/length is checked against given _min_ value)
+* `pattern`: checks that the value matches a regular expression
+* `in`: checks that the value is one of the values of a specified set
+* `notIn`: checks that the value is not one of the values of a specified set
+* `notNegative`: checks that a numeric value is not negative
+* `digits`: checks that a numeric value is within an accepted range of integral/fractional digits
+* `past`: checks that a date type value is in the past
+* `future`: checks that a date type value is in the future
+* `lessThan`: checks that a value is less than another value
+* `lessOrEqual`: checks that a value is less than or equal to another value
+* `greaterThan`: checks that a value is greater than another value
+* `greaterOrEqual`: checks that a value is greater than or equal to another value
+* `email`: checks that the value is a valid e-mail address using RFC822 format rules
+
+[source, java]
+.Example bultin validators
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleValidator.java[tag=builtin,indent=0]
+----
+<1> Uses the builtin `notEmpty` validator to validate a value, using the default invalid value message
+<2> Uses the builtin `notEmpty` validator to validate a value, using a custom invalid value message and localization message code
+
+=== Validatable and ValidatorSupport
+
+The link:{apidir}/com/holonplatform/core/Validator.ValidatorSupport.html[ValidatorSupport^] interface is implemented by classes which supports adding and removing validators.
+
+The link:{apidir}/com/holonplatform/core/Validator.Validatable.html[Validatable^] interface declares the support for value validation, using the `Validator` interface, for a class.
+The `validate(T value)` checks the validity of the given _value_ against every registered validator, and throws a `ValidationException` with a single or multiple validation error message if a given value is not valid.
+
+See the <<Property>> section as an example of `Validatable` usage.

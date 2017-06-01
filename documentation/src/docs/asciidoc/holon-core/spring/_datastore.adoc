@@ -1,0 +1,28 @@
+== Datastore configuration
+
+The Spring integration module provides a number of methods to extend and configure a `Datastore` using Spring beans when the `Datastore` is registered as a bean in the Spring context.
+
+=== DatastoreResolver
+
+The link:{apidir}/com/holonplatform/spring/DatastoreResolver.html[DatastoreResolver^] annotation can be used to annotate `ExpressionResolver` type beans to automatically register them into a `Datastore`.
+
+The `datastoreBeanName()` annotation attribute can be used to uniquely identify the `Datastore` bean into which register the
+resolver, if more than one Datastore bean is present in Spring context.
+
+=== DatastoreCommodityFactory
+
+The link:{apidir}/com/holonplatform/spring/DatastoreCommodityFactory.html[DatastoreCommodityFactory^] annotation can be used to annotate `DatastoreCommodityFactory` type beans to automatically register them into a `Datastore`.
+
+The `datastoreBeanName()` annotation attribute can be used to uniquely identify the `Datastore` bean into which register the
+factory, if more than one Datastore bean is present in Spring context.
+
+IMPORTANT: Each concrete `Datastore` implementation could provide a specific `DatastoreCommodityFactory` base type to be used to register commodity factories in order to provide a specific `DatastoreCommodityContext`. See specific `Datastore` documentation for further information.
+
+=== DatastorePostProcessor
+
+The link:{apidir}/com/holonplatform/spring/DatastorePostProcessor.html[DatastorePostProcessor^] interface can be used to configure a `Datastore`, if registered as a Spring bean, right after it is initialized in the Spring context.
+
+A Spring bean class implementing this interface is automatically detected and the method
+`postProcessDatastore(Datastore, String)` is called at `Datastore` bean initialization time. For example, the post processor can be used to register additional `ExpressionResolver` or `DatastoreCommodityFactory`.
+
+The `DatastorePostProcessor` beans must be registered with a `singleton` scope in context.

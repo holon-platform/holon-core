@@ -1,0 +1,42 @@
+[[Account]]
+== Account
+
+The platform provides an abstraction of an _Account_ structure, which represents information about a _principal_.
+
+The link:{apidir}/com/holonplatform/auth/Account.html[Account^] interface is used to represent a generic _account_, providing the following information:
+
+* The account *id* (as a String)
+* The account *credentials* (as a generic Object)
+* Whether the account is a *root* account, i.e. has any permission
+* Optional map of generic account *details*, identified by a String id
+* Optional set of *permissions* granted to the account
+* Whether the account is *enabled*
+* Whether the account is *locked*
+* Whether the account is *expired*
+
+A _builder_ is available to create `Account` instances:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=builder,indent=0]
+----
+
+=== AccountProvider
+
+The link:{apidir}/com/holonplatform/auth/Account.AccountProvider.html[AccountProvider^] interface can be used to provide <<Account>> instances using the *account id*, for example from a data store, by implementing the `loadAccountById(String id)` method.
+
+The loading method returns an `Optional`, if empty means that an account with given id is not available.
+
+=== Authenticator
+
+A default <<Authenticator>> is provided to perform the account authentication by using an `AccountProvider` to load account data. The account authenticator is obtained by using the `authenticator(...)` static method of the `Account` interface, choosing to use a custom credentials matcher or the default one.
+
+The supported `AuthenticationToken` is the _account credentials_ authentication token, obtained using the static `accountCredentials(...)` method of the `AuthenticationToken` interface. 
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=auth,indent=0]
+----
+<1> Create an `AccountProvider` to provide the `Account` instances according to the _account id_
+<2> Create a `Realm` with default authorizer and register an account `Authenticator` which uses the previously defined `AccountProvider`
+<3> Perform authentication using an _account credentials_ authentication token

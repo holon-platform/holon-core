@@ -1,0 +1,83 @@
+[[StringValuePresenter]]
+== StringValuePresenter
+
+A link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] deals with `String` representation of a generic Object, according to object type and using the current context for example for messages localization.
+
+Presentation parameters can be used to tune the presentation strategy.
+
+=== Default StringValuePresenter
+
+The default `StringValuePresenter` can be obtained using the `getDefault()` static method.
+
+The default presentation strategy is organized according to the type of the value to present, with the following rules:
+
+* *`CharSequence`*: the value `toString()` representation is used
+* *`Boolean`*: boolean values are represented using the _default boolean localization_ rules of the current `LocalizationContext`, if available. Otherwise, `String.valueOf(value)` is used.
++ 
+See <<i18n>> for further information on internationalization and `LocalizationContext`
+* *`Localizable`*: the value is localized using current `LocalizationContext`, if available.
++ 
+See <<i18n>> for further information on internationalization and `LocalizationContext`
+* *`Enum`*: The enum value name is used by default. If the enumeration is `Localizable`, the value is localized using current `LocalizationContext`, if available. The <<i18n.caption>> annotation is supported on enumeration values for localization.
+* *`Temporal` and `Date`*: The current `LocalizationContext` is used to format the value, if available. Otherwise, a default short date format is used with the default Locale.
+* *`Number`*: The current `LocalizationContext` is used to format the value, if available. Otherwise, the default number format for the default Locale is used.
+* *Any other type*: the value `toString()` representation is used
+* *Arrays and collections*: Each element of the array/collection is presented using the rules described above, then the values are joined together in a single String using a separator character.
+
+NOTE: The default separator character for array/collection presentation is `;`. Use `holon.value-presenter.values-separator` parameter to change the separator character to use.
+
+*Presentation parameters:*
+
+The default `StringValuePresenter` supports the following parameters to setup and tune the presentation:
+
+.Default presentation parameters
+|===
+|Name |Constant |Type |Meaning
+
+|_holon.value-presenter._ *values-separator*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#MULTIPLE_VALUES_SEPARATOR[MULTIPLE_VALUES_SEPARATOR^]
+|String
+|The separator character to use for arrays/collections presentation
+
+|_holon.value-presenter._ *max-length*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#MAX_LENGTH[MAX_LENGTH^]
+|Integer number
+|Limit the max length of the presented String
+
+|_holon.value-presenter._ *decimal-positions*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#DECIMAL_POSITIONS[DECIMAL_POSITIONS^]
+|Integer number
+|Specify the decimal positions to use to present numeric type values
+
+|_holon.value-presenter._ *disable-grouping*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#DISABLE_GROUPING[DISABLE_GROUPING^]
+|Boolean (true/false)
+|Disable the use of grouping symbol for numeric type values
+
+|_holon.value-presenter._ *hide-zero-decimals*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#HIDE_DECIMALS_WHEN_ALL_ZERO[HIDE_DECIMALS_WHEN_ALL_ZERO^]
+|Boolean (true/false)
+|Hide number decimals when all decimal positions (if any) are equal to zero
+
+|_holon.value-presenter._ *percent-style*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#PERCENT_STYLE[PERCENT_STYLE^]
+|Boolean (true/false)
+|Use a percent-style format for numeric decimal values
+
+|_holon.value-presenter._ *temporal-type*
+|link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html#TEMPORAL_TYPE[TEMPORAL_TYPE^]
+|link:{apidir}/com/holonplatform/core/temporal/TemporalType.html[TemporalType^] enumeration
+|Set the temporal time format (Date, time or date and time) to use to present `Date` and `Calendar` values
+|===
+
+TIP: For <<Property.presentation>>, the presentation parameters are read from the property configuration attributes.
+
+[source, java]
+.Value presentation examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExamplePresenter.java[tag=presenter,indent=0]
+----
+<1> Return `stringValue`
+<2> Return `string`
+<3> Return `The value 1`, using the `@Caption` annotation
+<4> Return `The value 1;The value 2`

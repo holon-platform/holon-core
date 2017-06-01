@@ -1,0 +1,21 @@
+[[Utilities]]
+== Utilities
+
+The core Holon platform module provides some utility interfaces/classes which can be used in applications development.
+
+=== Initializer
+
+The link:{apidir}/com/holonplatform/core/Initializer.html[Initializer^] interface can be used to perform a *lazy initialization* of a generic value (with the same type of the generic Initializer type) and provides some static methods to create `Initializer` implementations:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleUtils.java[tag=initializer,indent=0]
+----
+<1> Create an `Initializer` using a `Supplier` to provide the lazy-initialized value
+<2> Only the first time the `get()` method is invoked, the value is initialized using given `Supplier` and than is returned to the caller
+
+=== SizedStack
+
+The link:{apidir}/com/holonplatform/core/utils/SizedStack.html[SizedStack^] class is a `java.util.Stack` extension which supports a *max stack size*, given at construction time.
+
+When the stack size exceeds the max size, the eldest element is removed before adding a new one on the top of the stack.

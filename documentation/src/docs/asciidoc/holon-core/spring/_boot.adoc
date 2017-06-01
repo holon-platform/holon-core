@@ -1,0 +1,46 @@
+== *Spring Boot* auto-configuration
+
+The Holon platform provides https://projects.spring.io/spring-boot[Spring Boot^] *auto-configuration* features for the most of the platform modules, including the core module.
+
+To enable Spring Boot auto-configuration the following artifact must be included in your project dependencies:
+
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-spring-boot</artifactId>
+<version>{revnumber}</version>
+----
+
+Two auto-configuration features are provided:
+
+*1.* <<SpringContextScope>> is enabled, registering the corresponding `Context` scope. This has the same effect as using the `@EnableBeanContext` annotation on Spring configuration classes, with the `lookupByType()` attribute set as true by default.
+
+To disable this auto-configuration feature the `EnableBeanContextAutoConfiguration` class can be excluded:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={EnableBeanContextAutoConfiguration.class})
+----
+
+*2.* If a `TenantResolver` bean is registered in Spring `ApplicationContext`, the <<SpringTenantScope>> is automatically registered. This has the same effect as using the `@EnableTenantScope` annotation on Spring configuration classes.
+
+To disable this auto-configuration feature the `TenantScopeAutoConfiguration` class can be excluded:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={TenantScopeAutoConfiguration.class})
+----
+
+=== Spring Boot starters
+
+The following Spring Boot _starter_ artifact is available to provide a quick project configuration setup using Maven dependency system:
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-starter</artifactId>
+<version>{revnumber}</version>
+----
+
+The starter provides the dependency to the `holon-spring-boot` artifact in addition to the one to the base Spring Boot starter (`spring-boot-starter`).

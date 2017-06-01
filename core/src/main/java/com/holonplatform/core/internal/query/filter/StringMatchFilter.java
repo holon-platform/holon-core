@@ -1,0 +1,132 @@
+/*
+ * Copyright 2000-2016 Holon TDCN.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.holonplatform.core.internal.query.filter;
+
+import com.holonplatform.core.internal.query.QueryFilterVisitor;
+import com.holonplatform.core.internal.query.QueryUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.query.QueryFilter;
+
+/**
+ * Filter which represents a match condition on text values.
+ * <p>
+ * This filter supports the ignore-case condition, if supported by underlyng data store, to match text values ignoring
+ * case.
+ * </p>
+ * 
+ * @since 4.4.0
+ * 
+ * @see QueryFilter
+ */
+public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
+
+	private static final long serialVersionUID = -1873151412251025897L;
+
+	/**
+	 * Matching mode
+	 */
+	public enum MatchMode {
+
+		/**
+		 * Contains the value
+		 */
+		CONTAINS,
+
+		/**
+		 * Starts with the value
+		 */
+		STARTS_WITH,
+
+		/**
+		 * Ends with the value
+		 */
+		ENDS_WITH
+
+	}
+
+	/*
+	 * Match mode
+	 */
+	private final MatchMode matchMode;
+
+	/*
+	 * Ignore case
+	 */
+	private boolean ignoreCase;
+
+	/**
+	 * Constructor.
+	 * @param expression Operand expression
+	 * @param value Filter value
+	 * @param matchMode Match mode
+	 * @param ignoreCase Set if to match like pattern ignoring case
+	 */
+	public StringMatchFilter(QueryExpression<String> expression, String value, MatchMode matchMode,
+			boolean ignoreCase) {
+		super(expression, FilterOperator.MATCH, QueryUtils.asConstantExpression(expression, value));
+		ObjectUtils.argumentNotNull(matchMode, "Match mode must be not null");
+		this.matchMode = matchMode;
+		this.ignoreCase = ignoreCase;
+	}
+
+	/**
+	 * Get the match mode
+	 * @return the match mode
+	 */
+	public MatchMode getMatchMode() {
+		return matchMode;
+	}
+
+	/**
+	 * Match like pattern ignoring case
+	 * @return <code>true</code> to ignore case in pattern match
+	 */
+	public boolean isIgnoreCase() {
+		return ignoreCase;
+	}
+
+	/**
+	 * Set if to match like pattern ignoring case
+	 * @param ignoreCase <code>true</code> to ignore case in pattern match
+	 */
+	public void setIgnoreCase(boolean ignoreCase) {
+		this.ignoreCase = ignoreCase;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.filter.AbstractOperationQueryFilter#validate()
+	 */
+	@Override
+	public void validate() throws InvalidExpressionException {
+		super.validate();
+		if (!getRightOperand().isPresent()) {
+			throw new InvalidExpressionException("Missing right hand operand");
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.VisitableQueryData#accept(com.holonplatform.core.query.QueryDataVisitor,
+	 * java.lang.Object)
+	 */
+	@Override
+	public <R, C> R accept(QueryFilterVisitor<R, C> visitor, C context) {
+		return visitor.visit(this, context);
+	}
+
+}

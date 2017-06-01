@@ -1,0 +1,10 @@
+== `RestClient` implementation using Spring RestTemplate
+
+The Spring integration module provides a link:http.html#RestClient[RestClient] implementation using Spring `RestTemplate`.
+
+The Spring `RestClient` is represented by the link:{apidir}/com/holonplatform/spring/SpringRestClient.html[SpringRestClient^] interface, which provides a `create(RestTemplate restTemplate)` method to create a `RestClient` instance using provided Spring `RestTemplate`.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=restclient,indent=0]
+----

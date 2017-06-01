@@ -1,0 +1,29 @@
+[[SpringContextScope]]
+== Spring beans as context resources
+
+The link:{apidir}/com/holonplatform/spring/EnableBeanContext.html[EnableBeanContext^] annotation can be used on Spring `Configuration` classes to configure a link:core.html#Context[Context] scope using the Spring `ApplicationContext` to provide *context resources* instances as Spring beans.
+
+The scope registration priority order is an intermediate value between the default _thread_ scope (highest priority) and _classloader_ scope (lowest priority).
+
+If the scope is registered, when a context resource is requested, using for example the `Context.resource(String resourceKey, Class<T> resourceType)` method, the Spring scope checks if a _bean_ matches the requested resource key and type using the following strategy:
+
+* If a Spring bean with a *name* equal to the requested resource *key* and with the same required *type* is found, this is returned;
+* Otherwise, if the `lookupByType()` attribute value of the `@EnableBeanContext` annotation is `true` and a Spring bean of the required type, ignoring the its name, is present and _only one candidate_ is available, this instance is returned.
+
+The Spring *scopes* are respected, in the sense that when a resource is requested and a matching _bean_ is found, the bean instance lookup is performed using standard Spring `ApplicationContext` methods, involving any registered and active Spring scope.
+
+[source, java]
+.Spring context scope example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=context,indent=0]
+----
+
+== EnvironmentConfigPropertyProvider
+
+The link:{apidir}/com/holonplatform/spring/EnvironmentConfigPropertyProvider.html[EnvironmentConfigPropertyProvider^] is provided to build a `ConfigPropertyProvider` which uses the Spring `Environment` structure as property source.
+
+[source, java]
+.EnvironmentConfigPropertyProvider example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=env,indent=0]
+----

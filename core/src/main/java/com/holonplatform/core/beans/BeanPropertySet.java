@@ -1,0 +1,282 @@
+/*
+ * Copyright 2000-2016 Holon TDCN.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
+ */
+package com.holonplatform.core.beans;
+
+import java.util.Optional;
+
+import com.holonplatform.core.Path;
+import com.holonplatform.core.Validator.ValidationException;
+import com.holonplatform.core.exceptions.TypeMismatchException;
+import com.holonplatform.core.property.PathProperty;
+import com.holonplatform.core.property.Property.PropertyAccessException;
+import com.holonplatform.core.property.Property.PropertyNotFoundException;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.property.PropertyValueConverter;
+
+/**
+ * A {@link PropertySet} collecting and providing Java Bean property set and configuration as {@link PathProperty}
+ * property type elements.
+ * 
+ * @param <T> Bean class to which this property set refers
+ * 
+ * @see BeanIntrospector
+ */
+public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>> {
+
+	/**
+	 * Get the bean class to which this property set refers.
+	 * @return the bean class
+	 */
+	Class<? extends T> getBeanClass();
+
+	/**
+	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
+	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
+	 * @param <PT> Property type
+	 * @param propertyName Property name (not null)
+	 * @return The bean property with given name, or an empty Optional if not found
+	 */
+	<PT> Optional<PathProperty<PT>> getProperty(String propertyName);
+
+	/**
+	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
+	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
+	 * is used.
+	 * @param <PT> Property type
+	 * @param propertyName Property name (not null)
+	 * @param type Property type
+	 * @return The bean property with given name, or an empty Optional if not found
+	 * @throws TypeMismatchException If the given type is not consistent with actual property type
+	 */
+	<PT> Optional<PathProperty<PT>> getProperty(String propertyName, Class<PT> type);
+
+	/**
+	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
+	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
+	 * @param <PT> Property type
+	 * @param propertyName Property name (not null)
+	 * @return The bean property with given name, or an empty Optional if not found
+	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
+	 */
+	@SuppressWarnings("unchecked")
+	default <PT> PathProperty<PT> requireProperty(String propertyName) {
+		return (PathProperty<PT>) getProperty(propertyName).orElseThrow(
+				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
+	}
+
+	/**
+	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
+	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
+	 * is used.
+	 * @param <PT> Property type
+	 * @param propertyName Property name (not null)
+	 * @param type Property type
+	 * @return The bean property with given name, or an empty Optional if not found
+	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
+	 * @throws TypeMismatchException If the given type is not consistent with actual property type
+	 */
+	default <PT> PathProperty<PT> requireProperty(String propertyName, Class<PT> type) {
+		return getProperty(propertyName, type).orElseThrow(
+				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
+	}
+
+	/**
+	 * Read the value of the property with given <code>propertyName</code> from given bean instance.
+	 * @param propertyName Name of the property to read (not null)
+	 * @param instance Bean instance from which to read the property value (not null)
+	 * @param <V> Property and result type
+	 * @return The property value
+	 * @throws PropertyNotFoundException If a property with given name is not found in this property set
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If actual property type and expected type mismatch
+	 */
+	<V> V read(String propertyName, T instance);
+
+	/**
+	 * Read the value of the property bound to given <code>path</code> from given bean instance, using full path name to
+	 * match the bean property to read.
+	 * @param <V> Path and value type
+	 * @param path Property path to read (not null)
+	 * @param instance Bean instance from which to read the property value (not null)
+	 * @return The property value
+	 * @throws PropertyNotFoundException If a property wich corresponds to given path name is not found in this property
+	 *         set
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If actual property type and expected type mismatch
+	 */
+	<V> V read(Path<V> path, T instance);
+
+	/**
+	 * Write the <code>value</code> of the property with given <code>propertyName</code> to given bean instance.
+	 * @param propertyName Name of the property to write (not null)
+	 * @param value Value to write (may be null)
+	 * @param instance Bean instance to which to write the property value
+	 * @throws PropertyNotFoundException If a property with given name is not found in this property set
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If actual property type and expected type mismatch
+	 */
+	void write(String propertyName, Object value, T instance);
+
+	/**
+	 * Write the <code>value</code> bound to given <code>path</code> to given bean instance, using full path name to
+	 * match the bean property to write.
+	 * @param <P> Path and value type
+	 * @param path Property path to write (not null)
+	 * @param value Value to write (may be null)
+	 * @param instance Bean instance to which to write the property value
+	 * @throws PropertyNotFoundException If a property wich corresponds to given path name is not found in this property
+	 *         set
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If actual property type and expected type mismatch
+	 */
+	<P> void write(Path<P> path, P value, T instance);
+
+	/**
+	 * Read the property values from given bean instance into the given {@link PropertyBox}, using given
+	 * <code>propertyBox</code> property set.
+	 * <p>
+	 * The matching between the PropertyBox properties and the bean properties is performed by property name, so only
+	 * the PropertyBox properties which implements {@link Path} will be taken into account, using {@link Path#getName()}
+	 * as property name.
+	 * </p>
+	 * <p>
+	 * Any {@link PropertyValueConverter} will be applied to read values from bean data model.
+	 * </p>
+	 * @param propertyBox PropertyBox into which to write the property values (not null)
+	 * @param instance Bean instance from which read the property values (not null)
+	 * @param ignoreMissing <code>true</code> to ignore properties of the PropertyBox property set which are not present
+	 *        as bean property. If <code>false</code>, when a property of the PropertyBox property set does not match
+	 *        with any of the bean properties, a {@link PropertyNotFoundException} is thrown.
+	 * @return The updated PropertyBox
+	 * @throws PropertyNotFoundException If <code>ignoreMissing</code> is <code>false</code> and a property of the
+	 *         PropertyBox property set does not match with any of the bean properties
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If the bean property type and the PropertyBox property type mismatch for a property
+	 * @throws ValidationException If not {@link PropertyBox#isInvalidAllowed()} for given property box and one of the
+	 *         property values validation failed
+	 */
+	PropertyBox read(PropertyBox propertyBox, T instance, boolean ignoreMissing);
+
+	/**
+	 * Read the property values from given bean instance into the given {@link PropertyBox}, using given
+	 * <code>propertyBox</code> property set.
+	 * <p>
+	 * The matching between the PropertyBox properties and the bean properties is performed by property name, so only
+	 * the PropertyBox properties which implements {@link Path} will be taken into account, using {@link Path#getName()}
+	 * as property name.
+	 * </p>
+	 * <p>
+	 * Any {@link PropertyValueConverter} will be applied to read values from bean data model.
+	 * </p>
+	 * @param propertyBox PropertyBox into which to write the property values (not null)
+	 * @param instance Bean instance from which read the property values (not null)
+	 * @return The updated PropertyBox
+	 * @throws PropertyNotFoundException If a property of the PropertyBox property set does not match with any of the
+	 *         bean properties
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If the bean property type and the PropertyBox property type mismatch for a property
+	 * @throws ValidationException If not {@link PropertyBox#isInvalidAllowed()} for given property box and one of the
+	 *         property values validation failed
+	 */
+	default PropertyBox read(PropertyBox propertyBox, T instance) {
+		return read(propertyBox, instance, false);
+	}
+
+	/**
+	 * Read the property values from given bean instance into a {@link PropertyBox} with this property set.
+	 * <p>
+	 * By default, the created PropertyBox allows invalid values, so no property value validation is performed.
+	 * </p>
+	 * <p>
+	 * Any {@link PropertyValueConverter} will be applied to read values from bean data model.
+	 * </p>
+	 * @param instance Bean instance from which read the property values (not null)
+	 * @return The PropertyBox containing the property values read from the given bean instance
+	 * @throws PropertyAccessException Error accessing bean properties
+	 */
+	default PropertyBox read(T instance) {
+		return read(PropertyBox.builder(this).invalidAllowed(true).build(), instance, false);
+	}
+
+	/**
+	 * Write the property values contained into given {@link PropertyBox} into given bean instance.
+	 * <p>
+	 * The matching between the PropertyBox properties and the bean properties is performed by property name, so only
+	 * the PropertyBox properties which implements {@link PathProperty} will be taken into account, using
+	 * {@link Path#getName()} as property name.
+	 * </p>
+	 * <p>
+	 * Any {@link PropertyValueConverter} will be applied to write values to bean data model.
+	 * </p>
+	 * @param propertyBox PropertyBox from which read the property values (not null)
+	 * @param instance Bean instance to which to write the property values (not null)
+	 * @param ignoreMissing <code>true</code> to ignore properties of the PropertyBox property set which are not present
+	 *        as bean property. If <code>false</code>, when a property of the PropertyBox property set does not match
+	 *        with any of the bean properties, a {@link PropertyNotFoundException} is thrown.
+	 * @return The updated bean instance
+	 * @throws PropertyNotFoundException If <code>ignoreMissing</code> is <code>false</code> and a property of the
+	 *         PropertyBox property set does not match with any of the bean properties
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If the bean property type and the PropertyBox property type mismatch for a property
+	 */
+	T write(PropertyBox propertyBox, T instance, boolean ignoreMissing);
+
+	/**
+	 * Write the property values contained into given {@link PropertyBox} into given bean instance.
+	 * <p>
+	 * The matching between the PropertyBox properties and the bean properties is performed by property name, so only
+	 * the PropertyBox properties which implements {@link PathProperty} will be taken into account, using
+	 * {@link Path#getName()} as property name.
+	 * </p>
+	 * <p>
+	 * Any {@link PropertyValueConverter} will be applied to write values to bean data model.
+	 * </p>
+	 * @param propertyBox PropertyBox from which read the property values (not null)
+	 * @param instance Bean instance to which to write the property values (not null)
+	 * @return The updated bean instance
+	 * @throws PropertyNotFoundException If a property of the PropertyBox property set does not match with any of the
+	 *         bean properties
+	 * @throws PropertyAccessException Error accessing bean properties
+	 * @throws TypeMismatchException If the bean property type and the PropertyBox property type mismatch for a property
+	 */
+	default T write(PropertyBox propertyBox, T instance) {
+		return write(propertyBox, instance, false);
+	}
+
+	/**
+	 * Create a bean property set using default {@link BeanIntrospector}.
+	 * @param <T> Bean type
+	 * @param beanClass Bean class for which to create the property set (not null)
+	 * @return {@link PropertySet} of the properties detected from given bean class
+	 */
+	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass) {
+		return create(beanClass, null);
+	}
+
+	/**
+	 * Create a bean property set using default {@link BeanIntrospector}. If a <code>parentPath</code> is specified, it
+	 * will be setted as bean root properties parent path.
+	 * @param <T> Bean type
+	 * @param beanClass Bean class for which to create the property set (not null)
+	 * @param parentPath Optional parent path to set as bean root properties parent path
+	 * @return {@link PropertySet} of the properties detected from given bean class
+	 */
+	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass, Path<?> parentPath) {
+		return BeanIntrospector.get().getPropertySet(beanClass, parentPath);
+	}
+
+}

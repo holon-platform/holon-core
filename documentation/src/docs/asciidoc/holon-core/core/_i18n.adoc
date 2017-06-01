@@ -1,0 +1,130 @@
+[[i18n]]
+== Internationalization
+
+The internationalization architecture of the Holon platform relies upon the <<LocalizationContext>> interface, which is the main entry point for localization of messages, numbers and date/time elements.
+
+=== Localizable messages
+
+A _localizable_ message is represented using the following attributes:
+
+* A *default* message: This is the default message to use if a localization attribute or provider is not available
+* A localization *message code*: The symbolic message code to use as identifier to provide message translations
+* Optional message *arguments*: A set of arguments to be used to replace a conventional placeholder in the message String with actual values
+
+The link:{apidir}/com/holonplatform/core/i18n/Localizable.html[Localizable^] interface is available to represent a localizable message, providing a convenience fluent builder to create `Localizable` instances.
+
+[source, java]
+.Building a Localizable
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=localizable,indent=0]
+----
+<1> Build a `Localizable` with a _defaultMessage_ and a message localization code
+<2> Build a `Localizable` using a localization argument too
+
+[[i18n.caption]]
+=== `@Caption` annotation
+
+The link:{apidir}/com/holonplatform/core/i18n/Caption.html[Caption^] annotation can be used to provide the localizable message to use as the _caption_ (i.e. the short description or explanatory label of an element) of an element.
+
+The relevant annotation attributes are:
+
+* `value`: The _default_ message to use as caption
+* `messageCode`: The symbolic message code to use as identifier to provide message translations
+
+The support for the `@Caption` annotation must be declared and documented by the classes/elements which support it.
+
+TIP: For example, the default <<StringValuePresenter>>, used also as default <<Property>> value presenter supports the `@Caption` annotation for `enum` values presentation.
+
+[[i18n.MessageProvider]]
+=== Message providers
+
+To perform actual messages localization the link:{apidir}/com/holonplatform/core/i18n/MessageProvider.html[MessageProvider^] functional interface is used. A `MessageProvider` provides a message translation for a specified message localization identifier and a `Locale` representing the language/country for which the translation is required.
+
+The platform makes available a default `MessageProvider` using _properties_ files as message localization containers, which can be created using the static `fromProperties(String... basenames)` method.
+
+Properties files are resolved using a configured basenames as prefix, and `Locale` language, country and variant separated by an underscore as file name. Files must have the _.properties_ extension.
+
+The basenames follow the `java.util.ResourceBundle` conventions: essentially, a fully-qualified classpath location. If it doesn't contain a package qualifier, it will be resolved from the classpath root. Note that the JDK's standard `ResourceBundle` treats dots as package separators: this means that `test.messages` is equivalent to `test/messages`.
+
+As an example, suppose to have a `messages` folder under the classpath root containing the following files:
+
+* *messages_en_US_var.properties*: This file will be used for a `Locale` with `en` as language, `US` as country and `var` as variant
+* *messages_en_US.properties*: This file will be used for a `Locale` with `en` as language, `US` as country and no variant
+* *messages_en.properties*: This file will be used for a `Locale` with `en` as language and a country different from `US`
+* *messages_it.properties*: This file will be used for a `Locale` with `it` as language, ignoring country or variant
+* *messages.properties*: This is the default file to use as fallback if no other match is found for a `Locale`
+
+A message localization properties file simply contains a list of the localization (translation) of the available message localization identifiers (or message codes), e.g. `test.msg=translation`.
+
+[[LocalizationContext]]
+=== LocalizationContext
+
+The link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.html[LocalizationContext^] interface is the main entry point for localization of messages, numbers and date/time elements.
+
+=== Building a LocalizationContext
+
+The simplest way to build a `LocalizationContext` is to use the fluent builder:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=ctxbuild,indent=0]
+----
+<1> Add a `MessageProvider` using _properties_ files located under the `messages` folder (see <<i18n.MessageProvider>>)
+<2> Add a `MessageProvider` using _properties_ files located under the `messages2` folder (see <<i18n.MessageProvider>>)
+<3> Use the `$` character as message localization arguments placeholder (replacing the default `&` character)
+<4> Use the _medium_ format as default date format style
+<5> Use the _full_ format as default time format style
+<6> Use the `boolean.true` message code to localize the `true` boolean values
+<7> Use the `boolean.false` message code to localize the `false` boolean values
+<8> Initially Localize the LocalizationContext using the default system `Locale`
+<9> Initially Localize the LocalizationContext using the `US` `Locale`
+
+=== Obtaining a LocalizationContext
+
+If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key, i.e. the fully qualified LocalizationContext class name, the current `LocalizationContext` can be obtained by using the convenience `getCurrent()` method.
+
+=== Localizing a LocalizationContext
+
+Before using a `LocalizationContext`, you must ensure that it is _localized_, i.e. bound to a specific `Locale`. This will be the `Locale` used for the localization of messages, numbers and date/time elements. To _localize_ a `LocalizationContext`, use the `localize(...)` method of the LocalizationContext interface, providing a `Locale` instance.
+
+To have more control on context localization, a link:{apidir}/com/holonplatform/core/i18n/Localization.html[Localization^] object can be used, which allows to setup:
+
+* A _parent_ `Localization`, i.e. the Localization to use as fallback when a localization operation cannot be successfully performed using current localization, for example because a message translation is not available. This allows the creation of a hierarchy of `Localization`s;
+* The default decimal positions to use to format a localized numeric decimal value, if decimal positions are not explicitly given;
+* The default date format style
+* The default time format style
+
+[source, java]
+.LocalizationContext localization
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=localize,indent=0]
+----
+<1> Require a `LocalizationContext` to be available as context resource 
+<2> Localize the LocalizationContext using the `US` `Locale`
+<3> Check the LocalizationContext is localized
+<4> Localize the LocalizationContext using a `Localization`
+
+=== Using the LocalizationContext
+
+The `LocalizationContext` provides several methods to perform localizations of messages, dates and numbers.
+
+* For numbers formatting, the `NumberFormatFeature` enumeration can be used to tune the format style
+* For date and times formatting, the `TemporalFormat` enumeration can be used to specify the format style 
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=localization,indent=0]
+----
+<1> Print the current LocalizationContext `Locale`
+<2> Localize a message providing the message localization code and the default message to use if no translation is available for the current LocalizationContext `Locale`
+<3> Localize a message using a `Localizable`
+<4> Format a number using default styles and localization settings
+<5> Format a number using the _percent_ style
+<6> Format the given number using 2 decimal places
+<7> Get the LocalizationContext `NumberFormat` for `Integer` numbers localization
+<8> Format a `Date` considering the date value of `DATE` type (without time)
+<9> Format a `Date` considering the date value of `DATE_TIME` type (including time) and using the `LONG` style for both date and time parts
+<10> Format a `LocalDate` with default style
+<11> Format a `LocalDateTime` using `FULL` style for the date part and `SHORT` style for the time part
+<12> Get the `DateFormat` to use to format `Date`s without time
+<13> Get the `DateTimeFormatter` to use to format temporals with date and time

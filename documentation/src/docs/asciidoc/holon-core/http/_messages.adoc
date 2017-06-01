@@ -1,0 +1,27 @@
+== HTTP messages
+
+The Holon platform provides an implementation-independent representation of the *Hypertext Transfer Protocol* request and response messages, used by other platform modules to deal with HTTP-based operations.
+
+The HTTP request and response message representations are based on the link:{apidir}/com/holonplatform/core/messaging/Message.html[Message^] interface, which represent a generic _message_ consisting of a map of message *headers* (identified by a textual header name) and a *payload* which represents the content delivered in the message.
+
+NOTE: For an HTTP message, the message header values are represented as a `List` of Strings, since HTTP supports multiple values for each header. The message _payload_ is represented as a `String`.
+
+[[HttpRequest]]
+=== HttpRequest
+
+The link:{apidir}/com/holonplatform/http/HttpRequest.html[HttpRequest^] interface represents a HTTP *request* message and provides the following informations and operations:
+
+* The HTTP *method* describing the desired action to be performed
+* The fully qualified name of the client host or the last proxy that sent the request
+* The request message _path_
+* The request URI query parameters, if any
+* The request _cookies_, if any
+* An `InputStream` of the request message body (payload)
+
+[[HttpResponse]]
+=== HttpResponse
+
+The link:{apidir}/com/holonplatform/http/HttpResponse.html[HttpResponse^] interface represents a HTTP *response* message and provides the following informations and operations:
+
+* The HTTP _status code_ of the response, also represented with the convenience link:{apidir}/com/holonplatform/http/HttpStatus.html[HttpStatus^] enumeration
+* A _builder_ to create default HttpResponse instances

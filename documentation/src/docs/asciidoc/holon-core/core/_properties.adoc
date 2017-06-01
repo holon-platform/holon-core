@@ -1,0 +1,283 @@
+[[Property]]
+== Properties
+
+The _properties_ architecture is a central concept in the Holon platform. A _property_ represent a data attribute in a general and abstract way, allowing to:
+
+* Collect all relevant features and configurations of the data attribute in a single point, to avoid duplications and inconsistency between application layers;
+* Abstract the property definition from the concrete data representation and persistence model, to favor loose coupling and independence from underlying data structures;
+* Use a common structure for data attributes definition which can be shared by different distributed application layers;
+* Provide common operations and functionalities, such as value converters and validators;
+* Provide bultin naming and localization features;
+* Use the property as an abstract data model reference to build queries and to transport data model values.
+
+=== Property abstraction
+
+A _property_ is represented by the link:{apidir}/com/holonplatform/core/property/Property.html[Property^] interface. 
+Provides a *type* and it is generalized on such type, which represents the value type handled by the property.
+
+[[PropertyConfiguration]]
+==== Configuration
+
+A `PropertyConfiguration` class is bound to each property, representing a common place to handle property configuration attributes using a general purpose structure which extends <<ParameterSet>> to provide operations to inspect and use configuration parameter values. This structure can be used also for application-specific properties configuration and platform extensions parameters collector.
+
+The property configuration is accessible from the `Property.getConfiguration()` method. To set the property configuration attributes, the property builder `configuration(String parameterName, Object value)` methods can be used.
+
+The `PropertyConfiguration` interface provides a special link:{apidir}/com/holonplatform/core/temporal/TemporalType.html[TemporalType^] attribute which can be used to specify the nature (date, time or date and time) of generic java temporal types, such as `Date` and `Calendar`. This attribute can be used from a number of platform services and structures to perform consistent operations on property value, such as presentation, rendering or persistence data manipulation.
+
+TIP: The Holon platform fully supports the new *Java 8 Date and Time API*, which represents a big step forward compared to the previous date and time support classes, to address the shortcomings of the older `java.util.Date` and `java.util.Calendar` types. It is strongly recommended to use the new `java.time.*` classes to manage date and times, such as `LocalDate`, `LocalTime`, `LocalDateTime` and so on. This way, in addition to achieving a more robust and consistent code, there no need to use the `TemporalType` property configuration attribute to ensure consistency in property value manipulation and presentation.
+
+[source, java]
+.Date type property configuration example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=config,indent=0]
+----
+<1> Set the property `TemporalType`
+<2> Set a custom configuration attribute
+<3> Get the property configuration
+<4> Get the `myAttribute` configuration attribute
+
+[[PropertyValueConverter]]
+==== Converters
+
+Each `Property` supports a link:{apidir}/com/holonplatform/core/property/PropertyValueConverter.html[PropertyValueConverter^], which can be used to perform property value conversions when obtaining the property value from the concrete data model and back. The two conversion methods (from the property value type to the data model value type and vice-versa) should be symmetric, so that chaining these together returns the original result for all inputs.
+
+[source, java]
+.Example converter from String to Integer and back
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=converter,indent=0]
+----
+<1> Convert a `String` model value into the `Integer` property value type
+<2> Convert the `Integer` property value type into the `String` model value type
+
+Some useful *builtin converters* are provided:
+
+* _Numeric boolean converter_: perform conversions from/to a numeric data model type to a `boolean` property type using the following convention: `null` or `0` numeric values will be converted as `false` boolean values, any other value will be converted as the `true` boolean value;
+* _Enum by ordinal converter_: perform conversions from/to a Integer data model type to an `Enum` property type using the the enumeration *ordinal* values;
+* _Enum by name converter_: perform conversions from/to a String data model type to an `Enum` property type using the the enumeration *name* values;
+* _LocalDate value converter_: perform conversions from/to `Date` type data model values and Java 8 `LocalDate` temporal type property types;
+* _LocalDateTime value converter_: perform conversions from/to `Date` type data model values and Java 8 `LocalDateTime` temporal type property types.
+
+[source, java]
+.Builtin converters
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=bultincnv,indent=0]
+----
+<1> Numeric boolean converter using a `Integer` type data model value
+<2> `LocalDate` converter
+<3> `LocalDateTime` converter
+<4> `Enum` by ordinal converter
+<5> `Enum` by name converter
+
+==== Localization (caption)
+
+The `Property` interface extends link:{apidir}/com/holonplatform/core/i18n/Localizable.html[Localizable^] to allow property _caption_ localization. The property _caption_ is a kind of property description, which can be used also in UI application layers to provide the property description to the user.
+
+See link:../i18n/overview.html[Internationalization] for additional details about the Holon platform internationalization architecture.
+
+==== Validation
+
+The `Property` interface extends link:{apidir}/com/holonplatform/core/Validator.Validatable.html[Validatable^] and supports property value validation using `Validators`.
+See the <<Validators>> section for detailed information about validators definition and usage.
+
+[[Path]]
+==== Path
+
+Properties which refer to a concrete data model attribute extend the link:{apidir}/com/holonplatform/core/Path.html[Path^] interface, which represents a named path to a data model attribute and supports hierarchical structures. Each _path_ is identified by a `String` *name*, representing the connection with the concrete data model. 
+
+A _path_ is typed and the path type represents the type of the value identified by such path in the data model.
+
+[source, java]
+.Path examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=path,indent=0]
+----
+<1> Create a `String` type path with the name _pathName_
+<2> The path name is `pathName`
+<3> The path is a _root_ path because it has no parent
+<4> Create a path named _subName_ and set _pathName_ as parent path
+<5> The path full name will be `pathName.subName`
+
+[[PathProperty]]
+==== PathProperty
+
+The central interface to define a `Property` bound to a data model attribute is the link:{apidir}/com/holonplatform/core/property/PathProperty.html[PathProperty^] interface, which extends <<Path>> to provide a binding to the symbolic path of the data model attribute.
+
+The `create(...)` method can be used for the definition of a `PathProperty`, providing property configuration attributes, converters, validators and property localization messages through a fluent builder.
+
+Usually a `PathProperty` is defined as a static constant, immutable during the application runtime.
+
+[source, java]
+.PathProperty definition
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=pathproperty,indent=0]
+----
+<1> Create a `PathProperty` named _id_ (this is the path name) bound to a `Long` value type
+<2> Add a configuration parameter named _test_ with value 1
+<3> Add a validator to check that the property value is not _null_
+<4> Set the property _caption_ message
+<5> Set the property _caption_ localization message code
+<6> Create a `PathProperty` named _valid_ (this is the path name) bound to a `Boolean` value type but which refers to a `Integer` data model attribute
+<7> Set the converter to perform conversion between `Integer` data model values and `Boolean` property values and vice-versa
+
+A `PathProperty` can be used in <<Query>> clauses and projections, and the `PathProperty` interface provides several method to easily create query clauses and aggregations.
+
+==== VirtualProperty
+
+A link:{apidir}/com/holonplatform/core/property/VirtualProperty.html[VirtualProperty^] is a `Property` which is not directly bound to a data model attribute, but which instead provides its value through a link:{apidir}/com/holonplatform/core/property/PropertyValueProvider.html[PropertyValueProvider^].
+
+The `PropertyValueProvider` is a _functional interface_ which implementation must be declared when the virtual property is created and is used to provide a _virtual_ or _calculated_ property value. The `PropertyValueProvider` takes a `PropertyBox` as argument, allowing the use of other properties to compose and provide the virtual property value. For this reason, the most suitable use of a `VirtualProperty` is within a `PropertyBox` context.
+
+See <<PropertyBox>> for further information.
+
+[source, java]
+.VirtualProperty definition
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=vrtproperty,indent=0]
+----
+<1> Create a `VirtualProperty` of Integer type which always returns the value `1`
+<2> `PathProperty` definition representing a person _name_ attribute
+<3> `PathProperty` definition representing a person _surname_ attribute
+<4> Create a `VirtualProperty` of String type providing the person _full_ name, concatenating the person _name_ and _surname_ values read from the current `PropertyBox`
+
+[[PropertySet]]
+=== PropertySet
+
+The link:{apidir}/com/holonplatform/core/property/PropertySet.html[PropertySet^] interface represents an immutable set of `Property` and provides methods for the definition and inspection of the set of properties. It extends the Java standard `Iterable` interface,
+representing an iterable set of properties.
+
+The most common use case of a property set is to aggregate the properties which refer to a data model _entity_, even combining path properties with virtual properties.
+
+Property sets can be used as <<Query>> projections: the query selection will be the set of the properties defined in the `PropertySet` and the query result will be a <<PropertyBox>> with the same properties of the projected property set and the query results bound to each property.
+
+[source, java]
+.PropertySet examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=propertyset,indent=0]
+----
+<1> Create a PropertySet containing `NAME` and `SURNAME` properties
+<2> Create a PropertySet containing `NAME` and `SURNAME` properties using the fluent builder
+<3> Check if PropertySet contains the property `NAME`
+<4> Use the `forEach` operation to invoke the toString method for each property of the set
+<5> Use a `stream` of the properties of the set to join the property captions in a String
+<6> Create a new PropertySet as the conjunction of the properties of the first set and the `ID` property
+<7> Obtain the set size, i.e. the number of properties in the set
+<8> Create a new PropertySet from the first one but excluding the `SURNAME` property
+
+[[PropertyBox]]
+=== PropertyBox
+
+A link:{apidir}/com/holonplatform/core/property/PropertyBox.html[PropertyBox^] represents a container of `Property` values and it is bound to a specific (and immutable) <<PropertySet>>.
+
+`PropertyBox` provides methods set and retrieve the values for the properties of set to which it is bound, handling property value validation and conversions according to `Property` configuration and ensuring a consistent behaviour when using a `VirtualProperty`.
+
+The `PropertyBox` abstraction is the base structure to transport and provide property values, used by the Holon platform every time a set of property values comes into play, for example in <<Query>> results projections involving more than one property.
+
+Using a `PropertyBox` allows to preserve a strong independence from the underlying (and possibly mutable) concrete data model, representing a data model _entity_ (when it can be considered a set of data attributes, i.e. properties, and their values) in a generalized fashion.
+
+[source, java]
+.PropertyBox examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=propertybox,indent=0]
+----
+<1> Create an empty `PropertyBox` using `ID` and `NAME` properties as property set
+<2> Create an empty `PropertyBox` with the same property set but using `PROPERTIES` property set
+<3> Set the value for the `ID` property: the `setValue` method is generalized on property type, so only consistent value types are accepted (a Long in this case)
+<4> Set the value for the `NAME` property: the `setValue` method is generalized on property type, so only consistent value types are accepted (a String in this case)
+<5> Create a `PropertyBox` using the fluent builder using the `PROPERTIES` property set and setting the property values
+<6> Validate the value of the properties currently present in the box, invoking configured property Validators
+<7> Get the value for the `ID` property: the `getValue` method is generalized on property type, so a consistent value type is returned (Long in this case)
+<8> Get the _Optional_ `NAME` property value, using the `default` String if a value for that property is not present in PropertyBox
+<9> Check if a value for the `ID` property is present in PropertyBox
+<10> Clone the PropertyBox, creating a new PropertyBox with a property set composed only by the `ID` property and copying the values of the properties which was present in the source PropertyBox and the destination property set too
+
+[[Property.presentation]]
+=== Property value presentation
+
+The Holon platform provides a standard way to present the value of a `Property` as a String using a link:{apidir}/com/holonplatform/core/property/PropertyValuePresenter.html[PropertyValuePresenter^].
+
+The `PropertyValuePresenter` is _functional interface_ aimed to provide a String representation of the value associated to a `Property`. The property value presenters are organized in a registry (the link:{apidir}/com/holonplatform/core/property/PropertyValuePresenterRegistry.html[PropertyValuePresenterRegistry^]), which collects all available presenters and provides the most suitable presenter for a given property, using the *conditions*, expressed as `Predicate`, the presenters were registered with.
+
+A _default_ property value presenter is provided by the platform and automatically registered in the registry.
+
+NOTE: The default property value presenter uses a default implementation of link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] to convert property values into `String`. See <<StringValuePresenter>> for further information on the presentation strategy.
+
+IMPORTANT: The default property value presenter uses the `PropertyConfiguration` attributes as property presentation parameters. So you can set default <<StringValuePresenter>> presentation parameters as property configuration parameters to use them for property presentation.
+
+This way, the registry uses a _fallback_ strategy to obtain the most suitable presenter for a property, searching for the presenter associated to the condition which best matches a given property, or falling back to another presenter consistent with the property, if available. If a specific presenter is not found, the _default_ presenter is used.
+
+The registry supports a *priority* indication for a `PropertyValuePresenter`, which can be expressed by using standard `javax.annotation.Priority` annotation on presenter implementation class, where lower values corresponds to higher priority. Priority can be used when a set of *conditions* are not clearly one more restrictive than others in the same registry, so an explicit lookup order has to be defined.
+
+The `Property` interface provides a convenience `present(T value)` method to present given property value using the current `PropertyValuePresenterRegistry`, i.e. the registry available as a <<Context>> resource, if available, or the default registry associated to the current ClassLoader otherwise.
+
+[source, java]
+.Property value presentation
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=presenter,indent=0]
+----
+<1> Present the `1` value for the `ID` property using the current `Context` presenters registry or the default one
+<2> The same operation made using the `PropertyValuePresenterRegistry` directly
+
+==== PropertyValuePresenter registration
+
+The registration of a new `PropertyValuePresenter` can be made in two ways:
+
+*1. Using the PropertyValuePresenterRegistry*:
+
+[source, java]
+.PropertyValuePresenter registration example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=presenterreg,indent=0]
+----
+<1> Create a presenter for `LocalTime` type properties which represents the value as _hours.minutes_
+<2> Register the presenter binding it to the `Predicate` wich corresponds to the condition "`the property type is LocalTime`"  
+
+*2. Using the standard Java service extensions*:
+
+Create a file named _com.holonplatform.core.property.PropertyValuePresenter_ containing the fully qualified class name(s) of the `PropertyValuePresenter` implementation and put it under the `META-INF/services` folder of your project to register the presenter in the default PropertyValuePresenterRegistry.
+
+IMPORTANT: When a `PropertyValuePresenter` is registered using service extensions an *always true* condition is used, i.e. the presenter is available for any property. Use this method only for general purpose presenters. The `javax.annotation.Priority` annotation can be used on presenter's implementation class to assign a priority order to the presenter.
+
+=== Property rendering
+
+A further property handling concept is made available by the Holon platform: the property _renderers_.
+
+link:{apidir}/com/holonplatform/core/property/PropertyRenderer.html[PropertyRenderer^] is responsible to render a `Property` as a specific rendering class type, declared by the `getRenderType()` method.
+
+The property renderers are organized in a registry (the link:{apidir}/com/holonplatform/core/property/PropertyRendererRegistry.html[PropertyRendererRegistry^]), which collects all available renderers and provides the most suitable renderer for a given property and a specific rendering type, using the *conditions*, expressed as `Predicate`s, the renderers were registered with.
+
+This paradigm can be used to provide property representation or management objects in a standard way, organizing the renderers by rendering type and gathering them together in a common registry, to made them available to application layers.
+
+NOTE: No default `PropertyRenderer` is provided by the core platform module, because the renderers are very related to the specific  application logic or UI technology.
+
+The registry supports a *priority* indication for a `PropertyRenderer`, which can be expressed using standard `javax.annotation.Priority` annotation on renderer implementation class, where lower values corresponds to higher priority. Priority can be used when a set of *conditions* is not clearly more restrictive than another, so an explicit lookup order has to be defined.
+
+The `Property` interface provides two convenience methods to render the property value using the current `PropertyRendererRegistry`, i.e. the registry available as a <<Context>> resource, if available, or the default registry associated to the current ClassLoader otherwise. These methods are:
+
+* `render(Class renderType)`: Renders the property as given _renderType_ object type. Throws a `NoSuitableRendererAvailableException` if no `PropertyRenderer` is available for this property and given rendering type
+
+* `renderIfAvailable(Class renderType)`: Renders the property as given _renderType_ object type if a suitable `PropertyRenderer` for the required _renderType_ is available from the `PropertyRendererRegistry` obtained from current `Context` or from the default one for the current ClassLoader. If a suitable renderer is not available, an empty Optional is returned.
+
+[source, java]
+.Property renderers
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=renderer,indent=0]
+----
+<1> Define a custom rendering class (in a UI layer, this could be for example a field to manage property value)
+<2> Create a renderer for `MyRenderingType`, available for any property type
+<3> Register the renderer binding it to an _always true_ condition, so it will be available for any property
+<4> Render the `ID` property as `MyRenderingType` type
+
+==== PropertyRenderer registration
+
+The registration of a new `PropertyRenderer` can be made in two ways:
+
+*1. Using the PropertyRendererRegistry*:
+
+Property renderers can be registered to a `PropertyRendererRegistry` using the `register` method and providing a condition to bind the renderer only to a specific kind/set of properties.
+
+*2. Using the standard Java service extensions*:
+
+Create a file named _com.holonplatform.core.property.PropertyRenderer_ containing the fully qualified class name(s) of the `PropertyRenderer` implementation and put it under the `META-INF/services` folder of your project to register the renderer in the default PropertyRendererRegistry.
+
+IMPORTANT: When a `PropertyRenderer` is registered using service extensions an *always true* condition is used, i.e. the renderer is available for any property. The `javax.annotation.Priority` annotation can be used on the renderer's implementation class to assign a priority order to the renderer.
+

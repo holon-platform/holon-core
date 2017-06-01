@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.holon-platform.core</groupId>
+		<artifactId>holon-root</artifactId>
+		<version>5.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>holon-bom</artifactId>
+
+	<packaging>pom</packaging>
+
+	<name>${project.groupId}:${project.artifactId}</name>
+	<description>Holon core BOM (Bill of Materials)</description>
+
+	<url>https://holon-platform.com</url>
+
+	<dependencyManagement>
+		<dependencies>
+
+			<!-- Core -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Auth -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-auth</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-auth-jwt</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- HTTP support -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-http</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Spring support -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-spring</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-spring-boot</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Spring Boot starters -->
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-starter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.holon-platform.core</groupId>
+				<artifactId>holon-starter-test</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+		</dependencies>
+
+	</dependencyManagement>
+
+</project>
