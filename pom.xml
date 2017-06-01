@@ -42,15 +42,14 @@
 	</developers>
 
 	<issueManagement>
+		<url>https://github.com/holon-platform/holon-core/issues</url>
 		<system>GitHub Issues</system>
-		<url>https://github.com/holon-platform/holon/issues</url>
 	</issueManagement>
 
 	<scm>
-		<!-- <connection>scm:https:https://github.com/holon-platform/holon-core.git</connection> -->
-		<!-- <developerConnection>scm:https:https://github.com/holon-platform/holon-core.git</developerConnection> -->
-		<!-- <url>https://github.com/holon-platform/holon-core</url> -->
-		<developerConnection>scm:svn:svn://aximisvn/holon/holon/trunk</developerConnection>
+		<connection>scm:git:https://github.com/holon-platform/holon-core.git</connection>
+		<url>https://github.com/holon-platform/holon-core</url>
+		<developerConnection>scm:git:https://github.com/holon-platform/holon-core.git</developerConnection>
 	</scm>
 
 	<properties>
