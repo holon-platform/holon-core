@@ -2,7 +2,7 @@
 :revnumber: {project-version}
 :!sectnums:
 
-The Holon Platform *Core* module represents the platform foundation, providing the definition of the main platform concepts and architecture, base structures and APIs.
+The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs. 
 
 == Sections
 
