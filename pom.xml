@@ -55,6 +55,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+		<!-- pre-releases package name -->
+		<bintray.package>holon-core</bintray.package>
+
 		<!-- Annotation api -->
 		<annotation-api.version>1.2</annotation-api.version>
 
