@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1</version>
 	</parent>
 
 	<groupId>com.holon-platform.core</groupId>
@@ -91,67 +91,5 @@
 		<module>bom-platform</module>
 		<module>documentation</module>
 	</modules>
-
-	<!-- Javadocs generation and aggregation -->
-	<profiles>
-		<profile>
-			<id>apidocs</id>
-			<build>
-				<plugins>
-					<!-- javadoc -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<executions>
-							<execution>
-								<id>module-javadocs</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-								<configuration>
-									<verbose>false</verbose>
-								</configuration>
-							</execution>
-							<execution>
-								<id>aggregate</id>
-								<inherited>false</inherited>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>aggregate</goal>
-								</goals>
-								<configuration>
-									<show>public</show>
-									<excludePackageNames>*.internal.*;*.examples.*</excludePackageNames>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-					<!-- Assembly -->
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-assembly-plugin</artifactId>
-						<configuration>
-							<appendAssemblyId>false</appendAssemblyId>
-							<finalName>${project.artifactId}-${project.version}</finalName>
-							<descriptors>
-								<descriptor>${project.basedir}/javadocs-assembly.xml</descriptor>
-							</descriptors>
-						</configuration>
-						<executions>
-							<execution>
-								<id>assembly-docs</id>
-								<inherited>false</inherited>
-								<phase>package</phase>
-								<goals>
-									<goal>single</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
 
 </project>
