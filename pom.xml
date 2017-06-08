@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.3</version>
 	</parent>
 
 	<groupId>com.holon-platform.core</groupId>
@@ -91,5 +91,35 @@
 		<module>bom-platform</module>
 		<module>documentation</module>
 	</modules>
+
+	<profiles>
+		<profile>
+			<id>apidocs</id>
+			<build>
+				<plugins>
+					<!-- Aggregate javadocs -->
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>aggregate-javadocs</id>
+								<phase>package</phase>
+								<inherited>false</inherited>
+								<goals>
+									<goal>aggregate-jar</goal>
+								</goals>
+								<configuration>
+									<show>public</show>
+									<excludePackageNames>*.internal.*;*.examples.*</excludePackageNames>
+									<quiet>true</quiet>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
