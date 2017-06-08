@@ -34,10 +34,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<configuration>
-					<appendAssemblyId>false</appendAssemblyId>
+					<appendAssemblyId>true</appendAssemblyId>
 					<finalName>${project.artifactId}-${project.version}</finalName>
 					<descriptors>
-						<descriptor>${project.basedir}/docs-assembly.xml</descriptor>
+						<descriptor>src/main/assembly/docs-assembly.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>
