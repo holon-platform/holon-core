@@ -1,9 +1,9 @@
 [[i18n]]
-== Internationalization
+=== Internationalization
 
 The internationalization architecture of the Holon platform relies upon the <<LocalizationContext>> interface, which is the main entry point for localization of messages, numbers and date/time elements.
 
-=== Localizable messages
+==== Localizable messages
 
 A _localizable_ message is represented using the following attributes:
 
@@ -22,7 +22,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 <2> Build a `Localizable` using a localization argument too
 
 [[i18n.caption]]
-=== `@Caption` annotation
+==== `@Caption` annotation
 
 The link:{apidir}/com/holonplatform/core/i18n/Caption.html[Caption^] annotation can be used to provide the localizable message to use as the _caption_ (i.e. the short description or explanatory label of an element) of an element.
 
@@ -36,7 +36,7 @@ The support for the `@Caption` annotation must be declared and documented by the
 TIP: For example, the default <<StringValuePresenter>>, used also as default <<Property>> value presenter supports the `@Caption` annotation for `enum` values presentation.
 
 [[i18n.MessageProvider]]
-=== Message providers
+==== Message providers
 
 To perform actual messages localization the link:{apidir}/com/holonplatform/core/i18n/MessageProvider.html[MessageProvider^] functional interface is used. A `MessageProvider` provides a message translation for a specified message localization identifier and a `Locale` representing the language/country for which the translation is required.
 
@@ -57,11 +57,11 @@ As an example, suppose to have a `messages` folder under the classpath root cont
 A message localization properties file simply contains a list of the localization (translation) of the available message localization identifiers (or message codes), e.g. `test.msg=translation`.
 
 [[LocalizationContext]]
-=== LocalizationContext
+==== LocalizationContext
 
 The link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.html[LocalizationContext^] interface is the main entry point for localization of messages, numbers and date/time elements.
 
-=== Building a LocalizationContext
+==== Building a LocalizationContext
 
 The simplest way to build a `LocalizationContext` is to use the fluent builder:
 
@@ -79,11 +79,11 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=ctxb
 <8> Initially Localize the LocalizationContext using the default system `Locale`
 <9> Initially Localize the LocalizationContext using the `US` `Locale`
 
-=== Obtaining a LocalizationContext
+==== Obtaining a LocalizationContext
 
 If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key, i.e. the fully qualified LocalizationContext class name, the current `LocalizationContext` can be obtained by using the convenience `getCurrent()` method.
 
-=== Localizing a LocalizationContext
+==== Localizing a LocalizationContext
 
 Before using a `LocalizationContext`, you must ensure that it is _localized_, i.e. bound to a specific `Locale`. This will be the `Locale` used for the localization of messages, numbers and date/time elements. To _localize_ a `LocalizationContext`, use the `localize(...)` method of the LocalizationContext interface, providing a `Locale` instance.
 
@@ -104,7 +104,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 <3> Check the LocalizationContext is localized
 <4> Localize the LocalizationContext using a `Localization`
 
-=== Using the LocalizationContext
+==== Using the LocalizationContext
 
 The `LocalizationContext` provides several methods to perform localizations of messages, dates and numbers.
 

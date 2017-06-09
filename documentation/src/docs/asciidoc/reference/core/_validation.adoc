@@ -1,10 +1,10 @@
 [[Validators]]
-== Data validation
+=== Data validation
 
 The main entry point to configure and perform data validation in Holon Platform is the link:{apidir}/com/holonplatform/core/Validator.html[Validator^] interface.
 
 [[Validator]]
-=== Validator
+==== Validator
 
 A link:{apidir}/com/holonplatform/core/Validator.html[Validator^] is an interface implemented by a class which performs the validation of a value. The `Validator` is generalized on the value type which the validator is able to validate and can be used as a _functional interface_, providing the single method `validate(T value)`, which is responsible for the actual validation operation and throws a `ValidationException` if the given value is not valid.
 
@@ -19,7 +19,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleValidator.java[tag
 <2> Create the same Validator created using the `Validator.create()` builder method
 <3> Create the same Validator created using the `Validator.create()` builder method and providing an invalid value message localization code
 
-=== Bultin validators
+==== Bultin validators
 
 The platform provides a set of validators for the most common use cases. Each of the builtin validators supports a localizable invalid value message or provides a default invalid value message if a custom one is not specified.
 
@@ -52,7 +52,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleValidator.java[tag
 <1> Uses the builtin `notEmpty` validator to validate a value, using the default invalid value message
 <2> Uses the builtin `notEmpty` validator to validate a value, using a custom invalid value message and localization message code
 
-=== Validatable and ValidatorSupport
+==== Validatable and ValidatorSupport
 
 The link:{apidir}/com/holonplatform/core/Validator.ValidatorSupport.html[ValidatorSupport^] interface is implemented by classes which supports adding and removing validators.
 

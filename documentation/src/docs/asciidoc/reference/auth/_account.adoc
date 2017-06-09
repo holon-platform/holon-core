@@ -1,5 +1,5 @@
 [[Account]]
-== Account
+=== Account
 
 The platform provides an abstraction of an _Account_ structure, which represents information about a _principal_.
 
@@ -21,13 +21,13 @@ A _builder_ is available to create `Account` instances:
 include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=builder,indent=0]
 ----
 
-=== AccountProvider
+==== AccountProvider
 
 The link:{apidir}/com/holonplatform/auth/Account.AccountProvider.html[AccountProvider^] interface can be used to provide <<Account>> instances using the *account id*, for example from a data store, by implementing the `loadAccountById(String id)` method.
 
 The loading method returns an `Optional`, if empty means that an account with given id is not available.
 
-=== Authenticator
+==== Authenticator
 
 A default <<Authenticator>> is provided to perform the account authentication by using an `AccountProvider` to load account data. The account authenticator is obtained by using the `authenticator(...)` static method of the `Account` interface, choosing to use a custom credentials matcher or the default one.
 

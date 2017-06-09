@@ -1,7 +1,7 @@
 [[JWT]]
-== JWT support
+=== JWT support
 
-=== Introduction
+==== Introduction
 
 The `holon-auth-jwt` artifact provides the support for the https://tools.ietf.org/html/rfc7519[JSON Web Token^] standard, integrating it in the Holon platform authentication and authorization architecture.
 
@@ -19,7 +19,7 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-=== Configuration
+==== Configuration
 
 To enable and use JWT authentication structures, some configuration parameters must be defined and provided to the objects which perform concrete operations on the JWT tokens.
 
@@ -103,7 +103,7 @@ The available configuration properties are listed here below:
 include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=config2,indent=0]
 ----
 
-=== Building JWT tokens for an `Authentication`
+==== Building JWT tokens for an `Authentication`
 
 To build JWT token the link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html[JwtTokenBuilder^] class is available, providing static methods to create a *JWT token* from an `Authentication` object, optionally using a `JwtConfiguration` class to provide token configuration attributes.
 
@@ -121,7 +121,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build
 <2> Build an example `Authentication`
 <3> Build a JWT *token* by using given configuration and authentication, using a random id as token id
 
-=== Performing authentication using JWT tokens
+==== Performing authentication using JWT tokens
 
 The link:{apidir}/com/holonplatform/auth/jwt/JwtAuthenticator.html[JwtAuthenticator^] interface is provided as `Authenticator` to handle JWT token based authentication, using a `JwtConfiguration` to obtain JWT token configuration attributes.
 

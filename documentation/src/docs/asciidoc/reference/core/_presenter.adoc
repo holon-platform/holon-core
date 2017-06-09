@@ -1,11 +1,11 @@
 [[StringValuePresenter]]
-== StringValuePresenter
+=== StringValuePresenter
 
 A link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] deals with `String` representation of a generic Object, according to object type and using the current context for example for messages localization.
 
 Presentation parameters can be used to tune the presentation strategy.
 
-=== Default StringValuePresenter
+==== Default StringValuePresenter
 
 The default `StringValuePresenter` can be obtained using the `getDefault()` static method.
 

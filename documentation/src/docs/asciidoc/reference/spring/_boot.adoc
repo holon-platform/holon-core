@@ -1,4 +1,4 @@
-== *Spring Boot* auto-configuration
+=== *Spring Boot* auto-configuration
 
 The Holon platform provides https://projects.spring.io/spring-boot[Spring Boot^] *auto-configuration* features for the most of the platform modules, including the core module.
 
@@ -31,7 +31,7 @@ To disable this auto-configuration feature the `TenantScopeAutoConfiguration` cl
 @EnableAutoConfiguration(exclude={TenantScopeAutoConfiguration.class})
 ----
 
-=== Spring Boot starters
+==== Spring Boot starters
 
 The following Spring Boot _starter_ artifact is available to provide a quick project configuration setup using Maven dependency system:
 

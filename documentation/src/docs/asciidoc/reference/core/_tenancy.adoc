@@ -1,5 +1,5 @@
 [[Multi-tenancy]]
-== Multi tenancy support
+=== Multi tenancy support
 
 The core Holon platform module provides the link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] interface, which acts as default platform strategy representation to obtain the `String` which identifies the current *tenant* in a _multi-tenant_ enviroment.
 

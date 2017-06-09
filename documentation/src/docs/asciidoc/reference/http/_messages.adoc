@@ -1,4 +1,4 @@
-== HTTP messages
+=== HTTP messages
 
 The Holon platform provides an implementation-independent representation of the *Hypertext Transfer Protocol* request and response messages, used by other platform modules to deal with HTTP-based operations.
 
@@ -7,7 +7,7 @@ The HTTP request and response message representations are based on the link:{api
 NOTE: For an HTTP message, the message header values are represented as a `List` of Strings, since HTTP supports multiple values for each header. The message _payload_ is represented as a `String`.
 
 [[HttpRequest]]
-=== HttpRequest
+==== HttpRequest
 
 The link:{apidir}/com/holonplatform/http/HttpRequest.html[HttpRequest^] interface represents a HTTP *request* message and provides the following informations and operations:
 
@@ -19,7 +19,7 @@ The link:{apidir}/com/holonplatform/http/HttpRequest.html[HttpRequest^] interfac
 * An `InputStream` of the request message body (payload)
 
 [[HttpResponse]]
-=== HttpResponse
+==== HttpResponse
 
 The link:{apidir}/com/holonplatform/http/HttpResponse.html[HttpResponse^] interface represents a HTTP *response* message and provides the following informations and operations:
 

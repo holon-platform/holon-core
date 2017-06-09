@@ -1,4 +1,4 @@
-== `RestClient` implementation using Spring RestTemplate
+=== `RestClient` implementation using Spring RestTemplate
 
 The Spring integration module provides a link:http.html#RestClient[RestClient] implementation using Spring `RestTemplate`.
 

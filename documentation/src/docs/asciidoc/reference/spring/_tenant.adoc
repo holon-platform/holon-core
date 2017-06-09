@@ -1,5 +1,5 @@
 [[SpringTenantScope]]
-== Spring _tenant_ scope
+=== Spring _tenant_ scope
 
 The Holon platform provides a Spring *tenant scope* which provides different bean instances depending on the current _tenant id_. 
 

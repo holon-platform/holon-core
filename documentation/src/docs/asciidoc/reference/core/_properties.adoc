@@ -1,5 +1,5 @@
 [[Property]]
-== Properties
+=== Properties
 
 The _properties_ architecture is a central concept in the Holon platform. A _property_ represent a data attribute in a general and abstract way, allowing to:
 
@@ -9,8 +9,6 @@ The _properties_ architecture is a central concept in the Holon platform. A _pro
 * Provide common operations and functionalities, such as value converters and validators;
 * Provide bultin naming and localization features;
 * Use the property as an abstract data model reference to build queries and to transport data model values.
-
-=== Property abstraction
 
 A _property_ is represented by the link:{apidir}/com/holonplatform/core/property/Property.html[Property^] interface. 
 Provides a *type* and it is generalized on such type, which represents the value type handled by the property.
@@ -80,7 +78,7 @@ The `Property` interface extends link:{apidir}/com/holonplatform/core/Validator.
 See the <<Validators>> section for detailed information about validators definition and usage.
 
 [[Path]]
-==== Path
+=== Path
 
 Properties which refer to a concrete data model attribute extend the link:{apidir}/com/holonplatform/core/Path.html[Path^] interface, which represents a named path to a data model attribute and supports hierarchical structures. Each _path_ is identified by a `String` *name*, representing the connection with the concrete data model. 
 
@@ -98,7 +96,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 <5> The path full name will be `pathName.subName`
 
 [[PathProperty]]
-==== PathProperty
+=== PathProperty
 
 The central interface to define a `Property` bound to a data model attribute is the link:{apidir}/com/holonplatform/core/property/PathProperty.html[PathProperty^] interface, which extends <<Path>> to provide a binding to the symbolic path of the data model attribute.
 
@@ -121,7 +119,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 
 A `PathProperty` can be used in <<Query>> clauses and projections, and the `PathProperty` interface provides several method to easily create query clauses and aggregations.
 
-==== VirtualProperty
+=== VirtualProperty
 
 A link:{apidir}/com/holonplatform/core/property/VirtualProperty.html[VirtualProperty^] is a `Property` which is not directly bound to a data model attribute, but which instead provides its value through a link:{apidir}/com/holonplatform/core/property/PropertyValueProvider.html[PropertyValueProvider^].
 
@@ -280,4 +278,3 @@ Property renderers can be registered to a `PropertyRendererRegistry` using the `
 Create a file named _com.holonplatform.core.property.PropertyRenderer_ containing the fully qualified class name(s) of the `PropertyRenderer` implementation and put it under the `META-INF/services` folder of your project to register the renderer in the default PropertyRendererRegistry.
 
 IMPORTANT: When a `PropertyRenderer` is registered using service extensions an *always true* condition is used, i.e. the renderer is available for any property. The `javax.annotation.Priority` annotation can be used on the renderer's implementation class to assign a priority order to the renderer.
-

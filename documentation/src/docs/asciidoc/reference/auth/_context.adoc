@@ -1,5 +1,5 @@
 [[AuthContext]]
-== AuthContext
+=== AuthContext
 
 The link:{apidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] interface can be used to represent the current authentication/authorization context, i.e. acts as a holder of the current `Authentication`, if available, and provides methods to perform the actual authentication operations, relying on a specific `Realm` istance.
 

@@ -1,4 +1,4 @@
-== @Authenticate annotation
+=== @Authenticate annotation
 
 The link:{apidir}/com/holonplatform/auth/annotations/Authenticate.html[Authenticate^] can be used on classes or methods to require authentication for resource access.
 

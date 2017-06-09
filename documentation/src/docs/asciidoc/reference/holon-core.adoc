@@ -1,7 +1,11 @@
 = Holon Platform Core
 :revnumber: {project-version}
-:!sectnums:
+:apidir: ../../api/holon-core
+:linkattrs:
+:sectnums:
 :nofooter:
+:toc: left
+:toclevels: 4
 
 Copyright © 2016-2017
 
@@ -10,24 +14,6 @@ _Copies of this document may be made for your own use and for distribution to ot
 == Introduction
 
 The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
-
-== Sections
-
-* link:core.html[Core]
-+
-*Core API:* Context resources, configuration structures, data validation, internationalization support, _property_ architecture, _Datastore_ and _Query_ abstractions, multi-tenancy and core utilities.
-
-* link:http.html[HTTP support]
-+
-*HTTP protocol support:* HTTP messages representation and handling, _RESTful_ web services client.
-
-* link:auth.html[Authentication and Authorization]
-+
-*Authentication and Authorization:* Authentication and authorization support, credentials management, _JWT_ support.
-
-* link:spring.html[Spring integration]
-+
-*Spring and Spring Boot integration:* Integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^].
 
 == Obtaining the artifacts
 
@@ -72,6 +58,102 @@ The BOM can be imported an used in a Maven project in the following way:
 
 </project>
 ----
+
+== Core API, services and components
+
+=== Introduction
+
+The `holon-core` artifact is the Holon platform *core* API and implementation asset, defining and providing the main platform architecture concepts and structures. All other platform artifacts derive from this one and declares it as a dependency.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-core</artifactId>
+<version>{revnumber}</version>
+----
+
+include::core/_context.adoc[]
+
+include::core/_config.adoc[]
+
+include::core/_validation.adoc[]
+
+include::core/_presenter.adoc[]
+
+include::core/_i18n.adoc[]
+
+include::core/_properties.adoc[]
+
+include::core/_beans.adoc[]
+
+include::core/_datastore.adoc[]
+
+include::core/_tenancy.adoc[]
+
+include::core/_utils.adoc[]
+
+== HTTP and REST
+
+The `holon-http` artifact provides base *HTTP* protocol support to the Holon platform, dealing with HTTP _messages_ and providing support for _RESTful_ web services invocation through a _client_ API.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-http</artifactId>
+<version>{revnumber}</version>
+----
+
+include::http/_messages.adoc[]
+
+include::http/_restclient.adoc[]
+
+== Authentication and Authorization
+
+The `holon-auth` artifact provides a complete and highly configurable *Authentication* and *Authorization* architecture, integrated with all platform modules. *HTTP* messages authentication is supported, and several APIs are provided to manage _accounts_ and their credentials, perform authentication in a *Realm* and check for *permissions*.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-auth</artifactId>
+<version>{revnumber}</version>
+----
+
+include::auth/_realm.adoc[]
+
+include::auth/_credentials.adoc[]
+
+include::auth/_account.adoc[]
+
+include::auth/_context.adoc[]
+
+include::auth/_annotation.adoc[]
+
+include::auth/_jwt.adoc[]
+
+== Spring framework integration
+
+The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^] for the Holon platform core module.
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-spring</artifactId>
+<version>{revnumber}</version>
+----
+
+include::spring/_context.adoc[]
+
+include::spring/_tenant.adoc[]
+
+include::spring/_datastore.adoc[]
+
+include::spring/_restclient.adoc[]
+
+include::spring/_boot.adoc[]
 
 == Loggers
 

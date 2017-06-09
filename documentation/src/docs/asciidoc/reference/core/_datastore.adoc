@@ -1,5 +1,5 @@
 [[Datastore]]
-== Datastore
+=== Datastore
 
 The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] interface is the main entry point to manage data persistence in a technology/platform/vendor independent way.
 
@@ -19,7 +19,7 @@ The `Datastore` interface provides the following operations:
 Each operation which involves a possible persistence store data modification returns an `OperationResult` object, which provides information about the operation outcome, like the number of the elements affected by the execution of the operation or the _auto-generated_ key values, if the concrete persistence store supports this feature.
 
 [[ExpressionResolver]]
-=== Expressions and resolvers
+==== Expressions and resolvers
 
 Main `Datastore` operations relies on the core `Expression` type to configure and model data access and manipulation statements, which will be converted into concrete commands and requests to the underlying persistence store engine in its specific language.
 
@@ -43,7 +43,7 @@ To *register or unregister* an `ExpressionResolver`, the `addExpressionResolver(
 
 See below for more informations about `ExpressionResolver` usage.
 
-=== Property configuration and converters
+==== Property configuration and converters
 
 The `Datastore` operations fully support property values conversions using the standard <<PropertyValueConverter>>. If a property declares a value converter, it will be used to perform conversions from the property type to the data model attribute type and back. 
 
@@ -54,7 +54,7 @@ The <<PropertyConfiguration>> structure can be used by a `Datastore` to detect t
 TIP: The Holon platform `Datastore` fully supports the new *Java 8 Date and Time API*, which represents a big step forward compared to the previous date and time support classes, to address the shortcomings of the older `java.util.Date` and `java.util.Calendar` types. It is strongly recommended to use the new `java.time.*` types for date and time properties, such as `LocalDate`, `LocalTime`, `LocalDateTime` and so on. This way, in addition to achieving a more robust and consistent code, there no need to use the `TemporalType` property configuration attribute to ensure consistency in property value handling.
 
 [[DataTarget]]
-=== DataTarget
+==== DataTarget
 
 The link:{apidir}/com/holonplatform/core/datastore/DataTarget.html[DataTarget^] interface is used by `Datastore` and <<Query>> to refer to an _entity_ of the persistence model in an abstract and independent way from the concrete persistence layer. From the `DataTarget` point of view, and _entity_ has the meaning of a _collection of data model attributes_, and it is represented by a `Path`, i.e. by a symbolic *name*.
 
@@ -75,7 +75,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag
 
 All the `Datastore` operations involving persistent _entity_ structures use a `DataTarget` to identify the target persistent structure and <<PropertyBox>> to provide and obtain the data model attribute values.
 
-=== Data manipulation
+==== Data manipulation
 
 The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] interface provides the most common data manipulation operations, listed in the table below.
 
@@ -165,7 +165,7 @@ A `Query` instance is obtained using the the Datastore `query()` method.
 The `Query` interface provides methods to configure and define the query configuration and clauses, using a fluent builder pattern. The query configuration setting and clauses definitions are described below.
 
 [[QueryFilter]]
-==== QueryFilter
+===== QueryFilter
 
 The link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface represents a query results restriction.
 
@@ -208,7 +208,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=fil
 ----
 
 [[QuerySort]]
-==== QuerySort
+===== QuerySort
 
 The link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface represents a query results sorting directive, referred to a <<Property>>.
 
@@ -237,9 +237,9 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sor
 TIP: `QuerySort` can be added to a `Query` using the `sort(QuerySort sort)` query builder method, which adds a sort declaration to the query. If one or more `QuerySort` has already been associated to the query, the new sort is added at the end of the query sorts list.
 
 [[QueryAggregation]]
-==== Aggregations
+===== Aggregations
 
-===== Aggregation clause
+*Aggregation clause:*
 
 A `Query` supports a results aggregation clause, represented by the link:{apidir}/com/holonplatform/core/query/QueryAggregation.html[QueryAggregation^] interface. This interface provides a fluent builder to create aggregation clauses.
 
@@ -258,7 +258,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=agg
 <1> Aggregate the results grouping by `PROPERTY`
 <2> Aggregate the results grouping by `PROPERTY` and restrict the aggregation property values to not _null_ values
 
-===== Aggregation functions
+*Aggregation functions:*
 
 A set of basic results aggregation _functions_ are provided by the default `Datastore`. An aggregation function is related to a <<Path>> and allows to aggregate the query results related to such path with a specific aggregation semantic.
 
@@ -281,7 +281,7 @@ An aggregation function can be used as a query projection or expression, and can
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggfun,indent=0]
 ----
 
-==== Paging results
+===== Paging results
 
 `Query` supports results *pagination*, allowing to set:
 
@@ -296,7 +296,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=pag
 <1> Limit the query results to `100` and fetch the results starting from `0` (i.e. fetch the first page where a page is a window of 100 results)
 <2> Limit the query results to `100` and fetch the results starting from `100` (i.e. fetch the second page where a page is a window of 100 results)
 
-==== Query results projection
+===== Query results projection
 
 `Query` results are obtained using a _projection_, represented by the link:{apidir}/com/holonplatform/core/query/QueryProjection.html[QueryProjection^] interface.
 
@@ -312,7 +312,7 @@ Two additional convenience methods are made available by the `QueryResults` inte
 * `findOne(QueryProjection<R> projection)`: Get a single expected result from the query, which type matches the projection type. If more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown
 * `list(QueryProjection<R> projection)`: Convenience method to obtain query results `Stream` as a `List`
 
-===== Builtin projections
+*Builtin projections:*
 
 The platform provides the following query projections:
 
@@ -339,7 +339,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=pro
 <5> Optional unique `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
 <6> Unique value of the `sum` aggregation function applied to `PROPERTY`
 
-===== Bean projection
+*Bean projection:*
 
 The link:{apidir}/com/holonplatform/core/query/BeanProjection.html[BeanProjection^] interface can be used to obtain the query results as *Java Bean* instances, providing the mapping bean class to be used. The query results are mapped to the bean class properties by matching the query selection `Path` names with the bean property names.
 
@@ -352,7 +352,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=bea
 <2> Optional unique value using `MyBean` as projection, using all the bean property names as query selection
 <3> Stream of values using `MyBean` as projection, using provided `CODE` and `TEXT` properties as query selection
 
-=== Configuration
+==== Configuration
 
 The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface represents and provides the available configuration properties which can be used to configure a generic `Datastore`.
 
@@ -380,7 +380,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag
 <3> Read the configuration properties from a `Properties` instance
 <4> Read the configuration properties from the `datastore.properties` file
 
-==== Multiple Datastore configuration
+===== Multiple Datastore configuration
 
 When multiple `Datastore` configuration is required and properties are read from the same source, a _data context id_ can be used to discern one `Datastore` configuration property set form another.
 
@@ -402,7 +402,7 @@ In order to provide the configuration for two `Datastore` instances, one bound t
 include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=config2,indent=0]
 ----
 
-=== Common Datastore configuration properties
+==== Common Datastore configuration properties
 
 The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface is a  `ConfigPropertySet` bound to the property name prefix *holon.datastore*, which provides common `Datastore` configuration properties:
 
@@ -418,12 +418,12 @@ The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.htm
 |The fully qualified class name of the _dialect_ to be used, if the concrete Datastore supports dialects.
 |===
 
-=== Relational Datastores
+==== Relational Datastores
 
 Regarding the _relational_ `Datastore` implementations, i.e. Datastores bound to a *RDBMS*, some additional components are provided to express typical _relational_ concepts concerning query definition and execution.
 
 [[subquery]]
-==== Sub-query
+===== Sub-query
 
 The link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html[SubQuery^] interface can be used to represent a _sub-query_,  which can be used in a query definition to express query restrictions (filters) that involve a sub-query as filter operand.
 
@@ -450,7 +450,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sub
 <2> A query with a filter using a *NOT EXISTS* `SubQuery` predicate
 
 [[joins]]
-==== Alias and Joins
+===== Alias and Joins
 
 The link:{apidir}/com/holonplatform/core/datastore/relational/RelationalTarget.html[RelationalTarget^] interface can be used to express *alias* and *joins* for a `DataTarget`.
 
@@ -488,7 +488,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=joi
 <5> Join (using a *RIGHT* join type) the `TARGET1` with the `TARGET2`, using a *ON* clause to express the join condition
 <6> Use the created `RelationalTarget` as a query target
 
-=== Datastore extension
+==== Datastore extension
 
 Datastores provides two main entry points for extension purposes:
 
@@ -496,7 +496,7 @@ Datastores provides two main entry points for extension purposes:
 
 * Additional `Datastore` operations and functionalities relying on the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] concept, through the registration of a link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodityFactory.html[DatastoreCommodityFactory^].
 
-==== Common `ExpressionResolver` s
+===== Common `ExpressionResolver` s
 
 For the most common query use cases, a set of builtin `ExpressionResolver` are made available to extend the main query clauses, providing custom clause representations to be translated into a standard query clause which the `Datastore` can handle.
 
@@ -571,7 +571,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=cus
 <4> The resolver is registered in the `Datastore`, enabling the use of the `MySort` type sort in query clauses
 <5> Use of a `MySort` in a query execution
 
-==== Datastore _commodities_ definition and registration
+===== Datastore _commodities_ definition and registration
 
 Using the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] representation, a `Datastore` can be extended by adding new operations and functionalities, represented by a class which implements the `DatastoreCommodity` interface.
 
@@ -585,7 +585,7 @@ The `Query` object itself is a `DatastoreCommodity`, obtained by the convenience
 
 TIP: See concrete `Datastore` implementations documentation for additional information about any specific available _commodity_ types and registration options.
 
-=== Available Datastores
+==== Available Datastores
 
 By now, the holon platform provides two default `Datastore` implementations:
 

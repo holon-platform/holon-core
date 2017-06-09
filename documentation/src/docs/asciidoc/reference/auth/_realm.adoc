@@ -1,5 +1,5 @@
 [[Realm]]
-== Realm
+=== Realm
 
 The link:{apidir}/com/holonplatform/auth/Realm.html[Realm^] interface represents a security abstraction providing operations for the _principals_ *authentication* and *authorization* (permission check against _principal_ grants stored in the realm).
 
@@ -15,7 +15,7 @@ The `Realm` interface is a composition of more specific interfaces, each dealing
 TIP: The `Realm` interface provides a convenience `getCurrent()` static method to obtain the current `Realm` instance made available as `Context`resource, using default ClassLoader. See link:core.html#Context[Context] section for further information about context resources.
 
 [[Authenticator]]
-=== Authenticator
+==== Authenticator
 
 The `Realm` itself does not implement any authentication model or strategy, but delegates the specific authentication strategy to one or more concrete `Authenticator` registered in the Realm, relying on the `AuthenticationToken` type in order to discern which concrete `Authenticator` has to be used to handle the authentication process.
 
@@ -68,7 +68,7 @@ If an authentication operation is not successful, an `AuthenticationException` t
 |Generic authentication process failure
 |===
 
-==== AuthenticationToken
+===== AuthenticationToken
 
 The link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface represents an authentication request, and provides the following methods:
 
@@ -119,7 +119,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=aut
 <6> Perform the authentication using a `MyAuthenticationToken` instance
 
 [[Authentication]]
-==== Authentication
+===== Authentication
 
 The result of the authentication operation performed using the `authenticate(AuthenticationToken authenticationToken)` method of an `Authenticator` is represented by the link:{apidir}/com/holonplatform/auth/Authentication.html[Authentication^] interface.
 
@@ -140,7 +140,7 @@ An `Authentication` can be extended to provide more application-specific informa
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authentication,indent=0]
 ----
 
-=== MessageAuthenticator
+==== MessageAuthenticator
 
 The link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] interface represents an intermediate _authenticator_, specialized for `Message` based authentication.
 
@@ -153,7 +153,7 @@ Unlike the standard `Authenticator`, the `MessageAuthenticator` provides a speci
 authenticate(Message<?, ?> message, String... schemes)
 ----
 
-==== AuthenticationTokenResolver
+===== AuthenticationTokenResolver
 
 The link:{apidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] is responsible for the authentication `Message` handling, and must provide a standard `AuthenticationToken` which represents the authentication message to be used to perform actual authentication in `Realm`.
 
@@ -188,13 +188,13 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=res
 <2> Perform authentication using a `HTTPRequest` mesage
 
 [[Authorizer]]
-=== Authorizer
+==== Authorizer
 
 The link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] interface is responsible for authorization control, checking if one or more _permissions_ are granted to a _principal_.
 
 An `Authorizer` uses the <<Authentication>> representation to obtain the *permissions* granted to an authenticated _principal_, and provides several `isPermitted...` methods to perform permission control.
 
-==== Permission
+===== Permission
 
 A *permission* is the representation of the access to a resource and can be expressed int two ways:
 
@@ -203,7 +203,7 @@ A *permission* is the representation of the access to a resource and can be expr
 
 TIP: A `Permission` object which uses a simple String name can be created using the `Permission.create(String permission)` static method.
 
-==== Authorization checking
+===== Authorization checking
 
 Each `Authorizer` can be bound to a specific `Permission` type, to create specialized authorizers which handle a specific permission type.
 
@@ -219,7 +219,7 @@ The default `Authorizer` supports the `Authentication.isRoot()` state, always gr
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=permissions,indent=0]
 ----
 
-=== AuthenticationListener support
+==== AuthenticationListener support
 
 The `Realm` interface allows the registration of listeners to be notified when a successfull authentication happens, using the `addAuthenticationListener(AuthenticationListener authenticationListener)` method.
 
