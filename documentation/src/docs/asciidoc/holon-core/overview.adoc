@@ -1,6 +1,7 @@
 = Holon Platform Core
 :revnumber: {project-version}
 :!sectnums:
+:nofooter:
 
 Copyright © 2016-2017
 
@@ -8,7 +9,7 @@ _Copies of this document may be made for your own use and for distribution to ot
 
 == Introduction
 
-The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs. 
+The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
 == Sections
 
@@ -30,7 +31,7 @@ The Holon Platform *Core* module represents the platform foundation, providing t
 
 == Obtaining the artifacts
 
-The Holon Platform uses https://maven.apache.org[Maven^] as project definition and build system. All the platform artifacts are published in the *Maven Central Repository*, so there is no need to explicitly declare additional repositories in your project `pom` file.
+The Holon Platform uses https://maven.apache.org[Maven^] for projects build and configuration. All the platform artifacts are published in the *Maven Central Repository*, so there is no need to explicitly declare additional repositories in your project `pom` file.
 
 At the top of each _section_ of this documentation you will find the Maven _coordinates_ (group id, artifact id and version) to obtain the artifact(s) as a dependency for your project.
 
@@ -89,3 +90,8 @@ The following logger names are available:
 * `com.holonplatform.http`: for logs related to *HTTP* support classes, such as `RestClient`
 * `com.holonplatform.spring`: for logs related to https://spring.io[Spring^] integration
 
+== System requirements
+
+=== Java
+
+The Holon Platform core module requires https://www.java.com[Java] *8* or higher.

@@ -3,6 +3,7 @@
 :apidir: ../../api/holon-core
 :linkattrs:
 :sectnums:
+:nofooter:
 :toc: left
 :toclevels: 3
 
