@@ -29,6 +29,11 @@
 		</resources>
 
 		<plugins>
+			<!-- Asciidoc reference documentation to HTML and PDF -->
+			<plugin>
+				<groupId>org.asciidoctor</groupId>
+				<artifactId>asciidoctor-maven-plugin</artifactId>
+			</plugin>
 			<!-- Assembly docs -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -36,9 +41,9 @@
 				<configuration>
 					<appendAssemblyId>true</appendAssemblyId>
 					<finalName>${project.artifactId}-${project.version}</finalName>
-					<descriptors>
-						<descriptor>src/main/assembly/docs-assembly.xml</descriptor>
-					</descriptors>
+					<descriptorRefs>
+						<descriptorRef>reference-docs</descriptorRef>
+					</descriptorRefs>
 				</configuration>
 				<executions>
 					<execution>
