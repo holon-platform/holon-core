@@ -73,25 +73,25 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-include::core/_context.adoc[]
+include::include/core/_context.adoc[]
 
-include::core/_config.adoc[]
+include::include/core/_config.adoc[]
 
-include::core/_validation.adoc[]
+include::include/core/_validation.adoc[]
 
-include::core/_presenter.adoc[]
+include::include/core/_presenter.adoc[]
 
-include::core/_i18n.adoc[]
+include::include/core/_i18n.adoc[]
 
-include::core/_properties.adoc[]
+include::include/core/_properties.adoc[]
 
-include::core/_beans.adoc[]
+include::include/core/_beans.adoc[]
 
-include::core/_datastore.adoc[]
+include::include/core/_datastore.adoc[]
 
-include::core/_tenancy.adoc[]
+include::include/core/_tenancy.adoc[]
 
-include::core/_utils.adoc[]
+include::include/core/_utils.adoc[]
 
 == HTTP and REST
 
@@ -105,9 +105,9 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-include::http/_messages.adoc[]
+include::include/http/_messages.adoc[]
 
-include::http/_restclient.adoc[]
+include::include/http/_restclient.adoc[]
 
 == Authentication and Authorization
 
@@ -121,17 +121,17 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-include::auth/_realm.adoc[]
+include::include/auth/_realm.adoc[]
 
-include::auth/_credentials.adoc[]
+include::include/auth/_credentials.adoc[]
 
-include::auth/_account.adoc[]
+include::include/auth/_account.adoc[]
 
-include::auth/_context.adoc[]
+include::include/auth/_context.adoc[]
 
-include::auth/_annotation.adoc[]
+include::include/auth/_annotation.adoc[]
 
-include::auth/_jwt.adoc[]
+include::include/auth/_jwt.adoc[]
 
 == Spring framework integration
 
@@ -145,15 +145,15 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-include::spring/_context.adoc[]
+include::include/spring/_context.adoc[]
 
-include::spring/_tenant.adoc[]
+include::include/spring/_tenant.adoc[]
 
-include::spring/_datastore.adoc[]
+include::include/spring/_datastore.adoc[]
 
-include::spring/_restclient.adoc[]
+include::include/spring/_restclient.adoc[]
 
-include::spring/_boot.adoc[]
+include::include/spring/_boot.adoc[]
 
 == Loggers
 
