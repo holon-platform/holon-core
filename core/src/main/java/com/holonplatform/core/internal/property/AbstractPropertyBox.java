@@ -59,7 +59,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	/*
 	 * Whether to accept invalid property values (ignore property validators)
 	 */
-	private boolean invalidAllowed;
+	private transient boolean invalidAllowed;
 
 	/**
 	 * Constructor
