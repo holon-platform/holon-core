@@ -15,6 +15,10 @@
  */
 package com.holonplatform.core.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Calendar;
@@ -26,6 +30,7 @@ import org.junit.Test;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.UnsupportedValidationTypeException;
 import com.holonplatform.core.Validator.ValidationException;
+import com.holonplatform.core.internal.BuiltinValidator;
 import com.holonplatform.core.internal.utils.TestUtils;
 
 public class TestValidators {
@@ -233,6 +238,102 @@ public class TestValidators {
 		TestUtils.expectedException(ValidationException.class, () -> Validator.past(false).validate(c3.getTime()));
 		TestUtils.expectedException(ValidationException.class, () -> Validator.past(true).validate(c4.getTime()));
 
+	}
+
+	@Test
+	public void testValidatorDefinition() {
+		Validator<?> v = Validator.notNull();
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isRequired());
+
+		v = Validator.notEmpty();
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isRequired());
+
+		v = Validator.notBlank();
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isRequired());
+
+		v = Validator.min(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMin().intValue());
+		assertFalse(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMin());
+
+		v = Validator.max(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMax().intValue());
+		assertFalse(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMax());
+
+		v = Validator.greaterOrEqual(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMin().intValue());
+		assertFalse(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMin());
+
+		v = Validator.lessOrEqual(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMax().intValue());
+		assertFalse(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMax());
+
+		v = Validator.greaterThan(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMin().intValue());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMin());
+
+		v = Validator.lessThan(1);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(1, ((BuiltinValidator<?>) v).getDescriptor().get().getMax().intValue());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMax());
+
+		v = Validator.notNegative();
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(0, ((BuiltinValidator<?>) v).getDescriptor().get().getMin().intValue());
+		assertFalse(((BuiltinValidator<?>) v).getDescriptor().get().isExclusiveMin());
+
+		v = Validator.pattern("^[0-9]");
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals("^[0-9]", ((BuiltinValidator<?>) v).getDescriptor().get().getPattern());
+
+		v = Validator.in(1, 2);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(2, ((BuiltinValidator<?>) v).getDescriptor().get().getIn().size());
+
+		v = Validator.notIn(1, 2, 3);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(3, ((BuiltinValidator<?>) v).getDescriptor().get().getNotIn().size());
+
+		v = Validator.digits(1, 2);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertEquals(Integer.valueOf(1), ((BuiltinValidator<?>) v).getDescriptor().get().getIntegerDigits());
+		assertEquals(Integer.valueOf(2), ((BuiltinValidator<?>) v).getDescriptor().get().getFractionDigits());
+
+		v = Validator.past(false);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isPast());
+
+		v = Validator.future(false);
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isFuture());
+
+		v = Validator.email();
+		assertTrue(v instanceof BuiltinValidator);
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().isPresent());
+		assertTrue(((BuiltinValidator<?>) v).getDescriptor().get().isEmail());
 	}
 
 }

@@ -26,13 +26,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.i18n.MessageProvider;
+import com.holonplatform.core.internal.BuiltinValidator;
 import com.holonplatform.core.internal.DefaultValidator;
+import com.holonplatform.core.internal.ValidatorDescriptor;
 import com.holonplatform.core.internal.utils.CalendarUtils;
 import com.holonplatform.core.internal.utils.FormatUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -226,10 +229,20 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T> Validator<T> isNull(String message, String messageCode) {
-		return (v) -> {
-			if (v != null)
-				throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null)
+					throw new ValidationException(message, messageCode);
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.empty();
+			}
 		};
 	}
 
@@ -273,10 +286,20 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T> Validator<T> notNull(String message, String messageCode) {
-		return (v) -> {
-			if (v == null)
-				throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v == null)
+					throw new ValidationException(message, messageCode);
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().required().build());
+			}
 		};
 	}
 
@@ -323,25 +346,36 @@ public interface Validator<T> extends Serializable {
 	 * @return Validator
 	 * @throws UnsupportedValidationTypeException If value to validate is of an unsupported data type
 	 */
+	@SuppressWarnings("serial")
 	static <T> Validator<T> notEmpty(String message, String messageCode) {
-		return (v) -> {
-			if (v == null) {
-				throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v == null) {
+					throw new ValidationException(message, messageCode);
+				}
+				if (!v.getClass().isArray() && !CharSequence.class.isAssignableFrom(v.getClass())
+						&& !Collection.class.isAssignableFrom(v.getClass())
+						&& !Map.class.isAssignableFrom(v.getClass())) {
+					// unsupported type
+					throw new UnsupportedValidationTypeException(
+							"Data type not supported by noEmpty validator: " + v.getClass().getName());
+				}
+				if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() == 0)
+					throw new ValidationException(message, messageCode);
+				if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).isEmpty())
+					throw new ValidationException(message, messageCode);
+				if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).isEmpty())
+					throw new ValidationException(message, messageCode);
+				if (v.getClass().isArray() && ((Object[]) v).length == 0)
+					throw new ValidationException(message, messageCode);
 			}
-			if (!v.getClass().isArray() && !CharSequence.class.isAssignableFrom(v.getClass())
-					&& !Collection.class.isAssignableFrom(v.getClass()) && !Map.class.isAssignableFrom(v.getClass())) {
-				// unsupported type
-				throw new UnsupportedValidationTypeException(
-						"Data type not supported by noEmpty validator: " + v.getClass().getName());
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().required().build());
 			}
-			if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() == 0)
-				throw new ValidationException(message, messageCode);
-			if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).isEmpty())
-				throw new ValidationException(message, messageCode);
-			if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).isEmpty())
-				throw new ValidationException(message, messageCode);
-			if (v.getClass().isArray() && ((Object[]) v).length == 0)
-				throw new ValidationException(message, messageCode);
 		};
 	}
 
@@ -385,10 +419,20 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends CharSequence> Validator<T> notBlank(String message, String messageCode) {
-		return (v) -> {
-			if (v == null || v.toString().trim().length() == 0)
-				throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v == null || v.toString().trim().length() == 0)
+					throw new ValidationException(message, messageCode);
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().required().build());
+			}
 		};
 	}
 
@@ -468,38 +512,48 @@ public interface Validator<T> extends Serializable {
 	 * @return Validator
 	 * @throws UnsupportedValidationTypeException If value to validate is of an unsupported data type
 	 */
+	@SuppressWarnings("serial")
 	static <T> Validator<T> max(double max, String message, String messageCode) {
-		return (v) -> {
-			if (v != null) {
+		return new BuiltinValidator<T>() {
 
-				if (!v.getClass().isArray() && !TypeUtils.isNumber(v.getClass())
-						&& !CharSequence.class.isAssignableFrom(v.getClass())
-						&& !Collection.class.isAssignableFrom(v.getClass())
-						&& !Map.class.isAssignableFrom(v.getClass())) {
-					// unsupported type
-					throw new UnsupportedValidationTypeException(
-							"Data type not supported by max validator: " + v.getClass().getName());
-				}
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
 
-				if (TypeUtils.isNumber(v.getClass())) {
-					if (TypeUtils.isDecimalNumber(v.getClass())) {
-						if (((Number) v).doubleValue() > max) {
-							throw new ValidationException(message, messageCode, max);
-						}
-					} else {
-						if (((Number) v).longValue() > (long) max) {
-							throw new ValidationException(message, messageCode, (long) max);
+					if (!v.getClass().isArray() && !TypeUtils.isNumber(v.getClass())
+							&& !CharSequence.class.isAssignableFrom(v.getClass())
+							&& !Collection.class.isAssignableFrom(v.getClass())
+							&& !Map.class.isAssignableFrom(v.getClass())) {
+						// unsupported type
+						throw new UnsupportedValidationTypeException(
+								"Data type not supported by max validator: " + v.getClass().getName());
+					}
+
+					if (TypeUtils.isNumber(v.getClass())) {
+						if (TypeUtils.isDecimalNumber(v.getClass())) {
+							if (((Number) v).doubleValue() > max) {
+								throw new ValidationException(message, messageCode, max);
+							}
+						} else {
+							if (((Number) v).longValue() > (long) max) {
+								throw new ValidationException(message, messageCode, (long) max);
+							}
 						}
 					}
+					if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() > (int) max)
+						throw new ValidationException(message, messageCode, (long) max);
+					if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).size() > (int) max)
+						throw new ValidationException(message, messageCode, (long) max);
+					if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).size() > (int) max)
+						throw new ValidationException(message, messageCode, (long) max);
+					if (v.getClass().isArray() && ((Object[]) v).length > (int) max)
+						throw new ValidationException(message, messageCode, (long) max);
 				}
-				if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() > (int) max)
-					throw new ValidationException(message, messageCode, (long) max);
-				if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).size() > (int) max)
-					throw new ValidationException(message, messageCode, (long) max);
-				if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).size() > (int) max)
-					throw new ValidationException(message, messageCode, (long) max);
-				if (v.getClass().isArray() && ((Object[]) v).length > (int) max)
-					throw new ValidationException(message, messageCode, (long) max);
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().max(max).build());
 			}
 		};
 	}
@@ -589,38 +643,48 @@ public interface Validator<T> extends Serializable {
 	 * @return Validator
 	 * @throws UnsupportedValidationTypeException If value to validate is of an unsupported data type
 	 */
+	@SuppressWarnings("serial")
 	static <T> Validator<T> min(double min, String message, String messageCode) {
-		return (v) -> {
-			if (v != null) {
+		return new BuiltinValidator<T>() {
 
-				if (!v.getClass().isArray() && !TypeUtils.isNumber(v.getClass())
-						&& !CharSequence.class.isAssignableFrom(v.getClass())
-						&& !Collection.class.isAssignableFrom(v.getClass())
-						&& !Map.class.isAssignableFrom(v.getClass())) {
-					// unsupported type
-					throw new UnsupportedValidationTypeException(
-							"Data type not supported by min validator: " + v.getClass().getName());
-				}
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
 
-				if (TypeUtils.isNumber(v.getClass())) {
-					if (TypeUtils.isDecimalNumber(v.getClass())) {
-						if (((Number) v).doubleValue() < min) {
-							throw new ValidationException(message, messageCode, min);
-						}
-					} else {
-						if (((Number) v).longValue() < (long) min) {
-							throw new ValidationException(message, messageCode, (long) min);
+					if (!v.getClass().isArray() && !TypeUtils.isNumber(v.getClass())
+							&& !CharSequence.class.isAssignableFrom(v.getClass())
+							&& !Collection.class.isAssignableFrom(v.getClass())
+							&& !Map.class.isAssignableFrom(v.getClass())) {
+						// unsupported type
+						throw new UnsupportedValidationTypeException(
+								"Data type not supported by min validator: " + v.getClass().getName());
+					}
+
+					if (TypeUtils.isNumber(v.getClass())) {
+						if (TypeUtils.isDecimalNumber(v.getClass())) {
+							if (((Number) v).doubleValue() < min) {
+								throw new ValidationException(message, messageCode, min);
+							}
+						} else {
+							if (((Number) v).longValue() < (long) min) {
+								throw new ValidationException(message, messageCode, (long) min);
+							}
 						}
 					}
+					if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() < (int) min)
+						throw new ValidationException(message, messageCode, (long) min);
+					if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).size() < (int) min)
+						throw new ValidationException(message, messageCode, (long) min);
+					if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).size() < (int) min)
+						throw new ValidationException(message, messageCode, (long) min);
+					if (v.getClass().isArray() && ((Object[]) v).length < (int) min)
+						throw new ValidationException(message, messageCode, (long) min);
 				}
-				if (CharSequence.class.isAssignableFrom(v.getClass()) && ((CharSequence) v).length() < (int) min)
-					throw new ValidationException(message, messageCode, (long) min);
-				if (Collection.class.isAssignableFrom(v.getClass()) && ((Collection<?>) v).size() < (int) min)
-					throw new ValidationException(message, messageCode, (long) min);
-				if (Map.class.isAssignableFrom(v.getClass()) && ((Map<?, ?>) v).size() < (int) min)
-					throw new ValidationException(message, messageCode, (long) min);
-				if (v.getClass().isArray() && ((Object[]) v).length < (int) min)
-					throw new ValidationException(message, messageCode, (long) min);
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().min(min).build());
 			}
 		};
 	}
@@ -671,14 +735,24 @@ public interface Validator<T> extends Serializable {
 	 * @param flags Optional {@link PatternFlag} to considered when resolving the regular expression
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends CharSequence> Validator<T> pattern(String regex, String message, String messageCode,
 			PatternFlag... flags) {
 		ObjectUtils.argumentNotNull(regex, "Regular expression must be not null");
-		return (v) -> {
-			if (v != null) {
-				if (!Pattern.compile(regex, PatternFlag.asBitValue(flags)).matcher(v).matches()) {
-					throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					if (!Pattern.compile(regex, PatternFlag.asBitValue(flags)).matcher(v).matches()) {
+						throw new ValidationException(message, messageCode);
+					}
 				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().pattern(regex).build());
 			}
 		};
 	}
@@ -728,20 +802,30 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	@SafeVarargs
 	static <T> Validator<T> in(String message, String messageCode, T... values) {
 		if (values == null || values.length == 0) {
 			throw new IllegalArgumentException("Value must be not null and not empty");
 		}
-		return (v) -> {
-			if (v != null) {
-				for (T value : values) {
-					if (v.equals(value)) {
-						return;
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					for (T value : values) {
+						if (v.equals(value)) {
+							return;
+						}
 					}
 				}
+				throw new ValidationException(message, messageCode);
 			}
-			throw new ValidationException(message, messageCode);
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().in(values).build());
+			}
 		};
 	}
 
@@ -790,18 +874,28 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	@SafeVarargs
 	static <T> Validator<T> notIn(String message, String messageCode, T... values) {
 		if (values == null || values.length == 0) {
 			throw new IllegalArgumentException("Value must be not null and not empty");
 		}
-		return (v) -> {
-			if (v != null) {
-				for (T value : values) {
-					if (v.equals(value)) {
-						throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					for (T value : values) {
+						if (v.equals(value)) {
+							throw new ValidationException(message, messageCode);
+						}
 					}
 				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().notIn(values).build());
 			}
 		};
 	}
@@ -846,10 +940,20 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Number> Validator<T> notNegative(String message, String messageCode) {
-		return (v) -> {
-			if (v != null && Math.signum(v.doubleValue()) < 0) {
-				throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && Math.signum(v.doubleValue()) < 0) {
+					throw new ValidationException(message, messageCode);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().min(0).build());
 			}
 		};
 	}
@@ -900,6 +1004,7 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Number> Validator<T> digits(int integral, int fractional, String message, String messageCode) {
 		if (integral < 0) {
 			throw new IllegalArgumentException("Integral digits max number cannot be negative");
@@ -907,30 +1012,41 @@ public interface Validator<T> extends Serializable {
 		if (fractional < 0) {
 			throw new IllegalArgumentException("Fractional digits max number cannot be negative");
 		}
-		return (v) -> {
-			if (v != null) {
-				String string = null;
-				if (TypeUtils.isDecimalNumber(v.getClass())) {
-					BigDecimal bd = (v instanceof BigDecimal) ? (BigDecimal) v : BigDecimal.valueOf(v.doubleValue());
-					string = bd.stripTrailingZeros().toPlainString();
-				} else {
-					BigInteger bi = (v instanceof BigInteger) ? (BigInteger) v : BigInteger.valueOf(v.longValue());
-					string = bi.toString();
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					String string = null;
+					if (TypeUtils.isDecimalNumber(v.getClass())) {
+						BigDecimal bd = (v instanceof BigDecimal) ? (BigDecimal) v
+								: BigDecimal.valueOf(v.doubleValue());
+						string = bd.stripTrailingZeros().toPlainString();
+					} else {
+						BigInteger bi = (v instanceof BigInteger) ? (BigInteger) v : BigInteger.valueOf(v.longValue());
+						string = bi.toString();
+					}
+					if (string != null) {
+						if (string.startsWith("-")) {
+							string = string.substring(1);
+						}
+						int index = string.indexOf(".");
+						int itg = index < 0 ? string.length() : index;
+						int fct = index < 0 ? 0 : string.length() - index - 1;
+						if (itg > integral) {
+							throw new ValidationException(message, messageCode);
+						}
+						if (fct > fractional) {
+							throw new ValidationException(message, messageCode);
+						}
+					}
 				}
-				if (string != null) {
-					if (string.startsWith("-")) {
-						string = string.substring(1);
-					}
-					int index = string.indexOf(".");
-					int itg = index < 0 ? string.length() : index;
-					int fct = index < 0 ? 0 : string.length() - index - 1;
-					if (itg > integral) {
-						throw new ValidationException(message, messageCode);
-					}
-					if (fct > fractional) {
-						throw new ValidationException(message, messageCode);
-					}
-				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional
+						.of(ValidatorDescriptor.builder().integerDigits(integral).fractionDigits(fractional).build());
 			}
 		};
 	}
@@ -981,20 +1097,30 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Date> Validator<T> past(boolean includeTime, String message, String messageCode) {
-		return (v) -> {
-			if (v != null) {
-				if (!includeTime) {
-					Date today = CalendarUtils.floorTime(Calendar.getInstance()).getTime();
-					Date date = CalendarUtils.floorTime(v);
-					if (today.equals(date) || date.after(today)) {
-						throw new ValidationException(message, messageCode);
-					}
-				} else {
-					if (v.getTime() >= System.currentTimeMillis()) {
-						throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					if (!includeTime) {
+						Date today = CalendarUtils.floorTime(Calendar.getInstance()).getTime();
+						Date date = CalendarUtils.floorTime(v);
+						if (today.equals(date) || date.after(today)) {
+							throw new ValidationException(message, messageCode);
+						}
+					} else {
+						if (v.getTime() >= System.currentTimeMillis()) {
+							throw new ValidationException(message, messageCode);
+						}
 					}
 				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().past().build());
 			}
 		};
 	}
@@ -1045,20 +1171,30 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Date> Validator<T> future(boolean includeTime, String message, String messageCode) {
-		return (v) -> {
-			if (v != null) {
-				if (!includeTime) {
-					Date today = CalendarUtils.floorTime(Calendar.getInstance()).getTime();
-					Date date = CalendarUtils.floorTime(v);
-					if (today.equals(date) || date.before(today)) {
-						throw new ValidationException(message, messageCode);
-					}
-				} else {
-					if (v.getTime() <= System.currentTimeMillis()) {
-						throw new ValidationException(message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					if (!includeTime) {
+						Date today = CalendarUtils.floorTime(Calendar.getInstance()).getTime();
+						Date date = CalendarUtils.floorTime(v);
+						if (today.equals(date) || date.before(today)) {
+							throw new ValidationException(message, messageCode);
+						}
+					} else {
+						if (v.getTime() <= System.currentTimeMillis()) {
+							throw new ValidationException(message, messageCode);
+						}
 					}
 				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().future().build());
 			}
 		};
 	}
@@ -1106,11 +1242,24 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Comparable<T>> Validator<T> lessThan(T compareTo, String message, String messageCode) {
 		ObjectUtils.argumentNotNull(compareTo, "Value to compare must be not null");
-		return (v) -> {
-			if (v != null && v.compareTo(compareTo) >= 0) {
-				throw new ValidationException(message, messageCode, compareTo);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && v.compareTo(compareTo) >= 0) {
+					throw new ValidationException(message, messageCode, compareTo);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				if (TypeUtils.isNumber(compareTo.getClass())) {
+					return Optional.of(ValidatorDescriptor.builder().max(((Number) compareTo)).exclusiveMax().build());
+				}
+				return Optional.empty();
 			}
 		};
 	}
@@ -1151,11 +1300,24 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Comparable<T>> Validator<T> lessOrEqual(T compareTo, String message, String messageCode) {
 		ObjectUtils.argumentNotNull(compareTo, "Value to compare must be not null");
-		return (v) -> {
-			if (v != null && v.compareTo(compareTo) > 0) {
-				throw new ValidationException(message, messageCode, compareTo);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && v.compareTo(compareTo) > 0) {
+					throw new ValidationException(message, messageCode, compareTo);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				if (TypeUtils.isNumber(compareTo.getClass())) {
+					return Optional.of(ValidatorDescriptor.builder().max(((Number) compareTo)).build());
+				}
+				return Optional.empty();
 			}
 		};
 	}
@@ -1203,11 +1365,24 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Comparable<T>> Validator<T> greaterThan(T compareTo, String message, String messageCode) {
 		ObjectUtils.argumentNotNull(compareTo, "Value to compare must be not null");
-		return (v) -> {
-			if (v != null && v.compareTo(compareTo) <= 0) {
-				throw new ValidationException(message, messageCode, compareTo);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && v.compareTo(compareTo) <= 0) {
+					throw new ValidationException(message, messageCode, compareTo);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				if (TypeUtils.isNumber(compareTo.getClass())) {
+					return Optional.of(ValidatorDescriptor.builder().min(((Number) compareTo)).exclusiveMin().build());
+				}
+				return Optional.empty();
 			}
 		};
 	}
@@ -1248,11 +1423,24 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends Comparable<T>> Validator<T> greaterOrEqual(T compareTo, String message, String messageCode) {
 		ObjectUtils.argumentNotNull(compareTo, "Value to compare must be not null");
-		return (v) -> {
-			if (v != null && v.compareTo(compareTo) < 0) {
-				throw new ValidationException(message, messageCode, compareTo);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && v.compareTo(compareTo) < 0) {
+					throw new ValidationException(message, messageCode, compareTo);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				if (TypeUtils.isNumber(compareTo.getClass())) {
+					return Optional.of(ValidatorDescriptor.builder().min(((Number) compareTo)).build());
+				}
+				return Optional.empty();
 			}
 		};
 	}
@@ -1269,7 +1457,7 @@ public interface Validator<T> extends Serializable {
 	 * @return Validator
 	 */
 	static <T extends CharSequence> Validator<T> email() {
-		return pattern(FormatUtils.EMAIL_RFC822_REGEXP_PATTERN, ValidationMessage.EMAIL);
+		return email(ValidationMessage.EMAIL);
 	}
 
 	/**
@@ -1284,7 +1472,7 @@ public interface Validator<T> extends Serializable {
 	 */
 	static <T extends CharSequence> Validator<T> email(Localizable message) {
 		ObjectUtils.argumentNotNull(message, "Validation error message must be not null");
-		return pattern(FormatUtils.EMAIL_RFC822_REGEXP_PATTERN, message);
+		return email(message.getMessage(), message.getMessageCode());
 	}
 
 	/**
@@ -1297,8 +1485,24 @@ public interface Validator<T> extends Serializable {
 	 * @param messageCode Optional validation error message localization code
 	 * @return Validator
 	 */
+	@SuppressWarnings("serial")
 	static <T extends CharSequence> Validator<T> email(String message, String messageCode) {
-		return pattern(FormatUtils.EMAIL_RFC822_REGEXP_PATTERN, message, messageCode);
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null) {
+					if (!Pattern.compile(FormatUtils.EMAIL_RFC822_REGEXP_PATTERN).matcher(v).matches()) {
+						throw new ValidationException(message, messageCode);
+					}
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().email().build());
+			}
+		};
 	}
 
 	// Support
