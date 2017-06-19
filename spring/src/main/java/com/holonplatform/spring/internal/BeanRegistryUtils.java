@@ -16,13 +16,22 @@
 package com.holonplatform.spring.internal;
 
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionValidationException;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.core.type.StandardMethodMetadata;
 
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
@@ -74,6 +83,113 @@ public final class BeanRegistryUtils implements Serializable {
 			}
 		}
 		return names;
+	}
+
+	/**
+	 * Try to obtain the actual bean class of the bean with given name.
+	 * @param beanName Bean name
+	 * @param beanDefinition Optional bean definition
+	 * @param beanFactory Bean factory (not null)
+	 * @param classLoader ClassLoader to use
+	 * @return The bean class, or <code>null</code> if cannot be detected
+	 */
+	public static Class<?> getBeanClass(String beanName, BeanDefinition beanDefinition,
+			ConfigurableListableBeanFactory beanFactory, ClassLoader classLoader) {
+
+		ObjectUtils.argumentNotNull(beanFactory, "Bean factory must be not null");
+
+		BeanDefinition definition = beanDefinition;
+		if (definition == null && beanName != null) {
+			definition = beanFactory.getBeanDefinition(beanName);
+		}
+
+		if (definition == null) {
+			throw new BeanDefinitionValidationException("Missing bean definition for bean name [" + beanName + "]");
+		}
+
+		// check Root definition
+		if (definition instanceof RootBeanDefinition) {
+			RootBeanDefinition rootBeanDef = (RootBeanDefinition) definition;
+			try {
+				if (rootBeanDef.getBeanClass() != null) {
+					return rootBeanDef.getBeanClass();
+				}
+			} catch (@SuppressWarnings("unused") IllegalStateException e) {
+				// factory bean: ignore
+			}
+		}
+
+		// Check factory bean
+		if (definition.getFactoryMethodName() == null) {
+			// factory class
+			if (definition.getBeanClassName() != null) {
+				return getBeanClass(beanName, definition.getBeanClassName(), classLoader);
+			}
+		} else {
+			// factory method
+			String factoryClassName = getBeanFactoryClassName(definition, beanFactory);
+			if (factoryClassName != null) {
+				Class<?> factoryClass = getBeanClass(beanName, factoryClassName, classLoader);
+				if (factoryClass != null) {
+					for (Method method : factoryClass.getMethods()) {
+						if (method.getName().equals(definition.getFactoryMethodName())) {
+							return method.getReturnType();
+						}
+					}
+				}
+			}
+		}
+
+		// check beans defined using @Configuration
+		Object source = definition.getSource();
+		if (source instanceof StandardMethodMetadata) {
+			StandardMethodMetadata metadata = (StandardMethodMetadata) source;
+			return metadata.getIntrospectedMethod().getReturnType();
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Get the Factory class name which corresponds to given bean definition.
+	 * @param definition Bean definition
+	 * @param beanFactory Bean factory
+	 * @return Factory class name, or <code>null</code> if not found
+	 */
+	private static String getBeanFactoryClassName(BeanDefinition definition,
+			ConfigurableListableBeanFactory beanFactory) {
+		if (definition instanceof AnnotatedBeanDefinition) {
+			return ((AnnotatedBeanDefinition) definition).getMetadata().getClassName();
+		} else {
+			if (definition.getFactoryBeanName() != null) {
+				BeanDefinition fd = beanFactory.getBeanDefinition(definition.getFactoryBeanName());
+				if (fd != null) {
+					return fd.getBeanClassName();
+				}
+			} else {
+				return definition.getBeanClassName();
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get bean class from bean class name.
+	 * @param beanName Bean name
+	 * @param beanClassName Bean class naem (not null)
+	 * @param classLoader ClassLoader to use (null for default class loader)
+	 * @return Bean class
+	 * @throws CannotLoadBeanClassException Class name not found in given ClassLoader
+	 */
+	private static Class<?> getBeanClass(final String beanName, final String beanClassName, ClassLoader classLoader)
+			throws CannotLoadBeanClassException {
+		ObjectUtils.argumentNotNull(beanClassName, "Bean class name must be not null");
+		try {
+			return ClassUtils.forName(beanClassName, classLoader);
+		} catch (ClassNotFoundException e) {
+			throw new CannotLoadBeanClassException(BeanRegistryUtils.class.getName(), beanName, beanClassName, e);
+		}
 	}
 
 	/**

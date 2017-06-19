@@ -73,6 +73,32 @@ public final class AnnotationUtils implements Serializable {
 	}
 
 	/**
+	 * Get the class which is annotated with given <code>annotation</code>, checking any superclass and implemented
+	 * interface.
+	 * @param cls Class to inspect (not null)
+	 * @param annotation Annotation to look for (not null)
+	 * @return The class (or implemented interface) on which the annotation is present, <code>null</code> if not found
+	 */
+	public static Class<?> getClassWithAnnotation(Class<?> cls, Class<? extends Annotation> annotation) {
+		ObjectUtils.argumentNotNull(cls, "Class must be not null");
+		ObjectUtils.argumentNotNull(annotation, "Annotation must be not null");
+
+		if (cls.isAnnotationPresent(annotation)) {
+			return cls;
+		}
+		for (Class<?> intf : cls.getInterfaces()) {
+			if (intf.isAnnotationPresent(annotation)) {
+				return intf;
+			}
+		}
+		Class<?> superClass = cls.getSuperclass();
+		if (superClass != null && superClass != Object.class) {
+			return getClassWithAnnotation(superClass, annotation);
+		}
+		return null;
+	}
+
+	/**
 	 * Get all the annotations of given <code>annotationType</code> present in given <code>element</code>, including any
 	 * meta-annotation and supporting repeatable annotations.
 	 * @param <A> Annotation type
