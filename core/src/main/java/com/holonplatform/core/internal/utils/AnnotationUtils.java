@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Repeatable;
 import java.lang.reflect.AnnotatedElement;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -91,6 +92,41 @@ public final class AnnotationUtils implements Serializable {
 		List<A> annotations = new LinkedList<>();
 		findAnnotations(annotations, element, annotationType, repeatableContainerType);
 		return annotations;
+	}
+
+	/**
+	 * Get all the annotations of given <code>annotationType</code> present in given annotations list, including any
+	 * meta-annotation and supporting repeatable annotations.
+	 * @param <A> Annotation type
+	 * @param annotations Annotation list element to inspect
+	 * @param annotationType Annotation type to lookup
+	 * @return List of detected annotation of given <code>annotationType</code>, an empty List if none found
+	 */
+	@SuppressWarnings("unchecked")
+	public static <A extends Annotation> List<A> getAnnotations(List<Annotation> annotations, Class<A> annotationType) {
+		ObjectUtils.argumentNotNull(annotationType, "Annotation type must be not null");
+
+		if (annotations == null || annotations.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		Class<? extends Annotation> repeatableContainerType = null;
+		if (annotationType.isAnnotationPresent(Repeatable.class)) {
+			repeatableContainerType = annotationType.getAnnotation(Repeatable.class).value();
+		}
+
+		List<A> ans = new LinkedList<>();
+		for (Annotation annotation : annotations) {
+			if (annotationType.equals(annotation.annotationType())) {
+				ans.add((A) annotation);
+			}
+			if (!isInJavaLangAnnotationPackage(annotation) && !annotation.annotationType().equals(annotationType)
+					&& (repeatableContainerType == null
+							|| !annotation.annotationType().equals(repeatableContainerType))) {
+				findAnnotations(ans, annotation.annotationType(), annotationType, repeatableContainerType);
+			}
+		}
+		return ans;
 	}
 
 	/**
