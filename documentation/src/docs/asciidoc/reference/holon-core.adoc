@@ -1,6 +1,6 @@
 = Holon Platform Core
 :revnumber: {project-version}
-:apidir: ../../api/holon-core
+:apidir: ../api/holon-core
 :linkattrs:
 :sectnums:
 :nofooter:
