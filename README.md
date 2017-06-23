@@ -87,4 +87,18 @@ All the [Holon Platform](https://holon-platform.com) modules are _Open Source_ s
 
 ## Artifacts list
 
+Maven _group id_: `com.holon-platform.core`
 
+Artifact id | Description
+----------- | -----------
+`holon-core` | Platform core components, services and APIs
+`holon-http` | HTTP messages support
+`holon-auth` | Authentication and Authorization
+`holon-auth-jwt` | JSON Web Tokens support 
+`holon-spring` | Spring integration
+`holon-spring-boot` | Spring Boot integration
+`holon-starter` | Base Spring Boot starter
+`holon-starter-test` | Base Spring Boot starter for Unit tests
+`holon-bom` | Bill Of Materials
+`holon-bom-platform` | Bill Of Materials including external dependencies
+`documentation-core` | Documentation
