@@ -52,6 +52,12 @@ _Platform Maven BOM:_
 
 See the platform [documentation](https://holon-platform.com/docs/current/reference) for detailed information about platform architecture and projects setup.
 
+### Build from sources
+
+You can build the sources using Maven (version 3.3.x or above is recommended) like this: 
+
+`mvn clean install`
+
 ## Getting help
 
 * Check the [platform documentation](https://holon-platform.com/docs/current/reference) or the specific [module documentation](https://holon-platform.com/docs/current/reference/holon-core.html).
@@ -62,9 +68,9 @@ See the platform [documentation](https://holon-platform.com/docs/current/referen
 
 * A [commercial support](https://holon-platform.com/services) is available too.
 
-## Build from sources
+## Examples
 
-
+See the [Holon Platform examples](https://github.com/holon-platform/holon-examples) repository for a set of example projects.
 
 ## Contribute
 
