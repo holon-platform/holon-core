@@ -2,6 +2,8 @@
 
 This is the __core__ module of the [Holon Platform](https://holon-platform.com) and represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
+See the module [documentation](https://holon-platform.com/docs/current/reference/holon-core.html) for details.
+
 ## Getting started
 
 ### System requirements
@@ -31,7 +33,7 @@ _Maven BOM:_
 </dependencyManagement>
 ```
 
-See the module [documentation](https://holon-platform.com/docs/current/reference/holon-core.html) for further information about each artifact provided by this module.
+See the [Artifacts list](#artifacts-list) for a list of the available artifacts of this module.
 
 ### Using the Platform BOM
 
@@ -50,7 +52,7 @@ _Platform Maven BOM:_
 </dependencyManagement>
 ```
 
-See the platform [documentation](https://holon-platform.com/docs/current/reference) for detailed information about platform architecture and projects setup.
+See the [Artifacts list](#artifacts-list) for a list of the available artifacts of this module.
 
 ### Build from sources
 
@@ -82,3 +84,7 @@ Join the __contribute__ Gitter room for any question and to contact us.
 ## License
 
 All the [Holon Platform](https://holon-platform.com) modules are _Open Source_ software released under the [Apache 2.0 license](LICENSE.md).
+
+## Artifacts list
+
+
