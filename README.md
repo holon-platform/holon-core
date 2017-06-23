@@ -20,15 +20,15 @@ The Maven __group id__ for this module is `com.holon-platform.core` and a _BOM (
 
 _Maven BOM:_
 ```xml
-	<dependencyManagement>
-    	<dependency>
-        	<groupId>com.holon-platform.core</groupId>
-        	<artifactId>holon-bom</artifactId>
-        	<version>5.0.0</version>
-        	<type>pom</type>_
-			<scope>import</scope>
-    	</dependency>
-    </dependencyManagement>
+<dependencyManagement>
+	<dependency>
+		<groupId>com.holon-platform.core</groupId>
+		<artifactId>holon-bom</artifactId>
+		<version>5.0.0</version>
+		<type>pom</type>
+		<scope>import</scope>
+	</dependency>
+</dependencyManagement>
 ```
 
 ### Using the Platform BOM
@@ -37,15 +37,15 @@ The [Holon Platform](https://holon-platform.com) provides an overall Maven _BOM 
 
 _Platform Maven BOM:_
 ```xml
-    <dependencyManagement>
-    	<dependency>
-        	<groupId>com.holon-platform</groupId>
-        	<artifactId>bom</artifactId>
-        	<version>${platform-version}</version>
-        	<type>pom</type>
-			<scope>import</scope>
-   		</dependency>
-    </dependencyManagement>
+<dependencyManagement>
+	<dependency>
+		<groupId>com.holon-platform</groupId>
+		<artifactId>bom</artifactId>
+		<version>${platform-version}</version>
+		<type>pom</type>
+		<scope>import</scope>
+	</dependency>
+</dependencyManagement>
 ```
 
 See the platform [documentation](https://holon-platform.com/docs/current/reference) for detailed information about platform architecture and projects setup.
