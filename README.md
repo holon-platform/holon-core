@@ -76,6 +76,8 @@ See the [Holon Platform examples](https://github.com/holon-platform/holon-exampl
 
 See [Contributing to the Holon Platform](https://github.com/holon-platform/platform/blob/master/CONTRIBUTING.md).
 
+Join the __contribute__ Gitter room [![Gitter chat](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/holon-platform/contribute?utm_source=share-link&utm_medium=link&utm_campaign=share-link) for any question and to contact us.
+
 ## License
 
 All the [Holon Platform](https://holon-platform.com) modules are _Open Source_ software released under the [Apache 2.0 license](LICENSE.md).
