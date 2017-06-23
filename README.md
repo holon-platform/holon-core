@@ -31,6 +31,8 @@ _Maven BOM:_
 </dependencyManagement>
 ```
 
+See the module [documentation](https://holon-platform.com/docs/current/reference/holon-core.html) for further information about each artifact provided by this module.
+
 ### Using the Platform BOM
 
 The [Holon Platform](https://holon-platform.com) provides an overall Maven _BOM (Bill of Materials)_ to easily obtain all the available platform artifacts:
@@ -65,6 +67,8 @@ See the platform [documentation](https://holon-platform.com/docs/current/referen
 
 
 ## Contribute
+
+See [Contributing to the Holon Platform](https://github.com/holon-platform/platform/blob/master/CONTRIBUTING.md).
 
 ## License
 
