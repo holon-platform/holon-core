@@ -25,13 +25,13 @@ _Maven BOM:_
         	<groupId>com.holon-platform.core</groupId>
         	<artifactId>holon-bom</artifactId>
         	<version>5.0.0</version>
-        	_<type>pom</type>_
-			_<scope>import</scope>_
+        	<type>pom</type>_
+			<scope>import</scope>
     	</dependency>
     </dependencyManagement>
 ```
 
-### Use the Platform BOM
+### Using the Platform BOM
 
 The [Holon Platform](https://holon-platform.com) provides an overall Maven _BOM (Bill of Materials)_ to easily obtain all the available platform artifacts:
 
@@ -42,8 +42,8 @@ _Platform Maven BOM:_
         	<groupId>com.holon-platform</groupId>
         	<artifactId>bom</artifactId>
         	<version>${platform-version}</version>
-        	_<type>pom</type>_
-			_<scope>import</scope>_
+        	<type>pom</type>
+			<scope>import</scope>
    		</dependency>
     </dependencyManagement>
 ```
