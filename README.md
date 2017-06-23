@@ -4,6 +4,10 @@ This is the __core__ module of the [Holon Platform](https://holon-platform.com) 
 
 See the module [documentation](https://holon-platform.com/docs/current/reference/holon-core.html) for details.
 
+## Code structure
+
+See [Holon Platform code structure and conventions](https://github.com/holon-platform/platform/blob/master/CODING.md) to learn about the _"real Java API"_ philosophy with which the project codebase is developed and organized.
+
 ## Getting started
 
 ### System requirements
