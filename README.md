@@ -76,7 +76,8 @@ See the [Holon Platform examples](https://github.com/holon-platform/holon-exampl
 
 See [Contributing to the Holon Platform](https://github.com/holon-platform/platform/blob/master/CONTRIBUTING.md).
 
-Join the __contribute__ Gitter room [![Gitter chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/holon-platform/contribute?utm_source=share-link&utm_medium=link&utm_campaign=share-link) for any question and to contact us.
+[![Gitter chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/holon-platform/contribute?utm_source=share-link&utm_medium=link&utm_campaign=share-link) 
+Join the __contribute__ Gitter room for any question and to contact us.
 
 ## License
 
