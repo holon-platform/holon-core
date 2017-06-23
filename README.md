@@ -21,13 +21,13 @@ The Maven __group id__ for this module is `com.holon-platform.core` and a _BOM (
 _Maven BOM:_
 ```xml
 <dependencyManagement>
-	<dependency>
-		<groupId>com.holon-platform.core</groupId>
-		<artifactId>holon-bom</artifactId>
-		<version>5.0.0</version>
-		<type>pom</type>
-		<scope>import</scope>
-	</dependency>
+  <dependency>
+    <groupId>com.holon-platform.core</groupId>
+    <artifactId>holon-bom</artifactId>
+    <version>5.0.0</version>
+    <type>pom</type>
+    <scope>import</scope>
+  </dependency>
 </dependencyManagement>
 ```
 
