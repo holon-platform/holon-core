@@ -16,8 +16,13 @@
 package com.holonplatform.core.internal.property;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertySetRef;
 
@@ -58,6 +63,38 @@ public interface PropertySetRefIntrospector extends Serializable {
 	 */
 	static PropertySetRefIntrospector getDefault() {
 		return DefaultPropertySetRefIntrospector.INSTANCE;
+	}
+
+	/**
+	 * Check whether the {@link PropertySetRef} annotation is present in given annotations list, checking
+	 * meta-annotations too.
+	 * @param annotations Annotations to scan
+	 * @return The {@link PropertySetRef} annotation if present in given annotations list, an empty Optional otherwise
+	 */
+	static Optional<PropertySetRef> getPropertySetRef(List<Annotation> annotations) {
+		if (annotations != null && !annotations.isEmpty()) {
+			List<PropertySetRef> as = AnnotationUtils.getAnnotations(annotations, PropertySetRef.class);
+			if (!as.isEmpty()) {
+				return Optional.ofNullable(as.get(0));
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Check whether the {@link PropertySetRef} annotation is present in given annotations list, checking
+	 * meta-annotations too.
+	 * @param annotations Annotations to scan
+	 * @return The {@link PropertySetRef} annotation if present in given annotations list, an empty Optional otherwise
+	 */
+	static Optional<PropertySetRef> getPropertySetRef(Annotation... annotations) {
+		if (annotations != null && annotations.length > 0) {
+			List<PropertySetRef> as = AnnotationUtils.getAnnotations(Arrays.asList(annotations), PropertySetRef.class);
+			if (!as.isEmpty()) {
+				return Optional.ofNullable(as.get(0));
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
