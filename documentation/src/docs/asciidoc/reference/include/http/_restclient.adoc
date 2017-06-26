@@ -134,5 +134,5 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[ta
 
 Currently `RestClient` available implementations are:
 
-. A link:../../holon-jaxrs/client/overview.html[JAX-RS] based implementation, using a JAX-RS `Client` to perform invocations;
-. A link:../../holon-core/spring/overview.html[Spring] based implementation, using a Spring `RestTemplate` to perform invocations;
+. A link:holon-jaxrs.html[JAX-RS] based implementation, using a JAX-RS `Client` to perform invocations;
+. A link:holon-core.html#RestTemplateClient[Spring] based implementation, using a Spring `RestTemplate` to perform invocations;
