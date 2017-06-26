@@ -31,12 +31,10 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-The BOM can be imported an used in a Maven project in the following way:
+The BOM can be imported in a Maven project in the following way:
 
 [source, xml, subs="verbatim,quotes,attributes+"]
 ----
-<project>
-
 <dependencyManagement>
 	<dependencies>
 		<dependency>
@@ -48,16 +46,13 @@ The BOM can be imported an used in a Maven project in the following way:
 		</dependency>
 	</dependencies>
 </dependencyManagement>
-
-<dependencies>
-	<dependency>
-		<groupId>com.holon-platform.core</groupId>
-		<artifactId>holon-core</artifactId>
-	</dependency>
-</dependencies>
-
-</project>
 ----
+
+=== Using the Platform BOM
+
+The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily obtain all the available platform artifacts.
+
+See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
 == Core API, services and components
 
