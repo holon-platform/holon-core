@@ -15,13 +15,18 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import com.holonplatform.core.internal.Logger;
+import com.holonplatform.core.internal.Logger.Level;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertySet;
@@ -36,18 +41,109 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 
 	INSTANCE;
 
+	/**
+	 * Logger
+	 */
+	private static final Logger LOGGER = PropertyLogger.create();
+
+	/**
+	 * Class to be used as {@link PropertySet} references cache key.
+	 */
+	class CacheKey {
+
+		private final WeakReference<Class<?>> clazz;
+		private final String fieldName;
+
+		/**
+		 * Constructor
+		 * @param clazz Reference class
+		 * @param fieldName Field name
+		 */
+		public CacheKey(Class<?> clazz, String fieldName) {
+			super();
+			this.clazz = new WeakReference<>(clazz);
+			this.fieldName = fieldName;
+		}
+
+		/**
+		 * Get the reference class.
+		 * @return the reference class
+		 */
+		public Class<?> getClazz() {
+			return (clazz != null) ? clazz.get() : null;
+		}
+
+		/**
+		 * Get the field name.
+		 * @return the field name
+		 */
+		public String getFieldName() {
+			return fieldName;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((clazz == null || clazz.get() == null) ? 0 : clazz.get().hashCode());
+			result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			CacheKey other = (CacheKey) obj;
+			if (clazz == null || clazz.get() == null) {
+				if (other.clazz != null || other.clazz.get() != null)
+					return false;
+			} else if (other.clazz == null || other.clazz.get() == null || !clazz.get().equals(other.clazz.get()))
+				return false;
+			if (fieldName == null) {
+				if (other.fieldName != null)
+					return false;
+			} else if (!fieldName.equals(other.fieldName))
+				return false;
+			return true;
+		}
+
+	}
+
+	/**
+	 * Cache
+	 */
+	private final Map<CacheKey, PropertySet<?>> cache = new WeakHashMap<>(16, 0.9f);
+
 	@Override
 	public PropertySet<?> getPropertySet(PropertySetRef annotation) throws PropertySetIntrospectionException {
 		ObjectUtils.argumentNotNull(annotation, "PropertySetRef annotation must be not null");
 
+		// reference class
 		final Class<?> cls = annotation.value();
 		if (cls == null) {
 			throw new PropertySetIntrospectionException("[PropertySetRef] missing value");
 		}
 
+		// field name
 		String fieldName = AnnotationUtils.getStringValue(annotation.field());
 
+		boolean wasNullFieldName = (fieldName == null);
+
 		if (fieldName == null) {
+
+			// check cache
+			synchronized (cache) {
+				final CacheKey key = new CacheKey(cls, null);
+				if (cache.containsKey(key)) {
+					return cache.get(key);
+				}
+			}
+
 			if (PropertySet.class == cls) {
 				throw new PropertySetIntrospectionException(
 						"Invalid PropertySetRef class value: [" + cls.getName() + "]");
@@ -90,6 +186,22 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 
 			fieldName = candidateFieldNames.get(0);
 
+		} else {
+
+			// check cache
+			synchronized (cache) {
+				final CacheKey key = new CacheKey(cls, fieldName);
+				if (cache.containsKey(key)) {
+					return cache.get(key);
+				}
+			}
+
+		}
+
+		if (LOGGER.isEnabled(Level.DEBUG)) {
+			final String fn = fieldName;
+			LOGGER.debug(() -> "Get PropertySet using PropertySetRef annotation for class [" + cls
+					+ "] and field name [" + fn + "]");
 		}
 
 		// Read the PropertySet field
@@ -106,7 +218,14 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 						+ cls.getName() + "] is not of PropertySet type but [" + value.getClass().getName() + "]");
 			}
 
-			return (PropertySet<?>) value;
+			final PropertySet<?> propertySet = (PropertySet<?>) value;
+
+			// put in cache and return
+			if (wasNullFieldName) {
+				cache.putIfAbsent(new CacheKey(cls, null), propertySet);
+			}
+			PropertySet<?> existing = cache.putIfAbsent(new CacheKey(cls, fieldName), propertySet);
+			return (existing != null ? existing : propertySet);
 
 		} catch (IllegalAccessException e) {
 			throw new PropertySetIntrospectionException(
