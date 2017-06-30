@@ -104,6 +104,7 @@ include::include/http/_messages.adoc[]
 
 include::include/http/_restclient.adoc[]
 
+[[Auth]]
 == Authentication and Authorization
 
 The `holon-auth` artifact provides a complete and highly configurable *Authentication* and *Authorization* architecture, integrated with all platform modules. *HTTP* messages authentication is supported, and several APIs are provided to manage _accounts_ and their credentials, perform authentication in a *Realm* and check for *permissions*.
