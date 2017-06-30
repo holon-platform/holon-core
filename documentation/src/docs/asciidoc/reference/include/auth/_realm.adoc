@@ -140,6 +140,7 @@ An `Authentication` can be extended to provide more application-specific informa
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authentication,indent=0]
 ----
 
+[[MessageAuthenticator]]
 ==== MessageAuthenticator
 
 The link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] interface represents an intermediate _authenticator_, specialized for `Message` based authentication.
