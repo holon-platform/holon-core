@@ -102,9 +102,9 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 				.map(ps -> ps.execute(() -> invoke(uri, requestMethod, entity, responseType)))
 				.orElseGet(() -> invoke(uri, requestMethod, entity, responseType));
 
-		// check successful status code
-		if (!HttpStatus.isSuccessStatusCode(response.getStatusCodeValue())) {
-			throw new UnsuccessfulInvocationException(response.getStatusCodeValue());
+		// check error status code
+		if (HttpStatus.isErrorStatusCode(response.getStatusCodeValue())) {
+			throw new UnsuccessfulInvocationException(new SpringHttpResponse<>(response, responseType));
 		}
 
 		return new SpringHttpResponse<>(response, responseType);
