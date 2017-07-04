@@ -347,4 +347,23 @@ public enum HttpStatus {
 		return statusCode >= 200 && statusCode < 300;
 	}
 
+	/**
+	 * Gets whether given <code>statusCode</code> is a <em>redirection</em>, i.e. a <code>3xx</code> status code
+	 * @param statusCode Status code
+	 * @return <code>true</code> if given <code>statusCode</code> is a <em>redirection</em> status code
+	 */
+	public static boolean isRedirectionStatusCode(int statusCode) {
+		return statusCode >= 300 && statusCode < 400;
+	}
+
+	/**
+	 * Gets whether given <code>statusCode</code> is a client or server <em>error</em> status code, i.e. a
+	 * <code>4xx</code> or <code>5xx</code> status code
+	 * @param statusCode Status code
+	 * @return <code>true</code> if given <code>statusCode</code> is a client or server <em>error</em> status code
+	 */
+	public static boolean isErrorStatusCode(int statusCode) {
+		return statusCode >= 400 && statusCode < 600;
+	}
+
 }
