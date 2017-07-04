@@ -623,18 +623,12 @@ public interface RestClient {
 		// utils
 
 		/**
-		 * Try to obtain the given <code>response</code> payload, only if the response status code is a <em>success</em>
-		 * status code (i.e. a <code>2xx</code> status code).
+		 * Get the given <code>response</code> payload.
 		 * @param <T> Response type
-		 * @param response Response from which to obtain the context
+		 * @param response Response from which to obtain the content
 		 * @return Response content
-		 * @throws UnsuccessfulInvocationException In case the status code of the response returned by the server is not
-		 *         a successful type status code, i.e. it is not a <code>2xx</code> status type
 		 */
 		static <T> Optional<T> getResponseContent(HttpResponse<T> response) {
-			if (!HttpStatus.isSuccessStatusCode(response.getStatusCode())) {
-				throw new UnsuccessfulInvocationException(response.getStatusCode());
-			}
 			try {
 				return response.getPayload();
 			} catch (Exception e) {
@@ -979,60 +973,65 @@ public interface RestClient {
 	}
 
 	/**
-	 * Exception thrown by {@link RestClient} invocation methods when the response status is not a <em>successful</em>
-	 * status code, i.e. a <code>2xx</code> HTTP status code.
-	 * <p>
-	 * The response status code is available through {@link #getStatusCode()} or {@link #getStatus()} methods.
-	 * </p>
+	 * Exception thrown by {@link RestClient} invocation methods when the response status is a <em>error</em> status
+	 * code, i.e. a <code>4xx</code> or <code>5xx</code> HTTP status code.
 	 */
 	public class UnsuccessfulInvocationException extends RuntimeException {
 
 		private static final long serialVersionUID = 8453089509569188885L;
 
 		/**
-		 * Response status code
+		 * The response
 		 */
-		private final int statusCode;
+		private final HttpResponse<?> response;
 
 		/**
 		 * Constructor with default error message
-		 * @param statusCode HTTP status code
+		 * @param response HTTP response
 		 */
-		public UnsuccessfulInvocationException(int statusCode) {
-			this(statusCode,
-					Optional.ofNullable(HttpStatus.of(statusCode)).map(s -> statusCode + " - " + s.getDescription())
-							.orElse("Obtained a response with an unsuccessful status code: " + statusCode));
+		public UnsuccessfulInvocationException(HttpResponse<?> response) {
+			this(response, Optional.ofNullable(HttpStatus.of(response.getStatusCode()))
+					.map(s -> s.getCode() + " - " + s.getDescription())
+					.orElse("Obtained a response with an unsuccessful status code: " + response.getStatusCode()));
 		}
 
 		/**
 		 * Constructor with error message
-		 * @param statusCode HTTP status code
+		 * @param response HTTP response
 		 * @param message Error message
 		 */
-		public UnsuccessfulInvocationException(int statusCode, String message) {
+		public UnsuccessfulInvocationException(HttpResponse<?> response, String message) {
 			super(message);
-			this.statusCode = statusCode;
+			this.response = response;
 		}
 
 		/**
 		 * Constructor with nested exception
-		 * @param statusCode HTTP status code
+		 * @param response HTTP response
 		 * @param cause Nested exception
 		 */
-		public UnsuccessfulInvocationException(int statusCode, Throwable cause) {
+		public UnsuccessfulInvocationException(HttpResponse<?> response, Throwable cause) {
 			super(cause);
-			this.statusCode = statusCode;
+			this.response = response;
 		}
 
 		/**
 		 * Constructor with error message and nested exception
-		 * @param statusCode HTTP status code
+		 * @param response HTTP response
 		 * @param message Error message
 		 * @param cause Nested exception
 		 */
-		public UnsuccessfulInvocationException(int statusCode, String message, Throwable cause) {
+		public UnsuccessfulInvocationException(HttpResponse<?> response, String message, Throwable cause) {
 			super(message, cause);
-			this.statusCode = statusCode;
+			this.response = response;
+		}
+
+		/**
+		 * Get the HTTP response
+		 * @return the HTTP response
+		 */
+		public HttpResponse<?> getResponse() {
+			return response;
 		}
 
 		/**
@@ -1040,7 +1039,7 @@ public interface RestClient {
 		 * @return HTTP response status code
 		 */
 		public int getStatusCode() {
-			return statusCode;
+			return response.getStatusCode();
 		}
 
 		/**
