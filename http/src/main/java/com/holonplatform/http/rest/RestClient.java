@@ -387,8 +387,8 @@ public interface RestClient {
 		 * @return {@link ResponseEntity} object as a result of the request invocation
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
-		 * @throws UnsuccessfulInvocationException In case the status code of the response returned by the server is not
-		 *         a successful type status code, i.e. it is not a <code>2xx</code> status type
+		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
 		 */
 		default <T> ResponseEntity<T> patch(RequestEntity<?> entity, Class<T> responseType) {
 			return invoke(HttpMethod.PATCH, entity, ResponseType.of(responseType));
@@ -403,8 +403,8 @@ public interface RestClient {
 		 * @return {@link ResponseEntity} object as a result of the request invocation
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
-		 * @throws UnsuccessfulInvocationException In case the status code of the response returned by the server is not
-		 *         a successful type status code, i.e. it is not a <code>2xx</code> status type
+		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
 		 */
 		default <T> ResponseEntity<T> patch(RequestEntity<?> entity, ResponseType<T> responseType) {
 			return invoke(HttpMethod.PATCH, entity, responseType);
