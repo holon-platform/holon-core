@@ -49,7 +49,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	private final org.springframework.http.ResponseEntity<Resource> response;
 	private final ResponseType<T> type;
 	private final List<HttpMessageConverter<?>> messageConverters;
-	
+
 	private final StreamHttpResponse httpResponse;
 
 	/**
@@ -145,33 +145,42 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	 * @throws HttpEntityProcessingException If a entity processing error occurred (e.g. no message body reader
 	 *         available for the requested type)
 	 */
+	@SuppressWarnings("unchecked")
 	protected <E> Optional<E> readAs(ResponseType<E> type) {
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
 
 		final Type responseType = type.getType();
 
-		if (Void.class != responseType) {
-			try {
+		try {
+
+			// check InputStream
+			if (InputStream.class == responseType) {
+				return (Optional<E>) Optional.ofNullable(response.getBody().getInputStream());
+			}
+
+			if (Void.class != responseType) {
 				ResponseExtractor<E> extractor = new HttpMessageConverterExtractor<>(responseType,
 						getMessageConverters());
 				return Optional.ofNullable(extractor.extractData(httpResponse));
-			} catch (Exception e) {
-				throw new HttpEntityProcessingException("Failed to read HTTP entity as [" + type + "]", e);
-			} 
+			}
+		} catch (Exception e) {
+			throw new HttpEntityProcessingException("Failed to read HTTP entity as [" + type + "]", e);
 		}
+
 		return Optional.empty();
 	}
-	
+
 	static class StreamHttpResponse implements ClientHttpResponse {
 
 		private final org.springframework.http.ResponseEntity<Resource> responseEntity;
-		
+
 		public StreamHttpResponse(org.springframework.http.ResponseEntity<Resource> responseEntity) {
 			super();
 			this.responseEntity = responseEntity;
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.HttpInputMessage#getBody()
 		 */
 		@Override
@@ -179,7 +188,8 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 			return responseEntity.getBody().getInputStream();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.HttpMessage#getHeaders()
 		 */
 		@Override
@@ -187,7 +197,8 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 			return responseEntity.getHeaders();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.client.ClientHttpResponse#getStatusCode()
 		 */
 		@Override
@@ -195,7 +206,8 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 			return responseEntity.getStatusCode();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.client.ClientHttpResponse#getRawStatusCode()
 		 */
 		@Override
@@ -203,7 +215,8 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 			return responseEntity.getStatusCodeValue();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.client.ClientHttpResponse#getStatusText()
 		 */
 		@Override
@@ -211,14 +224,15 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 			return responseEntity.getStatusCode().getReasonPhrase();
 		}
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see org.springframework.http.client.ClientHttpResponse#close()
 		 */
 		@Override
 		public void close() {
 			// noop
 		}
-		
+
 	}
 
 }

@@ -15,6 +15,8 @@
  */
 package com.holonplatform.http.rest;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -152,6 +154,19 @@ public interface RestClient {
 		 */
 		default <T> Optional<T> getForEntity(ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.GET, null, responseType);
+		}
+
+		/**
+		 * Invoke the request using <code>GET</code> method and receive the response entity {@link InputStream} back.
+		 * @return the response payload {@link InputStream}, or an empty stream for empty responses
+		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
+		 *         channel or expected and actual payload type mismatch)
+		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 */
+		default InputStream getForStream() {
+			return invokeForEntity(HttpMethod.GET, null, ResponseType.of(InputStream.class))
+					.orElse(new ByteArrayInputStream(new byte[0]));
 		}
 
 		/**

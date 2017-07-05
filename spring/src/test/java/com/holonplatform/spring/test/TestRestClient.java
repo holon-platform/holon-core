@@ -18,6 +18,10 @@ package com.holonplatform.spring.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,13 +33,16 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -47,6 +54,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.RestTemplate;
 
+import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
@@ -87,7 +95,7 @@ public class TestRestClient extends JerseyTest {
 		public TestData getData(@PathParam("id") int id) {
 			return new TestData(id, "value" + id);
 		}
-		
+
 		@GET
 		@Path("data2/{id}")
 		@Produces(MediaType.APPLICATION_JSON)
@@ -107,6 +115,18 @@ public class TestRestClient extends JerseyTest {
 			boxes.add(new TestData(1, "One"));
 			boxes.add(new TestData(2, "Two"));
 			return boxes;
+		}
+
+		@GET
+		@Path("stream")
+		@Produces(MediaType.APPLICATION_OCTET_STREAM)
+		public StreamingOutput getStream() {
+			return new StreamingOutput() {
+				@Override
+				public void write(OutputStream output) throws IOException, WebApplicationException {
+					output.write(new byte[] { 1, 2, 3 });
+				}
+			};
 		}
 
 		@POST
@@ -196,7 +216,7 @@ public class TestRestClient extends JerseyTest {
 		}
 
 	}
-	
+
 	public static class ApiError {
 
 		private String code;
@@ -243,7 +263,8 @@ public class TestRestClient extends JerseyTest {
 
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
 
-		TestData td = client.request().path("test").path("data/{id}").resolve("id", 1).getForEntity(TestData.class).orElse(null);
+		TestData td = client.request().path("test").path("data/{id}").resolve("id", 1).getForEntity(TestData.class)
+				.orElse(null);
 		assertNotNull(td);
 		assertEquals(1, td.getCode());
 
@@ -261,26 +282,40 @@ public class TestRestClient extends JerseyTest {
 		assertNotNull(rsp);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
 	}
-	
+
 	@Test
-	public void testInputStream() {
+	public void testMultipleReads() {
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
-		
+
 		ResponseEntity<TestData> res = client.request().path("test").path("data2/{id}").resolve("id", 1)
 				.get(TestData.class);
 		assertNotNull(res);
-		
+
 		TestData td = res.getPayload().orElse(null);
 		assertNotNull(td);
-		
+
 		String asString = res.as(String.class).orElse(null);
 		assertNotNull(asString);
-		
+
 		td = res.as(TestData.class).orElse(null);
 		assertNotNull(td);
-		
+
 	}
 	
+	@Test
+	public void testStream() throws IOException {
+		
+		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
+		
+		@SuppressWarnings("resource")
+		InputStream s = client.request().path("test").path("stream").getForStream();
+		assertNotNull(s);
+		
+		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
+		assertNotNull(s);
+		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 } , bytes));
+	}
+
 	@Test
 	public void testErrors() {
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
@@ -295,11 +330,13 @@ public class TestRestClient extends JerseyTest {
 		assertEquals("ERR000", error.getCode());
 
 		TestUtils.expectedException(UnsuccessfulResponseException.class, () -> {
-			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
+					.orElse(null);
 		});
 
 		try {
-			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class).orElse(null);
+			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
+					.orElse(null);
 		} catch (UnsuccessfulResponseException e) {
 			assertEquals(HttpStatus.BAD_REQUEST, e.getStatus().orElse(null));
 			assertNotNull(e.getResponse());
@@ -308,8 +345,7 @@ public class TestRestClient extends JerseyTest {
 			assertNotNull(err);
 			assertEquals("ERR000", err.getCode());
 		}
-		
-		
+
 		ResponseEntity<?> rsp = client.request().path("test").path("data/save")
 				.put(RequestEntity.json(new TestData(-1, "testErr")));
 
@@ -319,7 +355,7 @@ public class TestRestClient extends JerseyTest {
 		error = rsp.as(ApiError.class).orElse(null);
 		assertNotNull(error);
 		assertEquals("ERR000", error.getCode());
-		
+
 	}
 
 }
