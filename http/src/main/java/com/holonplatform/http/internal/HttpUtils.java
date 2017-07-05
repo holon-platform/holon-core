@@ -30,11 +30,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TimeZone;
 
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.http.RestClient.RestClientException;
-
-import java.util.TimeZone;
 
 /**
  * Utility class for HTTP.
@@ -255,7 +253,7 @@ public final class HttpUtils implements Serializable {
 				}
 				return data;
 			} else {
-				throw new RestClientException("Invalid form data payload: not a Map");
+				throw new IllegalArgumentException("Invalid form data payload: not a Map");
 			}
 		}
 		return null;

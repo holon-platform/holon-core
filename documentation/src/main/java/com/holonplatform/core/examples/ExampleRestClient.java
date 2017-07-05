@@ -34,9 +34,9 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RequestEntity;
 import com.holonplatform.http.RestClient;
 import com.holonplatform.http.RestClient.RequestDefinition;
+import com.holonplatform.http.rest.RequestEntity;
 
 @SuppressWarnings("unused")
 public class ExampleRestClient {
@@ -132,10 +132,10 @@ public class ExampleRestClient {
 		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
 
 		HttpResponse<String> response = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.accept(MediaType.TEXT_PLAIN).getResponse(String.class); // <1>
+				.accept(MediaType.TEXT_PLAIN).get(String.class); // <1>
 
 		Optional<String> responseValue = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.accept(MediaType.TEXT_PLAIN).get(String.class); // <2>
+				.accept(MediaType.TEXT_PLAIN).getForEntity(String.class); // <2>
 
 		List<TestData> responseValues = client.request().target(new URI("https://rest.api.example")).path("test/{id}")
 				.resolve("id", 1).accept(MediaType.APPLICATION_JSON).getAsList(TestData.class); // <3>
@@ -148,7 +148,7 @@ public class ExampleRestClient {
 		Optional<URI> location = postResponse.getLocation(); // <6>
 
 		HttpResponse<TestData> dataResponse = client.request().path("postdata").queryParameter("id", 1)
-				.postForResponse(RequestEntity.EMPTY, TestData.class); // <7>
+				.post(RequestEntity.EMPTY, TestData.class); // <7>
 
 		HttpResponse<Void> putResponse = client.request().path("data/save")
 				.put(RequestEntity.json(new TestData(7, "testPost"))); // <8>
@@ -165,7 +165,7 @@ public class ExampleRestClient {
 		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
 
 		PropertyBox box = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.propertySet(PROPERTIES).get(PropertyBox.class).orElse(null); // <1>
+				.propertySet(PROPERTIES).getForEntity(PropertyBox.class).orElse(null); // <1>
 
 		List<PropertyBox> boxes = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
 				.propertySet(PROPERTIES).getAsList(PropertyBox.class); // <2>

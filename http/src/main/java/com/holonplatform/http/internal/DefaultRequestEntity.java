@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.http.RequestEntity;
+import com.holonplatform.http.rest.RequestEntity;
 
 /**
  * Default {@link RequestEntity} implementation.
@@ -112,7 +112,7 @@ public class DefaultRequestEntity<T> implements RequestEntity<T> {
 		 * @see com.holonplatform.http.RequestEntity.FormBuilder#set(java.lang.String, java.lang.String[])
 		 */
 		@Override
-		public com.holonplatform.http.RequestEntity.FormBuilder set(String name, String... value) {
+		public com.holonplatform.http.rest.RequestEntity.FormBuilder set(String name, String... value) {
 			ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
 			parameters.put(name, (value != null) ? Arrays.asList(value) : null);
 			return this;

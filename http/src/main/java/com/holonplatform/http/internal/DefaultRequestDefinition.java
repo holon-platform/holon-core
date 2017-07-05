@@ -33,13 +33,13 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.http.CacheControl;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpMethod;
-import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RequestEntity;
-import com.holonplatform.http.ResponseType;
 import com.holonplatform.http.RestClient.Invoker;
 import com.holonplatform.http.RestClient.RequestDefinition;
-import com.holonplatform.http.RestClient.RestClientException;
+import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.ResponseType;
 
 /**
  * Default {@link RequestDefinition} implementation.
@@ -284,7 +284,7 @@ public class DefaultRequestDefinition implements RequestDefinition {
 			return header(HttpHeaders.AUTHORIZATION, HttpHeaders.SCHEME_BASIC + " " + Base64.getEncoder()
 					.encodeToString(new String((username + ":" + password)).getBytes("ISO-8859-1")));
 		} catch (UnsupportedEncodingException e) {
-			throw new RestClientException(e);
+			throw new HttpClientInvocationException(e);
 		}
 	}
 
@@ -371,7 +371,8 @@ public class DefaultRequestDefinition implements RequestDefinition {
 	@Override
 	public String getRequestURI() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(getBaseRequestURI().orElseThrow(() -> new RestClientException("Missing target base URI")).toString());
+		sb.append(getBaseRequestURI().orElseThrow(() -> new HttpClientInvocationException("Missing target base URI"))
+				.toString());
 		sb.append(getRequestPath().map(p -> (sb.toString().endsWith("/") && p.startsWith("/")) ? p.substring(1) : p)
 				.orElse(""));
 		return sb.toString();
@@ -419,9 +420,39 @@ public class DefaultRequestDefinition implements RequestDefinition {
 	 * com.holonplatform.http.RequestEntity, com.holonplatform.http.ResponseType)
 	 */
 	@Override
-	public <T, R> HttpResponse<T> invoke(HttpMethod method, RequestEntity<R> requestEntity,
+	public <T, R> ResponseEntity<T> invoke(HttpMethod method, RequestEntity<R> requestEntity,
 			ResponseType<T> responseType) {
-		return invoker.invoke(this, method, requestEntity, responseType);
+		return invoker.invoke(this, method, requestEntity, responseType, false);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.http.RestClient.Invocation#invokeForSuccess(com.holonplatform.http.HttpMethod,
+	 * com.holonplatform.http.rest.RequestEntity, com.holonplatform.http.rest.ResponseType)
+	 */
+	@Override
+	public <T, R> ResponseEntity<T> invokeForSuccess(HttpMethod method, RequestEntity<R> requestEntity,
+			ResponseType<T> responseType) {
+		return invoker.invoke(this, method, requestEntity, responseType, true);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.http.RestClient.Invocation#invokeForEntity(com.holonplatform.http.HttpMethod,
+	 * com.holonplatform.http.rest.RequestEntity, com.holonplatform.http.rest.ResponseType)
+	 */
+	@Override
+	public <T, R> Optional<T> invokeForEntity(HttpMethod method, RequestEntity<R> requestEntity,
+			ResponseType<T> responseType) {
+		ResponseEntity<T> response = invoker.invoke(this, method, requestEntity, responseType, true);
+		if (response == null) {
+			throw new HttpClientInvocationException("The invoker [" + invoker + "] returned a null response");
+		}
+		try {
+			return response.getPayload();
+		} catch (Exception e) {
+			throw new HttpClientInvocationException(e);
+		}
 	}
 
 	/*

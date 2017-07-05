@@ -15,6 +15,8 @@
  */
 package com.holonplatform.http;
 
+import java.util.Optional;
+
 /**
  * Enumeration of HTTP status codes.
  * 
@@ -327,15 +329,16 @@ public enum HttpStatus {
 	/**
 	 * Get the {@link HttpStatus} which corresponds to given status code, if any
 	 * @param code Status code
-	 * @return HttpStatus which corresponds to given code, or <code>null</code>
+	 * @return HttpStatus which corresponds to given code, or an empty Optional if the given code does not corresponds
+	 *         to any of the {@link HttpStatus} values.
 	 */
-	public static HttpStatus of(int code) {
+	public static Optional<HttpStatus> of(int code) {
 		for (HttpStatus status : values()) {
 			if (code == status.code) {
-				return status;
+				return Optional.of(status);
 			}
 		}
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -354,16 +357,6 @@ public enum HttpStatus {
 	 */
 	public static boolean isRedirectionStatusCode(int statusCode) {
 		return statusCode >= 300 && statusCode < 400;
-	}
-
-	/**
-	 * Gets whether given <code>statusCode</code> is a client or server <em>error</em> status code, i.e. a
-	 * <code>4xx</code> or <code>5xx</code> status code
-	 * @param statusCode Status code
-	 * @return <code>true</code> if given <code>statusCode</code> is a client or server <em>error</em> status code
-	 */
-	public static boolean isErrorStatusCode(int statusCode) {
-		return statusCode >= 400 && statusCode < 600;
 	}
 
 }

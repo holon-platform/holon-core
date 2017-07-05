@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
-import com.holonplatform.http.ResponseType;
+import com.holonplatform.http.rest.ResponseType;
 
 /**
  * {@link ResponseType} implementation.
@@ -98,6 +98,15 @@ public class ResponseTypeImpl<T> implements ResponseType<T> {
 	@Override
 	public boolean isSimpleType() {
 		return simpleType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "ResponseType [type=" + type + ", simpleType=" + simpleType + "]";
 	}
 
 }

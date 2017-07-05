@@ -15,26 +15,30 @@
  */
 package com.holonplatform.spring.internal.rest;
 
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.util.Optional;
 
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.ResponseErrorHandler;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.holonplatform.http.HttpMethod;
-import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RequestEntity;
-import com.holonplatform.http.ResponseType;
+import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.internal.AbstractRestClient;
 import com.holonplatform.http.internal.DefaultRequestDefinition;
 import com.holonplatform.http.internal.HttpUtils;
+import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.ResponseType;
 import com.holonplatform.spring.SpringRestClient;
 
 /**
@@ -56,6 +60,18 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 	public RestTemplateRestClient(RestTemplate restTemplate) {
 		super();
 		this.restTemplate = restTemplate;
+		// exclude RestTemplate errors management
+		this.restTemplate.setErrorHandler(new ResponseErrorHandler() {
+
+			@Override
+			public boolean hasError(ClientHttpResponse response) throws IOException {
+				return false;
+			}
+
+			@Override
+			public void handleError(ClientHttpResponse response) throws IOException {}
+			
+		});
 	}
 
 	/*
@@ -67,14 +83,9 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 		return restTemplate;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.http.RestClient.Invoker#invoke(com.holonplatform.http.RestClient.RequestDefinition,
-	 * com.holonplatform.http.HttpMethod, com.holonplatform.http.RequestEntity, com.holonplatform.http.ResponseType)
-	 */
 	@Override
-	public <T, R> HttpResponse<T> invoke(RequestDefinition requestDefinition, HttpMethod method,
-			RequestEntity<R> requestEntity, ResponseType<T> responseType) {
+	public <T, R> ResponseEntity<T> invoke(RequestDefinition requestDefinition, HttpMethod method,
+			RequestEntity<R> requestEntity, ResponseType<T> responseType, boolean onlySuccessfulStatusCode) {
 
 		// URI
 		final UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(requestDefinition.getRequestURI());
@@ -98,16 +109,19 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 		}
 
 		// get response, checking propertySet
-		ResponseEntity<T> response = requestDefinition.getPropertySet()
+		org.springframework.http.ResponseEntity<Resource> response = requestDefinition.getPropertySet()
 				.map(ps -> ps.execute(() -> invoke(uri, requestMethod, entity, responseType)))
 				.orElseGet(() -> invoke(uri, requestMethod, entity, responseType));
 
 		// check error status code
-		if (HttpStatus.isErrorStatusCode(response.getStatusCodeValue())) {
-			throw new UnsuccessfulInvocationException(new SpringHttpResponse<>(response, responseType));
+		int statusCode = response.getStatusCodeValue();
+
+		if (onlySuccessfulStatusCode && !HttpStatus.isSuccessStatusCode(statusCode)) {
+			throw new UnsuccessfulResponseException(
+					new SpringResponseEntity<>(response, ResponseType.of(byte[].class), getRestTemplate().getMessageConverters()));
 		}
 
-		return new SpringHttpResponse<>(response, responseType);
+		return new SpringResponseEntity<>(response, responseType, getRestTemplate().getMessageConverters());
 	}
 
 	/*
@@ -128,27 +142,13 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 	 * @param responseType Expected response payload type
 	 * @return Response entity
 	 */
-	@SuppressWarnings("unchecked")
-	protected <T> ResponseEntity<T> invoke(String uri, org.springframework.http.HttpMethod requestMethod,
+	protected <T> org.springframework.http.ResponseEntity<Resource> invoke(String uri, org.springframework.http.HttpMethod requestMethod,
 			HttpEntity<?> request, ResponseType<T> responseType) {
-		// get response
-		ResponseEntity<T> response = null;
 		try {
-			if (responseType.isSimpleType()) {
-				response = getRestTemplate().exchange(uri, requestMethod, request, (Class<T>) responseType.getType());
-			} else {
-				response = getRestTemplate().exchange(uri, requestMethod, request,
-						new ParameterizedResponseType<>(responseType));
-			}
+			return getRestTemplate().exchange(uri, requestMethod, request, Resource.class);
 		} catch (Exception e) {
-			throw new RestClientException(e);
+			throw new HttpClientInvocationException(e);
 		}
-
-		if (response == null) {
-			throw new RestClientException("Invocation returned a null Response");
-		}
-
-		return response;
 	}
 
 	private static final String APPLICATION_FORM_URLENCODED_MEDIA_TYPE = MediaType.APPLICATION_FORM_URLENCODED
@@ -167,53 +167,6 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 					.orElse(null);
 		}
 		return Optional.empty();
-	}
-
-	private static class ParameterizedResponseType<T> extends ParameterizedTypeReference<T> {
-
-		final ResponseType<T> responseType;
-
-		protected ParameterizedResponseType(ResponseType<T> responseType) {
-			this.responseType = responseType;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.core.ParameterizedTypeReference#getType()
-		 */
-		@Override
-		public Type getType() {
-			return responseType.getType();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.core.ParameterizedTypeReference#equals(java.lang.Object)
-		 */
-		@Override
-		public boolean equals(Object obj) {
-			return (this == obj || (obj instanceof ParameterizedResponseType && this.responseType.getType()
-					.equals(((ParameterizedResponseType<?>) obj).responseType.getType())));
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.core.ParameterizedTypeReference#hashCode()
-		 */
-		@Override
-		public int hashCode() {
-			return this.responseType.getType().hashCode();
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see org.springframework.core.ParameterizedTypeReference#toString()
-		 */
-		@Override
-		public String toString() {
-			return "ParameterizedResponseType<" + this.responseType.getType() + ">";
-		}
-
 	}
 
 }

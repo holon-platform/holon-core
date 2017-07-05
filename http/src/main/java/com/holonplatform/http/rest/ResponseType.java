@@ -13,14 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http;
+package com.holonplatform.http.rest;
 
 import java.lang.reflect.Type;
 
+import com.holonplatform.http.RestClient;
 import com.holonplatform.http.internal.ResponseTypeImpl;
 
 /**
- * Represents a response type
+ * Represents a response type to be obtained from a HTTP client request-response invocation.
+ * <p>
+ * Supports parameterized types, which can be declared using {@link #of(Class, Class)}.
+ * </p>
  *
  * @param <T> Actual response type
  *

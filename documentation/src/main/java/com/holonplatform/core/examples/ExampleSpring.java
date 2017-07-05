@@ -100,7 +100,7 @@ public class ExampleSpring {
 	public void restclient() throws URISyntaxException {
 		RestClient client = SpringRestClient.create(restTemplate);
 
-		String response = client.request().target(new URI("https://api.example.com")).path("/apitest").get(String.class)
+		String response = client.request().target(new URI("https://api.example.com")).path("/apitest").getForEntity(String.class)
 				.orElse(null);
 	}
 	// end::restclient[]

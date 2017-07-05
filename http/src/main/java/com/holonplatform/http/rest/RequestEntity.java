@@ -13,12 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http;
+package com.holonplatform.http.rest;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.holonplatform.http.MediaType;
+import com.holonplatform.http.RestClient;
 import com.holonplatform.http.internal.DefaultRequestEntity;
 
 /**

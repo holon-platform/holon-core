@@ -18,6 +18,7 @@ package com.holonplatform.http;
 import java.util.List;
 import java.util.Map;
 
+import com.holonplatform.http.exceptions.InvalidHttpMessageException;
 import com.holonplatform.http.internal.DefaultHttpResponse;
 
 /**
@@ -38,9 +39,12 @@ public interface HttpResponse<T> extends HttpMessage<T> {
 	/**
 	 * Get the response status as {@link HttpStatus}
 	 * @return the response HttpStatus
+	 * @throws InvalidHttpMessageException If the status code of the message does not corresponds to any of the
+	 *         {@link HttpStatus} values
 	 */
 	default HttpStatus getStatus() {
-		return HttpStatus.of(getStatusCode());
+		return HttpStatus.of(getStatusCode())
+				.orElseThrow(() -> new InvalidHttpMessageException("Unknown status code: " + getStatusCode()));
 	}
 
 	/**
