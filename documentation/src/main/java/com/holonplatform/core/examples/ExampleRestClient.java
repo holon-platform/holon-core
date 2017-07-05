@@ -34,9 +34,9 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RestClient;
-import com.holonplatform.http.RestClient.RequestDefinition;
 import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.http.rest.RestClient.RequestDefinition;
 
 @SuppressWarnings("unused")
 public class ExampleRestClient {

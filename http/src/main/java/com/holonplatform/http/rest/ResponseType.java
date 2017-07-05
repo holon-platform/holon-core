@@ -17,8 +17,7 @@ package com.holonplatform.http.rest;
 
 import java.lang.reflect.Type;
 
-import com.holonplatform.http.RestClient;
-import com.holonplatform.http.internal.ResponseTypeImpl;
+import com.holonplatform.http.internal.rest.ResponseTypeImpl;
 
 /**
  * Represents a response type to be obtained from a HTTP client request-response invocation.

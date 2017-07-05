@@ -20,8 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RestClient;
-import com.holonplatform.http.internal.DefaultRequestEntity;
+import com.holonplatform.http.internal.rest.DefaultRequestEntity;
 
 /**
  * HTTP request message entity (payload) representation.

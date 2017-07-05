@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http.internal;
+package com.holonplatform.http.internal.rest;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -22,8 +22,9 @@ import java.util.Optional;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.http.RestClient;
-import com.holonplatform.http.RestClient.Invoker;
+import com.holonplatform.http.internal.HttpLogger;
+import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.http.rest.RestClient.Invoker;
 
 /**
  * Abstract {@link RestClient} implementation.

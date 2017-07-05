@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.config.ConfigPropertyProvider;
 import com.holonplatform.core.tenancy.TenantResolver;
-import com.holonplatform.http.RestClient;
+import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.EnableBeanContext;
 import com.holonplatform.spring.EnableTenantScope;
 import com.holonplatform.spring.EnvironmentConfigPropertyProvider;

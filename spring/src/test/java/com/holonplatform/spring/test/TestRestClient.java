@@ -50,10 +50,10 @@ import org.springframework.web.client.RestTemplate;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
-import com.holonplatform.http.RestClient;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.SpringRestClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)

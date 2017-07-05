@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http;
+package com.holonplatform.http.rest;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -27,11 +27,12 @@ import java.util.Optional;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.http.CacheControl;
+import com.holonplatform.http.HttpHeaders;
+import com.holonplatform.http.HttpMethod;
+import com.holonplatform.http.MediaType;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
-import com.holonplatform.http.rest.RequestEntity;
-import com.holonplatform.http.rest.ResponseEntity;
-import com.holonplatform.http.rest.ResponseType;
 
 /**
  * HTTP REST client to build and execute client requests in order to consume responses returned.

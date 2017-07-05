@@ -34,12 +34,12 @@ import com.holonplatform.http.CacheControl;
 import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.MediaType;
-import com.holonplatform.http.RestClient.Invoker;
-import com.holonplatform.http.RestClient.RequestDefinition;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.ResponseType;
+import com.holonplatform.http.rest.RestClient.Invoker;
+import com.holonplatform.http.rest.RestClient.RequestDefinition;
 
 /**
  * Default {@link RequestDefinition} implementation.

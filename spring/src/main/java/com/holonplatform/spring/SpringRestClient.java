@@ -17,7 +17,7 @@ package com.holonplatform.spring;
 
 import org.springframework.web.client.RestTemplate;
 
-import com.holonplatform.http.RestClient;
+import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.internal.rest.RestTemplateRestClient;
 
 /**
