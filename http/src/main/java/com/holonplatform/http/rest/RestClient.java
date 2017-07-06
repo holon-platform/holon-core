@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
@@ -697,6 +698,17 @@ public interface RestClient {
 		 * @return this
 		 */
 		RequestDefinition target(URI baseUri);
+
+		/**
+		 * Set request base URI. URI template parameters are not supported, use {@link #path(String)} to add URI paths
+		 * to base uri with template parameters support.
+		 * @param baseUri Request base URI (not null)
+		 * @return this
+		 * @throws URISyntaxException If the given string violates the <code>RFC 2396</code> URI specification
+		 */
+		default RequestDefinition target(String baseUri) {
+			return target(URI.create(baseUri));
+		}
 
 		/**
 		 * Append given <code>path</code> to the request URI.
