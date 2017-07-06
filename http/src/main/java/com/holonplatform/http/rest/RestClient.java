@@ -77,7 +77,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		<T, R> ResponseEntity<T> invokeForSuccess(HttpMethod method, RequestEntity<R> requestEntity,
 				ResponseType<T> responseType);
@@ -94,7 +94,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		<T, R> Optional<T> invokeForEntity(HttpMethod method, RequestEntity<R> requestEntity,
 				ResponseType<T> responseType);
@@ -134,7 +134,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> getForEntity(Class<T> responseType) {
 			return invokeForEntity(HttpMethod.GET, null, ResponseType.of(responseType));
@@ -150,7 +150,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> getForEntity(ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.GET, null, responseType);
@@ -162,7 +162,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default InputStream getForStream() {
 			return invokeForEntity(HttpMethod.GET, null, ResponseType.of(InputStream.class))
@@ -179,7 +179,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> List<T> getAsList(Class<T> responseType) {
 			final ResponseType<List<T>> rt = ResponseType.of(responseType, List.class);
@@ -243,7 +243,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> postForEntity(RequestEntity<?> entity, Class<T> responseType) {
 			return invokeForEntity(HttpMethod.POST, entity, ResponseType.of(responseType));
@@ -260,7 +260,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> postForEntity(RequestEntity<?> entity, ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.POST, entity, responseType);
@@ -274,7 +274,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default Optional<URI> postForLocation(RequestEntity<?> entity) {
 			return invokeForSuccess(HttpMethod.POST, entity, ResponseType.of(Void.class)).getLocation();
@@ -337,7 +337,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> putForEntity(RequestEntity<?> entity, Class<T> responseType) {
 			return invokeForEntity(HttpMethod.PUT, entity, ResponseType.of(responseType));
@@ -354,7 +354,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> putForEntity(RequestEntity<?> entity, ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.PUT, entity, responseType);
@@ -388,7 +388,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> ResponseEntity<T> patch(RequestEntity<?> entity, Class<T> responseType) {
 			return invoke(HttpMethod.PATCH, entity, ResponseType.of(responseType));
@@ -404,7 +404,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> ResponseEntity<T> patch(RequestEntity<?> entity, ResponseType<T> responseType) {
 			return invoke(HttpMethod.PATCH, entity, responseType);
@@ -421,7 +421,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> patchForEntity(RequestEntity<?> entity, Class<T> responseType) {
 			return invokeForEntity(HttpMethod.PATCH, entity, ResponseType.of(responseType));
@@ -438,7 +438,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> patchForEntity(RequestEntity<?> entity, ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.PATCH, entity, responseType);
@@ -458,6 +458,18 @@ public interface RestClient {
 		 */
 		default ResponseEntity<Void> delete() {
 			return invoke(HttpMethod.DELETE, null, ResponseType.of(Void.class));
+		}
+
+		/**
+		 * Invoke the request using <code>DELETE</code> method. If the returned response is not a <em>success</em>
+		 * response (i.e. with a <code>2xx</code> status code), a {@link UnsuccessfulResponseException} is thrown.
+		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
+		 *         channel)
+		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
+		 */
+		default void deleteOrFail() {
+			invokeForSuccess(HttpMethod.DELETE, null, ResponseType.of(Void.class));
 		}
 
 		/**
@@ -493,7 +505,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> deleteForEntity(Class<T> responseType) {
 			return invokeForEntity(HttpMethod.DELETE, null, ResponseType.of(responseType));
@@ -509,7 +521,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> deleteForEntity(ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.DELETE, null, responseType);
@@ -564,7 +576,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> optionsForEntity(Class<T> responseType) {
 			return invokeForEntity(HttpMethod.OPTIONS, null, ResponseType.of(responseType));
@@ -580,7 +592,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> optionsForEntity(ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.OPTIONS, null, responseType);
@@ -635,7 +647,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> traceForEntity(Class<T> responseType) {
 			return invokeForEntity(HttpMethod.TRACE, null, ResponseType.of(responseType));
@@ -651,7 +663,7 @@ public interface RestClient {
 		 * @throws HttpClientInvocationException Internal invocation failure (for example, an I/O error on communication
 		 *         channel or expected and actual payload type mismatch)
 		 * @throws UnsuccessfulResponseException In case the status code of the response returned by the server is not a
-		 *         successful type status code, i.e. it is not a <code>2xx</code> status type
+		 *         successful type status code, i.e. it is not a <code>2xx</code> status code
 		 */
 		default <T> Optional<T> traceForEntity(ResponseType<T> responseType) {
 			return invokeForEntity(HttpMethod.TRACE, null, responseType);
