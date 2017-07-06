@@ -62,6 +62,7 @@ import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.spring.EnableBeanContext;
 import com.holonplatform.spring.SpringRestClient;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -69,6 +70,7 @@ import com.holonplatform.spring.SpringRestClient;
 public class TestRestClient extends JerseyTest {
 
 	@Configuration
+	@EnableBeanContext
 	static class Config {
 
 		@Bean
@@ -284,6 +286,17 @@ public class TestRestClient extends JerseyTest {
 	}
 
 	@Test
+	public void testFactory() {
+
+		final RestClient client = RestClient.create().defaultTarget(getBaseUri());
+
+		TestData td = client.request().path("test").path("data/{id}").resolve("id", 1).getForEntity(TestData.class)
+				.orElse(null);
+		assertNotNull(td);
+		assertEquals(1, td.getCode());
+	}
+
+	@Test
 	public void testMultipleReads() {
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
 
@@ -301,19 +314,19 @@ public class TestRestClient extends JerseyTest {
 		assertNotNull(td);
 
 	}
-	
+
 	@Test
 	public void testStream() throws IOException {
-		
+
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
-		
+
 		@SuppressWarnings("resource")
 		InputStream s = client.request().path("test").path("stream").getForStream();
 		assertNotNull(s);
-		
+
 		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
 		assertNotNull(s);
-		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 } , bytes));
+		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
 	}
 
 	@Test

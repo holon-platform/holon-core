@@ -26,6 +26,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -34,6 +35,7 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.MediaType;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.exceptions.RestClientCreationException;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 
 /**
@@ -982,5 +984,75 @@ public interface RestClient {
 	 * @return Request definition builder
 	 */
 	RequestDefinition request();
+
+	// Builders
+
+	/**
+	 * Create a new {@link RestClient} instance using default {@link ClassLoader} and default implementation, setting
+	 * given <code>baseUri</code> as default {@link RestClient} target, which will be used as base URI for every request
+	 * configured using {@link #request()}, if not overridden using {@link RequestDefinition#target(URI)}.
+	 * @param baseUri The base target URI of the returned {@link RestClient}
+	 * @return A new {@link RestClient} instance
+	 */
+	static RestClient forTarget(String baseUri) {
+		return create().defaultTarget(URI.create(baseUri));
+	}
+
+	/**
+	 * Create a new {@link RestClient} instance using default {@link ClassLoader} and default implementation, setting
+	 * given <code>baseUri</code> as default {@link RestClient} target, which will be used as base URI for every request
+	 * configured using {@link #request()}, if not overridden using {@link RequestDefinition#target(URI)}.
+	 * @param baseUri The base target URI of the returned {@link RestClient}
+	 * @return A new {@link RestClient} instance
+	 */
+	static RestClient forTarget(URI baseUri) {
+		return create().defaultTarget(baseUri);
+	}
+
+	/**
+	 * Create a new {@link RestClient} instance using default {@link ClassLoader} and default implementation, if
+	 * available. If more than one {@link RestClient} implementation is found using given ClassLoader, the one returned
+	 * by the {@link RestClientFactory} with the higher priority is returned.
+	 * @return A new {@link RestClient} instance
+	 * @throws RestClientCreationException If a {@link RestClient} implementation is not available or a instance
+	 *         creation error occurred
+	 */
+	static RestClient create() {
+		return create(null, ClassUtils.getDefaultClassLoader());
+	}
+
+	/**
+	 * Create a new {@link RestClient} instance using given <code>classLoder</code> and default implementation, if
+	 * available. If more than one {@link RestClient} implementation is found using given ClassLoader, the one returned
+	 * by the {@link RestClientFactory} with the higher priority is returned.
+	 * @return A new {@link RestClient} instance
+	 * @throws RestClientCreationException If a {@link RestClient} implementation is not available or a instance
+	 *         creation error occurred
+	 */
+	static RestClient create(ClassLoader classLoader) {
+		return create(null, classLoader);
+	}
+
+	/**
+	 * Create a new {@link RestClient} instance using default {@link ClassLoader} and the implementation whith given
+	 * fully qualified class name.
+	 * @return A new {@link RestClient} instance
+	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
+	 *         is not available or a instance creation error occurred
+	 */
+	static RestClient create(String fullyQualifiedClassName) {
+		return create(fullyQualifiedClassName, ClassUtils.getDefaultClassLoader());
+	}
+
+	/**
+	 * Create a new {@link RestClient} instance using given <code>classLoder</code> and the implementation whith given
+	 * fully qualified class name.
+	 * @return A new {@link RestClient} instance
+	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
+	 *         is not available or a instance creation error occurred
+	 */
+	static RestClient create(String fullyQualifiedClassName, ClassLoader classLoader) {
+		return RestClientFactoryRegistry.INSTANCE.createRestClient(fullyQualifiedClassName, classLoader);
+	}
 
 }

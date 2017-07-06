@@ -46,7 +46,15 @@
 			<artifactId>spring-boot-autoconfigure</artifactId>
 			<version>${spring.boot.version}</version>
 		</dependency>
-		
+
+		<!-- Optional Spring web -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+			<optional>true</optional>
+		</dependency>
+
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
