@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
@@ -704,7 +703,6 @@ public interface RestClient {
 		 * to base uri with template parameters support.
 		 * @param baseUri Request base URI (not null)
 		 * @return this
-		 * @throws URISyntaxException If the given string violates the <code>RFC 2396</code> URI specification
 		 */
 		default RequestDefinition target(String baseUri) {
 			return target(URI.create(baseUri));
@@ -1037,6 +1035,7 @@ public interface RestClient {
 	 * Create a new {@link RestClient} instance using given <code>classLoder</code> and default implementation, if
 	 * available. If more than one {@link RestClient} implementation is found using given ClassLoader, the one returned
 	 * by the {@link RestClientFactory} with the higher priority is returned.
+	 * @param classLoader The {@link ClassLoader} to use
 	 * @return A new {@link RestClient} instance
 	 * @throws RestClientCreationException If a {@link RestClient} implementation is not available or a instance
 	 *         creation error occurred
@@ -1048,6 +1047,7 @@ public interface RestClient {
 	/**
 	 * Create a new {@link RestClient} instance using default {@link ClassLoader} and the implementation whith given
 	 * fully qualified class name.
+	 * @param fullyQualifiedClassName The {@link RestClient} implementation fully qualified class name to obtain
 	 * @return A new {@link RestClient} instance
 	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
 	 *         is not available or a instance creation error occurred
@@ -1059,6 +1059,8 @@ public interface RestClient {
 	/**
 	 * Create a new {@link RestClient} instance using given <code>classLoder</code> and the implementation whith given
 	 * fully qualified class name.
+	 * @param fullyQualifiedClassName The {@link RestClient} implementation fully qualified class name to obtain
+	 * @param classLoader The {@link ClassLoader} to use
 	 * @return A new {@link RestClient} instance
 	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
 	 *         is not available or a instance creation error occurred
