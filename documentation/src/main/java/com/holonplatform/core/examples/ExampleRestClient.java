@@ -20,6 +20,7 @@ import static com.holonplatform.core.property.PathProperty.create;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -31,30 +32,47 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.http.CacheControl;
 import com.holonplatform.http.HttpHeaders;
-import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.MediaType;
+import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
+import com.holonplatform.http.rest.ResponseEntity;
+import com.holonplatform.http.rest.ResponseType;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.http.rest.RestClient.RequestDefinition;
 
 @SuppressWarnings("unused")
 public class ExampleRestClient {
 
+	public void creation() throws URISyntaxException {
+		// tag::creation[]
+		// Create a RestClient using the default available implementation for current ClassLoader
+		RestClient client = RestClient.create();
+
+		// Create a RestClient using a specific implementation class name
+		client = RestClient.create("com.holonplatform.jaxrs.client.JaxrsRestClient");
+
+		// Create a RestClient using the default available implementation and set a default base URI
+		client = RestClient.forTarget("https://host/api");
+		// end::creation[]
+	}
+
 	public void configuration() throws URISyntaxException {
 		// tag::configuration1[]
-		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
+		RestClient client = RestClient.create();
 
-		RequestDefinition request = client.request().target(new URI("https://rest.api.example")); // <1>
-		request = request.path("/apimethod"); // <2>
+		RequestDefinition request = client.request().target(URI.create("https://rest.api.example")); // <1>
+		request = request.path("apimethod"); // <2>
+		request = request.path("subpath"); // <3>
 		// end::configuration1[]
 
 		// tag::configuration2[]
-		client.request().resolve("templateVar1", "value1").resolve("templateVar2", 123); // <1>
+		client.request().target("https://rest.api.example").path("/data/{name}/{id}").resolve("name", "test")
+				.resolve("id", 123); // <1>
 
 		Map<String, Object> templates = new HashMap<>(1);
-		templates.put("templateVar3", "testValue");
-		request = client.request().resolve(templates); // <2>
+		templates.put("id", "testValue");
+		request = client.request().target("https://rest.api.example").path("/test/{id}").resolve(templates); // <2>
 		// end::configuration2[]
 
 		// tag::configuration3[]
@@ -86,73 +104,83 @@ public class ExampleRestClient {
 
 	public void defaults() throws URISyntaxException {
 		// tag::defaults[]
-		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
+		RestClient client = RestClient.create();
 
 		client.defaultTarget(new URI("https://rest.api.example")); // <1>
 
 		client.withDefaultHeader(HttpHeaders.ACCEPT_LANGUAGE, "en-CA"); // <2>
+		client.withDefaultHeader(HttpHeaders.ACCEPT_CHARSET, "utf-8"); // <3>
 		// end::defaults[]
 	}
 
 	static class TestData {
 
-		private int code;
-		private String value;
-
-		public TestData() {
-			super();
-		}
-
-		public TestData(int code, String value) {
-			super();
-			this.code = code;
-			this.value = value;
-		}
-
-		public int getCode() {
-			return code;
-		}
-
-		public void setCode(int code) {
-			this.code = code;
-		}
-
-		public String getValue() {
-			return value;
-		}
-
-		public void setValue(String value) {
-			this.value = value;
-		}
-
 	}
 
-	public void invocation() throws URISyntaxException {
-		// tag::invocation[]
-		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
+	public void methods() {
+		// tag::post1[]
+		ResponseEntity<Void> response1 = RestClient.forTarget("https://rest.api.example/testpost").request()
+				.post(RequestEntity.json(new TestData()));
 
-		HttpResponse<String> response = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.accept(MediaType.TEXT_PLAIN).get(String.class); // <1>
+		ResponseEntity<TestData> response2 = RestClient.forTarget("https://rest.api.example/testpost").request()
+				.post(RequestEntity.json(new TestData()), TestData.class);
 
-		Optional<String> responseValue = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.accept(MediaType.TEXT_PLAIN).getForEntity(String.class); // <2>
+		ResponseEntity<List<TestData>> response3 = RestClient.forTarget("https://rest.api.example/testpost").request()
+				.post(RequestEntity.json(new TestData()), ResponseType.of(TestData.class, List.class));
+		// end::post1[]
 
-		List<TestData> responseValues = client.request().target(new URI("https://rest.api.example")).path("test/{id}")
-				.resolve("id", 1).accept(MediaType.APPLICATION_JSON).getAsList(TestData.class); // <3>
+		// tag::get1[]
+		try {
 
-		client = client.defaultTarget(new URI("https://rest.api.example"));
+			Optional<TestData> data = RestClient.forTarget("https://rest.api.example/testget").request()
+					.getForEntity(TestData.class);
 
-		HttpResponse<Void> postResponse = client.request().path("/apimethod")
-				.post(RequestEntity.form(RequestEntity.formBuilder().set("one", "1").set("two", "1").build())); // <4>
-		HttpStatus status = postResponse.getStatus(); // <5>
-		Optional<URI> location = postResponse.getLocation(); // <6>
+			final ResponseType<List<TestData>> responseType = ResponseType.of(TestData.class, List.class);
+			List<TestData> dataList = RestClient.forTarget("https://rest.api.example/testgetlist").request()
+					.getForEntity(responseType).orElse(Collections.emptyList());
 
-		HttpResponse<TestData> dataResponse = client.request().path("postdata").queryParameter("id", 1)
-				.post(RequestEntity.EMPTY, TestData.class); // <7>
+		} catch (UnsuccessfulResponseException e) {
+			// got a response with a status code different from 2xx
+			int httpStatusCode = e.getStatusCode();
+			e.getStatus().ifPresent(status -> System.err.println(status.getDescription()));
+			ResponseEntity<?> theResponse = e.getResponse();
+		}
+		// end::get1[]
+	}
 
-		HttpResponse<Void> putResponse = client.request().path("data/save")
-				.put(RequestEntity.json(new TestData(7, "testPost"))); // <8>
-		// end::invocation[]
+	@SuppressWarnings("rawtypes")
+	public void request() {
+		// tag::request[]
+		RequestEntity<String> request1 = RequestEntity.text("test"); // <1>
+
+		RequestEntity<TestData> request2 = RequestEntity.json(new TestData()); // <2>
+
+		RequestEntity request3 = RequestEntity
+				.form(RequestEntity.formBuilder().set("value1", "one").set("value2", "a", "b").build()); // <3>
+		// end::request[]
+	}
+
+	public void restype() {
+		// tag::restype[]
+		ResponseType<List<TestData>> responseType = ResponseType.of(TestData.class, List.class);
+		// end::restype[]
+	}
+
+	public void response() {
+		// tag::response[]
+		ResponseEntity<TestData> response = RestClient.forTarget("https://rest.api.example/testget").request()
+				.accept(MediaType.APPLICATION_JSON).get(TestData.class); // <1>
+
+		HttpStatus status = response.getStatus(); // <2>
+
+		Optional<TestData> entity = response.getPayload(); // <3>
+
+		Optional<String> asString = response.as(String.class); // <4>
+
+		String header = response.getHeaderValue(HttpHeaders.LAST_MODIFIED).orElse(null); // <5>
+
+		long contentLength = response.getContentLength().orElse(-1L); // <6>
+		// end::response[]
 	}
 
 	// tag::properties[]
@@ -161,21 +189,16 @@ public class ExampleRestClient {
 
 	static final PropertySet<?> PROPERTIES = PropertySet.of(CODE, VALUE);
 
-	public void propertiesInvocation() throws URISyntaxException {
-		RestClient client = getRestClient(); // use one of the available implementations to obtain a RestClient instance
+	public void propertiesInvocation() {
+		RestClient client = RestClient.create();
 
-		PropertyBox box = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
-				.propertySet(PROPERTIES).getForEntity(PropertyBox.class).orElse(null); // <1>
+		PropertyBox box = client.request().target("https://rest.api.example").path("/apimethod").propertySet(PROPERTIES)
+				.getForEntity(PropertyBox.class).orElse(null); // <1>
 
-		List<PropertyBox> boxes = client.request().target(new URI("https://rest.api.example")).path("/apimethod")
+		List<PropertyBox> boxes = client.request().target("https://rest.api.example").path("/apimethod")
 				.propertySet(PROPERTIES).getAsList(PropertyBox.class); // <2>
 
 	}
 	// end::properties[]
-
-	@SuppressWarnings("static-method")
-	private RestClient getRestClient() {
-		return null;
-	}
 
 }

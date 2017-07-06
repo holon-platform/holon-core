@@ -5,7 +5,7 @@ The Holon platform provides an implementation-independent representation of a cl
 
 The client provides a fluent _builder_ to compose and execute a RESTful service invocation, using _template_ variable substitution, supporting base authentication methods, common headers configuration and request entities definition.
 
-The client is represented by the link:{apidir}/com/holonplatform/http/RestClient.html[RestClient^] interface and its main features are:
+The client is represented by the link:{apidir}/com/holonplatform/http/rest/RestClient.html[RestClient^] interface and its main features are:
 
 * Support for a *_default_* *target request base URI*
 * Support for *default request* *_headers_*
@@ -21,9 +21,48 @@ The client is represented by the link:{apidir}/com/holonplatform/http/RestClient
 * Perform the request invocation with a specific HTTP _method_ providing a request message entity
 * Convenience methods to perform most common invocations using one of the `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`, `TRACE` or `HEAD` methods
 
+==== Obtain a `RestClient` instance
+
+Concrete `RestClient` implementations are obtained from a link:{apidir}/com/holonplatform/http/rest/RestClientFactory.html[RestClientFactory^], registered using Java service extensions through a `com.holonplatform.http.rest.RestClientFactory` file under the `META-INF/services` folder.
+
+A `RestClient` instance can be obtained using one of the `create(...)` methods provided by the interface, either specifying the _fully qualified_ class name of the `RestClient` implementation to obtain or using the default implementation according to the available `RestClientFactory` within the current `ClassLoader` (a specific `ClassLoader` can be used instead of the current one).
+
+NOTE: If more than one `RestClientFactory` is bound to the same `RestClient` implementation type, or if more than one `RestClientFactory` is available in the `ClassLoader` when the implementation class is not specified, the `RestClientFactory` to use to build the `RestClient` instance is selected according to the factory priority level, which can be specified using the `Priority` annotation, if available.
+
+TIP: The `forTarget(...)` static methods of the `RestClient` interface can be used as shorters to create a `RestClient` using the default implementation and setting a default base *URI* to use for the client requests.
+
+[source, java]
+.RestClient creation examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=creation,indent=0]
+----
+
+[[Available implementations]]
+===== Available implementations
+
+The `RestClient` implementations provided by the Holon Platform are are:
+
+* A *JAX-RS* based implementation, using a JAX-RS `Client` to perform invocations, available from the holon-jaxrs.html[Holon platform JAX-RS module];
+* A link:holon-core.html#RestTemplateClient[Spring] based implementation, using a Spring `RestTemplate` to perform invocations;
+
+==== Configure defaults
+
+A `RestClient` instance supports some request *default* configuration attributes:
+
+* A *default target*, i.e. the default base URI which will be used for all the requests performed with the `RestClient`, unless overridden using the specific request configuration `target` method.
+* A set of *default headers* to be included in all the requests performed with the `RestClient`.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=defaults,indent=0]
+----
+<1> Set the default target request base URI, which will be used as target URI for every request configured using `request()`, if not overridden using `target(URI)`. 
+<2> Add a default request header which will be automatically added to every invocation request message
+<3> Add another default request header
+
 ==== Build a request
 
-To build a client request, the link:{apidir}/com/holonplatform/http/RestClient.RequestDefinition.html[RequestDefinition^] is used, which represents both a _fluent_ builder to configure the request message and an link:{apidir}/com/holonplatform/http/RestClient.Invocation.html[Invocation^] to perform the actual invocation and obtain a response.
+To build a client request, the link:{apidir}/com/holonplatform/http/rest/RestClient.RequestDefinition.html[RequestDefinition^] is used, which represents both a _fluent_ builder to configure the request message and an link:{apidir}/com/holonplatform/http/rest/RestClient.Invocation.html[Invocation^] to perform the actual invocation and obtain a response.
 
 ==== Configure the request
 
@@ -31,14 +70,24 @@ The request can be configured using the `RequestDefinition` builder methods as d
 
 ===== Request URI
 
+The request URI can be composed using:
+
+* A request *target*, i.e. the base URI of the request. If a _default_ request target was configured for the `RestClient` instance, it will be overriden by the specific request target.
+* One ore more request *path*s, which will be appended to the base request target URI, adding _slash_ characters to separate them from one another, if necessary.
+
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=configuration1,indent=0]
 ----
 <1> Set the request _target_, i.e. the base request URI
 <2> Set the request _path_, which will be appended to the base request URI
+<3> Append one more _path_ to the request URI. The actual URI will be: `https://rest.api.example/apimethod/subpath`
 
 ===== URI _template_ variable substitution values
+
+The `RestClient` supports URI _template_ variables substitution through the `resolve(...)` method. 
+
+IMPORTART: URI templates variables substitution is only supported for the request URI components specified as `path(...)` elements, not for the `target(...)` base URI part.
 
 [source, java]
 ----
@@ -49,33 +98,39 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[ta
 
 ===== URI _query_ parameters
 
+The `RestClient` supports URI _query parameters_ specification, single or multi value, through the `queryParameter(...)` methods. 
+
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=configuration3,indent=0]
 ----
 
-===== Configure request headers
+===== Request headers
+
+HTTP *headers* can be added to the request using the generic `header(String name, String... values)` method (supporting single or multiple header values) or a set of frequently used headers convenience setter methods, such as `accept`, `acceptLanguage` (supporting Java Locale as arguments) and `cacheControl`.
+
+TIP: The link:{apidir}/com/holonplatform/http/HttpHeaders.html[HttpHeaders^] interface can be used to refer to HTTP *header names* as constants.
+
+TIP: The link:{apidir}/com/holonplatform/http/MediaType.html[MediaType^] enumeration can be used for the `Accept` header value using the `accept` header setter method.
+
+TIP: The link:{apidir}/com/holonplatform/http/CacheControl.html[CacheControl^] interface provides a fluent builder to build a `Cache-Control` header value and setting it for the request using the `cacheControl` header setter method.
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=configuration4,indent=0]
 ----
 
-===== Configure authorization headers
+===== Authorization headers
+
+The `RestClient` provides two convenience request builder methods to set a request `Authorization` header using:
+
+* The `Basic` authorization scheme, providing a _username_ and a _password_, using the `authorizationBasic` method.
+* The `Bearer` authorization scheme, providing a _token_, , using the `authorizationBearer` method.
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=configuration5,indent=0]
 ----
-
-==== Configure defaults
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=defaults,indent=0]
-----
-<1> Set the default target request base URI, which will be used as target URI for every request configured using `request()`, if not overridden using `target(URI)`. 
-<2> Add a default request header which will be automatically added to every invocation request message
 
 ==== Invoke the request and obtain a response
 
@@ -85,7 +140,7 @@ The `Invocation` interface provides a generic invocation method:
 
 [source, java]
 ----
-<T, R> HttpResponse<T> invoke(HttpMethod method, RequestEntity<R> requestEntity, ResponseType<T> responseType)
+<T, R> ResponseEntity<T> invoke(HttpMethod method, RequestEntity<R> requestEntity, ResponseType<T> responseType)
 ----
 
 This method acts as follows:
@@ -93,31 +148,93 @@ This method acts as follows:
 * Accept the `HttpMethod` to use to perform the request
 * Accept a `RequestEntity` to provide an optional request message payload
 * Accept a `ResponseType` to declare wich type of response _payload_ is expected, if any
-* It returns a `HttpResponse` object, which represents the response message, including the HTTP status code and an optional reponse payload
-
-In most cases, it is easier and faster to use other methods made available by the interface. Each method is relative to a specific request _method_ and it is named accordingly. More than one method version is provided for each request method, providing the most suitable parameters and response types for for the most common situations.
+* It returns a `ResponseEntity` object, which represents the response message entity, including the HTTP status code and an optional reponse payload, which can be unmarshalled as a Java object
 
 WARNING: For non textual request or response payload types, any marshalling/unmarshalling strategy and implementation must be provided by the concrete `RestClient`. See the specific `RestClient` implementation documentation for additional informations.
 
+==== Request invocation methods
+
+In most cases, it is easier and faster to use other methods made available by the interface. Each method is relative to a specific request _method_ and it is named accordingly. More than one method version is provided for each request method, providing the most suitable parameters and response types for for the most common situations.
+
+For each HTTP request method (apart from the `HEAD` method), the `RestClient` interface makes available a set of invocation methods organized as follows:
+
+* A set of methods to optionally provide a *request entity* and to obtain a `ResponseEntity` (which provides the HTTP status code, the response header and the response payload). If the response is expected to contain an _entity_ payload which has to be deserialized into a Java object, the *response type* can be specified, either as a simple or parametrized Java class.
+
 [source, java]
-.Invocation examples
+.Examples using the `POST` method
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=invocation,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=post1,indent=0]
 ----
-<1> `GET` request expecting a String payload type `HttpResponse`
-<2> `GET` request to obtain directly the response payload, if available
-<3> `GET` request to obtain a *list* of unmarshalled JSON object from the response payload
-<4> `POST` request using a builder to create a `application/x-www-form-urlencoded` request entity
-<5> Get the response HTTP status
-<6> Get the response `Location` header value, if present
-<7> `POST` request with an empty request payload expecting a `TestData` response payload type
-<8> `PUT` request providing an `application/json` request entity type
+
+* A set of method to directly obtain the deserialized response _entity_, named with the `ForEntity` suffix. This methods expects a _successful_ response (i.e. a response with a `2xx` HTTP status code), otherwise throwing a `UnsuccessfulResponseException`, which can be inspected to obtain the response status code and the response itself. This kind of methods returns an `Optional`, which will be empty for empty responses.
+
+[source, java]
+.Examples using the `GET` method
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=get1,indent=0]
+----
+
+A set of convenience methods are provided for frequent needs and situations, for example:
+
+* A `getForStream` method to obtain a response `InputStream`.
+* A `getAsList` method, specifying the list elements type, to obtain a response entity content as a `List` of deserialized Java objects.
+* A `postForLocation` to _post_ a request entity and obtain the `Location` response header value as a `URI`.
+
+==== Request entity
+
+The link:{apidir}/com/holonplatform/http/rest/RequestEntity.html[RequestEntity^] interface can be used to provide a _request entity_ to the `RestClient` invocation methods, i.e. a request message _payload_ as a Java object and a _media type_ to set as request `Content-Type` header.
+
+NOTE: Depending on the `RestClient` implementation used, you must ensure the request media type is supported and suitable message body converters are available to deal with the Java object type and the media type of the request entity.
+
+The `RequestEntity` interface provides a set of convenience static methods to build a request entity using the most common media types, such a `text/plain`, `application/json`, `application/xml` and `application/x-www-form-urlencoded` (also providing a fluent form data builder method).
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=request,indent=0]
+----
+<1> Build a `text/plain` type request entity
+<2> Build a `application/json` type request entity
+<3> Build a `application/x-www-form-urlencoded` type request entity, using the `formBuilder` method to build form data map
+
+==== Response type
+
+The link:{apidir}/com/holonplatform/http/rest/ResponseType.html[ResponseType^] interface can be used to provide the expected response entity type to the `RestClient` invocation methods.
+
+In addition to the simple Java class type, a _parametrized_ type can be declared to use Java generic types. For example, to declare a `List<TestData>` response type the following code can be used:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=restype,indent=0]
+----
+
+==== Response entity
+
+The link:{apidir}/com/holonplatform/http/rest/ResponseEntity.html[ResponseEntity^] interface is used by `RestClient` to represent the _response entity_ obtained as invocation result.
+
+The `ResponseEntity` interface provides the *HTTP status code*, the *response headers* (with a set of convenience methods to inspect common HTTP headers) and a method to obtain the *response entity* (the message payload) as a Java object of the type which was expected as invocation result.
+
+The `RequestEntity.EMPTY` constant cna be used to provide and empty request entity.
+
+NOTE: Depending on the `RestClient` implementation used, you must ensure the response media type is supported and suitable message body converters are available to deal with the Java object type and the media type of the response entity.
+
+The `ResponseEntity` interface, in addition to the `getPayload()` method to obtain the Java entity object of the expected response entity type, provides methods (`as(..)`) to unmarshall the response body in an arbitrary java type, if supported by the underlying `RestClient` implementation.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=response,indent=0]
+----
+<1> Perform a `GET` request, setting the `Accept` header as `application/json` and declaring the `TestData` class as expected response entity Java type
+<2> Get the response status
+<3> Get the response entity payload as a Java object of the expected `TestData` type
+<4> Get the response entity payload as a `String`
+<5> Get the response `Last-Modified` header value
+<6> Get the response `Content-Length` header value as a `long`
 
 ==== `Property` and `PropertyBox` support
 
-The REST client `Invocation` interface provides by default methods to handle request and response messages which involves link:core.html#PropertyBox[PropertyBox] objects as payload. Any concrete `RestClient` implementation must support this functionality.
+The REST client `Invocation` interface provides methods to handle request and response messages which involves link:core.html#PropertyBox[PropertyBox] objects as payload.
 
-Tipically, the `PropertyBox` instances which deliver the values of a set of `Property` are automatically marshsalled/unmarshsalled using the *JSON* format.
+Tipically, a `PropertyBox` instance is marshsalled/unmarshsalled using the *JSON* format. The `PropertyBox` JSON serialization and deserialization support is provided by the holon-json.html[Holon platform JSON module], both for JAX-RS (_Jersey_ and _RestEasy_) and Spring _RestTemplate_. The `PropertyBox` JSON support is automatically setted up when the Holon platform JSON module is available in classpath.
 
 The _property set_ which is involved in the request-response cycle can be configured in request definition using the `propertySet(...)` methods.
 
@@ -128,11 +245,3 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[ta
 ----
 <1> `GET` request for a `PropertyBox` response using `PROPERTIES` property set
 <2> `GET` request for a list of `PropertyBox` response type using `PROPERTIES` property set
-
-[[Available implementations]]
-==== Available implementations
-
-Currently `RestClient` available implementations are:
-
-. A link:holon-jaxrs.html[JAX-RS] based implementation, using a JAX-RS `Client` to perform invocations;
-. A link:holon-core.html#RestTemplateClient[Spring] based implementation, using a Spring `RestTemplate` to perform invocations;
