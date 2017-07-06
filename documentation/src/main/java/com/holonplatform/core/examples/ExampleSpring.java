@@ -15,7 +15,6 @@
  */
 package com.holonplatform.core.examples;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
@@ -98,10 +97,14 @@ public class ExampleSpring {
 	RestTemplate restTemplate;
 
 	public void restclient() throws URISyntaxException {
+
+		// Create a SpringRestClient
 		RestClient client = SpringRestClient.create(restTemplate);
 
-		String response = client.request().target(new URI("https://api.example.com")).path("/apitest").getForEntity(String.class)
-				.orElse(null);
+		// obtain the RestClient using default creation methods
+		client = RestClient.create();
+
+		client = RestClient.create(SpringRestClient.class.getName());
 	}
 	// end::restclient[]
 
