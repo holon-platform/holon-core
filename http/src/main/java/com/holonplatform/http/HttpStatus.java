@@ -326,6 +326,15 @@ public enum HttpStatus {
 		return description;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return getCode() + " - " + getDescription();
+	}
+
 	/**
 	 * Get the {@link HttpStatus} which corresponds to given status code, if any
 	 * @param code Status code
