@@ -101,6 +101,15 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.http.rest.ResponseEntity#close()
+	 */
+	@Override
+	public void close() {
+		// noop
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.messaging.Message#getPayload()
 	 */
 	@Override

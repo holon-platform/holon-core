@@ -15,6 +15,7 @@
  */
 package com.holonplatform.http.internal;
 
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
@@ -49,6 +51,8 @@ import com.holonplatform.http.rest.RestClient.RequestDefinition;
 public class DefaultRequestDefinition implements RequestDefinition {
 
 	private static final long serialVersionUID = 1100967972240536993L;
+
+	private final static Logger LOGGER = HttpLogger.create();
 
 	/**
 	 * Base request URI
@@ -452,6 +456,14 @@ public class DefaultRequestDefinition implements RequestDefinition {
 			return response.getPayload();
 		} catch (Exception e) {
 			throw new HttpClientInvocationException(e);
+		} finally {
+			if (responseType != null && InputStream.class != responseType.getType()) {
+				try {
+					response.close();
+				} catch (Exception e) {
+					LOGGER.debug(() -> "Failed to close the response", e);
+				}
+			}
 		}
 	}
 

@@ -51,4 +51,11 @@ public interface ResponseEntity<T> extends HttpResponse<T> {
 	 */
 	<E> Optional<E> as(ResponseType<E> entityType);
 
+	/**
+	 * If supported by the underlying implementation, close the message entity input stream (if available and open) as
+	 * well as releases any other resources associated with the response.
+	 * @throws HttpEntityProcessingException If there is an error closing the response
+	 */
+	void close();
+
 }
