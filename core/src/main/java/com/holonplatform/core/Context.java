@@ -119,6 +119,19 @@ public interface Context {
 	}
 
 	/**
+	 * Shortcut method to obtain a {@link Context} resource using the <code>resourceType</code> class name as resource
+	 * key and given <code>classLoader</code>.
+	 * @param resourceType Resource type (not null)
+	 * @param classLoader ClassLoader to use. If <code>null</code>, the default ClassLoader is used.
+	 * @param <T> Resource type
+	 * @return Optional resource instance, empty if not available from context
+	 */
+	default <T> Optional<T> resource(Class<T> resourceType, ClassLoader classLoader) {
+		ObjectUtils.argumentNotNull(resourceType, "Context resource type must be not null");
+		return resource(resourceType.getName(), resourceType, classLoader);
+	}
+
+	/**
 	 * Gets a registered {@link ContextScope} with the given <code>name</code> and bound to given
 	 * <code>classLoader</code>.
 	 * @param name Scope name (not null)
