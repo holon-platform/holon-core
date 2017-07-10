@@ -17,6 +17,7 @@ package com.holonplatform.auth.jwt;
 
 import java.io.Serializable;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Optional;
 
 import com.holonplatform.auth.Authentication;
@@ -143,6 +144,15 @@ public interface JwtConfiguration extends Serializable {
 		 * @return this
 		 */
 		Builder sharedKey(byte[] sharedKey);
+
+		/**
+		 * Set JWT signing shared key to use with symmetric signing algorithms (such as HMAC)
+		 * @param sharedKeyBase64encoded the key (Base64 encoded) to set
+		 * @return this
+		 */
+		default Builder sharedKeyBase64(String sharedKeyBase64encoded) {
+			return sharedKey(Base64.getDecoder().decode(sharedKeyBase64encoded));
+		}
 
 		/**
 		 * Set JWT signing public key to use with asymmetric signing algorithms (such as RSA)
