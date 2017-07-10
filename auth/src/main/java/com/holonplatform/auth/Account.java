@@ -16,7 +16,9 @@
 package com.holonplatform.auth;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
@@ -166,6 +168,16 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @return this
 		 */
 		Builder permissionStrings(Collection<String> permissions);
+
+		/**
+		 * Set permissions granted to Account using String representations. Any previously setted Permission will be
+		 * discarded.
+		 * @param permissions the permissions strings to set
+		 * @return this
+		 */
+		default Builder permissionStrings(String... permissions) {
+			return permissionStrings((permissions != null) ? Arrays.asList(permissions) : Collections.emptyList());
+		}
 
 		/**
 		 * Add a permission granted to Account using String representation.
