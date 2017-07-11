@@ -24,6 +24,20 @@
 			<artifactId>holon-spring</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<!-- Holon auth -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-auth</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<!-- Optional Holon auth JWT -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-auth-jwt</artifactId>
+			<version>${project.version}</version>
+			<optional>true</optional>
+		</dependency>
 
 		<!-- Spring Boot -->
 		<dependency>
