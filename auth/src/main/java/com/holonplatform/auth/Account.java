@@ -27,7 +27,7 @@ import com.holonplatform.auth.internal.DefaultAccount;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 
 /**
- * Provides account informations for authentication and authorization
+ * Provides account informations for authentication and authorization.
  * 
  * @since 5.0.0
  * 
