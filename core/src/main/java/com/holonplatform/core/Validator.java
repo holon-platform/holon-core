@@ -131,20 +131,6 @@ public interface Validator<T> extends Serializable {
 
 	}
 
-	/**
-	 * Interface to handle the {@link ValidationException} thrown as consequence of a validation.
-	 */
-	@FunctionalInterface
-	public interface ValidationErrorHandler {
-
-		/**
-		 * Handle given {@link ValidationException}.
-		 * @param error The {@link ValidationException} to handle
-		 */
-		void handleValidationError(ValidationException error);
-
-	}
-
 	// Builders
 
 	/**
