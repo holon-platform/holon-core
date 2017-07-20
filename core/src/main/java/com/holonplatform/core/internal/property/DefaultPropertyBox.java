@@ -20,12 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
+import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.property.Property.PropertyAccessException;
 
 /**
  * Default {@link PropertyBox} implementation.
@@ -103,6 +104,16 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 				propertyValues.put(property, value);
 			}
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertyBox#propertyValues()
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public <T> Stream<PropertyValue<T>> propertyValues() {
+		return propertyValues.entrySet().stream().map(e -> new DefaultPropertyValue(e.getKey(), e.getValue()));
 	}
 
 	/*
@@ -210,6 +221,54 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		@Override
 		public PropertyBox build() {
 			return instance;
+		}
+
+	}
+
+	/**
+	 * Default {@link PropertyValue} implementation.
+	 * @param <T> Value type
+	 */
+	public static class DefaultPropertyValue<T> implements PropertyValue<T> {
+
+		private static final long serialVersionUID = -1636789481818203557L;
+
+		/**
+		 * Property
+		 */
+		private final Property<T> property;
+		/**
+		 * Property value
+		 */
+		private final T value;
+
+		/**
+		 * Cosntructor.
+		 * @param property Property
+		 * @param value Property value
+		 */
+		public DefaultPropertyValue(Property<T> property, T value) {
+			super();
+			this.property = property;
+			this.value = value;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertyBox.PropertyValue#getProperty()
+		 */
+		@Override
+		public Property<T> getProperty() {
+			return property;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertyBox.PropertyValue#getValue()
+		 */
+		@Override
+		public T getValue() {
+			return value;
 		}
 
 	}

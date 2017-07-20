@@ -15,7 +15,9 @@
  */
 package com.holonplatform.core.property;
 
+import java.io.Serializable;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.Validator;
@@ -69,6 +71,17 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * @throws PropertyAccessException If an error occurred reading the property value
 	 */
 	<T> Optional<T> getValueIfPresent(Property<T> property);
+
+	/**
+	 * Get the {@link Stream} of all the {@link Property}s of the property set bound to this {@link PropertyBox} and
+	 * their values, using the {@link PropertyValue} representation.
+	 * <p>
+	 * All the properties will be part of the stream, even the ones without a value. If a property has not a value in
+	 * this {@link PropertyBox}, <code>null</code> will be returned by {@link PropertyValue#getValue()}.
+	 * </p>
+	 * @return a {@link PropertyValue} stream with all the property values
+	 */
+	<T> Stream<PropertyValue<T>> propertyValues();
 
 	/**
 	 * Set the value of given <code>property</code>.
@@ -207,6 +220,34 @@ public interface PropertyBox extends PropertySet<Property> {
 	@SafeVarargs
 	static <P extends Property> Builder builder(P... properties) {
 		return new DefaultPropertyBox.PropertyBoxBuilder(properties);
+	}
+
+	/**
+	 * Represents a {@link Property} value.
+	 * @param <T> Value type
+	 */
+	public interface PropertyValue<T> extends Serializable {
+
+		/**
+		 * Get the {@link Property}.
+		 * @return The property
+		 */
+		Property<T> getProperty();
+
+		/**
+		 * Get the property value.
+		 * @return the property value (may be null)
+		 */
+		T getValue();
+
+		/**
+		 * Checks whether this property has a value, i.e. the property value is not <code>null</code>.
+		 * @return <code>true</code> if this property has a value, <code>false</code> otherwise
+		 */
+		default boolean hasValue() {
+			return getValue() != null;
+		}
+
 	}
 
 	// Builder
