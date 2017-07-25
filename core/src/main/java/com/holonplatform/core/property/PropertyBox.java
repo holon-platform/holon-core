@@ -79,6 +79,7 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * All the properties will be part of the stream, even the ones without a value. If a property has not a value in
 	 * this {@link PropertyBox}, <code>null</code> will be returned by {@link PropertyValue#getValue()}.
 	 * </p>
+	 * @param <T> Property and value type
 	 * @return a {@link PropertyValue} stream with all the property values
 	 */
 	<T> Stream<PropertyValue<T>> propertyValues();
