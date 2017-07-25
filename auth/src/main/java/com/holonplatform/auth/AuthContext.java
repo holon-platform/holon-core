@@ -69,6 +69,14 @@ public interface AuthContext extends AuthenticationNotifier {
 	Optional<Authentication> getAuthentication();
 
 	/**
+	 * Gets whether this {@link AuthContext} is authenticated, i.e. an {@link Authentication} is available.
+	 * @return <code>true</code> if this {@link AuthContext} is authenticated, <code>false</code> otherwise
+	 */
+	default boolean isAuthenticated() {
+		return getAuthentication().isPresent();
+	}
+
+	/**
 	 * Attempts to authenticate a user using given {@link AuthenticationToken}.
 	 * <p>
 	 * If the authentication is successful, an {@link Authentication} instance is stored in this AuthContext and can be
