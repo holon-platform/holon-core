@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.regex.Pattern;
 
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.Localizable.LocalizationException;
@@ -640,19 +639,7 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	 * @return Message with resolved arguments.
 	 */
 	protected String resolveMessageArguments(String message, Object[] arguments) {
-		if (message != null && arguments != null && arguments.length > 0 && getMessageArgumentsPlaceholder() != null) {
-			Pattern pattern = Pattern.compile(FormatUtils.escapeRegexCharacters(getMessageArgumentsPlaceholder()));
-			String resolved = message;
-			for (Object argument : arguments) {
-				String value = "";
-				if (argument != null) {
-					value = argument.toString();
-				}
-				resolved = pattern.matcher(resolved).replaceFirst(value);
-			}
-			return resolved;
-		}
-		return message;
+		return FormatUtils.resolveMessageArguments(getMessageArgumentsPlaceholder(), message, arguments);
 	}
 
 	/*

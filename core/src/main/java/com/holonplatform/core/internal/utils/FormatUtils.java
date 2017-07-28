@@ -182,6 +182,26 @@ public final class FormatUtils implements Serializable {
 	}
 
 	/**
+	 * Replace any message argument identified by given <code>placeholder</code> with given argument values.
+	 * @param placeholder Argument placeholder (not null)
+	 * @param message Message to process
+	 * @param arguments Message arguments
+	 * @return Message with resolved arguments, or <code>null</code> if the message was <code>null</code>
+	 */
+	public static String resolveMessageArguments(String placeholder, String message, Object[] arguments) {
+		ObjectUtils.argumentNotNull(placeholder, "Argument placeholder must be not null");
+		if (message != null && arguments != null && arguments.length > 0) {
+			final Pattern pattern = Pattern.compile(FormatUtils.escapeRegexCharacters(placeholder));
+			String resolved = message;
+			for (Object argument : arguments) {
+				resolved = pattern.matcher(resolved).replaceFirst((argument != null) ? argument.toString() : "");
+			}
+			return resolved;
+		}
+		return message;
+	}
+
+	/**
 	 * Check if given <code>email</code> address is valid using RFC822 format
 	 * @param email Email address to validate (not null)
 	 * @return <code>true</code> if valid email address, <code>false</code> otherwise
