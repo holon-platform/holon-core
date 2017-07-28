@@ -1871,7 +1871,7 @@ public interface Validator<T> extends Serializable {
 		 */
 		public List<String> getLocalizedValidationMessages() {
 			List<String> ls = new LinkedList<>();
-			getValidationMessages().forEach(l -> ls.add(LocalizationContext.translate(l, true)));
+			getValidationMessages().forEach(m -> ls.add(LocalizationContext.translate(m, true)));
 			return ls;
 		}
 

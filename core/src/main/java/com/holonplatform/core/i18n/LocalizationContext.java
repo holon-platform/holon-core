@@ -29,6 +29,7 @@ import java.util.Optional;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.internal.i18n.DefaultLocalizationContext;
+import com.holonplatform.core.internal.utils.FormatUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.temporal.TemporalType;
 
@@ -84,6 +85,12 @@ public interface LocalizationContext {
 	Optional<Locale> getLocale();
 
 	/**
+	 * Get the symbol to be used as message arguments placeholder.
+	 * @return Optional message arguments placeholder
+	 */
+	Optional<String> getMessageArgumentsPlaceholder();
+
+	/**
 	 * Get a message for given <code>code</code> localized according to current Locale to which context is bound
 	 * @param code Message code (not null)
 	 * @param defaultMessage Default message to return if no localized message could be found
@@ -101,10 +108,7 @@ public interface LocalizationContext {
 	 * @throws LocalizationException If context is not localized
 	 */
 	default String getMessage(Localizable localizable) {
-		ObjectUtils.argumentNotNull(localizable, "Localizable must not be null");
-		return (localizable.getMessageCode() != null)
-				? getMessage(localizable.getMessageCode(), localizable.getMessage(), localizable.getMessageArguments())
-				: localizable.getMessage();
+		return getMessage(localizable, false);
 	}
 
 	/**
@@ -116,17 +120,7 @@ public interface LocalizationContext {
 	 * @return Localized message
 	 * @throws LocalizationException If not <code>lenient</code> and context is not localized
 	 */
-	default String getMessage(Localizable localizable, boolean lenient) {
-		ObjectUtils.argumentNotNull(localizable, "Localizable must not be null");
-		if (!isLocalized()) {
-			if (lenient)
-				return localizable.getMessage();
-			throw new LocalizationException("LocalizationContext is not localized");
-		}
-		return (localizable.getMessageCode() != null)
-				? getMessage(localizable.getMessageCode(), localizable.getMessage(), localizable.getMessageArguments())
-				: localizable.getMessage();
-	}
+	String getMessage(Localizable localizable, boolean lenient);
 
 	/**
 	 * Sets the default {@link Localizable} message to use to localize a boolean value
@@ -314,7 +308,9 @@ public interface LocalizationContext {
 			throw new LocalizationException(
 					"A LocalizationContext is not available from context or it is not localized");
 		}
-		return lc.map(l -> l.getMessage(localizable, lenient)).orElse(localizable.getMessage());
+		return lc.map(l -> l.getMessage(localizable, lenient))
+				.orElse(FormatUtils.resolveMessageArguments(MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+						localizable.getMessage(), localizable.getMessageArguments()));
 	}
 
 	/**

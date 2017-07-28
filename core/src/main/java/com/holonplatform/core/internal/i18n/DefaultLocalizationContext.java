@@ -195,14 +195,6 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	}
 
 	/**
-	 * Message arguments placeholder symbol
-	 * @return Message arguments placeholder
-	 */
-	protected String getMessageArgumentsPlaceholder() {
-		return messageArgumentsPlaceholder;
-	}
-
-	/**
 	 * Set message arguments placeholder symbol. Default is
 	 * {@link MessageProvider#DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER}.
 	 * @param messageArgumentsPlaceholder Message arguments placeholder to set
@@ -278,6 +270,15 @@ public class DefaultLocalizationContext implements LocalizationContext {
 			return Optional.ofNullable(defaultBooleanLocalizations.get(Boolean.valueOf(value)));
 		}
 		return Optional.empty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessageArgumentsPlaceholder()
+	 */
+	@Override
+	public Optional<String> getMessageArgumentsPlaceholder() {
+		return Optional.ofNullable(messageArgumentsPlaceholder);
 	}
 
 	/*
@@ -599,6 +600,27 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		return resolveMessageArguments(defaultMessage, arguments);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessage(com.holonplatform.core.i18n.Localizable)
+	 */
+	@Override
+	public String getMessage(Localizable localizable, boolean lenient) {
+		ObjectUtils.argumentNotNull(localizable, "Localizable must not be null");
+		
+		if (isLocalized()) {
+			if (localizable.getMessageCode() != null) {
+				return getMessage(localizable.getMessageCode(), localizable.getMessage(),
+						localizable.getMessageArguments());
+			}
+		} else {
+			if (!lenient) {
+				throw new LocalizationException("LocalizationContext is not localized");
+			}
+		}
+		return resolveMessageArguments(localizable.getMessage(), localizable.getMessageArguments());
+	}
+
 	/**
 	 * Check the LocalizationContext is localized and return current {@link Locale}. If LocalizationContext is not
 	 * localized, an {@link LocalizationException} is thrown.
@@ -639,7 +661,8 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	 * @return Message with resolved arguments.
 	 */
 	protected String resolveMessageArguments(String message, Object[] arguments) {
-		return FormatUtils.resolveMessageArguments(getMessageArgumentsPlaceholder(), message, arguments);
+		return getMessageArgumentsPlaceholder().map(p -> FormatUtils.resolveMessageArguments(p, message, arguments))
+				.orElse(message);
 	}
 
 	/*
