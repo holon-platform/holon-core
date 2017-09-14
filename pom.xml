@@ -20,7 +20,7 @@
 	<url>https://holon-platform.com</url>
 
 	<organization>
-		<name>Holon TDCN</name>
+		<name>The Holon Platform</name>
 		<url>https://holon-platform.com</url>
 	</organization>
 
@@ -36,7 +36,7 @@
 		<developer>
 			<name>Holon development team</name>
 			<email>dev@holon-platform.com</email>
-			<organization>Holon TDCN</organization>
+			<organization>The Holon Platform</organization>
 			<organizationUrl>https://holon-platform.com</organizationUrl>
 		</developer>
 	</developers>
