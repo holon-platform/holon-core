@@ -151,7 +151,28 @@ public interface Context {
 		return scope(name, null);
 	}
 
-	// Thread scope helper and shortcut methods
+	// ClassLoader scope helpers
+
+	/**
+	 * Shortcut method to obtain the ClassLoader-bound context scope, i.e. the default {@link ContextScope} named
+	 * {@link #CLASSLOADER_SCOPE_NAME}.
+	 * @param classLoader ClassLoader, if <code>null</code>, the default ClassLoader is used
+	 * @return The ClassLoader-bound context scope, or an empty Optional if scope is not registered
+	 */
+	default Optional<ContextScope> classLoaderScope(ClassLoader classLoader) {
+		return scope(CLASSLOADER_SCOPE_NAME, classLoader);
+	}
+
+	/**
+	 * Shortcut method to obtain the thread-bound context scope, i.e. the default {@link ContextScope} named
+	 * {@link #CLASSLOADER_SCOPE_NAME}, using the default {@link ClassLoader}.
+	 * @return The ClassLoader-bound context scope, or an empty Optional if scope is not registered
+	 */
+	default Optional<ContextScope> classLoaderScope() {
+		return classLoaderScope(null);
+	}
+
+	// Thread scope helpers and shortcut methods
 
 	/**
 	 * Shortcut method to obtain the thread-bound context scope, i.e. the default {@link ContextScope} named
