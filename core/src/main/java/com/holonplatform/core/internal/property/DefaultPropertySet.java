@@ -154,25 +154,34 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#add(com.holonplatform.core.property.Property[])
-		 */
-		@Override
-		public <PT extends P> Builder<P> add(PT[] properties) {
-			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
-			for (P property : properties) {
-				this.instance.add(property);
-			}
-			return this;
-		}
-
-		/*
-		 * (non-Javadoc)
 		 * @see com.holonplatform.core.property.PropertySet.Builder#add(java.lang.Iterable)
 		 */
 		@Override
 		public <PT extends P> Builder<P> add(Iterable<PT> properties) {
 			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
 			properties.forEach(p -> this.instance.add(p));
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#remove(com.holonplatform.core.property.Property)
+		 */
+		@Override
+		public <PT extends P> Builder<P> remove(PT property) {
+			ObjectUtils.argumentNotNull(property, "Property must be not null");
+			this.instance.remove(property);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#remove(java.lang.Iterable)
+		 */
+		@Override
+		public <PT extends P> Builder<P> remove(Iterable<PT> properties) {
+			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+			properties.forEach(p -> this.instance.remove(p));
 			return this;
 		}
 

@@ -22,7 +22,6 @@ import java.util.stream.Stream;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
 import com.holonplatform.core.internal.utils.ConversionUtils;
-import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * This interface represent an {@link Iterable} and immutable set of {@link Property}s.
@@ -66,58 +65,6 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 */
 	default List<P> asList() {
 		return ConversionUtils.iterableAsList(this);
-	}
-
-	/**
-	 * Build a new {@link PropertySet} joining the properties of this property set with given <code>properties</code>.
-	 * <p>
-	 * If the underlying set implementation supports property ordering, the given properties will be added after the
-	 * current set properties.
-	 * </p>
-	 * @param properties Properties to add (not null)
-	 * @return A new {@link PropertySet} containing all the properties of this set and all given <code>properties</code>
-	 */
-	@SuppressWarnings("unchecked")
-	default PropertySet<P> join(P... properties) {
-		return join(false, properties);
-	}
-
-	/**
-	 * Build a new {@link PropertySet} joining the properties of this property set with given <code>properties</code>.
-	 * @param before <code>true</code> to add the given properties before the current set properties, <code>false</code>
-	 *        to add them after the current set properties
-	 * @param properties Properties to add (not null)
-	 * @return A new {@link PropertySet} containing all the properties of this set and all given <code>properties</code>
-	 */
-	@SuppressWarnings("unchecked")
-	default PropertySet<P> join(boolean before, P... properties) {
-		ObjectUtils.argumentNotNull(properties, "Properties to join must be not null");
-		Builder<P> builder = builder();
-		if (before) {
-			builder.add(properties);
-		}
-		forEach(p -> builder.add(p));
-		if (!before) {
-			builder.add(properties);
-		}
-		return builder.build();
-	}
-
-	/**
-	 * Build a new {@link PropertySet} containing all the properties of this property set but the given
-	 * <code>properties</code>.
-	 * @param properties Properties to exclude (not null)
-	 * @return A new {@link PropertySet} with the properties of this set excluding given <code>properties</code>
-	 */
-	@SuppressWarnings("unchecked")
-	default PropertySet<P> exclude(P... properties) {
-		ObjectUtils.argumentNotNull(properties, "Properties to exclude must be not null");
-		Builder<P> builder = builder();
-		forEach(p -> {
-			if (!ObjectUtils.contains(properties, p))
-				builder.add(p);
-		});
-		return builder.build();
 	}
 
 	/**
@@ -198,20 +145,28 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		<PT extends P> Builder<P> add(PT property);
 
 		/**
-		 * Add all the properties in the given array to the set.
-		 * @param <PT> Actual property type
-		 * @param properties The properties to add (not null)
-		 * @return this
-		 */
-		<PT extends P> Builder<P> add(PT[] properties);
-
-		/**
 		 * Add all the properties provided by given {@link Iterable} to the set.
 		 * @param <PT> Actual property type
 		 * @param properties Properties {@link Iterable} to add (not null)
 		 * @return this
 		 */
 		<PT extends P> Builder<P> add(Iterable<PT> properties);
+
+		/**
+		 * Remove a property from the set.
+		 * @param <PT> Actual property type
+		 * @param property The property to remove (not null)
+		 * @return this
+		 */
+		<PT extends P> Builder<P> remove(PT property);
+
+		/**
+		 * Remove all the properties provided by given {@link Iterable} from the set.
+		 * @param <PT> Actual property type
+		 * @param properties Properties {@link Iterable} to remove (not null)
+		 * @return this
+		 */
+		<PT extends P> Builder<P> remove(Iterable<PT> properties);
 
 		/**
 		 * Build {@link PropertySet} instance

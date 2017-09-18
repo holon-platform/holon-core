@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.Validator;
-import com.holonplatform.core.presentation.StringValuePresenter;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
@@ -135,10 +134,10 @@ public class ExampleProperty {
 		set.forEach(p -> p.toString()); // <4>
 		String captions = set.stream().map(p -> p.getMessage()).collect(Collectors.joining()); // <5>
 
-		PropertySet<Property> newSet = set.join(ID); // <6>
+		PropertySet<Property> newSet = PropertySet.builder().add(set).add(ID).build(); // <6>
 		int size = newSet.size(); // <7>
 
-		newSet = set.exclude(SURNAME); // <8>
+		newSet = PropertySet.builder().add(set).remove(SURNAME).build(); // <8>
 		// end::propertyset[]
 	}
 

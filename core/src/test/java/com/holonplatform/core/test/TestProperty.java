@@ -789,7 +789,7 @@ public class TestProperty {
 		PropertySet<Property> p1 = PropertySet.of(TestPropertySet.NAME);
 		PropertySet<Property> p2 = PropertySet.of(TestPropertySet.SEQUENCE);
 
-		PropertySet<Property> p3 = p1.join(TestPropertySet.GENERIC);
+		PropertySet<Property> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
 
@@ -797,11 +797,11 @@ public class TestProperty {
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.SEQUENCE));
 
-		p3 = p1.join(true, TestPropertySet.GENERIC);
+		p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
 
-		PropertySet<Property> p4 = p3.exclude(TestPropertySet.GENERIC);
+		PropertySet<Property> p4 = PropertySet.builder().add(p3).remove(TestPropertySet.GENERIC).build();
 		assertTrue(p4.contains(TestPropertySet.NAME));
 		assertFalse(p4.contains(TestPropertySet.GENERIC));
 
