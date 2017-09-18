@@ -27,7 +27,7 @@ import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 public interface Expression {
 
 	/**
-	 * Validate this expressino.
+	 * Validate this expression.
 	 * @throws InvalidExpressionException If the expression is not valid
 	 */
 	void validate() throws InvalidExpressionException;
