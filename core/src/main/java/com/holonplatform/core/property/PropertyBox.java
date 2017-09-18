@@ -134,7 +134,7 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * @return A new, cloned, PropertyBox instance
 	 */
 	default PropertyBox cloneBox() {
-		return builder(this).copyValues(this).build();
+		return builder(this).invalidAllowed(this.isInvalidAllowed()).copyValues(this).build();
 	}
 
 	/**
@@ -144,9 +144,16 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * @param propertySet Property set of the cloned PropertyBox (not null)
 	 * @return A new, cloned, PropertyBox instance with given property set
 	 */
+	@SuppressWarnings("unchecked")
 	default <P extends Property> PropertyBox cloneBox(PropertySet<P> propertySet) {
 		ObjectUtils.argumentNotNull(propertySet, "Property set must be not null");
-		return builder(propertySet).copyValues(this).build();
+		Builder builder = builder(propertySet).invalidAllowed(true);
+		propertySet.forEach(p -> {
+			if (!p.isReadOnly()) {
+				this.getValueIfPresent(p).ifPresent(v -> builder.set(p, v));
+			}
+		});
+		return builder.invalidAllowed(this.isInvalidAllowed()).build();
 	}
 
 	/**
@@ -159,7 +166,7 @@ public interface PropertyBox extends PropertySet<Property> {
 	@SuppressWarnings("unchecked")
 	default <P extends Property> PropertyBox cloneBox(P... propertySet) {
 		ObjectUtils.argumentNotNull(propertySet, "Property set must be not null");
-		return builder(propertySet).copyValues(this).build();
+		return cloneBox(PropertySet.of(propertySet));
 	}
 
 	/**
