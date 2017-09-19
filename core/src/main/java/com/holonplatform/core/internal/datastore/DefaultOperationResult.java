@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.datastore;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.holonplatform.core.Path;
@@ -63,6 +64,25 @@ public class DefaultOperationResult implements OperationResult {
 	@Override
 	public Map<Path<?>, Object> getInsertedKeys() {
 		return (insertedKeys != null) ? insertedKeys : Collections.emptyMap();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.Datastore.OperationResult#getInsertedKey(com.holonplatform.core.Path)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> Optional<T> getInsertedKey(Path<T> path) {
+		ObjectUtils.argumentNotNull(path, "Path must be not null");
+		final String pathName = path.relativeName();
+		if (pathName != null) {
+			for (Entry<Path<?>, Object> entry : getInsertedKeys().entrySet()) {
+				if (pathName.equalsIgnoreCase(entry.getKey().relativeName())) {
+					return Optional.ofNullable((T) entry.getValue());
+				}
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**

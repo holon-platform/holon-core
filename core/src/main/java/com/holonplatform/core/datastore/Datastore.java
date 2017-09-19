@@ -240,6 +240,15 @@ public interface Datastore extends ExpressionResolverSupport, DataContextBound, 
 		 */
 		Map<Path<?>, Object> getInsertedKeys();
 
+		/**
+		 * For {@link OperationType#INSERT} operations, returns the inserted key value which correspond to given
+		 * <code>path</code> name, if available.
+		 * @param path Path for which to obtain the inserted key value
+		 * @return Optional inserted key value
+		 * @throws ClassCastException If the key value type is not compatible with the path type
+		 */
+		<T> Optional<T> getInsertedKey(Path<T> path);
+
 		// Builder
 
 		/**
