@@ -1,3 +1,4 @@
+[[SpringBoot]]
 === *Spring Boot* auto-configuration
 
 The Holon platform provides https://projects.spring.io/spring-boot[Spring Boot^] *auto-configuration* features for the most of the platform modules, including the core module.
