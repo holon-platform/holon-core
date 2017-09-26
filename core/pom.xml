@@ -77,6 +77,7 @@
 						<exclude>**/TestUtils.*</exclude>
 						<exclude>**/ClassUtils.*</exclude>
 						<exclude>**/holonplatform/core/exceptions/**</exclude>
+						<exclude>**/holonplatform/core/datastore/DatastoreCommodityContext$**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>
