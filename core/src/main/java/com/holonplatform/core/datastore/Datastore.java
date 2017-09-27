@@ -243,6 +243,7 @@ public interface Datastore extends ExpressionResolverSupport, DataContextBound, 
 		/**
 		 * For {@link OperationType#INSERT} operations, returns the inserted key value which correspond to given
 		 * <code>path</code> name, if available.
+		 * @param <T> Key type
 		 * @param path Path for which to obtain the inserted key value
 		 * @return Optional inserted key value
 		 * @throws ClassCastException If the key value type is not compatible with the path type
