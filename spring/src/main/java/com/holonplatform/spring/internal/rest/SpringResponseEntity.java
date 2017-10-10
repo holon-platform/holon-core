@@ -32,6 +32,8 @@ import org.springframework.web.client.HttpMessageConverterExtractor;
 import org.springframework.web.client.ResponseExtractor;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.http.exceptions.HttpEntityProcessingException;
 import com.holonplatform.http.exceptions.InvalidHttpMessageException;
 import com.holonplatform.http.rest.ResponseEntity;
@@ -49,6 +51,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	private final org.springframework.http.ResponseEntity<Resource> response;
 	private final ResponseType<T> type;
 	private final List<HttpMessageConverter<?>> messageConverters;
+	private final PropertySet<?> propertySet;
 
 	private final StreamHttpResponse httpResponse;
 
@@ -57,15 +60,17 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	 * @param response Spring response entity (not null)
 	 * @param type Response type (not null)
 	 * @param messageConverters HTTP message converters
+	 * @param propertySet Optional {@link PropertySet} to use to deserialize a {@link PropertyBox}
 	 */
 	public SpringResponseEntity(org.springframework.http.ResponseEntity<Resource> response, ResponseType<T> type,
-			List<HttpMessageConverter<?>> messageConverters) {
+			List<HttpMessageConverter<?>> messageConverters, PropertySet<?> propertySet) {
 		super();
 		ObjectUtils.argumentNotNull(response, "ClientHttpResponse must be not null");
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
 		this.response = response;
 		this.type = type;
 		this.messageConverters = (messageConverters != null) ? messageConverters : Collections.emptyList();
+		this.propertySet = propertySet;
 		this.httpResponse = new StreamHttpResponse(response);
 	}
 
@@ -147,6 +152,14 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	}
 
 	/**
+	 * Get the Optional {@link PropertySet} to use to deserialize a {@link PropertyBox}
+	 * @return the optional PropertySet
+	 */
+	protected Optional<PropertySet<?>> getPropertySet() {
+		return Optional.ofNullable(propertySet);
+	}
+
+	/**
 	 * Read the message entity as an instance of the type represented by given <code>type</code> {@link ResponseType}.
 	 * @param <E> Response entity type
 	 * @param type Response entity type to read
@@ -154,14 +167,21 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	 * @throws HttpEntityProcessingException If a entity processing error occurred (e.g. no message body reader
 	 *         available for the requested type)
 	 */
-	@SuppressWarnings("unchecked")
 	protected <E> Optional<E> readAs(ResponseType<E> type) {
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
 
+		// Check PropertySet
+		if (getPropertySet().isPresent()) {
+			return getPropertySet().get().execute(() -> readResponse(type));
+		} else {
+			return readResponse(type);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <E> Optional<E> readResponse(ResponseType<E> type) {
 		final Type responseType = type.getType();
-
 		try {
-
 			// check InputStream
 			if (InputStream.class == responseType) {
 				return (Optional<E>) Optional.ofNullable(response.getBody().getInputStream());
@@ -175,7 +195,6 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		} catch (Exception e) {
 			throw new HttpEntityProcessingException("Failed to read HTTP entity as [" + type + "]", e);
 		}
-
 		return Optional.empty();
 	}
 

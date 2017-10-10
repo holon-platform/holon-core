@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -18,6 +19,8 @@
 	<properties>
 		<!-- Jersey for test -->
 		<jersey.test.version>2.25</jersey.test.version>
+		<!-- Holon JSON for test -->
+		<holon.json.version>5.0.0</holon.json.version>
 	</properties>
 
 	<dependencies>
@@ -74,6 +77,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Holon JSON for test -->
+		<dependency>
+			<groupId>com.holon-platform.json</groupId>
+			<artifactId>holon-jackson-jaxrs</artifactId>
+			<version>${holon.json.version}</version>
+			<scope>test</scope>
+		</dependency>
+		
 		<!-- Jersey for test -->
 		<dependency>
 			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
@@ -92,6 +103,12 @@
 			<artifactId>jersey-media-json-jackson</artifactId>
 			<version>${jersey.test.version}</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson</groupId>
+					<artifactId>jackson-annotations</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>

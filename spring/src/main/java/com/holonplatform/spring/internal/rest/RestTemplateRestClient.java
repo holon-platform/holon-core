@@ -68,8 +68,9 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 			}
 
 			@Override
-			public void handleError(ClientHttpResponse response) throws IOException {}
-			
+			public void handleError(ClientHttpResponse response) throws IOException {
+			}
+
 		});
 	}
 
@@ -108,19 +109,24 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 		}
 
 		// get response, checking propertySet
-		org.springframework.http.ResponseEntity<Resource> response = requestDefinition.getPropertySet()
-				.map(ps -> ps.execute(() -> invoke(uri, requestMethod, entity, responseType)))
-				.orElseGet(() -> invoke(uri, requestMethod, entity, responseType));
+		final org.springframework.http.ResponseEntity<Resource> response;
+		if (requestDefinition.getPropertySet().isPresent()) {
+			response = requestDefinition.getPropertySet().get()
+					.execute(() -> invoke(uri, requestMethod, entity, responseType));
+		} else {
+			response = invoke(uri, requestMethod, entity, responseType);
+		}
 
 		// check error status code
 		int statusCode = response.getStatusCodeValue();
 
 		if (onlySuccessfulStatusCode && !HttpStatus.isSuccessStatusCode(statusCode)) {
-			throw new UnsuccessfulResponseException(
-					new SpringResponseEntity<>(response, ResponseType.of(byte[].class), getRestTemplate().getMessageConverters()));
+			throw new UnsuccessfulResponseException(new SpringResponseEntity<>(response, ResponseType.of(byte[].class),
+					getRestTemplate().getMessageConverters(), requestDefinition.getPropertySet().orElse(null)));
 		}
 
-		return new SpringResponseEntity<>(response, responseType, getRestTemplate().getMessageConverters());
+		return new SpringResponseEntity<>(response, responseType, getRestTemplate().getMessageConverters(),
+				requestDefinition.getPropertySet().orElse(null));
 	}
 
 	/*
@@ -141,8 +147,8 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 	 * @param responseType Expected response payload type
 	 * @return Response entity
 	 */
-	protected <T> org.springframework.http.ResponseEntity<Resource> invoke(String uri, org.springframework.http.HttpMethod requestMethod,
-			HttpEntity<?> request, ResponseType<T> responseType) {
+	protected <T> org.springframework.http.ResponseEntity<Resource> invoke(String uri,
+			org.springframework.http.HttpMethod requestMethod, HttpEntity<?> request, ResponseType<T> responseType) {
 		try {
 			return getRestTemplate().exchange(uri, requestMethod, request, Resource.class);
 		} catch (Exception e) {
