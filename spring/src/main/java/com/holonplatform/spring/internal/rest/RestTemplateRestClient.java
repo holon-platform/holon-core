@@ -16,7 +16,6 @@
 package com.holonplatform.spring.internal.rest;
 
 import java.io.IOException;
-import java.util.Optional;
 
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
@@ -166,7 +165,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 			return requestEntity.getPayload().map(p -> form ? new LinkedMultiValueMap<>(HttpUtils.getAsMultiMap(p)) : p)
 					.orElse(null);
 		}
-		return Optional.empty();
+		return null;
 	}
 
 }
