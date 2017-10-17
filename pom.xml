@@ -71,7 +71,7 @@
 		<bean.validation.version>1.1.0.Final</bean.validation.version>
 
 		<!-- Spring -->
-		<spring.version>4.3.11.RELEASE</spring.version>
+		<spring.version>4.3.12.RELEASE</spring.version>
 
 		<!-- Spring Boot -->
 		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
