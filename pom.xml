@@ -74,7 +74,7 @@
 		<spring.version>4.3.12.RELEASE</spring.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>1.5.7.RELEASE</spring.boot.version>
+		<spring.boot.version>1.5.8.RELEASE</spring.boot.version>
 
 	</properties>
 
