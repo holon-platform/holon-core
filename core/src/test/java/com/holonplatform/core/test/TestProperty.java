@@ -808,7 +808,15 @@ public class TestProperty {
 		Object value = p4.execute(() -> Context.get().resource(PropertySet.CONTEXT_KEY, PropertySet.class)
 				.map(p -> p.iterator().next()).orElse(null));
 		assertEquals(TestPropertySet.NAME, value);
-
+		
+		
+		PropertySet<?> source = PropertySet.of(TestPropertySet.NAME, TestPropertySet.SEQUENCE);
+		PropertySet<?> joined = PropertySet.of(source, TestPropertySet.GENERIC, TestPropertySet.VIRTUAL);
+		
+		assertTrue(joined.contains(TestPropertySet.NAME));
+		assertTrue(joined.contains(TestPropertySet.SEQUENCE));
+		assertTrue(joined.contains(TestPropertySet.GENERIC));
+		assertTrue(joined.contains(TestPropertySet.VIRTUAL));
 	}
 
 	@Test

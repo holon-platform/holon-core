@@ -22,6 +22,7 @@ import java.util.stream.Stream;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
 import com.holonplatform.core.internal.utils.ConversionUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * This interface represent an {@link Iterable} and immutable set of {@link Property}s.
@@ -108,6 +109,30 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 */
 	static <P extends Property> PropertySet<P> of(Iterable<P> properties) {
 		return new DefaultPropertySet<>(properties);
+	}
+
+	/**
+	 * Create a new {@link PropertySet} joining given <code>propertySet</code> with given additional
+	 * <code>properties</code>.
+	 * @param <P> Property type
+	 * @param propertySet Source property set (not null)
+	 * @param properties Additional properties
+	 * @return A new {@link PropertySet} instance containing the properties of given <code>propertySet</code> and any
+	 *         additional provided property
+	 */
+	@SafeVarargs
+	static <P extends Property> PropertySet<P> of(PropertySet<? extends P> propertySet, P... properties) {
+		ObjectUtils.argumentNotNull(propertySet, "Source property set must be not null");
+		Builder<P> builder = builder();
+		propertySet.forEach(p -> builder.add(p));
+		if (properties != null && properties.length > 0) {
+			for (P property : properties) {
+				if (property != null) {
+					builder.add(property);
+				}
+			}
+		}
+		return builder.build();
 	}
 
 	/**
