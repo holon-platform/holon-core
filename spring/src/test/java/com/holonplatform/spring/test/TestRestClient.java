@@ -154,6 +154,54 @@ public class TestRestClient extends JerseyTest {
 			return Response.accepted().build();
 		}
 
+		@GET
+		@Path("status/400")
+		public Response get400() {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
+
+		@GET
+		@Path("status/401")
+		public Response get401() {
+			return Response.status(Status.UNAUTHORIZED).build();
+		}
+
+		@GET
+		@Path("status/403")
+		public Response get403() {
+			return Response.status(Status.FORBIDDEN).build();
+		}
+
+		@GET
+		@Path("status/405")
+		public Response get405() {
+			return Response.status(Status.METHOD_NOT_ALLOWED).build();
+		}
+
+		@GET
+		@Path("status/406")
+		public Response get406() {
+			return Response.status(Status.NOT_ACCEPTABLE).build();
+		}
+
+		@GET
+		@Path("status/415")
+		public Response get415() {
+			return Response.status(Status.UNSUPPORTED_MEDIA_TYPE).build();
+		}
+
+		@GET
+		@Path("status/500")
+		public Response get500() {
+			return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+		}
+
+		@GET
+		@Path("status/503")
+		public Response get503() {
+			return Response.status(Status.SERVICE_UNAVAILABLE).build();
+		}
+
 	}
 
 	public static class TestData {
@@ -368,6 +416,37 @@ public class TestRestClient extends JerseyTest {
 		error = rsp.as(ApiError.class).orElse(null);
 		assertNotNull(error);
 		assertEquals("ERR000", error.getCode());
+
+	}
+
+	@Test
+	public void testStatus() {
+
+		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
+
+		ResponseEntity<?> rsp = client.request().path("test").path("status").path("400").get(Void.class);
+		assertEquals(HttpStatus.BAD_REQUEST, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("401").get(Void.class);
+		assertEquals(HttpStatus.UNAUTHORIZED, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("403").get(Void.class);
+		assertEquals(HttpStatus.FORBIDDEN, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("405").get(Void.class);
+		assertEquals(HttpStatus.METHOD_NOT_ALLOWED, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("406").get(Void.class);
+		assertEquals(HttpStatus.NOT_ACCEPTABLE, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("415").get(Void.class);
+		assertEquals(HttpStatus.UNSUPPORTED_MEDIA_TYPE, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("500").get(Void.class);
+		assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, rsp.getStatus());
+
+		rsp = client.request().path("test").path("status").path("503").get(Void.class);
+		assertEquals(HttpStatus.SERVICE_UNAVAILABLE, rsp.getStatus());
 
 	}
 
