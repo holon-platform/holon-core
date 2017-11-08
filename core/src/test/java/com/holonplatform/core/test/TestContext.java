@@ -106,6 +106,31 @@ public class TestContext {
 
 	}
 
+	@Test
+	public void testScopeHiearchy() {
+
+		final ClassLoader dft = ContextManager.getDefaultClassLoader();
+
+		ContextManager.registerScope(dft, new DummyScope());
+
+		Optional<ContextScope> scope = Context.get().scope("dummy", dft);
+		assertTrue(scope.isPresent());
+
+		ClassLoader myCl = new ClassLoader(dft) {
+		};
+
+		scope = Context.get().scope("dummy", myCl);
+		assertTrue(scope.isPresent());
+
+		ContextManager.setUseClassLoaderHierarchy(false);
+
+		scope = Context.get().scope("dummy", myCl);
+		assertFalse(scope.isPresent());
+
+		ContextManager.setUseClassLoaderHierarchy(true);
+
+	}
+
 	public static final class DummyScope implements ContextScope {
 
 		private final ContextResourceMap resources = new ContextResourceMap("dummy", true);

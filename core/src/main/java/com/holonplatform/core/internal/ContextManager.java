@@ -18,11 +18,16 @@ package com.holonplatform.core.internal;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 import com.holonplatform.core.Context;
@@ -48,6 +53,26 @@ public final class ContextManager {
 	private static final ScopeRegistry SCOPES = new ScopeRegistry();
 
 	private ContextManager() {
+	}
+
+	/**
+	 * Get whether the ClassLoader hierarchy (i.e. current ClassLoader and all it's parents) must be scanned when
+	 * looking for available context scopes.
+	 * @return <code>true</code> if the ClassLoader hierarchy must be scanned when looking for available context scopes,
+	 *         <code>false</code> if only the current ClassLoader must be taken into account
+	 */
+	public static boolean isUseClassLoaderHierarchy() {
+		return SCOPES.isUseClassLoaderHierarchy();
+	}
+
+	/**
+	 * Set whether the ClassLoader hierarchy (i.e. current ClassLoader and all it's parents) must be scanned when
+	 * looking for available context scopes.
+	 * @param useClassLoaderHierarchy <code>true</code> to scan the ClassLoader hierarchy when looking for available
+	 *        context scopes, <code>false</code> if only the current ClassLoader must be taken into account
+	 */
+	public static void setUseClassLoaderHierarchy(boolean useClassLoaderHierarchy) {
+		SCOPES.setUseClassLoaderHierarchy(useClassLoaderHierarchy);
 	}
 
 	/**
@@ -143,6 +168,8 @@ public final class ContextManager {
 		 */
 		private final WeakHashMap<ClassLoader, LinkedHashMap<String, ContextScope>> scopes;
 
+		private boolean useClassLoaderHierarchy = true;
+
 		/**
 		 * The default {@link ClassLoader}. When <code>null</code>, the {@link Thread#getContextClassLoader()} will be
 		 * used.
@@ -153,6 +180,24 @@ public final class ContextManager {
 			super();
 			this.scopes = new WeakHashMap<>(4);
 			this.classLoader = null;
+		}
+
+		/**
+		 * Get whether the ClassLoader hierarchy must be scanned when looking for available context scopes.
+		 * @return <code>true</code> if the ClassLoader hierarchy must be scanned when looking for available context
+		 *         scopes, <code>false</code> if only the current ClassLoader must be taken into account
+		 */
+		public boolean isUseClassLoaderHierarchy() {
+			return useClassLoaderHierarchy;
+		}
+
+		/**
+		 * Set whether the ClassLoader hierarchy must be scanned when looking for available context scopes.
+		 * @param useClassLoaderHierarchy <code>true</code> to scan the ClassLoader hierarchy when looking for available
+		 *        context scopes, <code>false</code> if only the current ClassLoader must be taken into account
+		 */
+		public void setUseClassLoaderHierarchy(boolean useClassLoaderHierarchy) {
+			this.useClassLoaderHierarchy = useClassLoaderHierarchy;
 		}
 
 		/**
@@ -250,9 +295,41 @@ public final class ContextManager {
 		 * @return ContextScopes iterator, preserving the order defined using {@link ContextScope#getOrder()}
 		 */
 		public synchronized Iterable<ContextScope> getScopes(ClassLoader classLoader) {
-			final ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
-			ensureInited(cl);
-			return scopes.get(cl).values();
+			ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
+
+			if (isUseClassLoaderHierarchy()) {
+
+				final Set<String> scopeNames = new HashSet<>();
+				final List<ContextScope> scopes = new LinkedList<>();
+
+				while (cl != null) {
+					getScopesForClassLoader(cl).forEach(scope -> {
+						if (!scopeNames.contains(scope.getName())) {
+							scopes.add(scope);
+						}
+					});
+
+					// get parent ClassLoader
+					try {
+						final ClassLoader currentClassLoader = cl;
+						cl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+							@Override
+							public ClassLoader run() {
+								return currentClassLoader.getParent();
+							}
+
+						});
+					} catch (Exception e) {
+						LOGGER.debug(() -> "Failed to obtain parent ClassLoader", e);
+					}
+				}
+
+				return scopes;
+
+			}
+
+			return getScopesForClassLoader(cl);
 		}
 
 		/**
@@ -273,11 +350,69 @@ public final class ContextManager {
 		public synchronized ContextScope getScope(String name, ClassLoader classLoader) {
 			ObjectUtils.argumentNotNull(name, "Scope name must be not null");
 
-			final ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
-			ensureInited(cl);
+			ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
 
-			LinkedHashMap<String, ContextScope> contextScopes = scopes.get(cl);
-			return contextScopes.get(name);
+			ContextScope scope = null;
+
+			while (cl != null) {
+				scope = getScopeForClassLoader(name, cl);
+				if (scope != null) {
+					break;
+				}
+				if (isUseClassLoaderHierarchy()) {
+					// get parent ClassLoader
+					try {
+						final ClassLoader currentClassLoader = cl;
+						cl = AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() {
+
+							@Override
+							public ClassLoader run() {
+								return currentClassLoader.getParent();
+							}
+
+						});
+					} catch (Exception e) {
+						LOGGER.debug(() -> "Failed to obtain parent ClassLoader", e);
+					}
+				} else {
+					cl = null;
+				}
+			}
+
+			return scope;
+		}
+
+		/**
+		 * Get the the context scopes registered with given ClassLoader, ensuring scopes are inited using service
+		 * loaders.
+		 * @param cl The ClassLoader
+		 * @return The context scopes bound to given ClassLoader, an empty collection if none
+		 */
+		private Collection<ContextScope> getScopesForClassLoader(ClassLoader cl) {
+			if (cl != null) {
+				ensureInited(cl);
+				Collection<ContextScope> classLoaderScopes = scopes.get(cl).values();
+				if (classLoaderScopes != null) {
+					return classLoaderScopes;
+				}
+			}
+			return Collections.emptyList();
+		}
+
+		/**
+		 * Get the context scope with given <code>name</code> registered with given ClassLoader, ensuring scopes are
+		 * inited using service loaders.
+		 * @param name Scope name
+		 * @param cl The ClassLoader
+		 * @return The {@link ContextScope} with given name, or <code>null</code> if not found
+		 */
+		private ContextScope getScopeForClassLoader(String name, ClassLoader cl) {
+			if (cl != null) {
+				ensureInited(cl);
+				LinkedHashMap<String, ContextScope> contextScopes = scopes.get(cl);
+				return contextScopes.get(name);
+			}
+			return null;
 		}
 
 		/**
