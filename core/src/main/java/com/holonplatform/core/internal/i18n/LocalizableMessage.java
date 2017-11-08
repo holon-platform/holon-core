@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.i18n;
 import java.util.Arrays;
 
 import com.holonplatform.core.i18n.Localizable;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Default {@link Localizable} message implementation.
@@ -161,6 +162,19 @@ public class LocalizableMessage implements Localizable {
 		@Override
 		public MessageBuilder messageArguments(Object... arguments) {
 			instance.setMessageArguments(arguments);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.i18n.Localizable.Builder#message(com.holonplatform.core.i18n.Localizable)
+		 */
+		@Override
+		public LocalizableBuilder message(Localizable localizable) {
+			ObjectUtils.argumentNotNull(localizable, "Localizable must be not null");
+			instance.setMessage(localizable.getMessage());
+			instance.setMessageCode(localizable.getMessageCode());
+			instance.setMessageArguments(localizable.getMessageArguments());
 			return this;
 		}
 
