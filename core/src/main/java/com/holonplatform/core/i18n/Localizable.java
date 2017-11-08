@@ -112,6 +112,18 @@ public interface Localizable {
 		 */
 		B messageArguments(Object... arguments);
 
+		/**
+		 * Set the message localization attributes cloning them from given {@link Localizable}.
+		 * <p>
+		 * NOTE: current message localization attributes (message, message code and attributes) will be overriden by the
+		 * given <code>localizable</code> attributes values.
+		 * </p>
+		 * @param localizable The {@link Localizable} instance form which to clone the message localization attributes
+		 *        (not null)
+		 * @return this
+		 */
+		B message(Localizable localizable);
+
 	}
 
 	/**

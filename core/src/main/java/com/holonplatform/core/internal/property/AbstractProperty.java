@@ -328,6 +328,20 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.Localizable.Builder#message(com.holonplatform.core.i18n.Localizable)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public P message(Localizable localizable) {
+		ObjectUtils.argumentNotNull(localizable, "Localizable must be not null");
+		this.message = localizable.getMessage();
+		this.messageCode = localizable.getMessageCode();
+		this.messageArguments = localizable.getMessageArguments();
+		return (P) this;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
