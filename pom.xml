@@ -75,9 +75,6 @@
 
 		<!-- Spring Boot -->
 		<spring.boot.version>1.5.8.RELEASE</spring.boot.version>
-		
-		<!-- Spring Security -->
-		<spring.security.version>4.2.3.RELEASE</spring.security.version>
 
 	</properties>
 
@@ -88,7 +85,6 @@
 		<module>auth-jwt</module>
 		<module>spring</module>
 		<module>spring-boot</module>
-		<module>spring-security</module>
 		<module>starter</module>
 		<module>starter-test</module>
 		<module>bom</module>
