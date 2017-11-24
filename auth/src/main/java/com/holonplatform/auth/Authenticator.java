@@ -16,6 +16,7 @@
 package com.holonplatform.auth;
 
 import java.util.List;
+import java.util.function.Function;
 
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.exceptions.AuthenticationException;
@@ -26,6 +27,7 @@ import com.holonplatform.auth.exceptions.LockedAccountException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.exceptions.UnsupportedTokenException;
+import com.holonplatform.auth.internal.DefaultCallbackAuthenticator;
 import com.holonplatform.core.messaging.Message;
 
 /**
@@ -69,6 +71,18 @@ public interface Authenticator<T extends AuthenticationToken> {
 	 * @see UnexpectedAuthenticationException
 	 */
 	Authentication authenticate(T authenticationToken) throws AuthenticationException;
+
+	/**
+	 * Create an {@link Authenticator} bound to the given token type and which uses the provided callback
+	 * {@link Function} to perform the authentication strategy. See {@link #authenticate(AuthenticationToken)}.
+	 * @param tokenType Authentication token type (not null)
+	 * @param authenticationFunction Authentication strategy function (not null)
+	 * @return The {@link Authenticator} instance
+	 */
+	static <T extends AuthenticationToken> Authenticator<T> create(Class<? extends T> tokenType,
+			Function<T, Authentication> authenticationFunction) {
+		return new DefaultCallbackAuthenticator<>(tokenType, authenticationFunction);
+	}
 
 	/**
 	 * Authenticator which support authentication using generic authentication request {@link Message}s.

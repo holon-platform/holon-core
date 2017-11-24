@@ -50,7 +50,7 @@ public class AccountCredentialsToken implements AuthenticationToken {
 	 * Constructor
 	 */
 	public AccountCredentialsToken() {
-		this(null, null);
+		this(null, (byte[]) null);
 	}
 
 	/**
@@ -62,6 +62,17 @@ public class AccountCredentialsToken implements AuthenticationToken {
 		super();
 		this.accountId = accountId;
 		this.secret = ConversionUtils.toBytes(secret);
+	}
+
+	/**
+	 * Constructor with account id and secret as byte array.
+	 * @param accountId Account id
+	 * @param secret Secret (for example a password)
+	 */
+	public AccountCredentialsToken(String accountId, byte[] secret) {
+		super();
+		this.accountId = accountId;
+		this.secret = secret;
 	}
 
 	/**
@@ -104,6 +115,26 @@ public class AccountCredentialsToken implements AuthenticationToken {
 	@Override
 	public Object getCredentials() {
 		return secret;
+	}
+
+	/**
+	 * Create a new {@link AccountCredentialsToken} with given account id and secret.
+	 * @param accountId Account id
+	 * @param secret Secret
+	 * @return A new {@link AccountCredentialsToken} with given credentials
+	 */
+	public static AccountCredentialsToken create(String accountId, String secret) {
+		return new AccountCredentialsToken(accountId, secret);
+	}
+
+	/**
+	 * Create a new {@link AccountCredentialsToken} with given account id and secret.
+	 * @param accountId Account id
+	 * @param secret Secret
+	 * @return A new {@link AccountCredentialsToken} with given credentials
+	 */
+	public static AccountCredentialsToken create(String accountId, byte[] secret) {
+		return new AccountCredentialsToken(accountId, secret);
 	}
 
 }

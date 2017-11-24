@@ -62,4 +62,13 @@ public class BearerAuthenticationToken implements AuthenticationToken {
 		return token;
 	}
 
+	/**
+	 * Create a new {@link BearerAuthenticationToken} with given token.
+	 * @param token Bearer token
+	 * @return A new {@link BearerAuthenticationToken} with given credentials
+	 */
+	public static BearerAuthenticationToken create(String token) {
+		return new BearerAuthenticationToken(token);
+	}
+
 }
