@@ -63,7 +63,8 @@ public class DefaultAuthorizer extends AbstractAuthorizer<Permission> {
 	 * java.util.Collection, boolean)
 	 */
 	@Override
-	protected boolean checkPermitted(Authentication authentication, Collection<Permission> permissions, boolean all) {
+	protected boolean checkPermitted(Authentication authentication, Collection<? extends Permission> permissions,
+			boolean all) {
 		if (authentication != null && authentication.isRoot()) {
 			return true;
 		}

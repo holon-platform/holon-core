@@ -83,7 +83,7 @@ public interface Authorizer<P extends Permission> {
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if given Authentication has all specified permission
 	 */
-	boolean isPermitted(Authentication authentication, Collection<P> permissions);
+	boolean isPermitted(Authentication authentication, Collection<? extends P> permissions);
 
 	/**
 	 * Check if given Authentication has any of specified permission/s using a Collection
@@ -91,7 +91,7 @@ public interface Authorizer<P extends Permission> {
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if given Authentication has any of specified permission
 	 */
-	boolean isPermittedAny(Authentication authentication, Collection<P> permissions);
+	boolean isPermittedAny(Authentication authentication, Collection<? extends P> permissions);
 
 	/**
 	 * Create a default Authorizer.

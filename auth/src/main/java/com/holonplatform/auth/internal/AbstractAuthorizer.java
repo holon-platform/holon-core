@@ -42,7 +42,8 @@ public abstract class AbstractAuthorizer<P extends Permission> implements Author
 	 *        one
 	 * @return <code>true</code> if permissions check was successful
 	 */
-	protected abstract boolean checkPermitted(Authentication authentication, Collection<P> permissions, boolean all);
+	protected abstract boolean checkPermitted(Authentication authentication, Collection<? extends P> permissions,
+			boolean all);
 
 	/**
 	 * Build a Permission of required type using given String representation.
@@ -116,7 +117,7 @@ public abstract class AbstractAuthorizer<P extends Permission> implements Author
 	 * @see com.holonplatform.auth.Authorizer#isPermitted(com.holonplatform.auth.Authentication, java.util.Collection)
 	 */
 	@Override
-	public boolean isPermitted(Authentication authentication, Collection<P> permissions) {
+	public boolean isPermitted(Authentication authentication, Collection<? extends P> permissions) {
 		return checkPermitted(authentication, permissions, true);
 	}
 
@@ -126,7 +127,7 @@ public abstract class AbstractAuthorizer<P extends Permission> implements Author
 	 * java.util.Collection)
 	 */
 	@Override
-	public boolean isPermittedAny(Authentication authentication, Collection<P> permissions) {
+	public boolean isPermittedAny(Authentication authentication, Collection<? extends P> permissions) {
 		return checkPermitted(authentication, permissions, false);
 	}
 

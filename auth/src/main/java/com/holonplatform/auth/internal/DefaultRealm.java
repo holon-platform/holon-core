@@ -400,7 +400,7 @@ public class DefaultRealm implements Realm {
 	 * @param permissions Permissions
 	 * @return Permission type
 	 */
-	protected Class<? extends Permission> getPermissionType(Collection<Permission> permissions) {
+	protected Class<? extends Permission> getPermissionType(Collection<? extends Permission> permissions) {
 		if (permissions != null && !permissions.isEmpty()) {
 			Permission p = permissions.iterator().next();
 			if (p != null) {
@@ -468,7 +468,7 @@ public class DefaultRealm implements Realm {
 	 * @see com.holonplatform.auth.Authorizer#isPermitted(com.holonplatform.auth.Authentication, java.util.Collection)
 	 */
 	@Override
-	public boolean isPermitted(Authentication authentication, Collection<Permission> permissions) {
+	public boolean isPermitted(Authentication authentication, Collection<? extends Permission> permissions) {
 		return getAuthorizer(getPermissionType(permissions)).isPermitted(authentication, permissions);
 	}
 
@@ -478,7 +478,7 @@ public class DefaultRealm implements Realm {
 	 * java.util.Collection)
 	 */
 	@Override
-	public boolean isPermittedAny(Authentication authentication, Collection<Permission> permissions) {
+	public boolean isPermittedAny(Authentication authentication, Collection<? extends Permission> permissions) {
 		return getAuthorizer(getPermissionType(permissions)).isPermittedAny(authentication, permissions);
 	}
 

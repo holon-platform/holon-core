@@ -179,7 +179,7 @@ public interface AuthContext extends AuthenticationNotifier {
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if current Authentication has all specified permission
 	 */
-	boolean isPermitted(Collection<Permission> permissions);
+	boolean isPermitted(Collection<? extends Permission> permissions);
 
 	/**
 	 * Check if current Authentication has any of specified permission/s using a Collection
@@ -190,7 +190,7 @@ public interface AuthContext extends AuthenticationNotifier {
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if current Authentication has any of specified permission
 	 */
-	boolean isPermittedAny(Collection<Permission> permissions);
+	boolean isPermittedAny(Collection<? extends Permission> permissions);
 
 	// Context resource
 

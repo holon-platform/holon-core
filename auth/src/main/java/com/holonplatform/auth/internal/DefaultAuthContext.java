@@ -186,7 +186,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.util.Collection)
 	 */
 	@Override
-	public synchronized boolean isPermitted(Collection<Permission> permissions) {
+	public synchronized boolean isPermitted(Collection<? extends Permission> permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -196,7 +196,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * java.util.Collection)
 	 */
 	@Override
-	public synchronized boolean isPermittedAny(Collection<Permission> permissions) {
+	public synchronized boolean isPermittedAny(Collection<? extends Permission> permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 

@@ -200,7 +200,9 @@ An `Authorizer` uses the <<Authentication>> representation to obtain the *permis
 A *permission* is the representation of the access to a resource and can be expressed int two ways:
 
 * As a `String`: this can be compared to a *Role* name.
-* Using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] interface. This interface can be extended and implemented in different ways to represent more complex permissions than a simple role name. The `Authorizer` relies on the `equals()` and `hashCode()` implementation to perform `Permission` comparison.
+* Using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] interface. This interface can be extended and implemented in different ways to represent more complex permissions than a simple role name. The default `Authorizer` relies on the `equals()` and `hashCode()` implementation to perform `Permission` comparison.
+
+To handle a custom `Permission` type, when the `equals()`/`hashCode()` comparison logic is not suitable or applicable, a custom `Authorizer` can be registered to the `Realm`, providing the right permission checking strategy for the custom `Permission` type. See below for further details.
 
 TIP: A `Permission` object which uses a simple String name can be created using the `Permission.create(String permission)` static method.
 

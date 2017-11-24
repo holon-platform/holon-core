@@ -28,11 +28,11 @@ import org.junit.Test;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
+import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Authenticator;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
-import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
@@ -138,6 +138,98 @@ public class TestContext {
 
 		final AccountCredentialsToken token2 = new AccountCredentialsToken("usr", "pwd");
 		dctx.authenticate(token2);
+
+	}
+
+	@Test
+	public void testPermissionExtension() {
+
+		final Realm realm = Realm.builder().withDefaultAuthorizer().build();
+
+		final Authentication authc = Authentication.builder("myself").permission(new MyPermission("r1"))
+				.permission(new MyPermission("r2")).build();
+
+		final MyPermission mp1 = new MyPermission("r1");
+		final MyPermission mp2 = new MyPermission("r2");
+		final MyPermission mp3 = new MyPermission("r3");
+
+		assertTrue(realm.isPermitted(authc, mp1));
+		assertTrue(realm.isPermitted(authc, mp2));
+		assertFalse(realm.isPermitted(authc, mp3));
+
+		Set<MyPermission> permissions = new HashSet<>();
+		permissions.add(mp1);
+		permissions.add(mp3);
+
+		assertFalse(realm.isPermitted(authc, permissions));
+		assertTrue(realm.isPermittedAny(authc, permissions));
+
+		final AuthContext ctx = AuthContext
+				.create(Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+					if ("myself".equals(token.getPrincipal())) {
+						return Authentication.builder("myself").permission(new MyPermission("r1"))
+								.permission(new MyPermission("r2")).build();
+					}
+					throw new UnknownAccountException("" + token.getPrincipal());
+				})).withDefaultAuthorizer().build());
+		
+		ctx.authenticate(AccountCredentialsToken.create("myself", ""));
+
+		assertTrue(ctx.isPermitted(mp1));
+		assertTrue(ctx.isPermitted(mp2));
+		assertFalse(ctx.isPermitted(mp3));
+
+		assertFalse(ctx.isPermitted(permissions));
+		assertTrue(ctx.isPermittedAny(permissions));
+
+	}
+
+	@SuppressWarnings("serial")
+	class MyPermission implements Permission {
+
+		private final String role;
+
+		public MyPermission(String role) {
+			super();
+			this.role = role;
+		}
+
+		@Override
+		public Optional<String> getPermission() {
+			return Optional.ofNullable(role);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + ((role == null) ? 0 : role.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			MyPermission other = (MyPermission) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (role == null) {
+				if (other.role != null)
+					return false;
+			} else if (!role.equals(other.role))
+				return false;
+			return true;
+		}
+
+		private TestContext getOuterType() {
+			return TestContext.this;
+		}
 
 	}
 
