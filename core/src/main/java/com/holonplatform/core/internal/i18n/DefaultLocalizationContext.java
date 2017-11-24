@@ -103,6 +103,11 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	private List<MessageProvider> messageProviders = new LinkedList<>();
 
 	/**
+	 * {@link MissingMessageLocalizationListener}s
+	 */
+	private List<MissingMessageLocalizationListener> missingMessageLocalizationListeners = new LinkedList<>();
+
+	/**
 	 * Message arguments placeholder
 	 */
 	private String messageArgumentsPlaceholder = MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER;
@@ -201,6 +206,27 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	 */
 	public void setMessageArgumentsPlaceholder(String messageArgumentsPlaceholder) {
 		this.messageArgumentsPlaceholder = messageArgumentsPlaceholder;
+	}
+
+	/**
+	 * Adds a {@link MissingMessageLocalizationListener}.
+	 * @param listener The listener to add (not null)
+	 */
+	public void addMissingMessageLocalizationListener(MissingMessageLocalizationListener listener) {
+		ObjectUtils.argumentNotNull(listener, "The MissingMessageLocalizationListener must be not null");
+		missingMessageLocalizationListeners.add(listener);
+	}
+
+	/**
+	 * Fires any registered {@link MissingMessageLocalizationListener}.
+	 * @param messageCode Localization message code
+	 * @param defaultMessage Optional default message
+	 */
+	protected void fireMissingMessageLocalizationListeners(String messageCode, String defaultMessage) {
+		getLocale().ifPresent(locale -> {
+			missingMessageLocalizationListeners
+					.forEach(listener -> listener.messageLocalizationIsMissing(locale, messageCode, defaultMessage));
+		});
 	}
 
 	/**
@@ -597,6 +623,9 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		LOGGER.debug(() -> "DefaultLocalizationContext: message with code [" + code + "] for Locale [" + locale
 				+ "] not found. Use default message [" + defaultMessage + "]");
 
+		// fire listeners
+		fireMissingMessageLocalizationListeners(code, defaultMessage);
+
 		return resolveMessageArguments(defaultMessage, arguments);
 	}
 
@@ -607,7 +636,7 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	@Override
 	public String getMessage(Localizable localizable, boolean lenient) {
 		ObjectUtils.argumentNotNull(localizable, "Localizable must not be null");
-		
+
 		if (isLocalized()) {
 			if (localizable.getMessageCode() != null) {
 				return getMessage(localizable.getMessageCode(), localizable.getMessage(),
@@ -830,6 +859,17 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		@Override
 		public Builder messageProvider(MessageProvider messageProvider) {
 			context.addMessageProvider(messageProvider);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withMissingMessageLocalizationListener(com.
+		 * holonplatform.core.i18n.LocalizationContext.MissingMessageLocalizationListener)
+		 */
+		@Override
+		public Builder withMissingMessageLocalizationListener(MissingMessageLocalizationListener listener) {
+			context.addMissingMessageLocalizationListener(listener);
 			return this;
 		}
 

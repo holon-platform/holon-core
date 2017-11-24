@@ -132,3 +132,11 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 <11> Format a `LocalDateTime` using `FULL` style for the date part and `SHORT` style for the time part
 <12> Get the `DateFormat` to use to format `Date`s without time
 <13> Get the `DateTimeFormatter` to use to format temporals with date and time
+
+==== MissingMessageLocalizationListener
+
+One or more link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.MissingMessageLocalizationListener.html[MissingMessageLocalizationListener^] can be registered to a `LocalizationContext` to be notified when a message localization is missing from any of the available `MessageProvider`.
+
+The `MissingMessageLocalizationListener` the localization message code for which the localization was requested, in addition to the `Locale` and the optionally provided default message.
+
+The `withMissingMessageLocalizationListener(...)` method of the `LocalizationContext` builder can be used to register a `MissingMessageLocalizationListener`.

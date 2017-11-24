@@ -400,6 +400,28 @@ public interface LocalizationContext {
 		return localizationContext;
 	}
 
+	// Listeners
+
+	/**
+	 * A listener which can be registered to a {@link LocalizationContext} to be notified when a message translation is
+	 * missing from any of the available {@link MessageProvider}s.
+	 * 
+	 * @since 5.0.4
+	 */
+	@FunctionalInterface
+	public interface MissingMessageLocalizationListener {
+
+		/**
+		 * Triggered when a message localization is not provided by any of the {@link MessageProvider}s registered in
+		 * the {@link LocalizationContext}.
+		 * @param locale The {@link Locale} for which the message localization was requested (never null)
+		 * @param messageCode Localization message code (never null)
+		 * @param defaultMessage The provided default message, if available (may be null)
+		 */
+		void messageLocalizationIsMissing(Locale locale, String messageCode, String defaultMessage);
+
+	}
+
 	// Builder
 
 	/**
@@ -483,6 +505,14 @@ public interface LocalizationContext {
 		 * @return this
 		 */
 		Builder messageProvider(MessageProvider messageProvider);
+
+		/**
+		 * Add a {@link MissingMessageLocalizationListener} to be notified when a message localization is not provided
+		 * by any of the {@link MessageProvider}s registered in the {@link LocalizationContext}.
+		 * @param listener The listener to add (not null)
+		 * @return this
+		 */
+		Builder withMissingMessageLocalizationListener(MissingMessageLocalizationListener listener);
 
 		/**
 		 * Build LocalizationContext instance

@@ -30,6 +30,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
@@ -380,6 +381,40 @@ public class TestI18n {
 
 		assertEquals("dft", LocalizationContext.builder().build().getMessage(msg, true));
 
+	}
+	
+	@Test
+	public void testMissingMessages() {
+		
+		final AtomicInteger counter = new AtomicInteger();
+		
+		final LocalizationContext ctx = LocalizationContext.builder().withInitialLocale(Locale.US)
+				.messageProvider((locale, code) -> {
+					if ("test".equals(code)) {
+						return Optional.of("testCode");
+					}
+					return Optional.empty();
+				}).withMissingMessageLocalizationListener((locale, code, dft) -> {
+					counter.incrementAndGet();
+					assertEquals(Locale.US, locale);
+					assertEquals("theDefault", dft);
+				})
+				.build();
+		
+		String msg = ctx.getMessage("test", "theDefault");
+		
+		assertEquals("testCode", msg);
+		assertEquals(0, counter.get());
+		
+		msg = ctx.getMessage("xxx", "theDefault");
+		
+		assertEquals("theDefault", msg);
+		assertEquals(1, counter.get());
+		
+		msg = ctx.getMessage("xxx2", "theDefault");
+		
+		assertEquals("theDefault", msg);
+		assertEquals(2, counter.get());
 	}
 
 	@Test
