@@ -372,6 +372,34 @@ public interface LocalizationContext {
 		return Context.get().resource(CONTEXT_KEY, LocalizationContext.class);
 	}
 
+	/**
+	 * Requires the current {@link LocalizationContext}. If not available using {@link #getCurrent()}, an
+	 * {@link IllegalStateException} is thrown.
+	 * @return Current LocalizationContext
+	 * @throws IllegalStateException LocalizationContext is not available as a {@link Context} resource
+	 */
+	static LocalizationContext require() {
+		return getCurrent().orElseThrow(
+				() -> new IllegalStateException("LocalizationContext is not available as context resource"));
+	}
+
+	/**
+	 * Requires the current {@link LocalizationContext}, checking that it is localized. If not available using
+	 * {@link #getCurrent()}, an {@link IllegalStateException} is thrown. If not localized, a
+	 * {@link LocalizationException} is thrown instead.
+	 * @return Current LocalizationContext
+	 * @throws IllegalStateException LocalizationContext is not available as a {@link Context} resource
+	 * @throws LocalizationException A LocalizationContext is available as context resource but it is not localized
+	 * @see #isLocalized()
+	 */
+	static LocalizationContext requireLocalized() {
+		LocalizationContext localizationContext = require();
+		if (!localizationContext.isLocalized()) {
+			throw new LocalizationException("LocalizationContext is not localized");
+		}
+		return localizationContext;
+	}
+
 	// Builder
 
 	/**

@@ -81,7 +81,11 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=ctxb
 
 ==== Obtaining a LocalizationContext
 
-If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key, i.e. the fully qualified LocalizationContext class name, the current `LocalizationContext` can be obtained by using the convenience `getCurrent()` method.
+If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key, i.e. the fully qualified LocalizationContext class name, the current `LocalizationContext` can be obtained by using the convenience `getCurrent()` static method.
+
+The `require()` static method can be used to obtain the current `LocalizationContext` or throwing an exception if it's not available as context resource.
+
+Furthermore, the `requireLocalized()` static method acts the same as the `require()` method, but additionally requires that the current `LocalizationContext` is localized.
 
 ==== Localizing a LocalizationContext
 
