@@ -64,8 +64,8 @@
 		<!-- slf4j -->
 		<slf4j.version>1.7.25</slf4j.version>
 
-		<!-- Apache commons -->
-		<commons.lang.version>3.6</commons.lang.version>
+		<!-- Apache commons lang -->
+		<commons.lang.version>3.7</commons.lang.version>
 
 		<!-- Bean validation -->
 		<bean.validation.version>1.1.0.Final</bean.validation.version>
