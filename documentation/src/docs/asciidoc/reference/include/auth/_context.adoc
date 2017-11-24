@@ -30,4 +30,5 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[t
 <7> Check if the current context `Authentication` has the permission named `role1`
 <8> Unauthenticate the context, i.e. remove the current `Authentication`
 
-TIP: The `AuthContext` interface provides a convenience `getCurrent()` static method allowing to obtain the current `AuthContext` instance which is made available as `Context`resource, using the default ClassLoader. See link:core.html#Context[Context] section for further information about context resources.
+TIP: The `AuthContext` interface provides a convenience `getCurrent()` static method allowing to obtain the current `AuthContext` instance which is made available as `Context`resource, using the default ClassLoader. The `require()` convenience method can be used to obtain the current `AuthContext` or throwing an exception if it's not available as context resource.
+See link:core.html#Context[Context] section for further information about context resources.

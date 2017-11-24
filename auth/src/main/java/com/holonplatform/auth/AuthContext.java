@@ -206,6 +206,17 @@ public interface AuthContext extends AuthenticationNotifier {
 		return Context.get().resource(CONTEXT_KEY, AuthContext.class);
 	}
 
+	/**
+	 * Requires the current {@link AuthContext}. If not available using {@link #getCurrent()}, an
+	 * {@link IllegalStateException} is thrown.
+	 * @return Current AuthContext
+	 * @throws IllegalStateException AuthContext is not available as a {@link Context} resource
+	 */
+	static AuthContext require() {
+		return getCurrent()
+				.orElseThrow(() -> new IllegalStateException("AuthContext is not available as context resource"));
+	}
+
 	// Builder
 
 	/**
