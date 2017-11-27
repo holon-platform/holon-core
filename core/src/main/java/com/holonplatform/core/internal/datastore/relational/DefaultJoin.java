@@ -57,6 +57,11 @@ public class DefaultJoin<T> extends DefaultPath<T> implements Join<T> {
 	public DefaultJoin(DataTarget<T> target, JoinType joinType) {
 		super(target.getName(), target.getType());
 		this.joinType = joinType;
+
+		// check aliasable
+		if (AliasablePath.class.isAssignableFrom(target.getClass())) {
+			this.alias = ((AliasablePath<?, ?>) target).getAlias().orElse(null);
+		}
 	}
 
 	/*
