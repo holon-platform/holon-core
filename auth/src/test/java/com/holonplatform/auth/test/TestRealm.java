@@ -38,9 +38,11 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
+import com.holonplatform.auth.exceptions.UnsupportedMessageException;
 import com.holonplatform.auth.exceptions.UnsupportedTokenException;
 import com.holonplatform.auth.internal.DefaultPermission;
 import com.holonplatform.auth.token.AccountCredentialsToken;
+import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.messaging.Message;
 
@@ -51,6 +53,9 @@ public class TestRealm {
 	public void testRealm() {
 
 		final Realm realm = Realm.builder().name("rlm").withDefaultAuthorizer().build();
+		
+		assertEquals(AuthenticationToken.class, realm.getTokenType());
+		assertEquals(Permission.class, realm.getPermissionType());
 
 		assertEquals("rlm", realm.getName().get());
 
@@ -149,6 +154,19 @@ public class TestRealm {
 	}
 
 	@Test
+	public void testRealmContext() {
+
+		String name = Context.get().executeThreadBound(Realm.CONTEXT_KEY,
+				Realm.builder().name("rlm").withDefaultAuthorizer().build(), () -> {
+					return Realm.getCurrent().orElseThrow(() -> new IllegalStateException("Missing Realm")).getName()
+							.orElse(null);
+				});
+
+		assertEquals("rlm", name);
+
+	}
+
+	@Test
 	public void testAuthenticationListeners() {
 
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -183,6 +201,16 @@ public class TestRealm {
 
 	@Test
 	public void testMessageAuthentication() {
+		
+		final Realm realmx = Realm.builder().build();
+		
+		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				realmx.authenticate(new TestMessage("myself"));
+			}
+		});
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
@@ -196,7 +224,7 @@ public class TestRealm {
 
 			@Override
 			public Optional<String> getScheme() {
-				return Optional.empty();
+				return Optional.of("myscheme");
 			}
 
 			@Override
@@ -213,6 +241,17 @@ public class TestRealm {
 		})).build();
 
 		realm.addAuthenticationListener(authc -> counter.incrementAndGet());
+		
+		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public void run() {
+				realm.authenticate((Message)null);
+			}
+		});
+		
+		assertTrue(realm.supportsMessage(TestMessage.class));
 
 		Authentication authc = realm.authenticate(new TestMessage("myself"));
 
@@ -224,10 +263,18 @@ public class TestRealm {
 		assertNotNull(authc);
 		assertEquals(1, counter.get());
 
-		authc = realm.authenticate(new TestMessage("myself"));
+		authc = realm.authenticate(new TestMessage("myself"), "myscheme");
 
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
+		
+		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				realm.authenticate(new TestMessage("myself"), "xxx");
+			}
+		});
 
 	}
 

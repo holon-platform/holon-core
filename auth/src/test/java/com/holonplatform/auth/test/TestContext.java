@@ -37,6 +37,7 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
+import com.holonplatform.core.Context;
 
 public class TestContext {
 
@@ -143,6 +144,19 @@ public class TestContext {
 	}
 
 	@Test
+	public void testAuthContextResource() {
+
+		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
+				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {
+					return AuthContext.getCurrent().orElseThrow(() -> new IllegalStateException("Missing AuthContext"))
+							.isAuthenticated();
+				});
+
+		assertFalse(ia);
+
+	}
+
+	@Test
 	public void testAuthenticationListeners() {
 
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -158,7 +172,7 @@ public class TestContext {
 
 		ctx.addAuthenticationListener(authc -> {
 			counter.incrementAndGet();
-			
+
 			if (authc != null) {
 				assertTrue(ctx.isAuthenticated());
 				assertNotNull(ctx.getAuthentication().orElse(null));

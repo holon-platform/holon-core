@@ -33,11 +33,12 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 import com.holonplatform.auth.Account;
+import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.Authentication;
+import com.holonplatform.auth.Authenticator;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.CredentialsContainer;
 import com.holonplatform.auth.Permission;
-import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.exceptions.DisabledAccountException;
 import com.holonplatform.auth.exceptions.ExpiredCredentialsException;
 import com.holonplatform.auth.exceptions.InvalidCredentialsException;
@@ -102,6 +103,17 @@ public class TestAccount {
 		assertNotEquals(act, "x");
 
 		assertTrue(act.hashCode() == act2.hashCode());
+
+		act = Account.builder("test").enabled(true).expired(false).locked(false).permissionStrings("p1", "p2").build();
+		
+		assertNotNull(act.getPermissions());
+		assertTrue(act.getPermissions().contains(p1));
+		assertTrue(act.getPermissions().contains(p2));
+		
+		act = Account.builder("test").permissionStrings((String[])null).build();
+		
+		assertNotNull(act.getPermissions());
+		assertEquals(0, act.getPermissions().size());
 
 	}
 
@@ -227,6 +239,16 @@ public class TestAccount {
 				resolver.authenticate(new AccountCredentialsToken("test", "testpwd"));
 			}
 		});
+		
+		Authenticator<AccountCredentialsToken> aa = Account.authenticator(service);
+
+		authc = aa.authenticate(new AccountCredentialsToken("test", "testpwd"));
+		assertNotNull(authc);
+		
+		aa = Account.authenticator(service, CredentialsContainer.defaultMatcher());
+
+		authc = aa.authenticate(new AccountCredentialsToken("test", "testpwd"));
+		assertNotNull(authc);
 
 	}
 
