@@ -161,6 +161,14 @@ public class TestRealm {
 	@Test
 	public void testRealmContext() {
 
+		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				Realm.require();
+			}
+		});
+
 		String name = Context.get().executeThreadBound(Realm.CONTEXT_KEY,
 				Realm.builder().name("rlm").withDefaultAuthorizer().build(), () -> {
 					return Realm.getCurrent().orElseThrow(() -> new IllegalStateException("Missing Realm")).getName()
@@ -339,7 +347,7 @@ public class TestRealm {
 		final Realm realm = Realm.builder().authorizer(atz).build();
 
 		Authentication a = Authentication.builder("test").permission(new TestPermission(1)).build();
-		
+
 		Collection<Permission> toCheck = Collections.singletonList(new TestPermission(1));
 
 		assertTrue(realm.isPermitted(a, toCheck));

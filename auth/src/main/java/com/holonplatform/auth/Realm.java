@@ -185,6 +185,16 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 	}
 
 	/**
+	 * Requires the current {@link Realm}. If not available using {@link #getCurrent()}, an
+	 * {@link IllegalStateException} is thrown.
+	 * @return Current Realm
+	 * @throws IllegalStateException Realm is not available as a {@link Context} resource
+	 */
+	static Realm require() {
+		return getCurrent().orElseThrow(() -> new IllegalStateException("Realm is not available as context resource"));
+	}
+
+	/**
 	 * Builder to create {@link Realm} instances.
 	 */
 	public interface Builder {

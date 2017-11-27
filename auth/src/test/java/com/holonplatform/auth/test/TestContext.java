@@ -38,6 +38,7 @@ import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
+import com.holonplatform.core.internal.utils.TestUtils;
 
 public class TestContext {
 
@@ -146,6 +147,14 @@ public class TestContext {
 	@Test
 	public void testAuthContextResource() {
 
+		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				AuthContext.require();
+			}
+		});
+
 		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
 				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {
 					return AuthContext.getCurrent().orElseThrow(() -> new IllegalStateException("Missing AuthContext"))
@@ -240,7 +249,7 @@ public class TestContext {
 
 		assertFalse(ctx.isPermitted(permissions));
 		assertTrue(ctx.isPermittedAny(permissions));
-		
+
 		assertTrue(ctx.isPermitted(mp1));
 
 	}
