@@ -16,17 +16,16 @@
 package com.holonplatform.auth.internal;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
+import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Authenticator;
 import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
-import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -74,7 +73,20 @@ public class DefaultAuthContext implements AuthContext {
 	 * @param authentication Authentication to set
 	 */
 	protected void setAuthentication(Authentication authentication) {
+		setAuthentication(authentication, true);
+	}
+
+	/**
+	 * Set the current Authentication
+	 * @param fireEvents Whether to trigger or not any registered {@link AuthenticationListener}
+	 * @param authentication Authentication to set, may be null
+	 */
+	protected void setAuthentication(Authentication authentication, boolean fireEvents) {
 		this.authentication = authentication;
+
+		if (fireEvents) {
+			fireAuthenticationListeners(authentication);
+		}
 	}
 
 	/*
@@ -93,7 +105,7 @@ public class DefaultAuthContext implements AuthContext {
 	@Override
 	public synchronized Authentication authenticate(AuthenticationToken authenticationToken)
 			throws AuthenticationException {
-		Authentication authentication = getRealm().authenticate(authenticationToken);
+		Authentication authentication = getRealm().authenticate(authenticationToken, false);
 		if (authentication == null) {
 			throw new UnexpectedAuthenticationException("Authenticator returned a null Authentication");
 		}
@@ -108,7 +120,7 @@ public class DefaultAuthContext implements AuthContext {
 	 */
 	@Override
 	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
-		Authentication authentication = getRealm().authenticate(message, schemes);
+		Authentication authentication = getRealm().authenticate(message, false, schemes);
 		if (authentication == null) {
 			throw new UnexpectedAuthenticationException("Authenticator returned a null Authentication");
 		}
@@ -126,15 +138,18 @@ public class DefaultAuthContext implements AuthContext {
 		if (authc.isPresent()) {
 			// remove authentication
 			setAuthentication(null);
-			// notify unauthenticated
-			List<AuthenticationListener> authenticationListeners = getRealm().getAuthenticationListeners();
-			if (authenticationListeners != null) {
-				for (AuthenticationListener authenticationListener : authenticationListeners) {
-					authenticationListener.onAuthentication(null);
-				}
-			}
 		}
 		return authc;
+	}
+
+	/**
+	 * Fire any Realm registered {@link AuthenticationListener}
+	 * @param authentication Authentication
+	 */
+	protected void fireAuthenticationListeners(final Authentication authentication) {
+		for (AuthenticationListener authenticationListener : getRealm().getAuthenticationListeners()) {
+			authenticationListener.onAuthentication(authentication);
+		}
 	}
 
 	/**

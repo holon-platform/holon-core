@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
@@ -142,6 +143,43 @@ public class TestContext {
 	}
 
 	@Test
+	public void testAuthenticationListeners() {
+
+		final AtomicInteger counter = new AtomicInteger(0);
+
+		final Realm realm = Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+			if ("myself".equals(token.getPrincipal())) {
+				return Authentication.builder("myself").build();
+			}
+			throw new UnknownAccountException("" + token.getPrincipal());
+		})).build();
+
+		final AuthContext ctx = AuthContext.create(realm);
+
+		ctx.addAuthenticationListener(authc -> {
+			counter.incrementAndGet();
+			
+			if (authc != null) {
+				assertTrue(ctx.isAuthenticated());
+				assertNotNull(ctx.getAuthentication().orElse(null));
+			}
+		});
+
+		AccountCredentialsToken tkn = AccountCredentialsToken.create("myself", "pwd");
+
+		Authentication authc = ctx.authenticate(tkn);
+
+		assertNotNull(authc);
+		assertEquals(1, counter.get());
+
+		ctx.unauthenticate();
+
+		assertNotNull(authc);
+		assertEquals(2, counter.get());
+
+	}
+
+	@Test
 	public void testPermissionExtension() {
 
 		final Realm realm = Realm.builder().withDefaultAuthorizer().build();
@@ -172,7 +210,7 @@ public class TestContext {
 					}
 					throw new UnknownAccountException("" + token.getPrincipal());
 				})).withDefaultAuthorizer().build());
-		
+
 		ctx.authenticate(AccountCredentialsToken.create("myself", ""));
 
 		assertTrue(ctx.isPermitted(mp1));

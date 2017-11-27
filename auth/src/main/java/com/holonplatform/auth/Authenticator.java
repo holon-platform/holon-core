@@ -36,7 +36,7 @@ import com.holonplatform.core.messaging.Message;
  * Every Authenticator declares supported {@link AuthenticationToken} type though {@link #getTokenType()} method.
  * </p>
  * 
- * @param <T> Support token type
+ * @param <T> Supported token type
  * 
  * @since 5.0.0
  */
@@ -75,6 +75,7 @@ public interface Authenticator<T extends AuthenticationToken> {
 	/**
 	 * Create an {@link Authenticator} bound to the given token type and which uses the provided callback
 	 * {@link Function} to perform the authentication strategy. See {@link #authenticate(AuthenticationToken)}.
+	 * @param <T> Authentication token type
 	 * @param tokenType Authentication token type (not null)
 	 * @param authenticationFunction Authentication strategy function (not null)
 	 * @return The {@link Authenticator} instance
