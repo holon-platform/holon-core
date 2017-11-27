@@ -28,6 +28,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -46,6 +47,7 @@ import com.holonplatform.auth.exceptions.InvalidTokenException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.jwt.AuthenticationClaims;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
+import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.auth.jwt.JwtTokenBuilder.AuthPart;
@@ -66,6 +68,14 @@ public class TestJwt {
 
 	@Test
 	public void testConfig() {
+
+		Properties props = new Properties();
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.ISSUER.getKey(), "TestIssuer");
+
+		JwtConfigProperties cfg = JwtConfigProperties.builder().withPropertySource(props).build();
+
+		assertEquals(JwtConfigProperties.NAME, cfg.getName());
+		assertEquals("TestIssuer", cfg.getConfigPropertyValue(JwtConfigProperties.ISSUER, null));
 
 		final JwtAuthenticator jwtAuthenticator = JwtAuthenticator.builder()
 				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").build();
@@ -231,11 +241,10 @@ public class TestJwt {
 
 		SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
 
-		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+		JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
 				.sharedKey(key.getEncoded()).build();
 
-		final Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build())
-				.build();
+		Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
 
 		final Authentication authc = Authentication.builder("testuser").root(true).build();
 
@@ -279,6 +288,41 @@ public class TestJwt {
 
 		jwt = JwtTokenBuilder.buildJWT(authc, "TestId", "TestUnit", 20000L, null, (String) null);
 		assertNotNull(jwt);
+
+		cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+				.sharedKeyBase64(Base64.getEncoder().encodeToString(key.getEncoded())).build();
+
+		realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
+
+		jwt = JwtTokenBuilder.buildJWT(authc, "TestId", "TestUnit", 20000L, SignatureAlgorithm.HS256, key.getEncoded());
+		assertNotNull(jwt);
+
+		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
+		assertNotNull(authenticated);
+		assertEquals(authc, authenticated);
+		assertEquals("TestUnit", authenticated.getParameter(Claims.ISSUER, String.class).get());
+		assertEquals("TestId", authenticated.getParameter(Claims.ID, String.class).get());
+
+		Properties props = new Properties();
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.SIGNATURE_ALGORITHM.getKey(),
+				SignatureAlgorithm.HS256.getValue());
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.SHARED_KEY.getKey(),
+				Base64.getEncoder().encodeToString(key.getEncoded()));
+
+		JwtConfigProperties jcfg = JwtConfigProperties.builder().withPropertySource(props).build();
+
+		cfg = JwtConfiguration.build(jcfg);
+
+		realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
+
+		jwt = JwtTokenBuilder.buildJWT(authc, "TestId", "TestUnit", 20000L, SignatureAlgorithm.HS256, key.getEncoded());
+		assertNotNull(jwt);
+
+		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
+		assertNotNull(authenticated);
+		assertEquals(authc, authenticated);
+		assertEquals("TestUnit", authenticated.getParameter(Claims.ISSUER, String.class).get());
+		assertEquals("TestId", authenticated.getParameter(Claims.ID, String.class).get());
 
 	}
 
