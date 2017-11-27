@@ -15,6 +15,9 @@
  */
 package com.holonplatform.spring.test;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +58,11 @@ public class TestEnvironment {
 	@Test
 	public void testEnv() {
 		Assert.assertEquals("Test", provider.getProperty("test.env.str", String.class));
+		Assert.assertTrue(provider.containsProperty("test.env.str"));
+		Assert.assertFalse(provider.containsProperty("xxx"));
+		final List<String> pns = provider.getPropertyNames().collect(Collectors.toList());
+		Assert.assertTrue(pns.size() > 0);
+		Assert.assertTrue(pns.contains("test.env.str"));
 	}
 
 }
