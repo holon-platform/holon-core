@@ -77,7 +77,7 @@ public abstract class AbstractAuthorizer<P extends Permission> implements Author
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isPermitted(Authentication authentication, P... permissions) {
+	public <T extends P> boolean isPermitted(Authentication authentication, T... permissions) {
 		return checkPermitted(authentication,
 				(permissions != null && permissions.length > 0) ? Arrays.asList(permissions) : null, true);
 	}
@@ -98,7 +98,7 @@ public abstract class AbstractAuthorizer<P extends Permission> implements Author
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public boolean isPermittedAny(Authentication authentication, P... permissions) {
+	public <T extends P> boolean isPermittedAny(Authentication authentication, T... permissions) {
 		return checkPermitted(authentication,
 				(permissions != null && permissions.length > 0) ? Arrays.asList(permissions) : null, false);
 	}

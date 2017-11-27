@@ -79,6 +79,9 @@ public class TestTokens {
 		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		AuthenticationTokenResolver<HttpRequest> resolver = AuthenticationToken.httpBasicResolver();
+		
+		Assert.assertEquals("Basic", resolver.getScheme().orElse(null));
+		Assert.assertEquals(HttpRequest.class, resolver.getMessageType());
 
 		AuthenticationToken bt = resolver.getAuthenticationToken(new TestHttpRequest("usr", "pwd")).orElse(null);
 		Assert.assertNotNull(bt);
@@ -105,6 +108,9 @@ public class TestTokens {
 		Assert.assertNull(tkn2.getPrincipal());
 
 		AuthenticationTokenResolver<HttpRequest> resolver = AuthenticationToken.httpBearerResolver();
+		
+		Assert.assertEquals("Bearer", resolver.getScheme().orElse(null));
+		Assert.assertEquals(HttpRequest.class, resolver.getMessageType());
 
 		AuthenticationToken bt = resolver.getAuthenticationToken(new TestHttpRequest(bearer)).orElse(null);
 		Assert.assertNotNull(bt);

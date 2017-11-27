@@ -20,12 +20,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
@@ -33,6 +37,7 @@ import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Authenticator;
+import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
@@ -53,7 +58,7 @@ public class TestRealm {
 	public void testRealm() {
 
 		final Realm realm = Realm.builder().name("rlm").withDefaultAuthorizer().build();
-		
+
 		assertEquals(AuthenticationToken.class, realm.getTokenType());
 		assertEquals(Permission.class, realm.getPermissionType());
 
@@ -201,9 +206,9 @@ public class TestRealm {
 
 	@Test
 	public void testMessageAuthentication() {
-		
+
 		final Realm realmx = Realm.builder().build();
-		
+
 		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
 
 			@Override
@@ -238,19 +243,17 @@ public class TestRealm {
 				return Authentication.builder("myself").build();
 			}
 			throw new UnknownAccountException("" + token.getPrincipal());
-		})).build();
+		})).listener(authc -> counter.incrementAndGet()).build();
 
-		realm.addAuthenticationListener(authc -> counter.incrementAndGet());
-		
 		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
 
 			@SuppressWarnings("rawtypes")
 			@Override
 			public void run() {
-				realm.authenticate((Message)null);
+				realm.authenticate((Message) null);
 			}
 		});
-		
+
 		assertTrue(realm.supportsMessage(TestMessage.class));
 
 		Authentication authc = realm.authenticate(new TestMessage("myself"));
@@ -267,7 +270,7 @@ public class TestRealm {
 
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
-		
+
 		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
 
 			@Override
@@ -275,6 +278,122 @@ public class TestRealm {
 				realm.authenticate(new TestMessage("myself"), "xxx");
 			}
 		});
+
+	}
+
+	@Test
+	public void testAuthorization() {
+
+		Authorizer<TestPermission> atz = new Authorizer<TestRealm.TestPermission>() {
+
+			@Override
+			public Class<? extends TestPermission> getPermissionType() {
+				return TestPermission.class;
+			}
+
+			@Override
+			public boolean isPermitted(Authentication authentication, TestPermission... permissions) {
+				return check(authentication, Arrays.asList(permissions));
+			}
+
+			@Override
+			public boolean isPermitted(Authentication authentication, String... permissions) {
+				return false;
+			}
+
+			@Override
+			public boolean isPermittedAny(Authentication authentication, TestPermission... permissions) {
+				return check(authentication, Arrays.asList(permissions));
+			}
+
+			@Override
+			public boolean isPermittedAny(Authentication authentication, String... permissions) {
+				return false;
+			}
+
+			@Override
+			public boolean isPermitted(Authentication authentication,
+					Collection<? extends TestPermission> permissions) {
+				return check(authentication, permissions);
+			}
+
+			@Override
+			public boolean isPermittedAny(Authentication authentication,
+					Collection<? extends TestPermission> permissions) {
+				return check(authentication, permissions);
+			}
+
+			protected boolean check(Authentication authentication, Collection<? extends TestPermission> permissions) {
+				List<TestPermission> ps = authentication.getPermissions().stream()
+						.filter(p -> p instanceof TestPermission).map(p -> (TestPermission) p)
+						.collect(Collectors.toList());
+				for (TestPermission p : permissions) {
+					if (!ps.contains(p)) {
+						return false;
+					}
+				}
+				return true;
+			}
+		};
+
+		final Realm realm = Realm.builder().authorizer(atz).build();
+
+		Authentication a = Authentication.builder("test").permission(new TestPermission(1)).build();
+		
+		Collection<Permission> toCheck = Collections.singletonList(new TestPermission(1));
+
+		assertTrue(realm.isPermitted(a, toCheck));
+		assertFalse(realm.isPermitted(a, new TestPermission(2)));
+
+	}
+
+	@SuppressWarnings("serial")
+	private class TestPermission implements Permission {
+
+		private final int id;
+
+		public TestPermission(int id) {
+			super();
+			this.id = id;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.auth.Permission#getPermission()
+		 */
+		@Override
+		public Optional<String> getPermission() {
+			return Optional.empty();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getOuterType().hashCode();
+			result = prime * result + id;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			TestPermission other = (TestPermission) obj;
+			if (!getOuterType().equals(other.getOuterType()))
+				return false;
+			if (id != other.id)
+				return false;
+			return true;
+		}
+
+		private TestRealm getOuterType() {
+			return TestRealm.this;
+		}
 
 	}
 

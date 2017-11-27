@@ -154,6 +154,13 @@ public class TestContext {
 
 		assertFalse(ia);
 
+		ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
+				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {
+					return AuthContext.require().isAuthenticated();
+				});
+
+		assertFalse(ia);
+
 	}
 
 	@Test
@@ -233,6 +240,8 @@ public class TestContext {
 
 		assertFalse(ctx.isPermitted(permissions));
 		assertTrue(ctx.isPermittedAny(permissions));
+		
+		assertTrue(ctx.isPermitted(mp1));
 
 	}
 

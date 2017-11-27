@@ -37,12 +37,13 @@ public interface Authorizer<P extends Permission> {
 
 	/**
 	 * Check if given Authentication has all specified permission/s
+	 * @param <T> Actual permission type
 	 * @param authentication Authentication subject
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if given Authentication has all specified permission
 	 */
 	@SuppressWarnings("unchecked")
-	boolean isPermitted(Authentication authentication, P... permissions);
+	<T extends P> boolean isPermitted(Authentication authentication, T... permissions);
 
 	/**
 	 * Check if given Authentication has all specified permission/s using String permission form.
@@ -58,12 +59,13 @@ public interface Authorizer<P extends Permission> {
 
 	/**
 	 * Check if given Authentication has any of specified permission/s
+	 * @param <T> Actual permission type
 	 * @param authentication Authentication subject
 	 * @param permissions Permissions to check
 	 * @return <code>true</code> if given Authentication has any of specified permission
 	 */
 	@SuppressWarnings("unchecked")
-	boolean isPermittedAny(Authentication authentication, P... permissions);
+	<T extends P> boolean isPermittedAny(Authentication authentication, T... permissions);
 
 	/**
 	 * Check if given Authentication has any of specified permission/s using String permission form.
