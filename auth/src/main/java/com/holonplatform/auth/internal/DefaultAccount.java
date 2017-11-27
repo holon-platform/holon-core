@@ -191,7 +191,10 @@ public class DefaultAccount implements Account {
 	 * @param permissions the permissions to set
 	 */
 	public void setPermissions(Collection<Permission> permissions) {
-		this.permissions = permissions;
+		this.permissions = new ArrayList<>();
+		if (permissions != null) {
+			permissions.forEach(p -> this.permissions.add(p));
+		}
 	}
 
 	/**

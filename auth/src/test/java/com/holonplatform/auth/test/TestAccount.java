@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -46,6 +47,7 @@ import com.holonplatform.auth.exceptions.LockedAccountException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.internal.AccountAuthenticator;
+import com.holonplatform.auth.internal.DefaultAccount;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.internal.utils.Hash;
 import com.holonplatform.core.internal.utils.TestUtils;
@@ -89,7 +91,27 @@ public class TestAccount {
 		assertFalse(crd.isBase64Encoded());
 		assertFalse(crd.isHexEncoded());
 		assertNull(crd.getExpireDate());
+		
+		Object creds = Credentials.builder().secret("secret").hashAlgorithm("SHA-256").hashIterations(1).build();
+		
+		Account actx = Account.builder("test").root(true).credentials(creds)
+				.permissions(Collections.singleton(p1)).permission(p2).build();
 
+		assertTrue(actx.isRoot());
+		assertTrue(actx.isEnabled());
+		assertFalse(actx.isExpired());
+		assertFalse(actx.isLocked());
+		assertNotNull(actx.getPermissions());
+		assertEquals(2, actx.getPermissions().size());
+		assertTrue(actx.getPermissions().contains(p1));
+		assertTrue(actx.getPermissions().contains(p2));
+		assertNotNull(actx.getCredentials());
+		Credentials crdx = (Credentials) act.getCredentials();
+		assertEquals("secret", new String(crdx.getSecret()));
+		assertEquals("SHA-256", crdx.getHashAlgorithm());
+		assertNull(crdx.getSalt());
+		assertEquals(1, crdx.getHashIterations());
+		
 		Account act2 = Account.builder("test").detail("test", "val").build();
 		assertNotNull(act2.getDetails());
 
@@ -105,15 +127,23 @@ public class TestAccount {
 		assertTrue(act.hashCode() == act2.hashCode());
 
 		act = Account.builder("test").enabled(true).expired(false).locked(false).permissionStrings("p1", "p2").build();
-		
+
 		assertNotNull(act.getPermissions());
 		assertTrue(act.getPermissions().contains(p1));
 		assertTrue(act.getPermissions().contains(p2));
-		
-		act = Account.builder("test").permissionStrings((String[])null).build();
-		
+
+		act = Account.builder("test").permissionStrings((String[]) null).build();
+
 		assertNotNull(act.getPermissions());
 		assertEquals(0, act.getPermissions().size());
+
+		DefaultAccount ia = new DefaultAccount("testd");
+		ia.setRoot(true);
+		ia.setPermissions(Collections.singleton(Permission.create("px")));
+
+		assertTrue(ia.isRoot());
+		assertNotNull(ia.getPermissions());
+		assertEquals(1, ia.getPermissions().size());
 
 	}
 
@@ -239,12 +269,12 @@ public class TestAccount {
 				resolver.authenticate(new AccountCredentialsToken("test", "testpwd"));
 			}
 		});
-		
+
 		Authenticator<AccountCredentialsToken> aa = Account.authenticator(service);
 
 		authc = aa.authenticate(new AccountCredentialsToken("test", "testpwd"));
 		assertNotNull(authc);
-		
+
 		aa = Account.authenticator(service, CredentialsContainer.defaultMatcher());
 
 		authc = aa.authenticate(new AccountCredentialsToken("test", "testpwd"));
