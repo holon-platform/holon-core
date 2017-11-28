@@ -39,5 +39,5 @@ public @interface ConditionalOnPropertyPrefix {
 	 * @return the property prefix to check
 	 */
 	String value();
-	
+
 }

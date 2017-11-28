@@ -40,14 +40,14 @@ public class TestRestClientConfiguration {
 
 	@Autowired
 	private RestTemplateBuilder restTemplateBuilder;
-	
+
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(restTemplateBuilder);
-		
+
 		RestClient rc = RestClient.create();
 		Assert.assertNotNull(rc);
-		
+
 		rc = RestClient.create(SpringRestClient.class.getName());
 		Assert.assertNotNull(rc);
 	}

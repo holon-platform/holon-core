@@ -59,7 +59,8 @@ public class SpringBootRestTemplateRestClientFactory implements RestClientFactor
 	@Override
 	public RestClient create(ClassLoader classLoader) throws RestClientCreationException {
 		// Try to obtain a RestTemplate
-		Optional<RestTemplateBuilder> restTemplateBuilder = Context.get().resource("restTemplateBuilder", RestTemplateBuilder.class, classLoader);
+		Optional<RestTemplateBuilder> restTemplateBuilder = Context.get().resource("restTemplateBuilder",
+				RestTemplateBuilder.class, classLoader);
 		if (restTemplateBuilder.isPresent()) {
 			return new RestTemplateRestClient(restTemplateBuilder.get().build());
 		}

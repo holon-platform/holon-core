@@ -114,11 +114,12 @@ public class TestDatastore {
 		assertTrue(q instanceof DummyQuery);
 
 	}
-	
+
 	@SuppressWarnings("serial")
 	private static class DummyQueryFactory implements DatastoreCommodityFactory<DatastoreCommodityContext, Query> {
 
-		/* (non-Javadoc)
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.core.datastore.DatastoreCommodityFactory#getCommodityType()
 		 */
 		@Override
@@ -126,14 +127,17 @@ public class TestDatastore {
 			return Query.class;
 		}
 
-		/* (non-Javadoc)
-		 * @see com.holonplatform.core.datastore.DatastoreCommodityFactory#createCommodity(com.holonplatform.core.datastore.DatastoreCommodityContext)
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * com.holonplatform.core.datastore.DatastoreCommodityFactory#createCommodity(com.holonplatform.core.datastore.
+		 * DatastoreCommodityContext)
 		 */
 		@Override
 		public Query createCommodity(DatastoreCommodityContext context) throws CommodityConfigurationException {
 			return new DummyQuery(new DefaultQueryDefinition());
 		}
-		
+
 	}
 
 }

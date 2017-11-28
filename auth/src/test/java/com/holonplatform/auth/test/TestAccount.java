@@ -91,11 +91,11 @@ public class TestAccount {
 		assertFalse(crd.isBase64Encoded());
 		assertFalse(crd.isHexEncoded());
 		assertNull(crd.getExpireDate());
-		
+
 		Object creds = Credentials.builder().secret("secret").hashAlgorithm("SHA-256").hashIterations(1).build();
-		
-		Account actx = Account.builder("test").root(true).credentials(creds)
-				.permissions(Collections.singleton(p1)).permission(p2).build();
+
+		Account actx = Account.builder("test").root(true).credentials(creds).permissions(Collections.singleton(p1))
+				.permission(p2).build();
 
 		assertTrue(actx.isRoot());
 		assertTrue(actx.isEnabled());
@@ -111,7 +111,7 @@ public class TestAccount {
 		assertEquals("SHA-256", crdx.getHashAlgorithm());
 		assertNull(crdx.getSalt());
 		assertEquals(1, crdx.getHashIterations());
-		
+
 		Account act2 = Account.builder("test").detail("test", "val").build();
 		assertNotNull(act2.getDetails());
 

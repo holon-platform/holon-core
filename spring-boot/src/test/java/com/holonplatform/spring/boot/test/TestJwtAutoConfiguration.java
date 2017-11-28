@@ -37,15 +37,15 @@ public class TestJwtAutoConfiguration {
 	protected static class Config {
 
 	}
-	
+
 	@Autowired
 	private JwtConfiguration jwtConfiguration;
-	
+
 	@Test
 	public void testConfig() {
 		Assert.assertNotNull(jwtConfiguration);
-		
+
 		Assert.assertEquals("TestIssuer", jwtConfiguration.getIssuer());
 	}
-	
+
 }

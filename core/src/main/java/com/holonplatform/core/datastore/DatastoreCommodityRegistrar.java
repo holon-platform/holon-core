@@ -32,7 +32,7 @@ public interface DatastoreCommodityRegistrar<X extends DatastoreCommodityContext
 	 */
 	@SuppressWarnings("rawtypes")
 	Class<? extends DatastoreCommodityFactory> getCommodityFactoryType();
-	
+
 	/**
 	 * Register a {@link DatastoreCommodityFactory} to made available
 	 * {@link DatastoreCommodityFactory#getCommodityType()} type commodities. If a {@link DatastoreCommodityFactory}

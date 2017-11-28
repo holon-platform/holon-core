@@ -67,24 +67,24 @@ public class TestBeanPostProcessor {
 		assertEquals("theCaptionMessageCode", property.getMessageCode());
 
 	}
-	
+
 	@Test
 	public void testConfig() {
 
 		Builder<String> property = BeanProperty.builder("test", String.class);
 
 		final Config annotation = new Config() {
-			
+
 			@Override
 			public Class<? extends Annotation> annotationType() {
 				return Config.class;
 			}
-			
+
 			@Override
 			public String value() {
 				return "testValue";
 			}
-			
+
 			@Override
 			public String key() {
 				return "test";
@@ -95,26 +95,26 @@ public class TestBeanPostProcessor {
 
 		BeanPropertyConfigPostProcessor postProcessor = new BeanPropertyConfigPostProcessor();
 		postProcessor.processBeanProperty(property, Object.class);
-		
+
 		assertNotNull(property.getConfiguration());
 
 		assertTrue(property.getConfiguration().hasNotNullParameter("test"));
 		assertEquals("testValue", property.getConfiguration().getParameter("test", String.class).orElse(null));
 
 	}
-	
+
 	@Test
 	public void testSequence() {
 
 		Builder<String> property = BeanProperty.builder("test", String.class);
 
 		final Sequence annotation = new Sequence() {
-			
+
 			@Override
 			public Class<? extends Annotation> annotationType() {
 				return Sequence.class;
 			}
-			
+
 			@Override
 			public int value() {
 				return 7;
@@ -125,24 +125,24 @@ public class TestBeanPostProcessor {
 
 		BeanPropertySequencePostProcessor postProcessor = new BeanPropertySequencePostProcessor();
 		postProcessor.processBeanProperty(property, Object.class);
-		
+
 		assertTrue(property.getSequence().isPresent());
 		assertEquals(Integer.valueOf(7), property.getSequence().get());
 
 	}
-	
+
 	@Test
 	public void testTemporal() {
 
 		Builder<String> property = BeanProperty.builder("test", String.class);
 
 		final Temporal annotation = new Temporal() {
-			
+
 			@Override
 			public Class<? extends Annotation> annotationType() {
 				return Temporal.class;
 			}
-			
+
 			@Override
 			public TemporalType value() {
 				return TemporalType.DATE_TIME;
@@ -153,7 +153,7 @@ public class TestBeanPostProcessor {
 
 		BeanPropertyTemporalPostProcessor postProcessor = new BeanPropertyTemporalPostProcessor();
 		postProcessor.processBeanProperty(property, Object.class);
-		
+
 		assertNotNull(property.getConfiguration());
 		assertEquals(TemporalType.DATE_TIME, property.getConfiguration().getTemporalType().orElse(null));
 

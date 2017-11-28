@@ -35,13 +35,13 @@ public class TestNoJwtAutoConfiguration {
 	protected static class Config {
 
 	}
-	
-	@Autowired(required=false)
+
+	@Autowired(required = false)
 	private JwtConfiguration jwtConfiguration;
-	
+
 	@Test
 	public void testConfig() {
 		Assert.assertNull(jwtConfiguration);
 	}
-	
+
 }

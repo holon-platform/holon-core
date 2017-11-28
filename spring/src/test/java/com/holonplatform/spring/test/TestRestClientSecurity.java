@@ -108,13 +108,13 @@ public class TestRestClientSecurity extends JerseyTest {
 	public void testClient() {
 
 		final RestClient client = SpringRestClient.create(restTemplate).defaultTarget(getBaseUri());
-		
+
 		ResponseEntity<?> rsp = client.request().path("test").path("permit").get(Void.class);
 		assertEquals(HttpStatus.OK, rsp.getStatus());
-		
+
 		rsp = client.request().path("test").path("role").get(Void.class);
 		assertEquals(HttpStatus.FORBIDDEN, rsp.getStatus());
-		
+
 		rsp = client.request().path("test").path("deny").get(Void.class);
 		assertEquals(HttpStatus.FORBIDDEN, rsp.getStatus());
 

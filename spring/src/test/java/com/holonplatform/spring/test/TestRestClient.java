@@ -321,15 +321,15 @@ public class TestRestClient extends JerseyTest {
 		List<TestData> tds = client.request().path("test").path("data").getAsList(TestData.class);
 		assertNotNull(td);
 		assertEquals(2, tds.size());
-		
+
 		ResponseEntity<?> rspe = client.request().path("test").path("data/{id}").resolve("id", 1).get(TestData.class);
 		assertEquals(TestData.class, rspe.getPayloadType());
-		
+
 		String asString = rspe.as(String.class).orElse(null);
 		assertNotNull(asString);
-		
+
 		assertNotNull(rspe.getHeaders());
-		
+
 		HttpResponse<?> rsp = client.request().path("test").path("data/save")
 				.put(RequestEntity.json(new TestData(7, "testPost")));
 		assertNotNull(rsp);

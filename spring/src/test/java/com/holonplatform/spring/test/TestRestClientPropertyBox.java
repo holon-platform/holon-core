@@ -197,12 +197,12 @@ public class TestRestClientPropertyBox extends JerseyTest {
 				.getAsList(PropertyBox.class).stream().map(p -> p.getValue(VALUE)).collect(Collectors.toList());
 		assertNotNull(values);
 		assertEquals(2, values.size());
-		
+
 		PropertyBox postBox = PropertyBox.builder(PROPERTIES).set(CODE, 100).set(VALUE, "post").build();
 		HttpResponse<Void> postResponse = client.request().path("test").path("box/post")
 				.post(RequestEntity.json(postBox));
 		assertEquals(HttpStatus.ACCEPTED, postResponse.getStatus());
-		
+
 	}
 
 }

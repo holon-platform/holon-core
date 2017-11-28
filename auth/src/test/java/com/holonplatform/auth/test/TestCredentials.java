@@ -115,7 +115,7 @@ public class TestCredentials {
 
 		crd = Credentials.builder().secret(bytes).hashAlgorithm(Credentials.Encoder.HASH_SHA_512).build();
 		assertTrue(Arrays.equals(bytes, crd.getSecret()));
-		
+
 		crd = Credentials.builder().secret("test").hashAlgorithm(Credentials.Encoder.HASH_MD5).hashIterations(9)
 				.salt(new String(bytes)).build();
 		assertEquals("MD5", crd.getHashAlgorithm());
