@@ -7,6 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.annotation.AliasFor;
 
 import com.holonplatform.spring.internal.tenant.TenantScope;
 
@@ -18,5 +20,16 @@ import com.holonplatform.spring.internal.tenant.TenantScope;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ScopeTenant {
+
+	/**
+	 * Alias for {@link Scope#proxyMode}.
+	 * <p>
+	 * Defaults to {@link ScopedProxyMode#INTERFACES}.
+	 * </p>
+	 * @return The scoped proxy mode
+	 * @see Scope#proxyMode()
+	 */
+	@AliasFor(annotation = Scope.class)
+	ScopedProxyMode proxyMode() default ScopedProxyMode.INTERFACES;
 
 }

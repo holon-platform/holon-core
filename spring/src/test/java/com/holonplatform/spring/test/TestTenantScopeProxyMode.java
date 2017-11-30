@@ -18,8 +18,8 @@ import com.holonplatform.spring.EnableTenantScope;
 import com.holonplatform.spring.ScopeTenant;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = TestTenantScope.Config.class)
-public class TestTenantScope {
+@ContextConfiguration(classes = TestTenantScopeProxyMode.Config.class)
+public class TestTenantScopeProxyMode {
 
 	private static final ThreadLocal<String> CURRENT_TENANT_ID = new ThreadLocal<>();
 
@@ -43,6 +43,11 @@ public class TestTenantScope {
 		public TenantScopedServiceTest serviceTest() {
 			return new TenantScopedServiceTest();
 		}
+		
+		@Bean
+		public SingletonComponent singletonComponent() {
+			return new SingletonComponent();
+		}
 
 	}
 
@@ -55,43 +60,22 @@ public class TestTenantScope {
 	}
 
 	@Test
-	public void testTenantScope() {
-		TenantScopedServiceTest srv1;
+	public void testTenantScopeProxy() {
 		try {
 			CURRENT_TENANT_ID.set("T1");
-			srv1 = applicationContext.getBean(TenantScopedServiceTest.class);
-			Assert.assertNotNull(srv1);
+			SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);
+			Assert.assertNotNull(sc);
 			
-			Assert.assertEquals("T1", srv1.getTenantId());
+			Assert.assertEquals("T1", sc.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
-
-		TenantScopedServiceTest srv2;
-		try {
-			CURRENT_TENANT_ID.set("T2");
-			srv2 = applicationContext.getBean(TenantScopedServiceTest.class);
-			Assert.assertNotNull(srv2);
-			
-			Assert.assertEquals("T2", srv2.getTenantId());
-		} finally {
-			CURRENT_TENANT_ID.remove();
-		}
-
-		Assert.assertNotEquals(srv1, srv2);
-
-		TenantScopedServiceTest srv3;
-		try {
-			CURRENT_TENANT_ID.set("T1");
-			srv3 = applicationContext.getBean(TenantScopedServiceTest.class);
-			Assert.assertNotNull(srv3);
-			
-			Assert.assertEquals("T1", srv3.getTenantId());
-		} finally {
-			CURRENT_TENANT_ID.remove();
-		}
-
-		Assert.assertEquals(srv1, srv3);
+	}
+	
+	@Test(expected = BeanCreationException.class)
+	public void testTenantScopeProxyFail() {
+		SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);
+		sc.getTenantId();
 	}
 
 }
