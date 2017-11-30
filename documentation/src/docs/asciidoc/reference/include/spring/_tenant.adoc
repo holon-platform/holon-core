@@ -19,3 +19,15 @@ The scope name is `tenant`, so Spring beans can be registered with this scope us
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=tenant,indent=0]
 ----
+
+==== ScopedProxyMode
+
+The default `ScopedProxyMode` of the `@ScopeTenant` annotation is `INTERFACES`.
+
+This proxy mode allows to configure a _proxy_ for the tenant-scoped Spring component, in order to inject (autowire) it in other Spring components with a different scope.
+
+The `INTERFACES` mode create a JDK dynamic proxy implementing all *interfaces* exposed by the class of the target object.
+
+The `proxyMode()` attribute of the `@ScopeTenant` annotation can be used to change the scoped proxy mode.
+
+
