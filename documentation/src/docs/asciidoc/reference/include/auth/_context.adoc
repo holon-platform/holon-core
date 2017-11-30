@@ -14,8 +14,6 @@ It provides methods to:
 
 See the <<Realm>> section for detailed information about authenticators and authorizers.
 
-TIP: When an `AuthContext` is *de-authenticated*, any Realm registered `AuthenticationListener` is notified, invoking `onAuthentication(Authentication authentication)` listeners method with a _null_ `authentication` parameter value.
-
 [source, java]
 .Authorization example
 ----
@@ -32,3 +30,11 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[t
 
 TIP: The `AuthContext` interface provides a convenience `getCurrent()` static method allowing to obtain the current `AuthContext` instance which is made available as `Context`resource, using the default ClassLoader. The `require()` convenience method can be used to obtain the current `AuthContext` or throwing an exception if it's not available as context resource.
 See link:core.html#Context[Context] section for further information about context resources.
+
+==== AuthenticationListener support
+
+The `AuthContext` interface allows the registration of listeners to be notified when a successfull authentication happens, using the `addAuthenticationListener(AuthenticationListener authenticationListener)` method.
+
+Furthermore, the registered `AuthenticationListener` are notified when the `AuthContext` is _unauthenticated_ using the `unauthenticate()` method, i.e. when the current `Authentication` is removed from the `AuthContext`. In this case a `null` `Authentication` is provided to the registered authentication listeners.
+
+NOTE: The `Realm` and `AuthContext` authentication listeners are considered as separate sets, but since the `AuthContext` uses its configured `Realm` to perform authentications, when the authentication is performed from the `AuthContext`, also the `Realm` authentication listeners will be triggered. Vice-versa, when the authentication is performed from the `Realm`, the `AuthContext` authentication listeners will not be triggered.
