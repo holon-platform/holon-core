@@ -200,11 +200,6 @@ public class TestRealm {
 		assertNotNull(authc);
 		assertEquals(1, counter.get());
 
-		authc = realm.authenticate(tkn, false);
-
-		assertNotNull(authc);
-		assertEquals(1, counter.get());
-
 		authc = realm.authenticate(tkn);
 
 		assertNotNull(authc);
@@ -265,11 +260,6 @@ public class TestRealm {
 		assertTrue(realm.supportsMessage(TestMessage.class));
 
 		Authentication authc = realm.authenticate(new TestMessage("myself"));
-
-		assertNotNull(authc);
-		assertEquals(1, counter.get());
-
-		authc = realm.authenticate(new TestMessage("myself"), false);
 
 		assertNotNull(authc);
 		assertEquals(1, counter.get());

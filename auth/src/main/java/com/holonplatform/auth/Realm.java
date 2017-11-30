@@ -15,21 +15,12 @@
  */
 package com.holonplatform.auth;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.Authentication.AuthenticationNotifier;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Authenticator.MessageAuthenticator;
-import com.holonplatform.auth.exceptions.AuthenticationException;
-import com.holonplatform.auth.exceptions.DisabledAccountException;
-import com.holonplatform.auth.exceptions.ExpiredCredentialsException;
-import com.holonplatform.auth.exceptions.InvalidCredentialsException;
-import com.holonplatform.auth.exceptions.LockedAccountException;
-import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
-import com.holonplatform.auth.exceptions.UnknownAccountException;
-import com.holonplatform.auth.exceptions.UnsupportedTokenException;
 import com.holonplatform.auth.internal.DefaultRealm;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.messaging.Message;
@@ -60,6 +51,10 @@ import com.holonplatform.core.messaging.Message;
  * 
  * <p>
  * Extends {@link MessageAuthenticator} to support authentication using generic authentication request {@link Message}.
+ * </p>
+ * 
+ * <p>
+ * Extends {@link AuthenticationNotifier} to allow {@link AuthenticationListener} registration.
  * </p>
  * 
  * @since 5.0.0
@@ -97,50 +92,6 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 	<T extends AuthenticationToken> void addAuthenticator(Authenticator<T> authenticator);
 
 	/**
-	 * Attempts to perform authentication using given {@link AuthenticationToken}.
-	 * <p>
-	 * If the authentication is successful, an {@link Authentication} instance is returned that represents the user's
-	 * account data and provides authorization operations.
-	 * </p>
-	 * <p>
-	 * If authentication is not successful, a suitable exception should be thrown. See the specific exceptions listed
-	 * below for builtin available authentication errors.
-	 * </p>
-	 * @param authenticationToken the authentication request token
-	 * @param fireEvents Whether to trigger or not any registered {@link AuthenticationListener}
-	 * @return the Authentication that represents principal's account and authorization data
-	 * @throws AuthenticationException Authentication failed
-	 * 
-	 * @see DisabledAccountException
-	 * @see LockedAccountException
-	 * @see UnknownAccountException
-	 * @see ExpiredCredentialsException
-	 * @see InvalidCredentialsException
-	 * @see UnsupportedTokenException
-	 * @see UnexpectedAuthenticationException
-	 */
-	Authentication authenticate(AuthenticationToken authenticationToken, boolean fireEvents)
-			throws AuthenticationException;
-
-	/**
-	 * Try to authenticate given <code>message</code> with the same contract as
-	 * {@link Authenticator#authenticate(AuthenticationToken)}.
-	 * <p>
-	 * Message-based authentication is performed using a resolvers chain: all available resolvers for given message type
-	 * are called in the order they where registered, and the first not null {@link AuthenticationToken} returned by a
-	 * resolver is used for attempting authentication.
-	 * </p>
-	 * @param message Request message
-	 * @param fireEvents Whether to trigger or not any registered {@link AuthenticationListener}
-	 * @param schemes Optional authentication schemes to use. If not null or empty, only
-	 *        {@link AuthenticationTokenResolver}s bound to given scheme names will be used
-	 * @return the Authentication that represents principal's account and authorization data
-	 * @throws AuthenticationException Authentication failed
-	 */
-	Authentication authenticate(Message<?, ?> message, boolean fireEvents, String... schemes)
-			throws AuthenticationException;
-
-	/**
 	 * Returns whether this Realm supports given {@link Permission} type
 	 * @param permissionType Permission type
 	 * @return <code>true</code> if this Realm supports given Permission type
@@ -153,12 +104,6 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 	 * @param authorizer Authorizer to add
 	 */
 	<P extends Permission> void addAuthorizer(Authorizer<P> authorizer);
-
-	/**
-	 * Get registered AuthenticationListeners
-	 * @return AuthenticationListeners or an empty List if none
-	 */
-	List<AuthenticationListener> getAuthenticationListeners();
 
 	// Builder
 

@@ -16,6 +16,9 @@
 package com.holonplatform.auth.internal;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import com.holonplatform.auth.AuthContext;
@@ -44,6 +47,11 @@ public class DefaultAuthContext implements AuthContext {
 	 * Realm (immutable)
 	 */
 	private final Realm realm;
+
+	/*
+	 * Authentication listeners
+	 */
+	private List<AuthenticationListener> authenticationListeners;
 
 	/*
 	 * Current authentication
@@ -105,7 +113,7 @@ public class DefaultAuthContext implements AuthContext {
 	@Override
 	public synchronized Authentication authenticate(AuthenticationToken authenticationToken)
 			throws AuthenticationException {
-		Authentication authentication = getRealm().authenticate(authenticationToken, false);
+		Authentication authentication = getRealm().authenticate(authenticationToken);
 		if (authentication == null) {
 			throw new UnexpectedAuthenticationException("Authenticator returned a null Authentication");
 		}
@@ -120,7 +128,7 @@ public class DefaultAuthContext implements AuthContext {
 	 */
 	@Override
 	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
-		Authentication authentication = getRealm().authenticate(message, false, schemes);
+		Authentication authentication = getRealm().authenticate(message, schemes);
 		if (authentication == null) {
 			throw new UnexpectedAuthenticationException("Authenticator returned a null Authentication");
 		}
@@ -140,16 +148,6 @@ public class DefaultAuthContext implements AuthContext {
 			setAuthentication(null);
 		}
 		return authc;
-	}
-
-	/**
-	 * Fire any Realm registered {@link AuthenticationListener}
-	 * @param authentication Authentication
-	 */
-	protected void fireAuthenticationListeners(final Authentication authentication) {
-		for (AuthenticationListener authenticationListener : getRealm().getAuthenticationListeners()) {
-			authenticationListener.onAuthentication(authentication);
-		}
 	}
 
 	/**
@@ -223,7 +221,12 @@ public class DefaultAuthContext implements AuthContext {
 	 */
 	@Override
 	public void addAuthenticationListener(AuthenticationListener authenticationListener) {
-		getRealm().addAuthenticationListener(authenticationListener);
+		if (authenticationListener != null) {
+			if (authenticationListeners == null) {
+				authenticationListeners = new LinkedList<>();
+			}
+			authenticationListeners.add(authenticationListener);
+		}
 	}
 
 	/*
@@ -234,7 +237,27 @@ public class DefaultAuthContext implements AuthContext {
 	 */
 	@Override
 	public void removeAuthenticationListener(AuthenticationListener authenticationListener) {
-		getRealm().removeAuthenticationListener(authenticationListener);
+		if (authenticationListeners != null && authenticationListener != null) {
+			authenticationListeners.remove(authenticationListener);
+		}
+	}
+
+	/**
+	 * Get the registered {@link AuthenticationListener}s.
+	 * @return the registered authentication listeners, an empty List if none
+	 */
+	protected List<AuthenticationListener> getAuthenticationListeners() {
+		return (authenticationListeners != null) ? authenticationListeners : Collections.emptyList();
+	}
+
+	/**
+	 * Fire any registered {@link AuthenticationListener}
+	 * @param authentication Authentication
+	 */
+	protected void fireAuthenticationListeners(final Authentication authentication) {
+		for (AuthenticationListener authenticationListener : getAuthenticationListeners()) {
+			authenticationListener.onAuthentication(authentication);
+		}
 	}
 
 }

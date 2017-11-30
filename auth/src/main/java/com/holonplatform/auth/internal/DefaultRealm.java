@@ -191,19 +191,9 @@ public class DefaultRealm implements Realm {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.auth.Authenticator#authenticate(com.holonplatform.auth.AuthenticationToken)
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Authentication authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
-		return authenticate(authenticationToken, true);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.Realm#authenticate(com.holonplatform.auth.AuthenticationToken, boolean)
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	@Override
-	public Authentication authenticate(AuthenticationToken authenticationToken, boolean fireEvents)
-			throws AuthenticationException {
 
 		if (authenticationToken == null) {
 			throw new UnexpectedAuthenticationException("Null AuthenticationToken");
@@ -239,9 +229,7 @@ public class DefaultRealm implements Realm {
 		}
 
 		// fire listeners
-		if (fireEvents) {
-			fireAuthenticationListeners(authc);
-		}
+		fireAuthenticationListeners(authc);
 
 		return authc;
 	}
@@ -281,20 +269,9 @@ public class DefaultRealm implements Realm {
 	 * com.holonplatform.auth.Authenticator.MessageAuthenticator#authenticate(com.holonplatform.core.messaging.Message,
 	 * java.lang.String[])
 	 */
-	@Override
-	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
-		return authenticate(message, true, schemes);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.Realm#authenticate(com.holonplatform.core.messaging.Message, boolean,
-	 * java.lang.String[])
-	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Authentication authenticate(Message<?, ?> message, boolean fireEvents, String... schemes)
-			throws AuthenticationException {
+	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
 
 		if (message == null) {
 			throw new UnexpectedAuthenticationException("Null Message");
@@ -311,8 +288,7 @@ public class DefaultRealm implements Realm {
 		// perform authentication
 
 		return authenticate(resolveAuthenticationToken(message, resolvers, schemes).orElseThrow(
-				() -> new UnsupportedMessageException("No AuthenticationTokenResolver resolved message" + message)),
-				fireEvents);
+				() -> new UnsupportedMessageException("No AuthenticationTokenResolver resolved message" + message)));
 	}
 
 	/**
@@ -538,12 +514,11 @@ public class DefaultRealm implements Realm {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.events.AuthenticationNotifier#getAuthenticationListeners()
+	/**
+	 * Get the registered {@link AuthenticationListener}s.
+	 * @return the registered authentication listeners, an empty List if none
 	 */
-	@Override
-	public List<AuthenticationListener> getAuthenticationListeners() {
+	protected List<AuthenticationListener> getAuthenticationListeners() {
 		return (authenticationListeners != null) ? authenticationListeners : Collections.emptyList();
 	}
 

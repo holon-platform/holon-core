@@ -40,7 +40,7 @@ import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.TestUtils;
 
-public class TestContext {
+public class TestAuthContext {
 
 	@Test
 	public void testContext() {
@@ -176,13 +176,14 @@ public class TestContext {
 	public void testAuthenticationListeners() {
 
 		final AtomicInteger counter = new AtomicInteger(0);
+		final AtomicInteger realmCounter = new AtomicInteger(0);
 
 		final Realm realm = Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
 			if ("myself".equals(token.getPrincipal())) {
 				return Authentication.builder("myself").build();
 			}
 			throw new UnknownAccountException("" + token.getPrincipal());
-		})).build();
+		})).listener(authc -> realmCounter.incrementAndGet()).build();
 
 		final AuthContext ctx = AuthContext.create(realm);
 
@@ -201,11 +202,18 @@ public class TestContext {
 
 		assertNotNull(authc);
 		assertEquals(1, counter.get());
+		assertEquals(1, realmCounter.get());
 
 		ctx.unauthenticate();
 
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
+		assertEquals(1, realmCounter.get());
+		
+		authc = realm.authenticate(tkn);
+		assertNotNull(authc);
+		assertEquals(2, counter.get());
+		assertEquals(2, realmCounter.get());
 
 	}
 
@@ -297,8 +305,8 @@ public class TestContext {
 			return true;
 		}
 
-		private TestContext getOuterType() {
-			return TestContext.this;
+		private TestAuthContext getOuterType() {
+			return TestAuthContext.this;
 		}
 
 	}
