@@ -25,6 +25,8 @@ import java.util.Optional;
 import com.holonplatform.auth.internal.AccountAuthenticator;
 import com.holonplatform.auth.internal.DefaultAccount;
 import com.holonplatform.auth.token.AccountCredentialsToken;
+import com.holonplatform.core.config.ConfigProperty;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Provides account informations for authentication and authorization.
@@ -146,6 +148,18 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @return this
 		 */
 		Builder detail(String key, Object value);
+
+		/**
+		 * Add (or replace if given key already exists) an Account detail using a {@link ConfigProperty}.
+		 * @param <T> Config property type
+		 * @param property ConfigProperty to use as detail key (not null)
+		 * @param value Detail value
+		 * @return this
+		 */
+		default <T> Builder detail(ConfigProperty<T> property, T value) {
+			ObjectUtils.argumentNotNull(property, "Config property must be not null");
+			return detail(property.getKey(), value);
+		}
 
 		/**
 		 * Set permissions granted to Account. Any previously setted Permission will be discarded.
