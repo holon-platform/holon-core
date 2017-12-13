@@ -148,7 +148,9 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		@Override
 		public <PT extends P> Builder<P> add(PT property) {
 			ObjectUtils.argumentNotNull(property, "Property must be not null");
-			this.instance.add(property);
+			if (!this.instance.contains(property)) {
+				this.instance.add(property);
+			}
 			return this;
 		}
 
@@ -159,7 +161,11 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		@Override
 		public <PT extends P> Builder<P> add(Iterable<PT> properties) {
 			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
-			properties.forEach(p -> this.instance.add(p));
+			properties.forEach(p -> {
+				if (!this.instance.contains(p)) {
+					this.instance.add(p);
+				}
+			});
 			return this;
 		}
 

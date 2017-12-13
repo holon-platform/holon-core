@@ -821,6 +821,9 @@ public class TestProperty {
 		assertTrue(joined.contains(TestPropertySet.SEQUENCE));
 		assertTrue(joined.contains(TestPropertySet.GENERIC));
 		assertTrue(joined.contains(TestPropertySet.VIRTUAL));
+		
+		PropertySet<?> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME).build();
+		assertEquals(1, ps2.size());
 	}
 
 	@Test
