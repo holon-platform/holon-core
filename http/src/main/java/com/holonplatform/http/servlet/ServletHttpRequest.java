@@ -19,8 +19,6 @@ import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.mockito.internal.stubbing.answers.Returns;
-
 import com.holonplatform.http.HttpRequest;
 import com.holonplatform.http.internal.servlet.DefaultServletHttpRequest;
 
@@ -47,7 +45,7 @@ public interface ServletHttpRequest extends HttpRequest {
 	String getRequestURI();
 
 	/**
-	 * {@link Returns} the id of current <code>HttpSession</code> associated with this request, if any.
+	 * Returns the id of current <code>HttpSession</code> associated with this request, if any.
 	 * @return the session id, or empty if no <code>HttpSession</code> is associated with this request
 	 */
 	Optional<String> getSessionId();
