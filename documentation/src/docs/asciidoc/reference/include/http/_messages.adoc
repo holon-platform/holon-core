@@ -25,3 +25,11 @@ The link:{apidir}/com/holonplatform/http/HttpResponse.html[HttpResponse^] interf
 
 * The HTTP _status code_ of the response, also represented with the convenience link:{apidir}/com/holonplatform/http/HttpStatus.html[HttpStatus^] enumeration
 * A _builder_ to create default HttpResponse instances
+
+==== Servlets integration
+
+The link:{apidir}/com/holonplatform/http/servlet/ServletHttpRequest.html[ServletHttpRequest^] represents a `HttpRequest` backed by a `javax.servlet.http.HttpServletRequest` instance, and can be used as an adapter to use servlet request messages as an `HttpRequest`.
+
+To create a `HttpRequest` from a servlet `HttpServletRequest` the `ServletHttpRequest create(HttpServletRequest request)` can be used.
+
+This way, a servlet request can be used for example with a Holon `MessageAuthenticator`, to perform authentication operation directly using the request message. See link:core.html#MessageAuthenticator[MessageAuthenticator] section for further information. 
