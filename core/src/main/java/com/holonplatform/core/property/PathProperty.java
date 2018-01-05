@@ -26,6 +26,7 @@ import com.holonplatform.core.query.PathExpression;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QueryFilter.FilterOperator;
+import com.holonplatform.core.query.QueryFunction;
 import com.holonplatform.core.query.QueryFunction.Avg;
 import com.holonplatform.core.query.QueryFunction.Count;
 import com.holonplatform.core.query.QueryFunction.Max;
@@ -472,6 +473,18 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, QueryPr
 	 */
 	default QuerySort desc() {
 		return QuerySort.desc(this);
+	}
+
+	// Functions
+
+	/**
+	 * Build a {@link FunctionExpression} on this property using given <code>function</code>.
+	 * @param <F> Function result type
+	 * @param function The function to use (not null)
+	 * @return A new {@link FunctionExpression} on this property using given <code>function</code>
+	 */
+	default <F> PathFunctionExpressionProperty<T, F> function(QueryFunction<F> function) {
+		return PathFunctionExpressionProperty.create(function, this);
 	}
 
 	// Aggregations
