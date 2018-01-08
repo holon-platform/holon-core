@@ -17,8 +17,8 @@ package com.holonplatform.core.internal.query.temporal;
 
 import java.util.Date;
 
-import com.holonplatform.core.query.temporal.TemporalFunction;
-import com.holonplatform.core.query.temporal.TemporalFunction.CurrentDate;
+import com.holonplatform.core.query.TemporalFunction;
+import com.holonplatform.core.query.TemporalFunction.CurrentDate;
 
 /**
  * A {@link TemporalFunction} to obtain the current date as a {@link Date}.

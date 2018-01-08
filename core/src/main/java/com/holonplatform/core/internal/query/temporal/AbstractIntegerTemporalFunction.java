@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction;
+import com.holonplatform.core.query.TemporalFunction;
 
 /**
  * Abstract {@link TemporalFunction} with an {@link Integer} result type.

@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction.Day;
+import com.holonplatform.core.query.TemporalFunction.Day;
 
 /**
  * {@link Day} function implementation.

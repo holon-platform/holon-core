@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.query.temporal;
+package com.holonplatform.core.query;
 
 import java.util.Date;
 
@@ -25,7 +25,6 @@ import com.holonplatform.core.internal.query.temporal.MinuteFunction;
 import com.holonplatform.core.internal.query.temporal.MonthFunction;
 import com.holonplatform.core.internal.query.temporal.SecondFunction;
 import com.holonplatform.core.internal.query.temporal.YearFunction;
-import com.holonplatform.core.query.QueryFunction;
 
 /**
  * Represents a temporal-related {@link QueryFunction}.

@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction;
-import com.holonplatform.core.query.temporal.TemporalFunction.CurrentTimestamp;
+import com.holonplatform.core.query.TemporalFunction;
+import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
 
 /**
  * A {@link TemporalFunction} to obtain the current timestamp as a {@link Long} number which represents the milliseconds

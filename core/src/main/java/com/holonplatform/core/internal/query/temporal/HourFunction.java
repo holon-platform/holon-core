@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction.Hour;
+import com.holonplatform.core.query.TemporalFunction.Hour;
 
 /**
  * {@link Hour} function implementation.

@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction.Year;
+import com.holonplatform.core.query.TemporalFunction.Year;
 
 /**
  * {@link Year} function implementation.

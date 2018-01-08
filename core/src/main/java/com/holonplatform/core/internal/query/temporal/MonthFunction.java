@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction.Month;
+import com.holonplatform.core.query.TemporalFunction.Month;
 
 /**
  * {@link Month} function implementation.

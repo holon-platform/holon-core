@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.temporal;
 
-import com.holonplatform.core.query.temporal.TemporalFunction.Second;
+import com.holonplatform.core.query.TemporalFunction.Second;
 
 /**
  * {@link Second} function implementation.
