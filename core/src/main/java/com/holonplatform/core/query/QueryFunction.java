@@ -36,9 +36,7 @@ import com.holonplatform.core.query.TemporalFunction.CurrentLocalDateTime;
 import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
 import com.holonplatform.core.query.TemporalFunction.Day;
 import com.holonplatform.core.query.TemporalFunction.Hour;
-import com.holonplatform.core.query.TemporalFunction.Minute;
 import com.holonplatform.core.query.TemporalFunction.Month;
-import com.holonplatform.core.query.TemporalFunction.Second;
 import com.holonplatform.core.query.TemporalFunction.Year;
 
 /**
@@ -197,28 +195,6 @@ public interface QueryFunction<T> extends Expression {
 	 */
 	public static Hour hour() {
 		return Hour.create();
-	}
-
-	/**
-	 * Create a function to extract the <em>minute</em> part of a temporal data type.
-	 * <p>
-	 * The minute range index is between 0 and 59.
-	 * </p>
-	 * @return A function to extract the <em>minute</em> part of a temporal data type.
-	 */
-	public static Minute minute() {
-		return Minute.create();
-	}
-
-	/**
-	 * Create a function to extract the <em>second</em> part of a temporal data type.
-	 * <p>
-	 * The second range index is between 0 and 59.
-	 * </p>
-	 * @return A function to extract the <em>second</em> part of a temporal data type.
-	 */
-	public static Second second() {
-		return Second.create();
 	}
 
 	// -------

@@ -27,9 +27,7 @@ import com.holonplatform.core.internal.query.function.CurrentLocalDateTimeFuncti
 import com.holonplatform.core.internal.query.function.CurrentTimestampFunction;
 import com.holonplatform.core.internal.query.function.DayFunction;
 import com.holonplatform.core.internal.query.function.HourFunction;
-import com.holonplatform.core.internal.query.function.MinuteFunction;
 import com.holonplatform.core.internal.query.function.MonthFunction;
-import com.holonplatform.core.internal.query.function.SecondFunction;
 import com.holonplatform.core.internal.query.function.YearFunction;
 import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
 import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
@@ -129,8 +127,8 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		}
 
 		/**
-		 * Create a {@link CurrentLocalDateTime} function expression, which can be used for example as query projection or
-		 * in query filters.
+		 * Create a {@link CurrentLocalDateTime} function expression, which can be used for example as query projection
+		 * or in query filters.
 		 * @return A {@link CurrentLocalDateTime} function expression
 		 */
 		static FunctionExpression<LocalDateTime> expression() {
@@ -244,62 +242,6 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 * @param <T> Path type
 		 * @param path Path to which to apply the function (not null)
 		 * @return A {@link Hour} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
-		}
-
-	}
-
-	/**
-	 * A function to extract the <em>minute</em> part of a temporal data type.
-	 * <p>
-	 * The result type is always an {@link Integer} and the minute range index is between 0 and 59.
-	 * </p>
-	 */
-	public interface Minute extends TemporalFunction<Integer> {
-
-		/**
-		 * Create a new {@link Minute} function instance.
-		 * @return New {@link Minute} function instance
-		 */
-		static Minute create() {
-			return new MinuteFunction();
-		}
-
-		/**
-		 * Create a {@link Minute} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Minute} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
-		}
-
-	}
-
-	/**
-	 * A function to extract the <em>second</em> part of a temporal data type.
-	 * <p>
-	 * The result type is always an {@link Integer} and the second range index is between 0 and 59.
-	 * </p>
-	 */
-	public interface Second extends TemporalFunction<Integer> {
-
-		/**
-		 * Create a new {@link Second} function instance.
-		 * @return New {@link Second} function instance
-		 */
-		static Second create() {
-			return new SecondFunction();
-		}
-
-		/**
-		 * Create a {@link Second} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Second} function expression on given path
 		 */
 		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
 			return PathFunctionExpressionProperty.create(create(), path);
