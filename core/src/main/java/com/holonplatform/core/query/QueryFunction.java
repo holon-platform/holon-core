@@ -21,6 +21,8 @@ import com.holonplatform.core.internal.query.CountFunction;
 import com.holonplatform.core.internal.query.MaxFunction;
 import com.holonplatform.core.internal.query.MinFunction;
 import com.holonplatform.core.internal.query.SumFunction;
+import com.holonplatform.core.query.StringFunction.Lower;
+import com.holonplatform.core.query.StringFunction.Upper;
 
 /**
  * Represents a generic <em>function</em> to be used in a {@link Query} definition.
@@ -36,6 +38,26 @@ public interface QueryFunction<T> extends Expression {
 	 * @return Function result type
 	 */
 	Class<? extends T> getResultType();
+
+	// String function builders
+
+	/**
+	 * Create a function to convert a String data type into lowercase.
+	 * @return A new {@link Lower} function
+	 */
+	public static Lower lower() {
+		return Lower.create();
+	}
+
+	/**
+	 * Create a function to convert a String data type into uppercase.
+	 * @return A new {@link Lower} function
+	 */
+	public static Upper upper() {
+		return Upper.create();
+	}
+
+	// -------
 
 	/**
 	 * A function which represents the <em>count</em> of a query result values.
