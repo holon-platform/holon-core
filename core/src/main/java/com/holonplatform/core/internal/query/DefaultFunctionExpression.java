@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query;
 
+import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.FunctionExpression;
 import com.holonplatform.core.query.QueryFunction;
@@ -26,7 +27,7 @@ import com.holonplatform.core.query.QueryFunction;
  *
  * @since 5.0.0
  */
-public class DefaultFunctionExpression<T> implements FunctionExpression<T> {
+public class DefaultFunctionExpression<T> implements FunctionExpression<T>, VisitableQueryProjection<T> {
 
 	private final QueryFunction<T> function;
 
@@ -67,6 +68,17 @@ public class DefaultFunctionExpression<T> implements FunctionExpression<T> {
 		if (getFunction() == null) {
 			throw new InvalidExpressionException("Null function");
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
+	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
+	 */
+	@Override
+	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
+		return visitor.visit(this, context);
 	}
 
 	/*

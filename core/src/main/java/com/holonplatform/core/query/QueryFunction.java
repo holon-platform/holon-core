@@ -118,25 +118,27 @@ public interface QueryFunction<T> extends Expression {
 		return Upper.create();
 	}
 
+	// Current date/time expression builders
+
+	/**
+	 * Create a {@link FunctionExpression} to obtain the current date as a {@link Date}.
+	 * @return A function expression to obtain the current date as a {@link Date}.
+	 */
+	public static FunctionExpression<Date> currentDate() {
+		return CurrentDate.expression();
+	}
+
+	/**
+	 * Create a {@link FunctionExpression} to obtain the current timestamp as a {@link Long} number which represents the
+	 * milliseconds since January 1, 1970, 00:00:00 GMT (Unix epoch). A negative number is the number of milliseconds
+	 * before January 1, 1970, 00:00:00 GMT.
+	 * @return A function expression to obtain the current timestamp
+	 */
+	public static FunctionExpression<Long> currentTimestamp() {
+		return CurrentTimestamp.expression();
+	}
+
 	// Temporal function builders
-
-	/**
-	 * Create a function to obtain the current date as a {@link Date}.
-	 * @return A function to obtain the current date as a {@link Date}.
-	 */
-	public static CurrentDate currentDate() {
-		return CurrentDate.create();
-	}
-
-	/**
-	 * Create a function to obtain the current timestamp as a {@link Long} number which represents the milliseconds
-	 * since January 1, 1970, 00:00:00 GMT (Unix epoch). A negative number is the number of milliseconds before January
-	 * 1, 1970, 00:00:00 GMT.
-	 * @return A function to obtain the current timestamp
-	 */
-	public static CurrentTimestamp currentTimestamp() {
-		return CurrentTimestamp.create();
-	}
 
 	/**
 	 * Create a function to extract the <em>year</em> part of a temporal data type.

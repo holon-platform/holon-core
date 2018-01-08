@@ -52,6 +52,15 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new CurrentDateFunction();
 		}
 
+		/**
+		 * Create a {@link CurrentDate} function expression, which can be used for example as query projection or in
+		 * query filters.
+		 * @return A {@link CurrentDate} function expression
+		 */
+		static FunctionExpression<Date> expression() {
+			return FunctionExpression.create(create());
+		}
+
 	}
 
 	/**
@@ -67,6 +76,15 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 */
 		static CurrentTimestamp create() {
 			return new CurrentTimestampFunction();
+		}
+
+		/**
+		 * Create a {@link CurrentTimestamp} function expression, which can be used for example as query projection or
+		 * in query filters.
+		 * @return A {@link CurrentTimestamp} function expression
+		 */
+		static FunctionExpression<Long> expression() {
+			return FunctionExpression.create(create());
 		}
 
 	}
