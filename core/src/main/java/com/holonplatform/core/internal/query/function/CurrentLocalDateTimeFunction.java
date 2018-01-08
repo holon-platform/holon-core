@@ -15,25 +15,25 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.holonplatform.core.query.TemporalFunction;
-import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
+import com.holonplatform.core.query.TemporalFunction.CurrentLocalDateTime;
 
 /**
- * A {@link TemporalFunction} to obtain the current timestamp as a {@link Date}.
+ * A {@link TemporalFunction} to obtain the current date and time as a {@link LocalDateTime}.
  *
  * @since 5.1.0
  */
-public class CurrentTimestampFunction implements CurrentTimestamp {
+public class CurrentLocalDateTimeFunction implements CurrentLocalDateTime {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
 	 */
 	@Override
-	public Class<? extends Date> getResultType() {
-		return Date.class;
+	public Class<? extends LocalDateTime> getResultType() {
+		return LocalDateTime.class;
 	}
 
 	/*

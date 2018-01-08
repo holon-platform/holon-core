@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.query;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.holonplatform.core.Expression;
@@ -29,6 +31,8 @@ import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionPro
 import com.holonplatform.core.query.StringFunction.Lower;
 import com.holonplatform.core.query.StringFunction.Upper;
 import com.holonplatform.core.query.TemporalFunction.CurrentDate;
+import com.holonplatform.core.query.TemporalFunction.CurrentLocalDate;
+import com.holonplatform.core.query.TemporalFunction.CurrentLocalDateTime;
 import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
 import com.holonplatform.core.query.TemporalFunction.Day;
 import com.holonplatform.core.query.TemporalFunction.Hour;
@@ -129,13 +133,27 @@ public interface QueryFunction<T> extends Expression {
 	}
 
 	/**
-	 * Create a {@link FunctionExpression} to obtain the current timestamp as a {@link Long} number which represents the
-	 * milliseconds since January 1, 1970, 00:00:00 GMT (Unix epoch). A negative number is the number of milliseconds
-	 * before January 1, 1970, 00:00:00 GMT.
+	 * Create a {@link FunctionExpression} to obtain the current date as a {@link LocalDate}.
+	 * @return A function expression to obtain the current date as a {@link LocalDate}.
+	 */
+	public static FunctionExpression<LocalDate> currentLocalDate() {
+		return CurrentLocalDate.expression();
+	}
+
+	/**
+	 * Create a {@link FunctionExpression} to obtain the current timestamp as a {@link Date}.
 	 * @return A function expression to obtain the current timestamp
 	 */
-	public static FunctionExpression<Long> currentTimestamp() {
+	public static FunctionExpression<Date> currentTimestamp() {
 		return CurrentTimestamp.expression();
+	}
+
+	/**
+	 * Create a {@link FunctionExpression} to obtain the current date and time as a {@link LocalDateTime}.
+	 * @return A function expression to obtain the current date and time as a {@link LocalDateTime}.
+	 */
+	public static FunctionExpression<LocalDateTime> currentLocalDateTime() {
+		return CurrentLocalDateTime.expression();
 	}
 
 	// Temporal function builders

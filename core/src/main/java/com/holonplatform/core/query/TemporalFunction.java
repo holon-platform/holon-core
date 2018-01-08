@@ -15,11 +15,15 @@
  */
 package com.holonplatform.core.query;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.CurrentDateFunction;
+import com.holonplatform.core.internal.query.function.CurrentLocalDateFunction;
+import com.holonplatform.core.internal.query.function.CurrentLocalDateTimeFunction;
 import com.holonplatform.core.internal.query.function.CurrentTimestampFunction;
 import com.holonplatform.core.internal.query.function.DayFunction;
 import com.holonplatform.core.internal.query.function.HourFunction;
@@ -64,11 +68,9 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 	}
 
 	/**
-	 * A function to obtain the current timestamp as a {@link Long} number which represents the milliseconds since
-	 * January 1, 1970, 00:00:00 GMT (Unix epoch). A negative number is the number of milliseconds before January 1,
-	 * 1970, 00:00:00 GMT.
+	 * A function to obtain the current timestamp as a {@link Date}.
 	 */
-	public interface CurrentTimestamp extends TemporalFunction<Long> {
+	public interface CurrentTimestamp extends TemporalFunction<Date> {
 
 		/**
 		 * Create a new {@link CurrentTimestamp} function instance.
@@ -83,7 +85,55 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 * in query filters.
 		 * @return A {@link CurrentTimestamp} function expression
 		 */
-		static FunctionExpression<Long> expression() {
+		static FunctionExpression<Date> expression() {
+			return FunctionExpression.create(create());
+		}
+
+	}
+
+	/**
+	 * A function to obtain the current date as a {@link LocalDate}.
+	 */
+	public interface CurrentLocalDate extends TemporalFunction<LocalDate> {
+
+		/**
+		 * Create a new {@link CurrentLocalDate} function instance.
+		 * @return New {@link CurrentLocalDate} function instance
+		 */
+		static CurrentLocalDate create() {
+			return new CurrentLocalDateFunction();
+		}
+
+		/**
+		 * Create a {@link CurrentLocalDate} function expression, which can be used for example as query projection or
+		 * in query filters.
+		 * @return A {@link CurrentLocalDate} function expression
+		 */
+		static FunctionExpression<LocalDate> expression() {
+			return FunctionExpression.create(create());
+		}
+
+	}
+
+	/**
+	 * A function to obtain the current date and time as a {@link LocalDateTime}.
+	 */
+	public interface CurrentLocalDateTime extends TemporalFunction<LocalDateTime> {
+
+		/**
+		 * Create a new {@link CurrentLocalDateTime} function instance.
+		 * @return New {@link CurrentLocalDateTime} function instance
+		 */
+		static CurrentLocalDateTime create() {
+			return new CurrentLocalDateTimeFunction();
+		}
+
+		/**
+		 * Create a {@link CurrentLocalDateTime} function expression, which can be used for example as query projection or
+		 * in query filters.
+		 * @return A {@link CurrentLocalDateTime} function expression
+		 */
+		static FunctionExpression<LocalDateTime> expression() {
 			return FunctionExpression.create(create());
 		}
 
