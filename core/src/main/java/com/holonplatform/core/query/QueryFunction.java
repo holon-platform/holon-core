@@ -18,11 +18,11 @@ package com.holonplatform.core.query;
 import java.util.Date;
 
 import com.holonplatform.core.Expression;
-import com.holonplatform.core.internal.query.AvgFunction;
-import com.holonplatform.core.internal.query.CountFunction;
-import com.holonplatform.core.internal.query.MaxFunction;
-import com.holonplatform.core.internal.query.MinFunction;
-import com.holonplatform.core.internal.query.SumFunction;
+import com.holonplatform.core.internal.query.function.AvgFunction;
+import com.holonplatform.core.internal.query.function.CountFunction;
+import com.holonplatform.core.internal.query.function.MaxFunction;
+import com.holonplatform.core.internal.query.function.MinFunction;
+import com.holonplatform.core.internal.query.function.SumFunction;
 import com.holonplatform.core.query.StringFunction.Lower;
 import com.holonplatform.core.query.StringFunction.Upper;
 import com.holonplatform.core.query.TemporalFunction.CurrentDate;

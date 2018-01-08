@@ -13,15 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query.temporal;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.TemporalFunction.Month;
+import com.holonplatform.core.query.TemporalFunction.Minute;
 
 /**
- * {@link Month} function implementation.
+ * {@link Minute} function implementation.
  *
  * @since 5.1.0
  */
-public class MonthFunction extends AbstractIntegerTemporalFunction implements Month {
+public class MinuteFunction extends AbstractIntegerTemporalFunction implements Minute {
 
 }

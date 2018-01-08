@@ -13,39 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.query.QueryFunction.Sum;
+import com.holonplatform.core.query.QueryFunction.Avg;
 
 /**
- * {@link Sum} function implementation.
- * 
- * @param <T> Function result type
+ * {@link Avg} function implementation.
  *
  * @since 5.0.0
  */
-public class SumFunction<T> implements Sum<T> {
-
-	private final Class<? extends T> resultType;
-
-	/**
-	 * Constructor
-	 * @param resultType Result type (not null)
-	 */
-	public SumFunction(Class<? extends T> resultType) {
-		super();
-		ObjectUtils.argumentNotNull(resultType, "Result type must be not null");
-		this.resultType = resultType;
-	}
+public class AvgFunction implements Avg {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
 	 */
 	@Override
-	public Class<? extends T> getResultType() {
-		return resultType;
+	public Class<? extends Double> getResultType() {
+		return Double.class;
 	}
 
 	/*

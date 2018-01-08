@@ -13,24 +13,24 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryFunction.Avg;
+import com.holonplatform.core.query.TemporalFunction;
 
 /**
- * {@link Avg} function implementation.
+ * Abstract {@link TemporalFunction} with an {@link Integer} result type.
  *
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class AvgFunction implements Avg {
+public abstract class AbstractIntegerTemporalFunction implements TemporalFunction<Integer> {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
 	 */
 	@Override
-	public Class<? extends Double> getResultType() {
-		return Double.class;
+	public Class<? extends Integer> getResultType() {
+		return Integer.class;
 	}
 
 	/*

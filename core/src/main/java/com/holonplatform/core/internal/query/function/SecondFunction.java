@@ -13,15 +13,15 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query.temporal;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.TemporalFunction.Day;
+import com.holonplatform.core.query.TemporalFunction.Second;
 
 /**
- * {@link Day} function implementation.
+ * {@link Second} function implementation.
  *
  * @since 5.1.0
  */
-public class DayFunction extends AbstractIntegerTemporalFunction implements Day {
+public class SecondFunction extends AbstractIntegerTemporalFunction implements Second {
 
 }

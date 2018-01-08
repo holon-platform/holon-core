@@ -17,14 +17,14 @@ package com.holonplatform.core.query;
 
 import java.util.Date;
 
-import com.holonplatform.core.internal.query.temporal.CurrentDateFunction;
-import com.holonplatform.core.internal.query.temporal.CurrentTimestampFunction;
-import com.holonplatform.core.internal.query.temporal.DayFunction;
-import com.holonplatform.core.internal.query.temporal.HourFunction;
-import com.holonplatform.core.internal.query.temporal.MinuteFunction;
-import com.holonplatform.core.internal.query.temporal.MonthFunction;
-import com.holonplatform.core.internal.query.temporal.SecondFunction;
-import com.holonplatform.core.internal.query.temporal.YearFunction;
+import com.holonplatform.core.internal.query.function.CurrentDateFunction;
+import com.holonplatform.core.internal.query.function.CurrentTimestampFunction;
+import com.holonplatform.core.internal.query.function.DayFunction;
+import com.holonplatform.core.internal.query.function.HourFunction;
+import com.holonplatform.core.internal.query.function.MinuteFunction;
+import com.holonplatform.core.internal.query.function.MonthFunction;
+import com.holonplatform.core.internal.query.function.SecondFunction;
+import com.holonplatform.core.internal.query.function.YearFunction;
 
 /**
  * Represents a temporal-related {@link QueryFunction}.

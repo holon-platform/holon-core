@@ -13,19 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query.temporal;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.TemporalFunction;
-import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
+import com.holonplatform.core.query.QueryFunction.Count;
 
 /**
- * A {@link TemporalFunction} to obtain the current timestamp as a {@link Long} number which represents the milliseconds
- * since January 1, 1970, 00:00:00 GMT (Unix epoch). A negative number is the number of milliseconds before January 1, 1970, 00:00:00
- * GMT.
+ * {@link Count} function implementation.
  *
- * @since 5.1.0
+ * @since 5.0.0
  */
-public class CurrentTimestampFunction implements CurrentTimestamp {
+public class CountFunction implements Count {
 
 	/*
 	 * (non-Javadoc)
@@ -42,6 +39,9 @@ public class CurrentTimestampFunction implements CurrentTimestamp {
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
+		if (getResultType() == null) {
+			throw new InvalidExpressionException("Null function result type");
+		}
 	}
 
 }

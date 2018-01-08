@@ -13,24 +13,39 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query.temporal;
+package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.TemporalFunction;
+import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.QueryFunction.Sum;
 
 /**
- * Abstract {@link TemporalFunction} with an {@link Integer} result type.
+ * {@link Sum} function implementation.
+ * 
+ * @param <T> Function result type
  *
- * @since 5.1.0
+ * @since 5.0.0
  */
-public abstract class AbstractIntegerTemporalFunction implements TemporalFunction<Integer> {
+public class SumFunction<T> implements Sum<T> {
+
+	private final Class<? extends T> resultType;
+
+	/**
+	 * Constructor
+	 * @param resultType Result type (not null)
+	 */
+	public SumFunction(Class<? extends T> resultType) {
+		super();
+		ObjectUtils.argumentNotNull(resultType, "Result type must be not null");
+		this.resultType = resultType;
+	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
 	 */
 	@Override
-	public Class<? extends Integer> getResultType() {
-		return Integer.class;
+	public Class<? extends T> getResultType() {
+		return resultType;
 	}
 
 	/*
