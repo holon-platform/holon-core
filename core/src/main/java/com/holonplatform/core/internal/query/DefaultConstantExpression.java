@@ -15,7 +15,6 @@
  */
 package com.holonplatform.core.internal.query;
 
-import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryExpression;
 
@@ -39,7 +38,6 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 */
 	public DefaultConstantExpression(T value) {
 		super();
-		ObjectUtils.argumentNotNull(value, "Expression value must be not null");
 		this.value = value;
 	}
 
@@ -59,7 +57,7 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends T> getType() {
-		return (Class<? extends T>) value.getClass();
+		return (value == null) ? (Class<? extends T>) Void.class : (Class<? extends T>) value.getClass();
 	}
 
 	/*
@@ -68,9 +66,6 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
-		if (getValue() == null) {
-			throw new InvalidExpressionException("Null value");
-		}
 	}
 
 	/*

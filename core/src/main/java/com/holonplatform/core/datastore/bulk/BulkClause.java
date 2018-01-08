@@ -17,6 +17,8 @@ package com.holonplatform.core.datastore.bulk;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.query.ConstantExpression;
+import com.holonplatform.core.query.QueryExpression;
 
 /**
  * Base interface for {@link Datastore} bulk DML clauses configuration.
@@ -28,13 +30,24 @@ import com.holonplatform.core.datastore.Datastore;
 public interface BulkClause<C extends BulkClause<C>> extends DMLClause<C> {
 
 	/**
-	 * Add a value binding using a {@link Path}.
+	 * Set given <code>path</code> to given constant value.
+	 * @param <T> Path type
 	 * @param path Path to be updated
 	 * @param value value to set
-	 * @param <T> Path type
 	 * @return the current object
 	 */
-	<T> C set(Path<T> path, T value);
+	default <T> C set(Path<T> path, T value) {
+		return set(path, ConstantExpression.create(value));
+	}
+
+	/**
+	 * Set given <code>path</code> to given <code>expression</code> value.
+	 * @param <T> Path type
+	 * @param path Path to be updated (not null)
+	 * @param expression Expression value to set (not null)
+	 * @return the current object
+	 */
+	<T> C set(Path<T> path, QueryExpression<? super T> expression);
 
 	/**
 	 * Bind the given {@link Path} to <code>null</code>

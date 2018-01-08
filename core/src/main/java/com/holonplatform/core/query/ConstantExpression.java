@@ -37,9 +37,9 @@ public interface ConstantExpression<T, E> extends QueryExpression<E> {
 	T getValue();
 
 	/**
-	 * Create a {@link QueryExpression} which represents a constant value
+	 * Create a {@link ConstantExpression} which represents a constant value.
 	 * @param <T> Expression type
-	 * @param value Constant value (not null)
+	 * @param value Constant value
 	 * @return A new constant expression
 	 */
 	static <T> ConstantExpression<T, T> create(T value) {
@@ -47,7 +47,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E> {
 	}
 
 	/**
-	 * Create a {@link QueryExpression} which represents a collection of constant values.
+	 * Create a {@link ConstantExpression} which represents a collection of constant values.
 	 * @param <T> Expression type
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
@@ -57,7 +57,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E> {
 	}
 
 	/**
-	 * Create a {@link QueryExpression} which represents a collection of constant values.
+	 * Create a {@link ConstantExpression} which represents a collection of constant values.
 	 * @param <T> Expression type
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
@@ -65,6 +65,14 @@ public interface ConstantExpression<T, E> extends QueryExpression<E> {
 	@SafeVarargs
 	static <T> ConstantExpression<Collection<T>, T> create(T... values) {
 		return new DefaultCollectionExpression<>(values);
+	}
+
+	/**
+	 * Create a {@link ConstantExpression} which represents a <code>null</code> value.
+	 * @return A new <code>null</code> value constant expression
+	 */
+	static ConstantExpression<Void, Void> nullValue() {
+		return new DefaultConstantExpression<>(null);
 	}
 
 }
