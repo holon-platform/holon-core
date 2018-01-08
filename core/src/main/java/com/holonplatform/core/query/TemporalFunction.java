@@ -17,6 +17,8 @@ package com.holonplatform.core.query;
 
 import java.util.Date;
 
+import com.holonplatform.core.Expression;
+import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.CurrentDateFunction;
 import com.holonplatform.core.internal.query.function.CurrentTimestampFunction;
 import com.holonplatform.core.internal.query.function.DayFunction;
@@ -25,6 +27,8 @@ import com.holonplatform.core.internal.query.function.MinuteFunction;
 import com.holonplatform.core.internal.query.function.MonthFunction;
 import com.holonplatform.core.internal.query.function.SecondFunction;
 import com.holonplatform.core.internal.query.function.YearFunction;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
 
 /**
  * Represents a temporal-related {@link QueryFunction}.
@@ -83,6 +87,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new YearFunction();
 		}
 
+		/**
+		 * Create a {@link Year} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Year} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
+		}
+
 	}
 
 	/**
@@ -99,6 +113,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 */
 		static Month create() {
 			return new MonthFunction();
+		}
+
+		/**
+		 * Create a {@link Month} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Month} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
 		}
 
 	}
@@ -119,6 +143,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new DayFunction();
 		}
 
+		/**
+		 * Create a {@link Day} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Day} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
+		}
+
 	}
 
 	/**
@@ -135,6 +169,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 */
 		static Hour create() {
 			return new HourFunction();
+		}
+
+		/**
+		 * Create a {@link Hour} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Hour} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
 		}
 
 	}
@@ -155,6 +199,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new MinuteFunction();
 		}
 
+		/**
+		 * Create a {@link Minute} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Minute} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
+		}
+
 	}
 
 	/**
@@ -171,6 +225,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 */
 		static Second create() {
 			return new SecondFunction();
+		}
+
+		/**
+		 * Create a {@link Second} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Second} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
 		}
 
 	}

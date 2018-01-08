@@ -18,11 +18,14 @@ package com.holonplatform.core.query;
 import java.util.Date;
 
 import com.holonplatform.core.Expression;
+import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.AvgFunction;
 import com.holonplatform.core.internal.query.function.CountFunction;
 import com.holonplatform.core.internal.query.function.MaxFunction;
 import com.holonplatform.core.internal.query.function.MinFunction;
 import com.holonplatform.core.internal.query.function.SumFunction;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
 import com.holonplatform.core.query.StringFunction.Lower;
 import com.holonplatform.core.query.StringFunction.Upper;
 import com.holonplatform.core.query.TemporalFunction.CurrentDate;
@@ -216,6 +219,16 @@ public interface QueryFunction<T> extends Expression {
 			return new CountFunction();
 		}
 
+		/**
+		 * Create a {@link Count} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Count} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Long> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
+		}
+
 	}
 
 	/**
@@ -232,6 +245,16 @@ public interface QueryFunction<T> extends Expression {
 		 */
 		static Avg create() {
 			return new AvgFunction();
+		}
+
+		/**
+		 * Create a {@link Avg} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Avg} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, Double> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
 		}
 
 	}
@@ -252,6 +275,16 @@ public interface QueryFunction<T> extends Expression {
 			return new MinFunction<>(resultType);
 		}
 
+		/**
+		 * Create a {@link Min} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Min} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, T> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(path.getType()), path);
+		}
+
 	}
 
 	/**
@@ -270,6 +303,16 @@ public interface QueryFunction<T> extends Expression {
 			return new MaxFunction<>(resultType);
 		}
 
+		/**
+		 * Create a {@link Max} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Max} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, T> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(path.getType()), path);
+		}
+
 	}
 
 	/**
@@ -286,6 +329,16 @@ public interface QueryFunction<T> extends Expression {
 		 */
 		static <T> Sum<T> create(Class<? extends T> resultType) {
 			return new SumFunction<>(resultType);
+		}
+
+		/**
+		 * Create a {@link Sum} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param <T> Path type
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Sum} function expression on given path
+		 */
+		static <T> PathFunctionExpression<T, T> of(Path<T> path) {
+			return PathFunctionExpressionProperty.create(create(path.getType()), path);
 		}
 
 	}

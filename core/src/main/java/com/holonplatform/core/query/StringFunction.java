@@ -15,8 +15,12 @@
  */
 package com.holonplatform.core.query;
 
+import com.holonplatform.core.Expression;
+import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.LowerFunction;
 import com.holonplatform.core.internal.query.function.UpperFunction;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
+import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
 
 /**
  * Represents a {@link QueryFunction} on a String data type.
@@ -49,6 +53,15 @@ public interface StringFunction extends QueryFunction<String> {
 			return new LowerFunction();
 		}
 
+		/**
+		 * Create a {@link Lower} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Lower} function expression on given path
+		 */
+		static PathFunctionExpression<String, String> of(Path<String> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
+		}
+
 	}
 
 	/**
@@ -62,6 +75,15 @@ public interface StringFunction extends QueryFunction<String> {
 		 */
 		static Upper create() {
 			return new UpperFunction();
+		}
+
+		/**
+		 * Create a {@link Upper} function {@link Expression} using given <code>path</code> as function argument.
+		 * @param path Path to which to apply the function (not null)
+		 * @return A {@link Upper} function expression on given path
+		 */
+		static PathFunctionExpression<String, String> of(Path<String> path) {
+			return PathFunctionExpressionProperty.create(create(), path);
 		}
 
 	}

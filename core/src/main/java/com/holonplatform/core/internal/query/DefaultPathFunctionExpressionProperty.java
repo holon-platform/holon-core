@@ -37,22 +37,21 @@ public class DefaultPathFunctionExpressionProperty<P, T> extends DefaultFunction
 
 	private final Path<P> path;
 
+	@SuppressWarnings("unchecked")
 	public DefaultPathFunctionExpressionProperty(QueryFunction<T> function, Path<P> path) {
 		super(function);
 		this.path = path;
-	}
 
-	@SuppressWarnings("unchecked")
-	public DefaultPathFunctionExpressionProperty(QueryFunction<T> function, PathProperty<P> property) {
-		super(function);
-		this.path = property;
-		// clone configuration
-		if (function.getResultType() == property.getType()) {
-			((PathProperty<T>) property).getConverter().map(c -> converter(c));
-		}
-		if (property.getConfiguration() != null) {
-			property.getConfiguration().getTemporalType().ifPresent(t -> temporalType(t));
-			property.getConfiguration().forEachParameter((n, v) -> configuration(n, v));
+		if (path instanceof Property) {
+			final Property<?> property = (Property<?>) path;
+			// clone configuration
+			if (function.getResultType() == property.getType()) {
+				((PathProperty<T>) property).getConverter().map(c -> converter(c));
+			}
+			if (property.getConfiguration() != null) {
+				property.getConfiguration().getTemporalType().ifPresent(t -> temporalType(t));
+				property.getConfiguration().forEachParameter((n, v) -> configuration(n, v));
+			}
 		}
 	}
 
