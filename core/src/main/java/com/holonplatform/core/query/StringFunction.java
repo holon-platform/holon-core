@@ -25,8 +25,6 @@ import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionPro
 /**
  * Represents a {@link QueryFunction} on a String data type.
  * 
- * @param <T> Function result type
- * 
  * @since 5.1.0
  */
 public interface StringFunction extends QueryFunction<String> {
