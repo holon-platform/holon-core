@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.StringFunction.Lower;
 
 /**
@@ -22,14 +23,27 @@ import com.holonplatform.core.query.StringFunction.Lower;
  *
  * @since 5.1.0
  */
-public class LowerFunction implements Lower {
+public class LowerFunction extends AbstractPropertyQueryFunction<String, String> implements Lower {
+
+	private static final long serialVersionUID = -3156919944228879766L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
+	 */
+	public LowerFunction(QueryExpression<String> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.StringFunction#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
+	public Class<? extends String> getType() {
+		return Lower.super.getType();
 	}
 
 }

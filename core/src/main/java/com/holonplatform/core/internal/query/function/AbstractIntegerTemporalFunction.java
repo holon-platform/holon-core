@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.TemporalFunction;
 
 /**
@@ -22,26 +23,22 @@ import com.holonplatform.core.query.TemporalFunction;
  *
  * @since 5.1.0
  */
-public abstract class AbstractIntegerTemporalFunction implements TemporalFunction<Integer> {
+public abstract class AbstractIntegerTemporalFunction extends AbstractPropertyQueryFunction<Integer, Object>
+		implements TemporalFunction<Integer> {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
-	 */
-	@Override
-	public Class<? extends Integer> getResultType() {
-		return Integer.class;
+	private static final long serialVersionUID = 7911584185529712160L;
+
+	public AbstractIntegerTemporalFunction(QueryExpression<?> argument) {
+		super(argument);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
-		if (getResultType() == null) {
-			throw new InvalidExpressionException("Null function result type");
-		}
+	public Class<? extends Integer> getType() {
+		return Integer.class;
 	}
 
 }

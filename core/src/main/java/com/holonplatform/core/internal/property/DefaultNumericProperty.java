@@ -15,27 +15,27 @@
  */
 package com.holonplatform.core.internal.property;
 
-import com.holonplatform.core.property.PathProperty;
-import com.holonplatform.core.property.PathProperty.PathPropertyBuilder;
+import com.holonplatform.core.property.NumericProperty;
+import com.holonplatform.core.property.NumericProperty.NumericPropertyBuilder;
 
 /**
- * Default {@link PathProperty} implementation.
+ * Default {@link NumericProperty} implementation.
  * 
- * @param <T> Property (path) type
+ * @param <N> Numeric property type
  *
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathPropertyBuilder<T>>
-		implements PathPropertyBuilder<T> {
+public class DefaultNumericProperty<N extends Number> extends AbstractPathProperty<N, NumericPropertyBuilder<N>>
+		implements NumericPropertyBuilder<N> {
 
-	private static final long serialVersionUID = 5796523880557314657L;
+	private static final long serialVersionUID = -2278164109480762076L;
 
 	/**
 	 * Constructor
-	 * @param name Property name, must be not <code>null</code>
-	 * @param type Property value type
+	 * @param name Property name (not null)
+	 * @param type Property type (not null)
 	 */
-	public DefaultPathProperty(String name, Class<? extends T> type) {
+	public DefaultNumericProperty(String name, Class<? extends N> type) {
 		super(name, type);
 	}
 

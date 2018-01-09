@@ -20,8 +20,8 @@ import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.BeanProjection;
 import com.holonplatform.core.query.CountAllProjection;
-import com.holonplatform.core.query.FunctionExpression;
 import com.holonplatform.core.query.PropertySetProjection;
+import com.holonplatform.core.query.QueryFunction;
 import com.holonplatform.core.query.QueryProjection;
 
 /**
@@ -79,13 +79,13 @@ public interface QueryProjectionVisitor<R, C> {
 	<T> R visit(ConstantExpressionProjection<T> projection, C context);
 
 	/**
-	 * Visit a {@link PropertySet} projection.
+	 * Visit a {@link QueryFunction} projection.
 	 * @param <T> Function expression type
 	 * @param projection Projection to visit
 	 * @param context Visiting context
 	 * @return Visit result
 	 */
-	<T> R visit(FunctionExpression<T> projection, C context);
+	<T> R visit(QueryFunction<T, ?> projection, C context);
 
 	/**
 	 * Visit a {@link PropertySet} projection.

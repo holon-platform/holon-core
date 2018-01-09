@@ -13,28 +13,27 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query.function;
+package com.holonplatform.core.internal.property;
 
-import com.holonplatform.core.query.QueryExpression;
-import com.holonplatform.core.query.TemporalFunction.Day;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.StringProperty.StringPropertyBuilder;
 
 /**
- * {@link Day} function implementation.
+ * Default {@link StringProperty} implementation.
  *
  * @since 5.1.0
  */
-public class DayFunction extends AbstractIntegerTemporalFunction implements Day {
+public class DefaultStringProperty extends AbstractPathProperty<String, StringPropertyBuilder>
+		implements StringPropertyBuilder {
 
-	private static final long serialVersionUID = 6806846015943118748L;
+	private static final long serialVersionUID = -3647255339530687803L;
 
 	/**
 	 * Constructor.
-	 * @param argument Function argument (not null)
+	 * @param name Property name (not null)
 	 */
-	public DayFunction(QueryExpression<?> argument) {
-		super(argument);
-		setMinimumArguments(1);
-		setMaximumArguments(1);
+	public DefaultStringProperty(String name) {
+		super(name, String.class);
 	}
 
 }

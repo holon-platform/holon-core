@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.TemporalFunction.Hour;
 
 /**
@@ -23,5 +24,17 @@ import com.holonplatform.core.query.TemporalFunction.Hour;
  * @since 5.1.0
  */
 public class HourFunction extends AbstractIntegerTemporalFunction implements Hour {
+
+	private static final long serialVersionUID = -1870857444970155084L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
+	 */
+	public HourFunction(QueryExpression<?> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
+	}
 
 }

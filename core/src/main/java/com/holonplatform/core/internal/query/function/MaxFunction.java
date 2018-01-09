@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction.Max;
 
 /**
@@ -25,38 +25,30 @@ import com.holonplatform.core.query.QueryFunction.Max;
  *
  * @since 5.0.0
  */
-public class MaxFunction<T> implements Max<T> {
+public class MaxFunction<T> extends AbstractPropertyQueryFunction<T, T> implements Max<T> {
+
+	private static final long serialVersionUID = 2713208705061349621L;
 
 	private final Class<? extends T> resultType;
 
 	/**
-	 * Constructor
-	 * @param resultType Result type (not null)
+	 * Constructor.
+	 * @param argument Function argument (not null)
 	 */
-	public MaxFunction(Class<? extends T> resultType) {
-		super();
-		ObjectUtils.argumentNotNull(resultType, "Result type must be not null");
-		this.resultType = resultType;
+	public MaxFunction(QueryExpression<T> argument) {
+		super(argument);
+		this.resultType = argument.getType();
+		setMinimumArguments(1);
+		setMaximumArguments(1);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public Class<? extends T> getResultType() {
+	public Class<? extends T> getType() {
 		return resultType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
-	 */
-	@Override
-	public void validate() throws InvalidExpressionException {
-		if (getResultType() == null) {
-			throw new InvalidExpressionException("Null function result type");
-		}
 	}
 
 }

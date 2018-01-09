@@ -25,11 +25,11 @@ import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.relational.Join.JoinType;
 import com.holonplatform.core.datastore.relational.RelationalTarget;
 import com.holonplatform.core.datastore.relational.SubQuery;
+import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.query.BeanProjection;
-import com.holonplatform.core.query.FunctionExpression;
-import com.holonplatform.core.query.FunctionExpression.FunctionExpressionProperty;
 import com.holonplatform.core.query.QueryAggregation;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QueryFilter.QueryFilterResolver;
@@ -79,7 +79,7 @@ public class ExampleQuery {
 
 	public void filter2() {
 		// tag::filter2[]
-		final PathProperty<String> PROPERTY = PathProperty.create("test", String.class);
+		final StringProperty PROPERTY = StringProperty.create("test");
 		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
 
 		QueryFilter restriction = PROPERTY.isNotNull(); // is not null
@@ -115,10 +115,10 @@ public class ExampleQuery {
 	// tag::custom[]
 	class MyFilter implements QueryFilter { // <1>
 
-		final PathProperty<String> property;
+		final StringProperty property;
 		final String value;
 
-		public MyFilter(PathProperty<String> property, String value) {
+		public MyFilter(StringProperty property, String value) {
 			this.property = property;
 			this.value = value;
 		}
@@ -147,7 +147,7 @@ public class ExampleQuery {
 
 	}
 
-	final static PathProperty<String> PROPERTY = PathProperty.create("testProperty", String.class);
+	final static StringProperty PROPERTY = StringProperty.create("testProperty");
 
 	public void customFilter() {
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
@@ -223,13 +223,15 @@ public class ExampleQuery {
 
 	public void aggregationFunctions() {
 		// tag::aggfun[]
-		final PathProperty<Integer> PROPERTY = PathProperty.create("test", Integer.class);
+		final PathProperty<Integer> PROPERTY = PathProperty.create("test1", Integer.class);
+		final NumericProperty<Integer> PROPERTY2 = NumericProperty.integerType("test2");
 
-		// Using AggregationProperty
-		FunctionExpression<Long> expression = FunctionExpression.count(PROPERTY);
+		PROPERTY.count();
+		PROPERTY.min();
+		PROPERTY.max();
 
-		// Using the property
-		FunctionExpressionProperty<Integer> sp = PROPERTY.sum();
+		PROPERTY2.avg();
+		PROPERTY2.sum();
 		// end::aggfun[]
 	}
 
@@ -263,7 +265,7 @@ public class ExampleQuery {
 
 	public void projection() {
 		// tag::projection[]
-		final PathProperty<Integer> PROPERTY = PathProperty.create("test", Integer.class);
+		final NumericProperty<Integer> PROPERTY = NumericProperty.integerType("test");
 		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
 
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation

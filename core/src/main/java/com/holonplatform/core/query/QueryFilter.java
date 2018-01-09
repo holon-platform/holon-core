@@ -80,8 +80,8 @@ public interface QueryFilter extends Expression, Serializable {
 	// Builders and helpers
 
 	/**
-	 * Build a {@link FilterOperator#NULL} filter on given <code>expression</code>, which checks if given expression
-	 * value is <code>null</code>.
+	 * Build a {@link QueryFilter} on given <code>expression</code>, which checks if given expression value is
+	 * <code>null</code>.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
@@ -91,8 +91,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_NULL} filter on given <code>expression</code>, which checks if given expression
-	 * value is not <code>null</code>.
+	 * Build a {@link QueryFilter} on given <code>expression</code>, which checks if given expression value is not
+	 * <code>null</code>.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
@@ -102,8 +102,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#EQUAL} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -114,8 +114,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#EQUAL} filter using given <code>expression</code>, which checks if expression value
-	 * is equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -126,8 +126,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_EQUAL} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is not equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is not equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -138,8 +138,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_EQUAL} filter using given <code>expression</code>, which checks if expression
-	 * value is not equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not equal to
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -150,14 +150,12 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} or a {@link FilterOperator#LESS_OR_EQUAL} filter using given
-	 * <code>left</code> and <code>right</code> operands, which checks if left expression value is less than or less
-	 * than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than or less than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#LESS_OR_EQUAL} operator (which includes
-	 *        value equality), <code>false</code> to use the {@link FilterOperator#LESS_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter lessThan(QueryExpression<T> left, QueryExpression<? super T> right, boolean includeEquals) {
@@ -165,14 +163,12 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} or a {@link FilterOperator#LESS_OR_EQUAL} filter using given
-	 * <code>expression</code>, which checks if expression value is less than or less than or equal to given constant
-	 * value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than or
+	 * less than or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#LESS_OR_EQUAL} operator (which includes
-	 *        value equality), <code>false</code> to use the {@link FilterOperator#LESS_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter lessThan(QueryExpression<T> expression, T value, boolean includeEquals) {
@@ -180,8 +176,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is less than right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -192,8 +188,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} filter using given <code>expression</code>, which checks if expression
-	 * value is less than given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -204,8 +200,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_OR_EQUAL} filter using given <code>left</code> and <code>right</code>
-	 * operands, which checks if left expression value is less than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -216,8 +212,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_OR_EQUAL} filter using given <code>expression</code>, which checks if
-	 * expression value is less than or equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than or
+	 * equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -228,14 +224,12 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} or a {@link FilterOperator#GREATER_OR_EQUAL} filter using given
-	 * <code>left</code> and <code>right</code> operands, which checks if left expression value is greater than or
-	 * greater than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than or greater than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#GREATER_OR_EQUAL} operator (which
-	 *        includes value equality), <code>false</code> to use the {@link FilterOperator#GREATER_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter greaterThan(QueryExpression<T> left, QueryExpression<? super T> right,
@@ -244,14 +238,12 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} or a {@link FilterOperator#GREATER_OR_EQUAL} filter using given
-	 * <code>expression</code>, which checks if expression value is greater than or greater than or equal to given
-	 * constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * or greater than or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#GREATER_OR_EQUAL} operator (which
-	 *        includes value equality), <code>false</code> to use the {@link FilterOperator#GREATER_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter greaterThan(QueryExpression<T> expression, T value, boolean includeEquals) {
@@ -259,8 +251,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is greater than right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -271,8 +263,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} filter using given <code>expression</code>, which checks if
-	 * expression value is greater than given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -283,8 +275,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_OR_EQUAL} filter using given <code>left</code> and <code>right</code>
-	 * operands, which checks if left expression value is greater than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -295,8 +287,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_OR_EQUAL} filter using given <code>expression</code>, which checks if
-	 * expression value is greater than or equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
@@ -307,8 +299,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#BETWEEN} filter using given <code>expression</code>, which checks if expression
-	 * value is between given <code>from</code> and <code>to</code> values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is between
+	 * given <code>from</code> and <code>to</code> values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param from From value (not null)
@@ -320,8 +312,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is equal to any of the right expression values.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is equal to any of the right expression values.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -332,8 +324,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>expression</code>, which checks if expression value is
-	 * equal to any of the given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to any
+	 * of the given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
@@ -345,8 +337,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>expression</code>, which checks if expression value is
-	 * equal to any of the given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to any
+	 * of the given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
@@ -357,8 +349,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is not included in the right expression values.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is not included in the right expression values.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
@@ -369,8 +361,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>expression</code>, which checks if expression
-	 * value is not included in given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not included
+	 * in given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
@@ -382,8 +374,8 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>expression</code>, which checks if expression
-	 * value is not included in given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not included
+	 * in given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
@@ -394,7 +386,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a <em>contains</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>contains</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value contains given value.
 	 * @param expression Filter expression (not null)
 	 * @param value Value which must be contained in expression value
@@ -406,7 +398,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a <em>starts with</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>starts with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value starts with given value.
 	 * @param expression Filter expression (not null)
 	 * @param value Value with which the expression value must start with
@@ -418,7 +410,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a <em>ends with</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>ends with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value ends with given value.
 	 * @param expression Filter expression (not null)
 	 * @param value Value with which the expression value must end with
@@ -430,7 +422,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter as ne negation of given <code>filter</code>.
+	 * Build a {@link QueryFilter} as ne negation of given <code>filter</code>.
 	 * @param filter Filter to negate
 	 * @return QueryFilter
 	 */
@@ -439,7 +431,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the conjunction (AND) of all given not null <code>filters</code>
+	 * Build a {@link QueryFilter} with the conjunction (AND) of all given not null <code>filters</code>
 	 * @param filters Filters
 	 * @return QueryFilter representing the conjunction (AND) of all given QueryFilters, or an empty optional if no
 	 *         not-null filter is given
@@ -455,7 +447,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the conjunction (AND) of all given <code>filters</code>
+	 * Build a {@link QueryFilter} with the conjunction (AND) of all given <code>filters</code>
 	 * @param <Q> Actual filter type
 	 * @param filters Filters
 	 * @return QueryFilter representing the conjunction (AND) of all given QueryFilters, or an empty optional if given
@@ -469,7 +461,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the disjunction (OR) of all given not null <code>filters</code>
+	 * Build a {@link QueryFilter} with the disjunction (OR) of all given not null <code>filters</code>
 	 * @param filters Filters
 	 * @return QueryFilter representing the disjunction (OR) of all given filters, or an empty optional if no not-null
 	 *         filter is given
@@ -485,7 +477,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the disjunction (OR) of all given <code>filters</code>
+	 * Build a {@link QueryFilter} with the disjunction (OR) of all given <code>filters</code>
 	 * @param <Q> Actual filter type
 	 * @param filters Filters
 	 * @return QueryFilter representing the disjunction (OR) of all given QueryFilters, or an empty optional if given
@@ -537,168 +529,6 @@ public interface QueryFilter extends Expression, Serializable {
 				ExpressionResolverFunction<T, QueryFilter> function) {
 			return new CallbackExpressionResolver<>(type, QueryFilter.class, function);
 		}
-
-	}
-
-	/**
-	 * Filter operators.
-	 * @since 4.4.0
-	 */
-	public enum FilterOperator {
-
-		/**
-		 * EQUAL
-		 */
-		EQUAL("=", "$eq"),
-
-		/**
-		 * NOT EQUAL
-		 */
-		NOT_EQUAL("<>", "$ne"),
-
-		/**
-		 * GREATER THAN
-		 */
-		GREATER_THAN(">", "$gt"),
-
-		/**
-		 * GREATER OR EQUAL
-		 */
-		GREATER_OR_EQUAL(">=", "$goe"),
-
-		/**
-		 * LESS THAN
-		 */
-		LESS_THAN("<", "$lt"),
-
-		/**
-		 * LESS OR EQUAL
-		 */
-		LESS_OR_EQUAL("<=", "$loe"),
-
-		/**
-		 * BETWEEN
-		 */
-		BETWEEN("[]", "$btw"),
-
-		/**
-		 * IN
-		 */
-		IN("^", "$in"),
-
-		/**
-		 * NOT IN
-		 */
-		NOT_IN("!^", "$nin"),
-
-		/**
-		 * MATCH
-		 */
-		MATCH("~", "$mtch"),
-
-		/*
-		 * IS NULL
-		 */
-		NULL("-", "$null"),
-
-		/**
-		 * IS NOT NULL
-		 */
-		NOT_NULL("+", "$notNull");
-
-		/*
-		 * Operator symbol
-		 */
-		private final String symbol;
-
-		/*
-		 * Serialized form id
-		 */
-		private final String serializedId;
-
-		/**
-		 * Constructor
-		 * @param symbol Operator symbol
-		 * @param serializedId Serialized form id
-		 */
-		private FilterOperator(String symbol, String serializedId) {
-			this.symbol = symbol;
-			this.serializedId = serializedId;
-		}
-
-		/**
-		 * Get operator symbol
-		 * @return Symbol
-		 */
-		public String getSymbol() {
-			return symbol;
-		}
-
-		/**
-		 * Serialized form id
-		 * @return Serialized id
-		 */
-		public String getSerializedId() {
-			return serializedId;
-		}
-
-		/**
-		 * Parse a {@link FilterOperator} from symbol
-		 * @param symbol Symbol
-		 * @return Filter operator, or <code>null</code> if symbol is not associated to any operator
-		 */
-		public static FilterOperator fromSymbol(String symbol) {
-			if (symbol != null) {
-				for (FilterOperator operator : values()) {
-					if (symbol.equals(operator.symbol)) {
-						return operator;
-					}
-				}
-			}
-			return null;
-		}
-
-		/**
-		 * Get the {@link FilterOperator} matching the given serialized id
-		 * @param serializedId Serialized operator id
-		 * @return FilterOperator, or <code>null</code> if none match
-		 */
-		public static FilterOperator deserialize(String serializedId) {
-			if (serializedId != null) {
-				for (FilterOperator operator : values()) {
-					if (serializedId.equals(operator.serializedId)) {
-						return operator;
-					}
-				}
-			}
-			return null;
-		}
-
-	}
-
-	/**
-	 * A {@link QueryFilter} which represents an operation with operator and arguments.
-	 * @param <T> Operation subject type
-	 */
-	public interface OperationQueryFilter<T> extends QueryFilter {
-
-		/**
-		 * Get the left hand {@link QueryExpression} operand.
-		 * @return The left hand operand expression
-		 */
-		QueryExpression<T> getLeftOperand();
-
-		/**
-		 * Get the operator.
-		 * @return The operator (not null)
-		 */
-		FilterOperator getOperator();
-
-		/**
-		 * Get the right hand {@link QueryExpression} operand, if applicable.
-		 * @return Optional right hand operand expression
-		 */
-		Optional<QueryExpression<? super T>> getRightOperand();
 
 	}
 

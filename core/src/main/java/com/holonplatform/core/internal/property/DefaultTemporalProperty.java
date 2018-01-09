@@ -15,27 +15,27 @@
  */
 package com.holonplatform.core.internal.property;
 
-import com.holonplatform.core.property.PathProperty;
-import com.holonplatform.core.property.PathProperty.PathPropertyBuilder;
+import com.holonplatform.core.property.TemporalProperty;
+import com.holonplatform.core.property.TemporalProperty.TemporalPropertyBuilder;
 
 /**
- * Default {@link PathProperty} implementation.
+ * Default {@link TemporalProperty} implementation.
  * 
- * @param <T> Property (path) type
+ * @param <T> Property type
  *
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathPropertyBuilder<T>>
-		implements PathPropertyBuilder<T> {
+public class DefaultTemporalProperty<T> extends AbstractPathProperty<T, TemporalPropertyBuilder<T>>
+		implements TemporalPropertyBuilder<T> {
 
-	private static final long serialVersionUID = 5796523880557314657L;
+	private static final long serialVersionUID = 8579232846776577003L;
 
 	/**
 	 * Constructor
-	 * @param name Property name, must be not <code>null</code>
-	 * @param type Property value type
+	 * @param name Property name (not null)
+	 * @param type Property type (not null)
 	 */
-	public DefaultPathProperty(String name, Class<? extends T> type) {
+	public DefaultTemporalProperty(String name, Class<? extends T> type) {
 		super(name, type);
 	}
 

@@ -25,20 +25,21 @@ import com.holonplatform.core.query.TemporalFunction.CurrentDate;
  *
  * @since 5.1.0
  */
-public class CurrentDateFunction implements CurrentDate {
+public class CurrentDateFunction extends AbstractQueryFunction<Date, Object> implements CurrentDate {
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
-	 */
-	@Override
-	public Class<? extends Date> getResultType() {
-		return Date.class;
+	public CurrentDateFunction() {
+		super();
+		setMinimumArguments(0);
+		setMaximumArguments(0);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {}
+	public Class<? extends Date> getType() {
+		return Date.class;
+	}
 
 }

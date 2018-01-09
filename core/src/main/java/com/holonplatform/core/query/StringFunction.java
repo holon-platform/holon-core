@@ -15,26 +15,23 @@
  */
 package com.holonplatform.core.query;
 
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.LowerFunction;
 import com.holonplatform.core.internal.query.function.UpperFunction;
-import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
-import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
+import com.holonplatform.core.query.QueryFunction.PropertyQueryFunction;
 
 /**
  * Represents a {@link QueryFunction} on a String data type.
  * 
  * @since 5.1.0
  */
-public interface StringFunction extends QueryFunction<String> {
+public interface StringFunction extends PropertyQueryFunction<String, String>, StringQueryExpression {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	default Class<? extends String> getResultType() {
+	default Class<? extends String> getType() {
 		return String.class;
 	}
 
@@ -45,19 +42,11 @@ public interface StringFunction extends QueryFunction<String> {
 
 		/**
 		 * Create a new {@link Lower} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Lower} function instance
 		 */
-		static Lower create() {
-			return new LowerFunction();
-		}
-
-		/**
-		 * Create a {@link Lower} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Lower} function expression on given path
-		 */
-		static PathFunctionExpression<String, String> of(Path<String> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Lower create(QueryExpression<String> argument) {
+			return new LowerFunction(argument);
 		}
 
 	}
@@ -69,19 +58,11 @@ public interface StringFunction extends QueryFunction<String> {
 
 		/**
 		 * Create a new {@link Lower} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Lower} function instance
 		 */
-		static Upper create() {
-			return new UpperFunction();
-		}
-
-		/**
-		 * Create a {@link Upper} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Upper} function expression on given path
-		 */
-		static PathFunctionExpression<String, String> of(Path<String> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Upper create(QueryExpression<String> argument) {
+			return new UpperFunction(argument);
 		}
 
 	}

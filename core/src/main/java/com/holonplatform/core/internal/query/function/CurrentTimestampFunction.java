@@ -25,23 +25,21 @@ import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
  *
  * @since 5.1.0
  */
-public class CurrentTimestampFunction implements CurrentTimestamp {
+public class CurrentTimestampFunction extends AbstractQueryFunction<Date, Object> implements CurrentTimestamp {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
-	 */
-	@Override
-	public Class<? extends Date> getResultType() {
-		return Date.class;
+	public CurrentTimestampFunction() {
+		super();
+		setMinimumArguments(0);
+		setMaximumArguments(0);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
+	public Class<? extends Date> getType() {
+		return Date.class;
 	}
 
 }

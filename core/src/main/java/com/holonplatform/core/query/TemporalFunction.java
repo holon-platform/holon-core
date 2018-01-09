@@ -19,8 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.function.CurrentDateFunction;
 import com.holonplatform.core.internal.query.function.CurrentLocalDateFunction;
 import com.holonplatform.core.internal.query.function.CurrentLocalDateTimeFunction;
@@ -29,8 +27,6 @@ import com.holonplatform.core.internal.query.function.DayFunction;
 import com.holonplatform.core.internal.query.function.HourFunction;
 import com.holonplatform.core.internal.query.function.MonthFunction;
 import com.holonplatform.core.internal.query.function.YearFunction;
-import com.holonplatform.core.query.FunctionExpression.PathFunctionExpression;
-import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionProperty;
 
 /**
  * Represents a temporal-related {@link QueryFunction}.
@@ -39,12 +35,12 @@ import com.holonplatform.core.query.FunctionExpression.PathFunctionExpressionPro
  * 
  * @since 5.1.0
  */
-public interface TemporalFunction<T> extends QueryFunction<T> {
+public interface TemporalFunction<T> extends QueryFunction<T, Object> {
 
 	/**
 	 * A function to obtain the current date as a {@link Date}.
 	 */
-	public interface CurrentDate extends TemporalFunction<Date> {
+	public interface CurrentDate extends TemporalFunction<Date>, TemporalQueryExpression<Date> {
 
 		/**
 		 * Create a new {@link CurrentDate} function instance.
@@ -54,21 +50,12 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new CurrentDateFunction();
 		}
 
-		/**
-		 * Create a {@link CurrentDate} function expression, which can be used for example as query projection or in
-		 * query filters.
-		 * @return A {@link CurrentDate} function expression
-		 */
-		static FunctionExpression<Date> expression() {
-			return FunctionExpression.create(create());
-		}
-
 	}
 
 	/**
 	 * A function to obtain the current timestamp as a {@link Date}.
 	 */
-	public interface CurrentTimestamp extends TemporalFunction<Date> {
+	public interface CurrentTimestamp extends TemporalFunction<Date>, TemporalQueryExpression<Date> {
 
 		/**
 		 * Create a new {@link CurrentTimestamp} function instance.
@@ -78,21 +65,12 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new CurrentTimestampFunction();
 		}
 
-		/**
-		 * Create a {@link CurrentTimestamp} function expression, which can be used for example as query projection or
-		 * in query filters.
-		 * @return A {@link CurrentTimestamp} function expression
-		 */
-		static FunctionExpression<Date> expression() {
-			return FunctionExpression.create(create());
-		}
-
 	}
 
 	/**
 	 * A function to obtain the current date as a {@link LocalDate}.
 	 */
-	public interface CurrentLocalDate extends TemporalFunction<LocalDate> {
+	public interface CurrentLocalDate extends TemporalFunction<LocalDate>, TemporalQueryExpression<LocalDate> {
 
 		/**
 		 * Create a new {@link CurrentLocalDate} function instance.
@@ -102,21 +80,13 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 			return new CurrentLocalDateFunction();
 		}
 
-		/**
-		 * Create a {@link CurrentLocalDate} function expression, which can be used for example as query projection or
-		 * in query filters.
-		 * @return A {@link CurrentLocalDate} function expression
-		 */
-		static FunctionExpression<LocalDate> expression() {
-			return FunctionExpression.create(create());
-		}
-
 	}
 
 	/**
 	 * A function to obtain the current date and time as a {@link LocalDateTime}.
 	 */
-	public interface CurrentLocalDateTime extends TemporalFunction<LocalDateTime> {
+	public interface CurrentLocalDateTime
+			extends TemporalFunction<LocalDateTime>, TemporalQueryExpression<LocalDateTime> {
 
 		/**
 		 * Create a new {@link CurrentLocalDateTime} function instance.
@@ -124,15 +94,6 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 		 */
 		static CurrentLocalDateTime create() {
 			return new CurrentLocalDateTimeFunction();
-		}
-
-		/**
-		 * Create a {@link CurrentLocalDateTime} function expression, which can be used for example as query projection
-		 * or in query filters.
-		 * @return A {@link CurrentLocalDateTime} function expression
-		 */
-		static FunctionExpression<LocalDateTime> expression() {
-			return FunctionExpression.create(create());
 		}
 
 	}
@@ -143,24 +104,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 	 * The result type is always an {@link Integer}.
 	 * </p>
 	 */
-	public interface Year extends TemporalFunction<Integer> {
+	public interface Year
+			extends TemporalFunction<Integer>, PropertyQueryFunction<Integer, Object>, NumericQueryExpression<Integer> {
 
 		/**
 		 * Create a new {@link Year} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Year} function instance
 		 */
-		static Year create() {
-			return new YearFunction();
-		}
-
-		/**
-		 * Create a {@link Year} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Year} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Year create(QueryExpression<?> argument) {
+			return new YearFunction(argument);
 		}
 
 	}
@@ -171,24 +124,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 	 * The result type is always an {@link Integer} and the month range index is between 1 and 12.
 	 * </p>
 	 */
-	public interface Month extends TemporalFunction<Integer> {
+	public interface Month
+			extends TemporalFunction<Integer>, PropertyQueryFunction<Integer, Object>, NumericQueryExpression<Integer> {
 
 		/**
 		 * Create a new {@link Month} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Month} function instance
 		 */
-		static Month create() {
-			return new MonthFunction();
-		}
-
-		/**
-		 * Create a {@link Month} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Month} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Month create(QueryExpression<?> argument) {
+			return new MonthFunction(argument);
 		}
 
 	}
@@ -199,24 +144,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 	 * The result type is always an {@link Integer} and the day range index is between 1 and 31.
 	 * </p>
 	 */
-	public interface Day extends TemporalFunction<Integer> {
+	public interface Day
+			extends TemporalFunction<Integer>, PropertyQueryFunction<Integer, Object>, NumericQueryExpression<Integer> {
 
 		/**
 		 * Create a new {@link Day} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Day} function instance
 		 */
-		static Day create() {
-			return new DayFunction();
-		}
-
-		/**
-		 * Create a {@link Day} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Day} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Day create(QueryExpression<?> argument) {
+			return new DayFunction(argument);
 		}
 
 	}
@@ -227,24 +164,16 @@ public interface TemporalFunction<T> extends QueryFunction<T> {
 	 * The result type is always an {@link Integer} and the hour range index is between 0 and 23.
 	 * </p>
 	 */
-	public interface Hour extends TemporalFunction<Integer> {
+	public interface Hour
+			extends TemporalFunction<Integer>, PropertyQueryFunction<Integer, Object>, NumericQueryExpression<Integer> {
 
 		/**
 		 * Create a new {@link Hour} function instance.
+		 * @param argument Function argument (not null)
 		 * @return New {@link Hour} function instance
 		 */
-		static Hour create() {
-			return new HourFunction();
-		}
-
-		/**
-		 * Create a {@link Hour} function {@link Expression} using given <code>path</code> as function argument.
-		 * @param <T> Path type
-		 * @param path Path to which to apply the function (not null)
-		 * @return A {@link Hour} function expression on given path
-		 */
-		static <T> PathFunctionExpression<T, Integer> of(Path<T> path) {
-			return PathFunctionExpressionProperty.create(create(), path);
+		static Hour create(QueryExpression<?> argument) {
+			return new HourFunction(argument);
 		}
 
 	}

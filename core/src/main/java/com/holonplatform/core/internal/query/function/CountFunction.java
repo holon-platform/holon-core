@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction.Count;
 
 /**
@@ -22,26 +23,27 @@ import com.holonplatform.core.query.QueryFunction.Count;
  *
  * @since 5.0.0
  */
-public class CountFunction implements Count {
+public class CountFunction extends AbstractPropertyQueryFunction<Long, Object> implements Count {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
+	private static final long serialVersionUID = -8719032813868570628L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
 	 */
-	@Override
-	public Class<? extends Long> getResultType() {
-		return Long.class;
+	public CountFunction(QueryExpression<?> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
-		if (getResultType() == null) {
-			throw new InvalidExpressionException("Null function result type");
-		}
+	public Class<? extends Long> getType() {
+		return Long.class;
 	}
 
 }

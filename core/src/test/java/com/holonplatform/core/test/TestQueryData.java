@@ -50,6 +50,8 @@ import com.holonplatform.core.internal.query.filter.NotFilter;
 import com.holonplatform.core.internal.query.filter.NotInFilter;
 import com.holonplatform.core.internal.query.filter.NotNullFilter;
 import com.holonplatform.core.internal.query.filter.NullFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.query.filter.OrFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter.MatchMode;
@@ -61,8 +63,6 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QueryFilter.FilterOperator;
-import com.holonplatform.core.query.QueryFilter.OperationQueryFilter;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.CompositeQuerySort;
 import com.holonplatform.core.query.QuerySort.PathQuerySort;
@@ -320,9 +320,6 @@ public class TestQueryData {
 		assertTrue(((StringMatchFilter) f).isIgnoreCase());
 		f.validate();
 		((VisitableQueryFilter) f).accept(visitor, null);
-
-		((StringMatchFilter) f).setIgnoreCase(false);
-		assertFalse(((StringMatchFilter) f).isIgnoreCase());
 
 		f = new StringMatchFilter(p, "test", MatchMode.CONTAINS, false);
 		assertEquals(p, f.getLeftOperand());

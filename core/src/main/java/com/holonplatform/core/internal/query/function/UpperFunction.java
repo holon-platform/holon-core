@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.StringFunction.Upper;
 
 /**
@@ -22,14 +23,27 @@ import com.holonplatform.core.query.StringFunction.Upper;
  *
  * @since 5.1.0
  */
-public class UpperFunction implements Upper {
+public class UpperFunction extends AbstractPropertyQueryFunction<String, String> implements Upper {
+
+	private static final long serialVersionUID = -1072443866437951740L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
+	 */
+	public UpperFunction(QueryExpression<String> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
+	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.StringFunction#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
+	public Class<? extends String> getType() {
+		return Upper.super.getType();
 	}
 
 }

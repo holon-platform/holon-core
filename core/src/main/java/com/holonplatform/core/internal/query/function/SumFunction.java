@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction.Sum;
 
 /**
@@ -25,38 +25,30 @@ import com.holonplatform.core.query.QueryFunction.Sum;
  *
  * @since 5.0.0
  */
-public class SumFunction<T> implements Sum<T> {
+public class SumFunction<T extends Number> extends AbstractPropertyQueryFunction<T, T> implements Sum<T> {
+
+	private static final long serialVersionUID = 1276109982296283979L;
 
 	private final Class<? extends T> resultType;
 
 	/**
 	 * Constructor
-	 * @param resultType Result type (not null)
+	 * @param argument Function argument (not null)
 	 */
-	public SumFunction(Class<? extends T> resultType) {
-		super();
-		ObjectUtils.argumentNotNull(resultType, "Result type must be not null");
-		this.resultType = resultType;
+	public SumFunction(QueryExpression<T> argument) {
+		super(argument);
+		this.resultType = argument.getType();
+		setMinimumArguments(1);
+		setMaximumArguments(1);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public Class<? extends T> getResultType() {
+	public Class<? extends T> getType() {
 		return resultType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
-	 */
-	@Override
-	public void validate() throws InvalidExpressionException {
-		if (getResultType() == null) {
-			throw new InvalidExpressionException("Null function result type");
-		}
 	}
 
 }

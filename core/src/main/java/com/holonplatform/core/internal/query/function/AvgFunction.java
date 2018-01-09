@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction.Avg;
 
 /**
@@ -22,26 +23,27 @@ import com.holonplatform.core.query.QueryFunction.Avg;
  *
  * @since 5.0.0
  */
-public class AvgFunction implements Avg {
+public class AvgFunction extends AbstractPropertyQueryFunction<Double, Number> implements Avg {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
+	private static final long serialVersionUID = -7149607237568548784L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
 	 */
-	@Override
-	public Class<? extends Double> getResultType() {
-		return Double.class;
+	public AvgFunction(QueryExpression<? extends Number> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
-		if (getResultType() == null) {
-			throw new InvalidExpressionException("Null function result type");
-		}
+	public Class<? extends Double> getType() {
+		return Double.class;
 	}
 
 }

@@ -20,7 +20,6 @@ import java.util.Optional;
 import com.holonplatform.core.internal.query.QueryFilterVisitor.VisitableQueryFilter;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryExpression;
-import com.holonplatform.core.query.QueryFilter.OperationQueryFilter;
 
 /**
  * Abstract {@link OperationQueryFilter} implementation.

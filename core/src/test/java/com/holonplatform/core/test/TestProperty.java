@@ -48,6 +48,8 @@ import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
 import com.holonplatform.core.internal.property.NumericBooleanConverter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.presentation.StringValuePresenter;
@@ -62,11 +64,10 @@ import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
 import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
+import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.VirtualProperty;
 import com.holonplatform.core.property.VirtualProperty.Builder;
 import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QueryFilter.FilterOperator;
-import com.holonplatform.core.query.QueryFilter.OperationQueryFilter;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.PathQuerySort;
 import com.holonplatform.core.query.QuerySort.SortDirection;
@@ -821,14 +822,14 @@ public class TestProperty {
 		assertTrue(joined.contains(TestPropertySet.SEQUENCE));
 		assertTrue(joined.contains(TestPropertySet.GENERIC));
 		assertTrue(joined.contains(TestPropertySet.VIRTUAL));
-		
+
 		PropertySet<?> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME).build();
 		assertEquals(1, ps2.size());
 	}
 
 	@Test
 	public void testPathProperty() {
-		PathProperty<String> property = PathProperty.create("test", String.class);
+		StringProperty property = StringProperty.create("test");
 
 		assertNotNull(property.toString());
 
@@ -996,24 +997,6 @@ public class TestProperty {
 		assertThat(flt, instanceOf(OperationQueryFilter.class));
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
-
-		TestUtils.expectedException(UnsupportedOperationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				PathProperty<Integer> ap = PathProperty.create("test", int.class);
-				ap.contains("x", false);
-			}
-		});
-
-		TestUtils.expectedException(UnsupportedOperationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				PathProperty<Integer> ap = PathProperty.create("test", int.class);
-				ap.contains("x", true);
-			}
-		});
 
 	}
 

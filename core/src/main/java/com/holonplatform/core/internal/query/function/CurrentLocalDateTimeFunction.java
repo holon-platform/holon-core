@@ -25,23 +25,22 @@ import com.holonplatform.core.query.TemporalFunction.CurrentLocalDateTime;
  *
  * @since 5.1.0
  */
-public class CurrentLocalDateTimeFunction implements CurrentLocalDateTime {
+public class CurrentLocalDateTimeFunction extends AbstractQueryFunction<LocalDateTime, Object>
+		implements CurrentLocalDateTime {
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFunction#getResultType()
-	 */
-	@Override
-	public Class<? extends LocalDateTime> getResultType() {
-		return LocalDateTime.class;
+	public CurrentLocalDateTimeFunction() {
+		super();
+		setMinimumArguments(0);
+		setMaximumArguments(0);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Expression#validate()
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {
+	public Class<? extends LocalDateTime> getType() {
+		return LocalDateTime.class;
 	}
 
 }

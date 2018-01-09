@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
+import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.TemporalFunction.Year;
 
 /**
@@ -23,5 +24,17 @@ import com.holonplatform.core.query.TemporalFunction.Year;
  * @since 5.1.0
  */
 public class YearFunction extends AbstractIntegerTemporalFunction implements Year {
+
+	private static final long serialVersionUID = 8519265412661701427L;
+
+	/**
+	 * Constructor.
+	 * @param argument Function argument (not null)
+	 */
+	public YearFunction(QueryExpression<?> argument) {
+		super(argument);
+		setMinimumArguments(1);
+		setMaximumArguments(1);
+	}
 
 }

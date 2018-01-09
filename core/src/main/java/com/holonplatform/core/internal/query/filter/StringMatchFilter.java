@@ -66,7 +66,7 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	/*
 	 * Ignore case
 	 */
-	private boolean ignoreCase;
+	private final boolean ignoreCase;
 
 	/**
 	 * Constructor.
@@ -97,14 +97,6 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	 */
 	public boolean isIgnoreCase() {
 		return ignoreCase;
-	}
-
-	/**
-	 * Set if to match like pattern ignoring case
-	 * @param ignoreCase <code>true</code> to ignore case in pattern match
-	 */
-	public void setIgnoreCase(boolean ignoreCase) {
-		this.ignoreCase = ignoreCase;
 	}
 
 	/*
