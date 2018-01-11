@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.utils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -558,6 +559,27 @@ public final class ConversionUtils implements Serializable {
 			return new String(hexChars);
 		}
 		return null;
+	}
+
+	/**
+	 * Flush the contents of a {@link Reader} into a String.
+	 * <p>
+	 * The Reader is closed at the end of the operation.
+	 * </p>
+	 * @param reader Reader to flush (not null)
+	 * @return A String with the charachters read from given <code>reader</code>
+	 * @throws IOException Read error
+	 */
+	public static String readerToString(Reader reader) throws IOException {
+		ObjectUtils.argumentNotNull(reader, "Reader must be not null");
+		char[] arr = new char[8 * 1024];
+		StringBuilder buffer = new StringBuilder();
+		int numCharsRead;
+		while ((numCharsRead = reader.read(arr, 0, arr.length)) != -1) {
+			buffer.append(arr, 0, numCharsRead);
+		}
+		reader.close();
+		return buffer.toString();
 	}
 
 }
