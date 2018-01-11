@@ -42,7 +42,7 @@ import com.holonplatform.core.query.QuerySort.SortDirection;
  * @see TemporalProperty
  * @see BooleanProperty
  */
-public interface PathProperty<T> extends Property<T>, PathExpression<T>, QueryProjection<T> {
+public interface PathProperty<T> extends Property<T>, PathExpression<T> {
 
 	/*
 	 * (non-Javadoc)

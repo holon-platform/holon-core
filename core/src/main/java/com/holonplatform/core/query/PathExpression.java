@@ -26,7 +26,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.0.0
  */
-public interface PathExpression<T> extends Path<T>, QueryExpression<T> {
+public interface PathExpression<T> extends Path<T>, QueryExpression<T>, QueryProjection<T> {
 
 	/**
 	 * Create a {@link PathExpression}.
