@@ -15,8 +15,6 @@
  */
 package com.holonplatform.core.internal.query;
 
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
-
 /**
  * Default {@link ConstantExpressionProjection} implementation.
  *
@@ -25,7 +23,7 @@ import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQue
  * @since 5.0.0
  */
 public class DefaultConstantExpressionProjection<T> extends DefaultConstantExpression<T>
-		implements ConstantExpressionProjection<T>, VisitableQueryProjection<T> {
+		implements ConstantExpressionProjection<T> {
 
 	/**
 	 * Constructor
@@ -33,17 +31,6 @@ public class DefaultConstantExpressionProjection<T> extends DefaultConstantExpre
 	 */
 	public DefaultConstantExpressionProjection(T value) {
 		super(value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 }

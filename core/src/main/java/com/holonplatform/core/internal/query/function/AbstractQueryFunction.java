@@ -18,8 +18,6 @@ package com.holonplatform.core.internal.query.function;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.holonplatform.core.internal.query.QueryProjectionVisitor;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction;
@@ -32,7 +30,7 @@ import com.holonplatform.core.query.QueryFunction;
  *
  * @since 5.1.0
  */
-public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>, VisitableQueryProjection<T> {
+public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A> {
 
 	/**
 	 * Function arguments
@@ -130,14 +128,6 @@ public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>
 					"[" + getClass().getName() + "] Invalid function arguments count: maximum is " + maximumArguments
 							+ ", got " + arguments.size());
 		}
-	}
-
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 }

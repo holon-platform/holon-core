@@ -19,8 +19,6 @@ import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.i18n.Localizable;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathProperty.Builder;
@@ -42,7 +40,7 @@ import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurati
  * @see DefaultPathProperty
  */
 public abstract class AbstractPathProperty<T, P extends Builder<T, P>> extends AbstractProperty<T, P>
-		implements Builder<T, P>, PathProperty<T>, VisitableQueryProjection<T> {
+		implements Builder<T, P>, PathProperty<T> {
 
 	private static final long serialVersionUID = 2939113810465856718L;
 
@@ -151,17 +149,6 @@ public abstract class AbstractPathProperty<T, P extends Builder<T, P>> extends A
 		sb.append(((getType() != null) ? getType().getName() : "null"));
 		sb.append("]");
 		return sb.toString();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 }

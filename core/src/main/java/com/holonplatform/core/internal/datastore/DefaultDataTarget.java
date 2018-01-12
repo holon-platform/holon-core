@@ -17,8 +17,6 @@ package com.holonplatform.core.internal.datastore;
 
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.internal.DefaultPath;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 
 /**
  * Default {@link DataTarget} implementation.
@@ -27,7 +25,7 @@ import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQue
  *
  * @since 5.0.0
  */
-public class DefaultDataTarget<T> extends DefaultPath<T> implements DataTarget<T>, VisitableQueryProjection<T> {
+public class DefaultDataTarget<T> extends DefaultPath<T> implements DataTarget<T> {
 
 	private static final long serialVersionUID = 6821077978867212734L;
 
@@ -38,17 +36,6 @@ public class DefaultDataTarget<T> extends DefaultPath<T> implements DataTarget<T
 	 */
 	public DefaultDataTarget(String name, Class<? extends T> type) {
 		super(name, type);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 	/*

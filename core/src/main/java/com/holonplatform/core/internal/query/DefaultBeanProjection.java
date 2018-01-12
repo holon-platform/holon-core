@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Optional;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.BeanProjection;
 
@@ -31,7 +30,7 @@ import com.holonplatform.core.query.BeanProjection;
  * @since 5.0.0
  */
 @SuppressWarnings("rawtypes")
-public class DefaultBeanProjection<T> implements BeanProjection<T>, VisitableQueryProjection<T> {
+public class DefaultBeanProjection<T> implements BeanProjection<T> {
 
 	/**
 	 * Bean class
@@ -82,17 +81,6 @@ public class DefaultBeanProjection<T> implements BeanProjection<T>, VisitableQue
 		if (getBeanClass() == null) {
 			throw new InvalidExpressionException("Null bean class");
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 	/*

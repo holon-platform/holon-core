@@ -15,9 +15,7 @@
  */
 package com.holonplatform.core.internal.query;
 
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.PropertySetProjection;
 
@@ -26,7 +24,7 @@ import com.holonplatform.core.query.PropertySetProjection;
  *
  * @since 5.0.0
  */
-public class DefaultPropertySetProjection implements PropertySetProjection, VisitableQueryProjection<PropertyBox> {
+public class DefaultPropertySetProjection implements PropertySetProjection {
 
 	private final PropertySet<?> propertySet;
 
@@ -58,17 +56,6 @@ public class DefaultPropertySetProjection implements PropertySetProjection, Visi
 		if (getPropertySet() == null) {
 			throw new InvalidExpressionException("Null property set");
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 	/*
