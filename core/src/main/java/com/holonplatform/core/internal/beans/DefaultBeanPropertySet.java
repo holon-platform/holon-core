@@ -73,6 +73,14 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		this.beanClass = new WeakReference<>(beanClass);
 	}
 
+	/**
+	 * Declare given property as identifier.
+	 * @param property Identifier property (not null)
+	 */
+	void addIdentifier(BeanProperty<?> property) {
+		super.addIdentifier(property);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.beans.BeanPropertySet#getBeanClass()

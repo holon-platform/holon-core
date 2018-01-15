@@ -286,7 +286,10 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		List<BeanProperty<?>> properties = resolveBeanProperties(beanClass, parentPath, null);
 		// sort
 		properties.sort(SEQUENCE_COMPARATOR);
-		return new DefaultBeanPropertySet<>(beanClass, properties);
+		final DefaultBeanPropertySet<T> beanPropertySet = new DefaultBeanPropertySet<>(beanClass, properties);
+		// check identifiers
+		properties.stream().filter(p -> p.isIdentifier()).forEach(p -> beanPropertySet.addIdentifier(p));
+		return beanPropertySet;
 	}
 
 	/**

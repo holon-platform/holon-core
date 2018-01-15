@@ -68,6 +68,13 @@ public interface BeanProperty<T> extends PathProperty<T> {
 	Optional<Integer> getSequence();
 
 	/**
+	 * Get whether the property is declared as an identifier for the bean property set.
+	 * @return <code>true</code> if it is an identifier property, <code>false</code> otherwise
+	 * @since 5.1.0
+	 */
+	boolean isIdentifier();
+
+	/**
 	 * Gets the annotation of given <code>annotationClass</code> type declared on this property, if available.
 	 * <p>
 	 * Only annotations declared on the {@link Field} which corresponds to this property are taken into account, any
@@ -147,6 +154,14 @@ public interface BeanProperty<T> extends PathProperty<T> {
 		 * @return this
 		 */
 		Builder<T> sequence(Integer sequence);
+
+		/**
+		 * Set the bean property as an identifier property.
+		 * @param identifier Whether the property is an identifier for the bean property set
+		 * @return this
+		 * @since 5.1.0
+		 */
+		Builder<T> identifier(boolean identifier);
 
 		/**
 		 * Set the property annotations

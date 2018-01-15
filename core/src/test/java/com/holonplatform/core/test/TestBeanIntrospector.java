@@ -206,5 +206,26 @@ public class TestBeanIntrospector {
 		set.write(wb, instance);
 
 	}
+	
+	@Test
+	public void testPropertyIdentifier() {
+		BeanPropertySet<TestBeanPropertyBean> set = BeanIntrospector.get().getPropertySet(TestBeanPropertyBean.class);
+		assertTrue(set.getFirstIdentifier().isPresent());
+		assertEquals("name", set.getFirstIdentifier().get().getName());
+		
+		TestBeanPropertyBean b1 = new TestBeanPropertyBean();
+		b1.setName("n1");
+		TestBeanPropertyBean b2 = new TestBeanPropertyBean();
+		b2.setName("n2");
+		TestBeanPropertyBean b3 = new TestBeanPropertyBean();
+		b3.setName("n1");
+		
+		PropertyBox p1 = set.read(b1);
+		PropertyBox p2 = set.read(b2);
+		PropertyBox p3 = set.read(b3);
+		
+		assertFalse(p1.equals(p2));
+		assertTrue(p1.equals(p3));
+	}
 
 }

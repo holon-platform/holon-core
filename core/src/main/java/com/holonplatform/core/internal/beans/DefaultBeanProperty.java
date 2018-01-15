@@ -68,6 +68,11 @@ public class DefaultBeanProperty<T> extends AbstractPathProperty<T, Builder<T>> 
 	private Integer sequence;
 
 	/**
+	 * Identifier property
+	 */
+	private boolean identifier;
+
+	/**
 	 * Constructor.
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
@@ -137,6 +142,15 @@ public class DefaultBeanProperty<T> extends AbstractPathProperty<T, Builder<T>> 
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanProperty#isIdentifier()
+	 */
+	@Override
+	public boolean isIdentifier() {
+		return identifier;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.beans.BeanProperty#getAnnotation(java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
@@ -186,6 +200,16 @@ public class DefaultBeanProperty<T> extends AbstractPathProperty<T, Builder<T>> 
 	@Override
 	public BeanProperty.Builder<T> sequence(Integer sequence) {
 		this.sequence = sequence;
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanProperty.Builder#identifier(boolean)
+	 */
+	@Override
+	public BeanProperty.Builder<T> identifier(boolean identifier) {
+		this.identifier = identifier;
 		return this;
 	}
 
