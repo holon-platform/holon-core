@@ -26,6 +26,7 @@ public interface TestIdentifiablePropertySet {
 	public static final StringProperty TEXT = StringProperty.create("text");
 	public static final PathProperty<TestEnum> ENM = PathProperty.create("enm", TestEnum.class);
 
-	public static final PropertySet<?> PROPERTIES = PropertySet.builderOf(ID, TEXT, ENM).identifier(ID).build();
+	public static final PropertySet<?> PROPERTIES = PropertySet.builderOf(ID, TEXT, ENM).identifier(ID)
+			.configuration("test", "TEST").build();
 
 }

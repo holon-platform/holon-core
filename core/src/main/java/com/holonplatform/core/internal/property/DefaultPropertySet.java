@@ -22,6 +22,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.ParameterSet;
+import com.holonplatform.core.internal.DefaultParameterSet;
+import com.holonplatform.core.internal.MutableParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
@@ -42,6 +45,11 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 	 * Identifiers
 	 */
 	private Set<P> identifiers;
+
+	/**
+	 * Configuration
+	 */
+	private MutableParameterSet configuration;
 
 	/**
 	 * Default empty constructor
@@ -126,6 +134,28 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 	@Override
 	public Set<P> getIdentifiers() {
 		return (identifiers == null) ? Collections.emptySet() : Collections.unmodifiableSet(identifiers);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getConfiguration()
+	 */
+	@Override
+	public ParameterSet getConfiguration() {
+		return (configuration != null) ? configuration : ParameterSet.empty();
+	}
+
+	/**
+	 * Add a parameter to the property set configuration.
+	 * @param parameterName Parameter name (not null)
+	 * @param value Parameter value
+	 */
+	protected void addConfigurationParameter(String name, Object value) {
+		ObjectUtils.argumentNotNull(name, "Configuration parameter name must be not null");
+		if (configuration == null) {
+			configuration = new DefaultParameterSet();
+		}
+		configuration.addParameter(name, value);
 	}
 
 	/**
@@ -257,6 +287,16 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		@Override
 		public <PT extends P> Builder<P> identifiers(Iterable<PT> properties) {
 			this.instance.setIdentifers(properties);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#configuration(java.lang.String, java.lang.Object)
+		 */
+		@Override
+		public Builder<P> configuration(String name, Object value) {
+			this.instance.addConfigurationParameter(name, value);
 			return this;
 		}
 

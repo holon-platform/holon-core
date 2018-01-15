@@ -23,6 +23,7 @@ import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.Validator.ValidationException;
@@ -166,6 +167,25 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	@Override
 	public Set<Property> getIdentifiers() {
 		return getAndCheckPropertySet().getIdentifiers();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getConfiguration()
+	 */
+	@Override
+	public ParameterSet getConfiguration() {
+		return getAndCheckPropertySet().getConfiguration();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertyBox#propertyValues()
+	 */
+	@Override
+	public <T> Stream<PropertyValue<T>> propertyValues() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/*

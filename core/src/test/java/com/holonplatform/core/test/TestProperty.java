@@ -44,6 +44,7 @@ import org.junit.Test;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
@@ -837,6 +838,36 @@ public class TestProperty {
 		assertEquals(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.PROPERTIES.getFirstIdentifier().get());
 		assertTrue(TestIdentifiablePropertySet.ID == TestIdentifiablePropertySet.PROPERTIES.identifiers().findFirst()
 				.get());
+
+		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID)
+				.identifier(TestIdentifiablePropertySet.ID).build();
+
+		assertTrue(set.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, set.getFirstIdentifier().get());
+
+		PropertySet<?> set2 = PropertySet.of(set, TestIdentifiablePropertySet.TEXT);
+
+		assertTrue(set2.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set2.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, set2.getFirstIdentifier().get());
+	}
+
+	@Test
+	public void testPropertySetConfiguration() {
+
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getConfiguration().hasNotNullParameter("test"));
+		assertEquals("TEST",
+				TestIdentifiablePropertySet.PROPERTIES.getConfiguration().getParameter("test").orElse(null));
+
+		ConfigProperty<Long> cp = ConfigProperty.create("tcfg", Long.class);
+
+		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID).configuration(cp, 7L).build();
+		assertEquals(Long.valueOf(7), set.getConfiguration().getParameter(cp, 1L));
+
+		PropertySet<?> set2 = PropertySet.of(set, TestIdentifiablePropertySet.TEXT);
+		assertEquals(Long.valueOf(7), set2.getConfiguration().getParameter(cp, 1L));
+
 	}
 
 	@Test

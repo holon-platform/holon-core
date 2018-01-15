@@ -32,7 +32,7 @@ import com.holonplatform.core.internal.utils.TypeUtils;
  * 
  * @since 4.5.0
  */
-public class DefaultParameterSet implements ParameterSet {
+public class DefaultParameterSet implements MutableParameterSet {
 
 	private static final long serialVersionUID = 5385317218930611729L;
 
@@ -162,12 +162,10 @@ public class DefaultParameterSet implements ParameterSet {
 		}
 	}
 
-	/**
-	 * Add a parameter. If parameter with <code>name</code> already exists, its value will be replaced by new
-	 * <code>value</code>.
-	 * @param name Parameter name (not null)
-	 * @param value Parameter value
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.internal.MutableParameterSet#addParameter(java.lang.String, java.lang.Object)
 	 */
+	@Override
 	public void addParameter(String name, Object value) {
 		ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
 		if (parameters == null) {
@@ -176,10 +174,10 @@ public class DefaultParameterSet implements ParameterSet {
 		parameters.put(name, value);
 	}
 
-	/**
-	 * Remove parameter named <code>name</code>, if exists.
-	 * @param name Parameter name (not null)
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.internal.MutableParameterSet#removeParameter(java.lang.String)
 	 */
+	@Override
 	public void removeParameter(String name) {
 		ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
 		if (parameters != null) {

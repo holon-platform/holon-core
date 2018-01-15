@@ -22,6 +22,8 @@ import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.ParameterSet;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -91,6 +93,12 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	default Optional<P> getFirstIdentifier() {
 		return getIdentifiers().stream().findFirst();
 	}
+
+	/**
+	 * Get the property set configuration, which can be used for extension and application-specific purposes.
+	 * @return the property set configuration {@link ParameterSet}
+	 */
+	ParameterSet getConfiguration();
 
 	/**
 	 * Convert this PropertySet into a {@link List} of properties.
@@ -166,7 +174,7 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 * <code>properties</code>.
 	 * <p>
 	 * Any identifier property declared by given <code>propertySet</code> will be an identifier of the new property set
-	 * too.
+	 * too. The original property set configuration is cloned to the new {@link PropertySet} instance configuration.
 	 * </p>
 	 * @param <P> Property type
 	 * @param propertySet Source property set (not null)
@@ -181,6 +189,10 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		propertySet.forEach(p -> builder.add(p));
 		// identifiers
 		propertySet.identifiers().forEach(i -> builder.identifier(i));
+		// configuration
+		if (propertySet.getConfiguration().hasParameters()) {
+			propertySet.getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
+		}
 		// additional properties
 		if (properties != null && properties.length > 0) {
 			for (P property : properties) {
@@ -197,7 +209,11 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 * @param <P> Actual property type
 	 * @param propertySets PropertySet to join (not null and not empty)
 	 * @return New PropertySet containing all the properties of given sets
+	 * @deprecated Using this method causes the loss of any property set configuration and/or identifier property
+	 *             declaration. Use the default PropertySet builder to compose a new PropertySet from different property
+	 *             sources.
 	 */
+	@Deprecated
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> join(PropertySet<? extends P>... propertySets) {
 		if (propertySets == null || propertySets.length == 0) {
@@ -276,6 +292,27 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		 * @since 5.1.0
 		 */
 		<PT extends P> Builder<P> identifiers(Iterable<PT> properties);
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter
+		 * @param name The parameter name to add (not null)
+		 * @param value The configuration parameter value
+		 * @return this
+		 */
+		Builder<P> configuration(String name, Object value);
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, using
+		 * {@link ConfigProperty#getKey()} as parameter name.
+		 * @param <C> Config property type
+		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
+		 * @param value The configuration property value
+		 * @return this
+		 */
+		default <C> Builder<P> configuration(ConfigProperty<C> configurationProperty, C value) {
+			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+			return configuration(configurationProperty.getKey(), value);
+		}
 
 		/**
 		 * Build {@link PropertySet} instance
