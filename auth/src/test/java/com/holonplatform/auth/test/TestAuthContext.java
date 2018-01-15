@@ -141,6 +141,8 @@ public class TestAuthContext {
 
 		final AccountCredentialsToken token2 = new AccountCredentialsToken("usr", "pwd");
 		dctx.authenticate(token2);
+		
+		assertNotNull(dctx.requireAuthentication());
 
 	}
 
@@ -155,6 +157,16 @@ public class TestAuthContext {
 			}
 		});
 
+		final AuthContext ac = AuthContext.create(Realm.builder().build());
+
+		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				ac.requireAuthentication();
+			}
+		});
+		
 		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
 				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {
 					return AuthContext.getCurrent().orElseThrow(() -> new IllegalStateException("Missing AuthContext"))
@@ -209,7 +221,7 @@ public class TestAuthContext {
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
 		assertEquals(1, realmCounter.get());
-		
+
 		authc = realm.authenticate(tkn);
 		assertNotNull(authc);
 		assertEquals(2, counter.get());

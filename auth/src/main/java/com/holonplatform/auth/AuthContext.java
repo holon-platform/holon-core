@@ -57,16 +57,25 @@ public interface AuthContext extends AuthenticationNotifier {
 	public static final String CONTEXT_KEY = AuthContext.class.getName();
 
 	/**
-	 * Get current Authentication in this context.
+	 * Get the current {@link Authentication} in this context.
 	 * <p>
 	 * Principals are authenticated using {@link #authenticate(AuthenticationToken)}. When authentication process is
 	 * successful, an {@link Authentication} is bound to this AuthContext and can be obtained using this method.
 	 * </p>
 	 * 
-	 * @return Optional Authentication, an empty Optional is returned if no {@link Authentication} is bound to this
-	 *         AuthContext
+	 * @return Optional {@link Authentication}, an empty Optional is returned if no {@link Authentication} is bound to
+	 *         this AuthContext
 	 */
 	Optional<Authentication> getAuthentication();
+
+	/**
+	 * Get the current {@link Authentication} in this context, throwing an {@link IllegalStateException} if not
+	 * authentication is available.
+	 * @return The current {@link Authentication}
+	 */
+	default Authentication requireAuthentication() {
+		return getAuthentication().orElseThrow(() -> new IllegalStateException("No Authentication available"));
+	}
 
 	/**
 	 * Gets whether this {@link AuthContext} is authenticated, i.e. an {@link Authentication} is available.
