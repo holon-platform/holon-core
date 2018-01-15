@@ -29,16 +29,7 @@ public abstract class AbstractIntegerTemporalFunction extends AbstractPropertyQu
 	private static final long serialVersionUID = 7911584185529712160L;
 
 	public AbstractIntegerTemporalFunction(QueryExpression<?> argument) {
-		super(argument);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryExpression#getType()
-	 */
-	@Override
-	public Class<? extends Integer> getType() {
-		return Integer.class;
+		super(argument, Integer.class);
 	}
 
 }

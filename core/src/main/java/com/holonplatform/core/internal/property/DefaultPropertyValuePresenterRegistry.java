@@ -124,10 +124,12 @@ public class DefaultPropertyValuePresenterRegistry implements PropertyValuePrese
 		ObjectUtils.argumentNotNull(condition, "Condition Predicate must be not null");
 		ObjectUtils.argumentNotNull(presenter, "PropertyValuePresenter must be not null");
 
-		presenters.putIfAbsent(condition, presenter);
+		PropertyValuePresenter<?> rp = presenters.putIfAbsent(condition, presenter);
 
-		LOGGER.debug(() -> "DefaultPropertyValuePresenterRegistry: registered presenter [" + presenter
-				+ "] bound to condition [" + condition + "]");
+		if (rp == null) {
+			LOGGER.debug(() -> "DefaultPropertyValuePresenterRegistry: registered presenter [" + presenter
+					+ "] bound to condition [" + condition + "]");
+		}
 	}
 
 	/*

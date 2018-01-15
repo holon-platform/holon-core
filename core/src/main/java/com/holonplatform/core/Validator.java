@@ -1774,12 +1774,11 @@ public interface Validator<T> extends Serializable {
 		 * Constructor with {@link Localizable} message
 		 * @param message Validation error message (not null)
 		 */
-		@SuppressWarnings("null")
 		public ValidationException(Localizable message) {
 			super((message != null) ? message.getMessage() : null);
 			ObjectUtils.argumentNotNull(message, "Localizable message must be not null");
-			this.messageCode = message.getMessageCode();
-			this.messageArguments = message.getMessageArguments();
+			this.messageCode = (message != null) ? message.getMessageCode() : null;
+			this.messageArguments = (message != null) ? message.getMessageArguments() : null;
 		}
 
 		/**

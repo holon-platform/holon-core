@@ -32,18 +32,9 @@ public class AvgFunction extends AbstractPropertyQueryFunction<Double, Number> i
 	 * @param argument Function argument (not null)
 	 */
 	public AvgFunction(QueryExpression<? extends Number> argument) {
-		super(argument);
+		super(argument, Double.class);
 		setMinimumArguments(1);
 		setMaximumArguments(1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryExpression#getType()
-	 */
-	@Override
-	public Class<? extends Double> getType() {
-		return Double.class;
 	}
 
 }

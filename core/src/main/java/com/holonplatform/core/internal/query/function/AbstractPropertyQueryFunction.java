@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 import com.holonplatform.core.Validator;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyValueConverter;
@@ -39,25 +40,42 @@ public abstract class AbstractPropertyQueryFunction<T, A> extends AbstractQueryF
 
 	private static final long serialVersionUID = 9044336386767727378L;
 
+	/**
+	 * Property configuration
+	 */
 	private final PropertyConfiguration configuration;
 
+	/**
+	 * Optional property value converter
+	 */
 	private PropertyValueConverter<T, ?> converter;
 
 	/**
-	 * Empty constructor
+	 * Actual function result type
 	 */
-	public AbstractPropertyQueryFunction() {
+	private final Class<? extends T> resultType;
+
+	/**
+	 * Constructor with no expression.
+	 * @param resultType Function result type (not null)
+	 */
+	public AbstractPropertyQueryFunction(Class<? extends T> resultType) {
 		super();
+		ObjectUtils.argumentNotNull(resultType, "Function result type must be not null");
+		this.resultType = resultType;
 		this.configuration = PropertyConfiguration.create();
 	}
 
 	/**
 	 * Constructor with function argument.
 	 * @param argument Function argument (not null)
+	 * @param resultType Function result type (not null)
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractPropertyQueryFunction(QueryExpression<? extends A> argument) {
+	public AbstractPropertyQueryFunction(QueryExpression<? extends A> argument, Class<? extends T> resultType) {
 		super(argument);
+		ObjectUtils.argumentNotNull(resultType, "Function result type must be not null");
+		this.resultType = resultType;
 		if (argument instanceof Property) {
 			final Property<?> property = (Property<?>) argument;
 			this.configuration = PropertyConfiguration.clone(property.getConfiguration());
@@ -67,6 +85,15 @@ public abstract class AbstractPropertyQueryFunction<T, A> extends AbstractQueryF
 		} else {
 			this.configuration = PropertyConfiguration.create();
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.QueryExpression#getType()
+	 */
+	@Override
+	public Class<? extends T> getType() {
+		return resultType;
 	}
 
 	/*

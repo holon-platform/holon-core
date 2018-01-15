@@ -32,18 +32,9 @@ public class UpperFunction extends AbstractPropertyQueryFunction<String, String>
 	 * @param argument Function argument (not null)
 	 */
 	public UpperFunction(QueryExpression<String> argument) {
-		super(argument);
+		super(argument, argument.getType());
 		setMinimumArguments(1);
 		setMaximumArguments(1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.StringFunction#getType()
-	 */
-	@Override
-	public Class<? extends String> getType() {
-		return Upper.super.getType();
 	}
 
 }

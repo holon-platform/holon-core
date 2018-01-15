@@ -28,27 +28,15 @@ import com.holonplatform.core.query.QueryFunction.Min;
 public class MinFunction<T> extends AbstractPropertyQueryFunction<T, T> implements Min<T> {
 
 	private static final long serialVersionUID = 6248027815206322210L;
-	
-	private final Class<? extends T> resultType;
 
 	/**
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
 	public MinFunction(QueryExpression<T> argument) {
-		super(argument);
-		this.resultType = argument.getType();
+		super(argument, argument.getType());
 		setMinimumArguments(1);
 		setMaximumArguments(1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryExpression#getType()
-	 */
-	@Override
-	public Class<? extends T> getType() {
-		return resultType;
 	}
 
 }

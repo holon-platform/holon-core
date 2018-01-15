@@ -32,18 +32,9 @@ public class CountFunction extends AbstractPropertyQueryFunction<Long, Object> i
 	 * @param argument Function argument (not null)
 	 */
 	public CountFunction(QueryExpression<?> argument) {
-		super(argument);
+		super(argument, Long.class);
 		setMinimumArguments(1);
 		setMaximumArguments(1);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryExpression#getType()
-	 */
-	@Override
-	public Class<? extends Long> getType() {
-		return Long.class;
 	}
 
 }
