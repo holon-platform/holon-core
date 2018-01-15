@@ -18,6 +18,9 @@ package com.holonplatform.core.internal.property;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Validator;
@@ -49,12 +52,13 @@ import com.holonplatform.core.property.VirtualProperty;
  * 
  * @see PropertyBox
  */
+@SuppressWarnings("rawtypes")
 public abstract class AbstractPropertyBox implements PropertyBox {
 
 	/*
 	 * Property set (immutable)
 	 */
-	private final PropertySet<?> propertySet;
+	private final PropertySet<Property> propertySet;
 
 	/*
 	 * Whether to accept invalid property values (ignore property validators)
@@ -62,22 +66,31 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	private transient boolean invalidAllowed;
 
 	/**
+	 * Optional hash code provider function
+	 */
+	private BiFunction<PropertyBox, Integer, Integer> hashCodeHandler;
+
+	/**
+	 * Optional equals handler predicate
+	 */
+	private BiPredicate<PropertyBox, Object> equalsHandler;
+
+	/**
 	 * Constructor
 	 * @param propertySet PropertySet instance to use
 	 */
-	public AbstractPropertyBox(PropertySet<?> propertySet) {
+	@SuppressWarnings("unchecked")
+	public AbstractPropertyBox(PropertySet<? extends Property> propertySet) {
 		super();
-
 		ObjectUtils.argumentNotNull(propertySet, "PropertySet must be not null");
-
-		this.propertySet = propertySet;
+		this.propertySet = (PropertySet<Property>) propertySet;
 	}
 
 	/**
 	 * Box property set
 	 * @return PropertySet
 	 */
-	protected PropertySet<?> getPropertySet() {
+	protected PropertySet<Property> getPropertySet() {
 		return propertySet;
 	}
 
@@ -85,8 +98,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * Get current PropertySet, throwing an {@link IllegalArgumentException} if it is <code>null</code>
 	 * @return The property set
 	 */
-	@SuppressWarnings("rawtypes")
-	protected PropertySet getAndCheckPropertySet() {
+	protected PropertySet<Property> getAndCheckPropertySet() {
 		if (propertySet == null) {
 			throw new IllegalStateException("Null PropertySet");
 		}
@@ -124,7 +136,6 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertySet#contains(com.holonplatform.core.property.Property)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean contains(Property property) {
 		return getAndCheckPropertySet().contains(property);
@@ -134,7 +145,6 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<Property> iterator() {
 		return getAndCheckPropertySet().iterator();
@@ -144,10 +154,18 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertySet#stream()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Stream<Property> stream() {
 		return getAndCheckPropertySet().stream();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getIdentifiers()
+	 */
+	@Override
+	public Set<Property> getIdentifiers() {
+		return getAndCheckPropertySet().getIdentifiers();
 	}
 
 	/*
@@ -198,9 +216,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 */
 	@Override
 	public <T> Optional<T> getValueIfPresent(Property<T> property) throws PropertyAccessException {
-
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
-
 		try {
 			return Optional.ofNullable(getAndCheckPropertyValue(property));
 		} catch (PropertyAccessException e) {
@@ -375,6 +391,76 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 		// set the value
 		setPropertyValue(property, checkupPropertyValue(property, value));
 	}
+
+	/**
+	 * Get the function to use to provide the {@link PropertyBox} <code>hashCode</code>.
+	 * @return the hashCodeHandler Optional hash code provider function
+	 */
+	protected Optional<BiFunction<PropertyBox, Integer, Integer>> getHashCodeHandler() {
+		return Optional.ofNullable(hashCodeHandler);
+	}
+
+	/**
+	 * Set the function to use to provide the {@link PropertyBox} <code>hashCode</code>.
+	 * <p>
+	 * The second argument is the default Object hash code value.
+	 * </p>
+	 * @param hashCodeHandler the hash code function to set
+	 */
+	protected void setHashCodeHandler(BiFunction<PropertyBox, Integer, Integer> hashCodeHandler) {
+		this.hashCodeHandler = hashCodeHandler;
+	}
+
+	/**
+	 * Get the predicate to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @return Optional equals handler predicate
+	 */
+	protected Optional<BiPredicate<PropertyBox, Object>> getEqualsHandler() {
+		return Optional.ofNullable(equalsHandler);
+	}
+
+	/**
+	 * Set the predicate to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @param equalsHandler the equals handler predicate to set
+	 */
+	protected void setEqualsHandler(BiPredicate<PropertyBox, Object> equalsHandler) {
+		this.equalsHandler = equalsHandler;
+	}
+
+	/**
+	 * Get the {@link PropertyBox} hash code.
+	 * <p>
+	 * If a hash code handler function is provided, it is used to provide the hash code. Otherwise, the default
+	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
+	 * values, if available, to provide the object's hash code.
+	 * </p>
+	 * @return the hash code
+	 */
+	@Override
+	public int hashCode() {
+		Integer hashCode = getHashCodeHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).apply(this,
+				super.hashCode());
+		if (hashCode == null) {
+			throw new IllegalStateException("The hash code handler function returned a null hash code value");
+		}
+		return hashCode.intValue();
+	}
+
+	/**
+	 * Checks whether some other object is "equal to" this {@link PropertyBox}.
+	 * <p>
+	 * If an equals predicate is provided, it is used to check objects equality. Otherwise, the default
+	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
+	 * values, if available, to check objects equality.
+	 * </p>
+	 * @return <code>true</code> if object are equal, <code>false</code> otherwise
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return getEqualsHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).test(this, obj);
+	}
+
+	// ------- Abstract methods
 
 	/**
 	 * Gets the actual value for given property.

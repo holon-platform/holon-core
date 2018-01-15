@@ -17,6 +17,9 @@ package com.holonplatform.core.internal.property;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -34,6 +37,11 @@ import com.holonplatform.core.property.PropertySet;
 public class DefaultPropertySet<P extends Property> extends ArrayList<P> implements PropertySet<P> {
 
 	private static final long serialVersionUID = 288703271476761715L;
+
+	/**
+	 * Identifiers
+	 */
+	private Set<P> identifiers;
 
 	/**
 	 * Default empty constructor
@@ -113,11 +121,52 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getIdentifiers()
+	 */
+	@Override
+	public Set<P> getIdentifiers() {
+		return (identifiers == null) ? Collections.emptySet() : Collections.unmodifiableSet(identifiers);
+	}
+
+	/**
+	 * Add given property to property set identifiers.
+	 * @param property The property to declare as property set identifier (not null)
+	 */
+	protected void addIdentifier(P property) {
+		ObjectUtils.argumentNotNull(property, "Identifier property must be not null");
+		if (identifiers == null) {
+			identifiers = new LinkedHashSet<>(4);
+		}
+		identifiers.add(property);
+	}
+
+	/**
+	 * Set given properties as property set identifiers.
+	 * @param <PT> Actual property type
+	 * @param properties Identifier properties (not null)
+	 */
+	protected <PT extends P> void setIdentifers(Iterable<PT> properties) {
+		ObjectUtils.argumentNotNull(properties, "Identifier properties must be not null");
+		identifiers = new LinkedHashSet<>(4);
+		properties.forEach(p -> identifiers.add(p));
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "DefaultPropertySet [" + super.toString() + "]";
+		final StringBuilder sb = new StringBuilder();
+		sb.append("DefaultPropertySet [");
+		sb.append(super.toString());
+		if (identifiers != null && !identifiers.isEmpty()) {
+			sb.append(" / Identifiers: {");
+			sb.append(identifiers.toString());
+			sb.append("}");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	// Builder
@@ -188,6 +237,26 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		public <PT extends P> Builder<P> remove(Iterable<PT> properties) {
 			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
 			properties.forEach(p -> this.instance.remove(p));
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#identifier(com.holonplatform.core.property.Property)
+		 */
+		@Override
+		public <PT extends P> Builder<P> identifier(PT property) {
+			this.instance.addIdentifier(property);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#identifiers(java.lang.Iterable)
+		 */
+		@Override
+		public <PT extends P> Builder<P> identifiers(Iterable<PT> properties) {
+			this.instance.setIdentifers(properties);
 			return this;
 		}
 

@@ -74,6 +74,7 @@ import com.holonplatform.core.query.QuerySort.SortDirection;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.core.test.data.TestBean;
 import com.holonplatform.core.test.data.TestBean2;
+import com.holonplatform.core.test.data.TestIdentifiablePropertySet;
 import com.holonplatform.core.test.data.TestNested;
 import com.holonplatform.core.test.data.TestPropertySet;
 
@@ -701,7 +702,7 @@ public class TestProperty {
 		Date date = new Date();
 
 		TestBean2 testMock = mock(TestBean2.class);
-		when(testMock.getSomeDecimal()).thenReturn(new BigDecimal(2.7));
+		when(testMock.getSomeDecimal()).thenReturn(BigDecimal.valueOf(2.7));
 
 		TestNested testNested = mock(TestNested.class);
 		when(testNested.getNestedId()).thenReturn(2L);
@@ -710,7 +711,7 @@ public class TestProperty {
 		when(testMock.getNested()).thenReturn(testNested);
 
 		Object value = testBean2Context.read("someDecimal", testMock);
-		assertEquals(new BigDecimal(2.7), value);
+		assertEquals(BigDecimal.valueOf(2.7), value);
 	}
 
 	@Test
@@ -825,6 +826,57 @@ public class TestProperty {
 
 		PropertySet<?> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME).build();
 		assertEquals(1, ps2.size());
+	}
+
+	@Test
+	public void testPropertySetIdentifier() {
+
+		assertFalse(TestIdentifiablePropertySet.PROPERTIES.getIdentifiers().isEmpty());
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.PROPERTIES.getFirstIdentifier().get());
+		assertTrue(TestIdentifiablePropertySet.ID == TestIdentifiablePropertySet.PROPERTIES.identifiers().findFirst()
+				.get());
+	}
+
+	@Test
+	public void testPropertyBoxIdentifier() {
+
+		PropertyBox box = PropertyBox.create(TestIdentifiablePropertySet.PROPERTIES);
+
+		assertTrue(box.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(box.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, box.getFirstIdentifier().get());
+		assertTrue(TestIdentifiablePropertySet.ID == box.identifiers().findFirst().get());
+
+		box = PropertyBox.create(PropertySet.builderOf(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.ENM)
+				.identifier(TestIdentifiablePropertySet.ENM).build());
+		assertTrue(box.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ENM, box.getFirstIdentifier().get());
+
+		PropertyBox box1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 2L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box3 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box4 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.TEXT, "test").build();
+
+		assertTrue(box1.equals(box3));
+		assertFalse(box1.equals(box2));
+		assertFalse(box1.equals(null));
+		assertFalse(box1.equals("a"));
+		assertFalse(box1.equals(box4));
+		assertFalse(box4.equals(box2));
+		assertTrue(box1.equals(box1));
+		assertTrue(box4.equals(box4));
+
+		PropertyBox box5 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES).equalsHandler((a, b) -> true)
+				.hashCodeHandler((a, b) -> 1).build();
+		assertTrue(box5.equals(box1));
+		assertTrue(box5.equals(null));
+		assertEquals(1, box5.hashCode());
 	}
 
 	@Test

@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,6 +40,7 @@ import com.holonplatform.core.property.PropertySet;
  * 
  * @see PropertyBox
  */
+@SuppressWarnings("rawtypes")
 public class DefaultPropertyBox extends AbstractPropertyBox {
 
 	/**
@@ -49,7 +52,6 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	 * Construct a new PropertyBox using given <code>properties</code> as property set.
 	 * @param properties Property set
 	 */
-	@SuppressWarnings("rawtypes")
 	@SafeVarargs
 	public DefaultPropertyBox(Property... properties) {
 		this(PropertySet.of(properties));
@@ -60,7 +62,6 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	 * @param <P> Actual property type
 	 * @param properties Property set
 	 */
-	@SuppressWarnings("rawtypes")
 	public <P extends Property> DefaultPropertyBox(Iterable<P> properties) {
 		this((properties instanceof PropertySet) ? (PropertySet<P>) properties : PropertySet.of(properties));
 	}
@@ -70,7 +71,6 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	 * @param <P> Actual property type
 	 * @param propertySet Property set
 	 */
-	@SuppressWarnings("rawtypes")
 	public <P extends Property> DefaultPropertyBox(PropertySet<P> propertySet) {
 		super(propertySet);
 		this.propertyValues = new HashMap<>();
@@ -110,7 +110,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertyBox#propertyValues()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Stream<PropertyValue<T>> propertyValues() {
 		return propertyValues.entrySet().stream().map(e -> new DefaultPropertyValue(e.getKey(), e.getValue()));
@@ -147,7 +147,6 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		 * @param <P> Actual property type
 		 * @param properties Iterable set of properties
 		 */
-		@SuppressWarnings("rawtypes")
 		public <P extends Property> PropertyBoxBuilder(Iterable<P> properties) {
 			super();
 			this.instance = new DefaultPropertyBox(properties);
@@ -158,7 +157,6 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		 * @param <P> Actual property type
 		 * @param properties Set of properties
 		 */
-		@SuppressWarnings("rawtypes")
 		@SafeVarargs
 		public <P extends Property> PropertyBoxBuilder(P... properties) {
 			super();
@@ -172,6 +170,26 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		@Override
 		public Builder invalidAllowed(boolean invalidAllowed) {
 			this.instance.setInvalidAllowed(invalidAllowed);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#equalsHandler(java.util.function.BiPredicate)
+		 */
+		@Override
+		public Builder equalsHandler(BiPredicate<PropertyBox, Object> equalsHandler) {
+			this.instance.setEqualsHandler(equalsHandler);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#hashCodeHandler(java.util.function.BiFunction)
+		 */
+		@Override
+		public Builder hashCodeHandler(BiFunction<PropertyBox, Integer, Integer> hashCodeHandler) {
+			this.instance.setHashCodeHandler(hashCodeHandler);
 			return this;
 		}
 
@@ -202,7 +220,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		 * @see
 		 * com.holonplatform.core.property.PropertyBox.Builder#copyValues(com.holonplatform.core.property.PropertyBox)
 		 */
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings("unchecked")
 		@Override
 		public Builder copyValues(PropertyBox source) {
 			ObjectUtils.argumentNotNull(source, "Source PropertyBox must be not null");
