@@ -141,7 +141,7 @@ public class TestAuthContext {
 
 		final AccountCredentialsToken token2 = new AccountCredentialsToken("usr", "pwd");
 		dctx.authenticate(token2);
-		
+
 		assertNotNull(dctx.requireAuthentication());
 
 	}
@@ -166,7 +166,7 @@ public class TestAuthContext {
 				ac.requireAuthentication();
 			}
 		});
-		
+
 		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
 				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {
 					return AuthContext.getCurrent().orElseThrow(() -> new IllegalStateException("Missing AuthContext"))

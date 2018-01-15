@@ -156,13 +156,13 @@ public class ExampleRealm {
 		// tag::permissions[]
 		final Permission p1 = Permission.create("role1");
 		final Permission p2 = Permission.create("role2");
-		
+
 		// build an Authentication and grant the two permissions to it
 		Authentication authc = Authentication.builder("test").permission(p1).permission(p2).build();
-		
+
 		// Realm with default authorizer
 		Realm realm = Realm.builder().withDefaultAuthorizer().build();
-		
+
 		// permission checking
 		boolean permitted = realm.isPermitted(authc, p1);
 		permitted = realm.isPermitted(authc, p1, p2);

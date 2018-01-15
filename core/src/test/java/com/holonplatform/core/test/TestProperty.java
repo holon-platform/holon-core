@@ -795,15 +795,10 @@ public class TestProperty {
 		assertTrue(ps.contains(TestPropertySet.NAME));
 
 		PropertySet<Property> p1 = PropertySet.of(TestPropertySet.NAME);
-		PropertySet<Property> p2 = PropertySet.of(TestPropertySet.SEQUENCE);
 
 		PropertySet<Property> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
-
-		p3 = PropertySet.join(p1, p2);
-		assertTrue(p3.contains(TestPropertySet.NAME));
-		assertTrue(p3.contains(TestPropertySet.SEQUENCE));
 
 		p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
@@ -908,6 +903,20 @@ public class TestProperty {
 		assertTrue(box5.equals(box1));
 		assertTrue(box5.equals(null));
 		assertEquals(1, box5.hashCode());
+	}
+
+	@Test
+	public void testPropertyBoxConfiguration() {
+
+		PropertyBox box = PropertyBox.create(TestIdentifiablePropertySet.PROPERTIES);
+		box.setValue(TestIdentifiablePropertySet.ID, 3L);
+
+		assertEquals("TEST", box.getConfiguration().getParameter("test").orElse(null));
+
+		PropertyBox box2 = box.cloneBox();
+
+		assertEquals("TEST", box2.getConfiguration().getParameter("test").orElse(null));
+		assertEquals(Long.valueOf(3), box2.getValue(TestIdentifiablePropertySet.ID));
 	}
 
 	@Test

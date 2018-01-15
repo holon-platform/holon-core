@@ -103,10 +103,11 @@ public class ExampleBeans {
 		BeanPropertySet<MyBean> properties = introspector.getPropertySet(MyBean.class); // <2>
 		// end::introspector[]
 	}
-	
+
 	public void postProcessor() {
 		// tag::postprocessor[]
-		BeanIntrospector.get().addBeanPropertyPostProcessor((property, cls) -> property.configuration("test", "testValue")); // <1>
+		BeanIntrospector.get()
+				.addBeanPropertyPostProcessor((property, cls) -> property.configuration("test", "testValue")); // <1>
 		// end::postprocessor[]
 	}
 

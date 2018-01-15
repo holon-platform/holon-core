@@ -42,7 +42,7 @@ public class ExampleAuthContext {
 				a -> System.out.println((a != null) ? "Authenticated: " + a.getName() : "Unauthenticated")); // <4>
 
 		try {
-			
+
 			context.authenticate(AuthenticationToken.accountCredentials("test", "pwd")); // <5>
 
 			Authentication authc = context.getAuthentication()
@@ -51,7 +51,7 @@ public class ExampleAuthContext {
 			boolean permitted = context.isPermitted("role1"); // <7>
 
 			context.unauthenticate(); // <8>
-			
+
 		} catch (AuthenticationException e) {
 			// handle authentication failures
 		}

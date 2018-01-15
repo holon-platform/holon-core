@@ -24,9 +24,9 @@ public class SingletonComponent implements Serializable {
 
 	@Autowired
 	private ITenantScopedTest serviceTest;
-	
+
 	public String getTenantId() {
 		return serviceTest.getTenantId();
 	}
-	
+
 }

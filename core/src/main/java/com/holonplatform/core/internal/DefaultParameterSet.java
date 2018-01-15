@@ -162,7 +162,8 @@ public class DefaultParameterSet implements MutableParameterSet {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.MutableParameterSet#addParameter(java.lang.String, java.lang.Object)
 	 */
 	@Override
@@ -174,7 +175,8 @@ public class DefaultParameterSet implements MutableParameterSet {
 		parameters.put(name, value);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.MutableParameterSet#removeParameter(java.lang.String)
 	 */
 	@Override

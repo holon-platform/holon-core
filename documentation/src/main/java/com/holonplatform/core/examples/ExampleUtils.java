@@ -26,5 +26,5 @@ public class ExampleUtils {
 		String lazyInited = intzr.get(); // <2>
 		// end::initializer[]
 	}
-	
+
 }

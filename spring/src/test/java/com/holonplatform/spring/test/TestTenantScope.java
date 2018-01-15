@@ -61,7 +61,7 @@ public class TestTenantScope {
 			CURRENT_TENANT_ID.set("T1");
 			srv1 = applicationContext.getBean(TenantScopedServiceTest.class);
 			Assert.assertNotNull(srv1);
-			
+
 			Assert.assertEquals("T1", srv1.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();
@@ -72,7 +72,7 @@ public class TestTenantScope {
 			CURRENT_TENANT_ID.set("T2");
 			srv2 = applicationContext.getBean(TenantScopedServiceTest.class);
 			Assert.assertNotNull(srv2);
-			
+
 			Assert.assertEquals("T2", srv2.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();
@@ -85,7 +85,7 @@ public class TestTenantScope {
 			CURRENT_TENANT_ID.set("T1");
 			srv3 = applicationContext.getBean(TenantScopedServiceTest.class);
 			Assert.assertNotNull(srv3);
-			
+
 			Assert.assertEquals("T1", srv3.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();

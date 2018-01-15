@@ -18,5 +18,5 @@ package com.holonplatform.spring.test;
 public interface ITenantScopedTest {
 
 	String getTenantId();
-	
+
 }
