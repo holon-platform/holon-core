@@ -17,7 +17,7 @@ package com.holonplatform.core.query;
 
 import java.util.Collection;
 
-import com.holonplatform.core.Expression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.QueryFunction.Count;
 import com.holonplatform.core.query.QueryFunction.Max;
@@ -31,13 +31,7 @@ import com.holonplatform.core.query.QueryFunction.PropertyQueryFunction;
  * 
  * @since 5.0.0
  */
-public interface QueryExpression<T> extends Expression {
-
-	/**
-	 * Get the expression type.
-	 * @return Expression type
-	 */
-	Class<? extends T> getType();
+public interface QueryExpression<T> extends TypedExpression<T> {
 
 	// ------- Query filter builders
 

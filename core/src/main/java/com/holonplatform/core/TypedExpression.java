@@ -13,18 +13,21 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.query;
-
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.TypedExpression;
+package com.holonplatform.core;
 
 /**
- * A query projection {@link Expression} to obtain typed query results.
+ * An {@link Expression} with a declared type.
  * 
- * @param <T> Projection result type
- * 
- * @since 5.0.0
+ * @param <T> Expression type
+ *
+ * @since 5.1.0
  */
-public interface QueryProjection<T> extends TypedExpression<T> {
+public interface TypedExpression<T> extends Expression {
+
+	/**
+	 * Get the expression type.
+	 * @return Expression type
+	 */
+	Class<? extends T> getType();
 
 }
