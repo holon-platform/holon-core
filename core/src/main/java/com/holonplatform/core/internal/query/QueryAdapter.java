@@ -19,6 +19,7 @@ import java.util.stream.Stream;
 
 import com.holonplatform.core.query.Query;
 import com.holonplatform.core.query.QueryConfiguration;
+import com.holonplatform.core.query.QueryExecution;
 import com.holonplatform.core.query.QueryProjection;
 import com.holonplatform.core.query.QueryResults.QueryExecutionException;
 
@@ -41,7 +42,21 @@ public interface QueryAdapter<C extends QueryConfiguration> {
 	 * @param projection Query results projection
 	 * @return Query results stream
 	 * @throws QueryExecutionException Error during query execution
+	 * @deprecated Use {@link #stream(QueryExecution)}
 	 */
-	<R> Stream<R> stream(C queryConfiguration, QueryProjection<R> projection) throws QueryExecutionException;
+	@Deprecated
+	default <R> Stream<R> stream(C queryConfiguration, QueryProjection<R> projection) throws QueryExecutionException {
+		return stream(QueryExecution.create(queryConfiguration, projection));
+	}
+
+	/**
+	 * Execute query using provided <code>queryDefinition</code> and return a results {@link Stream} typed on
+	 * <code>projection</code> type.
+	 * @param <R> Results type
+	 * @param query Query execution
+	 * @return Query results stream
+	 * @throws QueryExecutionException If a query execution error occurred
+	 */
+	<R> Stream<R> stream(QueryExecution<C, R> query) throws QueryExecutionException;
 
 }

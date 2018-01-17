@@ -15,78 +15,60 @@
  */
 package com.holonplatform.core.internal.query;
 
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryConfiguration;
+import com.holonplatform.core.query.QueryExecution;
 import com.holonplatform.core.query.QueryProjection;
 
 /**
- * Default {@link QueryStructure} implementation.
+ * Default {@link QueryExecution} implementation.
+ * 
+ * @param <R> Query projection result type
+ * @param <C> Query configuration type
  *
- * @param <T> Projection result type
- *
- * @since 5.0.0
+ * @since 5.1.0
  */
-public class DefaultQueryStructure<T> implements QueryStructure<T> {
+public class DefaultQueryExecution<C extends QueryConfiguration, R> implements QueryExecution<C, R> {
 
 	/**
-	 * Query configuration
+	 * Configuration
 	 */
-	private QueryConfiguration configuration;
+	private final C configuration;
 
 	/**
-	 * Query projection
+	 * Projection
 	 */
-	private QueryProjection<T> projection;
-
-	/**
-	 * Default constructor.
-	 */
-	public DefaultQueryStructure() {
-		super();
-	}
+	private final QueryProjection<R> projection;
 
 	/**
 	 * Constructor.
-	 * @param configuration Query configuration
-	 * @param projection Query projection
+	 * @param configuration Query configuration (not null)
+	 * @param projection Query projection (not null)
 	 */
-	public DefaultQueryStructure(QueryConfiguration configuration, QueryProjection<T> projection) {
+	public DefaultQueryExecution(C configuration, QueryProjection<R> projection) {
 		super();
+		ObjectUtils.argumentNotNull(configuration, "QueryConfiguration must be not null");
+		ObjectUtils.argumentNotNull(projection, "QueryProjection must be not null");
 		this.configuration = configuration;
 		this.projection = projection;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.internal.query.QueryStructure#getConfiguration()
+	 * @see com.holonplatform.core.query.QueryExecution#getConfiguration()
 	 */
 	@Override
-	public QueryConfiguration getConfiguration() {
+	public C getConfiguration() {
 		return configuration;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.internal.query.QueryStructure#getProjection()
+	 * @see com.holonplatform.core.query.QueryExecution#getProjection()
 	 */
 	@Override
-	public QueryProjection<T> getProjection() {
+	public QueryProjection<R> getProjection() {
 		return projection;
-	}
-
-	/**
-	 * Set the {@link QueryConfiguration}.
-	 * @param configuration the query configuration to set
-	 */
-	public void setConfiguration(QueryConfiguration configuration) {
-		this.configuration = configuration;
-	}
-
-	/**
-	 * Set the {@link QueryProjection}.
-	 * @param projection the query projection to set
-	 */
-	public void setProjection(QueryProjection<T> projection) {
-		this.projection = projection;
 	}
 
 	/*
@@ -102,5 +84,4 @@ public class DefaultQueryStructure<T> implements QueryStructure<T> {
 			throw new InvalidExpressionException("Missing query projection");
 		}
 	}
-
 }
