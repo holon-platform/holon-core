@@ -303,6 +303,15 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 		return getQueryDefinition().getAggregation();
 	}
 
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler#getExpressionResolvers()
+	 */
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Iterable<ExpressionResolver> getExpressionResolvers() {
+		return getQueryDefinition().getExpressionResolvers();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see

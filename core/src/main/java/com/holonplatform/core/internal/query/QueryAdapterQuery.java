@@ -40,19 +40,27 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	private final QueryAdapter<? super D> queryAdapter;
 
 	/**
+	 * Constructor.
+	 * @param queryAdapter Query adapter (not null)
+	 * @param queryDefinition Query definition (not null)
+	 */
+	public QueryAdapterQuery(QueryAdapter<? super D> queryAdapter, D queryDefinition) {
+		super(queryDefinition);
+		ObjectUtils.argumentNotNull(queryAdapter, "QueryAdapter must be not null");
+		this.queryAdapter = queryAdapter;
+	}
+
+	/**
 	 * Constructor
 	 * @param datastore Datastore (not null)
 	 * @param queryAdapter Query adapter (not null)
 	 * @param queryDefinition Query definition (not null)
+	 * @deprecated Datastore parameter is no longer required, use
+	 *             {@link #QueryAdapterQuery(QueryAdapter, QueryDefinition)}
 	 */
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	public QueryAdapterQuery(Datastore datastore, QueryAdapter<? super D> queryAdapter, D queryDefinition) {
-		super(queryDefinition);
-		ObjectUtils.argumentNotNull(datastore, "Datastore must be not null");
-		ObjectUtils.argumentNotNull(queryAdapter, "QueryAdapter must be not null");
-		this.queryAdapter = queryAdapter;
-		// inherit datastore resolvers
-		datastore.getExpressionResolvers().forEach(r -> queryDefinition.addExpressionResolver(r));
+		this(queryAdapter, queryDefinition);
 	}
 
 	/**

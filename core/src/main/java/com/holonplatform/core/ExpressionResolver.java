@@ -23,6 +23,7 @@ import javax.annotation.Priority;
 import com.holonplatform.core.Expression.ExpressionResolverFunction;
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.internal.CallbackExpressionResolver;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Resolver to translate an {@link Expression} into another {@link Expression} type.
@@ -84,6 +85,13 @@ public interface ExpressionResolver<E extends Expression, R extends Expression>
 	public interface ExpressionResolverHandler {
 
 		/**
+		 * Get all the registered {@link ExpressionResolver}s.
+		 * @return the registered {@link ExpressionResolver}s iterable
+		 */
+		@SuppressWarnings("rawtypes")
+		Iterable<ExpressionResolver> getExpressionResolvers();
+
+		/**
 		 * Try to resolve given <code>expression</code> to obtain an {@link Expression} of the specified
 		 * <code>resolutionType</code>, using the suitable {@link ExpressionResolver}s among all available resolvers for
 		 * given expression and resolution type.
@@ -129,11 +137,14 @@ public interface ExpressionResolver<E extends Expression, R extends Expression>
 				ExpressionResolver<E, R> expressionResolver);
 
 		/**
-		 * Get all the registered {@link ExpressionResolver}s.
-		 * @return the registered {@link ExpressionResolver}s iterable
+		 * Add all expression resolvers provided by given <code>resolvers</code> Iterable.
+		 * @param resolvers Expression resolvers to add (not null)
 		 */
-		@SuppressWarnings("rawtypes")
-		Iterable<ExpressionResolver> getExpressionResolvers();
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		default void addExpressionResolvers(Iterable<ExpressionResolver> resolvers) {
+			ObjectUtils.argumentNotNull(resolvers, "ExpressionResolvers to add must be not null");
+			resolvers.forEach(r -> addExpressionResolver(r));
+		}
 
 	}
 

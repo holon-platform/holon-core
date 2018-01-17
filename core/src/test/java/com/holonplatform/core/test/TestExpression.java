@@ -172,6 +172,12 @@ public class TestExpression {
 					Class<R> resolutionType, ResolutionContext context) throws InvalidExpressionException {
 				return registry.resolve(expression, resolutionType, context);
 			}
+
+			@SuppressWarnings("rawtypes")
+			@Override
+			public Iterable<ExpressionResolver> getExpressionResolvers() {
+				return registry.getExpressionResolvers();
+			}
 		};
 
 		registry.addExpressionResolver(R1);
