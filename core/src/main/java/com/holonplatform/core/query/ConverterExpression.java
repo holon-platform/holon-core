@@ -35,4 +35,14 @@ public interface ConverterExpression<T> extends TypedExpression<T> {
 	 */
 	Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter();
 
+	/**
+	 * Get the model expression type.
+	 * @return The model expression type if an {@link ExpressionValueConverter} is available, otherwise returns the
+	 *         expression type
+	 */
+	@SuppressWarnings("rawtypes")
+	default Class<?> getModelType() {
+		return getExpressionValueConverter().map(converter -> (Class) converter.getModelType()).orElse(getType());
+	}
+
 }
