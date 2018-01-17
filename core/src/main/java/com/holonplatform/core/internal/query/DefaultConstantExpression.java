@@ -15,7 +15,11 @@
  */
 package com.holonplatform.core.internal.query;
 
+import java.util.Optional;
+
 import com.holonplatform.core.query.ConstantExpression;
+import com.holonplatform.core.query.ConverterExpression;
+import com.holonplatform.core.query.ExpressionValueConverter;
 import com.holonplatform.core.query.QueryExpression;
 
 /**
@@ -32,13 +36,30 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 */
 	private final T value;
 
+	/*
+	 * Optional value converter
+	 */
+	private final ExpressionValueConverter<T, ?> expressionValueConverter;
+
 	/**
 	 * Constructor
-	 * @param value Constant value (not null)
+	 * @param value Constant value
 	 */
 	public DefaultConstantExpression(T value) {
+		this(null, value);
+	}
+
+	/**
+	 * Constructor
+	 * @param expression Optional expression from which to inherit an {@link ExpressionValueConverter}, if available.
+	 * @param value Constant value (not null)
+	 */
+	@SuppressWarnings("unchecked")
+	public DefaultConstantExpression(QueryExpression<T> expression, T value) {
 		super();
 		this.value = value;
+		this.expressionValueConverter = (expression instanceof ConverterExpression)
+				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null;
 	}
 
 	/*
@@ -48,6 +69,25 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	@Override
 	public T getValue() {
 		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConstantExpression#getModelValue()
+	 */
+	@Override
+	public Object getModelValue() {
+		return getExpressionValueConverter().map(converter -> (Object) converter.toModel(getValue()))
+				.orElse(getValue());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConverterExpression#getExpressionValueConverter()
+	 */
+	@Override
+	public Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
+		return Optional.ofNullable(expressionValueConverter);
 	}
 
 	/*

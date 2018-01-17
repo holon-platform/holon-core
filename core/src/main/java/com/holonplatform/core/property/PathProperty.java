@@ -15,14 +15,19 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.Optional;
+
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultPathProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.ConverterExpression;
+import com.holonplatform.core.query.ExpressionValueConverter;
 import com.holonplatform.core.query.PathExpression;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryProjection;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.SortDirection;
+import com.holonplatform.core.temporal.TemporalType;
 
 /**
  * A {@link Property} bound to a {@link Path}, using {@link Path#getName()} as property name.
@@ -42,7 +47,7 @@ import com.holonplatform.core.query.QuerySort.SortDirection;
  * @see TemporalProperty
  * @see BooleanProperty
  */
-public interface PathProperty<T> extends Property<T>, PathExpression<T> {
+public interface PathProperty<T> extends Property<T>, PathExpression<T>, ConverterExpression<T> {
 
 	/*
 	 * (non-Javadoc)
@@ -58,6 +63,24 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T> {
 	 * @return A new {@link PathPropertyBuilder} using property name, type and configuration cloned from this property
 	 */
 	PathPropertyBuilder<T> clone();
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.TypedExpression#getTemporalType()
+	 */
+	@Override
+	default Optional<TemporalType> getTemporalType() {
+		return getConfiguration().getTemporalType();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConverterExpression#getExpressionValueConverter()
+	 */
+	@Override
+	default Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
+		return getConverter().map(converter -> ExpressionValueConverter.fromProperty(this, converter));
+	}
 
 	// QuerySort builders
 

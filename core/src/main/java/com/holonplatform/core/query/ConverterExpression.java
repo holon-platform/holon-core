@@ -13,33 +13,18 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core;
+package com.holonplatform.core.query;
 
 import java.util.Optional;
 
-import com.holonplatform.core.temporal.TemporalType;
+import com.holonplatform.core.TypedExpression;
 
 /**
- * An {@link Expression} with a declared type.
- * 
- * @param <T> Expression type
+ * @author BODSI08
  *
- * @since 5.1.0
  */
-public interface TypedExpression<T> extends Expression {
+public interface ConverterExpression<T> extends TypedExpression<T> {
 
-	/**
-	 * Get the expression type.
-	 * @return Expression type
-	 */
-	Class<? extends T> getType();
-
-	/**
-	 * If the value type is a generic temporal type, get the actual {@link TemporalType} of the type.
-	 * @return Optional temporal type
-	 */
-	default Optional<TemporalType> getTemporalType() {
-		return Optional.empty();
-	}
+	Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter();
 
 }

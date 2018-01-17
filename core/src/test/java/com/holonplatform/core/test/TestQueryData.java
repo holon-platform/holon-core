@@ -36,7 +36,6 @@ import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.internal.query.DefaultPropertyConstantExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor.VisitableQueryFilter;
 import com.holonplatform.core.internal.query.QuerySortVisitor;
 import com.holonplatform.core.internal.query.filter.AndFilter;
@@ -422,11 +421,6 @@ public class TestQueryData {
 		assertThat(filter, instanceOf(OperationQueryFilter.class));
 		assertEquals(TestPropertySet.NAME, ((OperationQueryFilter<?>) filter).getLeftOperand());
 		assertEquals(FilterOperator.NOT_EQUAL, ((OperationQueryFilter<?>) filter).getOperator());
-		assertThat(((OperationQueryFilter<?>) filter).getRightOperand().get(),
-				instanceOf(DefaultPropertyConstantExpression.class));
-		assertEquals("testValue",
-				((DefaultPropertyConstantExpression<?>) ((OperationQueryFilter<?>) filter).getRightOperand().get())
-						.getValue());
 
 		final NotFilter nf = new NotFilter(filter);
 		assertNotNull(nf.toString());

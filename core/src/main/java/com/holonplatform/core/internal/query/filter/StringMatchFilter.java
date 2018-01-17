@@ -16,8 +16,8 @@
 package com.holonplatform.core.internal.query.filter;
 
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.internal.query.QueryUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
 
@@ -77,7 +77,7 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	 */
 	public StringMatchFilter(QueryExpression<String> expression, String value, MatchMode matchMode,
 			boolean ignoreCase) {
-		super(expression, FilterOperator.MATCH, QueryUtils.asConstantExpression(expression, value));
+		super(expression, FilterOperator.MATCH, ConstantExpression.create(expression, value));
 		ObjectUtils.argumentNotNull(matchMode, "Match mode must be not null");
 		this.matchMode = matchMode;
 		this.ignoreCase = ignoreCase;

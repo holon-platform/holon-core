@@ -16,7 +16,6 @@
 package com.holonplatform.core.internal.query;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -26,13 +25,8 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.Property;
-import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.PropertyConstantExpression;
 import com.holonplatform.core.query.Query;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryResults.QueryNonUniqueResultException;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.CompositeQuerySort;
@@ -50,68 +44,6 @@ public final class QueryUtils implements Serializable {
 	 * Empty private constructor: this class is intended only to provide constants ad utility methods.
 	 */
 	private QueryUtils() {
-	}
-
-	/**
-	 * Build a constant {@link QueryExpression} for the given <code>value</code> associated to given
-	 * <code>expression</code>.
-	 * @param <T> Value type
-	 * @param expression Reference expression
-	 * @param value Constant value
-	 * @return Constant {@link QueryExpression}
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> QueryExpression<T> asConstantExpression(QueryExpression<T> expression, T value) {
-		return (expression instanceof Property) ? PropertyConstantExpression.create((Property<T>) expression, value)
-				: ConstantExpression.create(value);
-	}
-
-	/**
-	 * Build a constant {@link QueryExpression} for the given <code>values</code> associated to given
-	 * <code>expression</code>.
-	 * @param <T> Value type
-	 * @param expression Reference expression
-	 * @param values Constant values
-	 * @return Constant {@link QueryExpression}
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> QueryExpression<T> asConstantExpression(QueryExpression<T> expression,
-			Collection<? extends T> values) {
-		return (expression instanceof Property) ? PropertyConstantExpression.create((Property<T>) expression, values)
-				: ConstantExpression.create(values);
-	}
-
-	/**
-	 * Build a constant {@link QueryExpression} for the given <code>values</code> associated to given
-	 * <code>expression</code>.
-	 * @param <T> Value type
-	 * @param expression Reference expression
-	 * @param values Constant values
-	 * @return Constant {@link QueryExpression}
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> QueryExpression<T> asConstantExpression(QueryExpression<T> expression, T... values) {
-		return (expression instanceof Property) ? PropertyConstantExpression.create((Property<T>) expression, values)
-				: ConstantExpression.create(values);
-	}
-
-	/**
-	 * Get the model value from given constant <code>expression</code>.
-	 * @param <T> Expression type
-	 * @param expression Expression (not null)
-	 * @return Model value
-	 * @throws InvalidExpressionException If the given expression is not a {@link ConstantExpression} or a
-	 *         {@link PropertyConstantExpression}
-	 */
-	public static <T> Object getConstantExpressionValue(QueryExpression<T> expression) {
-		ObjectUtils.argumentNotNull(expression, "QueryExpression must be not null");
-		if (ConstantExpression.class.isAssignableFrom(expression.getClass())) {
-			return ((ConstantExpression<?, ?>) expression).getValue();
-		}
-		if (PropertyConstantExpression.class.isAssignableFrom(expression.getClass())) {
-			return ((PropertyConstantExpression<?, ?>) expression).getModelValue();
-		}
-		throw new InvalidExpressionException("Expression [" + expression + "] is not a constant expression");
 	}
 
 	/**
