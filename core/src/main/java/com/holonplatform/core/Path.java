@@ -37,7 +37,7 @@ import com.holonplatform.core.internal.DefaultPath;
  *
  * @since 5.0.0
  */
-public interface Path<T> extends Expression, Serializable {
+public interface Path<T> extends TypedExpression<T>, Serializable {
 
 	/**
 	 * Separator character used as separator between path hierarchy elements when composing or parsing a path name.
@@ -55,12 +55,6 @@ public interface Path<T> extends Expression, Serializable {
 	 * @return Optional parent path, empty if none
 	 */
 	Optional<Path<?>> getParent();
-
-	/**
-	 * Gets the type of the element identified by this path
-	 * @return Path type
-	 */
-	Class<? extends T> getType();
 
 	/**
 	 * Checks whether this path is a root path, i.e. it has no parent path.
