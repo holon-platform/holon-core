@@ -20,11 +20,19 @@ import java.util.Optional;
 import com.holonplatform.core.TypedExpression;
 
 /**
- * @author BODSI08
+ * A {@link TypedExpression} which supports an optional {@link ExpressionValueConverter} to perform expression type
+ * conversion.
+ * 
+ * @param <T> Expression type
  *
+ * @since 5.1.0
  */
 public interface ConverterExpression<T> extends TypedExpression<T> {
 
+	/**
+	 * Get the expression value type converter, if available.
+	 * @return Optional {@link ExpressionValueConverter}
+	 */
 	Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter();
 
 }
