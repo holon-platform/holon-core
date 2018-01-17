@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import com.holonplatform.core.query.CollectionExpression;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.ConverterExpression;
 import com.holonplatform.core.query.ExpressionValueConverter;
@@ -35,7 +36,7 @@ import com.holonplatform.core.query.QueryExpression;
  * 
  * @since 5.0.0
  */
-public class DefaultCollectionExpression<E> extends ArrayList<E> implements ConstantExpression<Collection<E>, E> {
+public class DefaultCollectionExpression<E> extends ArrayList<E> implements CollectionExpression<E> {
 
 	private static final long serialVersionUID = -3974289166776361490L;
 

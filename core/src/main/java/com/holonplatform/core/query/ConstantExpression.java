@@ -27,6 +27,8 @@ import com.holonplatform.core.internal.query.DefaultConstantExpression;
  * @param <E> Concrete value type
  * 
  * @since 5.0.0
+ * 
+ * @see CollectionExpression
  */
 public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterExpression<E> {
 
@@ -62,7 +64,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
 	 */
-	static <T> ConstantExpression<Collection<T>, T> create(Collection<? extends T> values) {
+	static <T> CollectionExpression<T> create(Collection<? extends T> values) {
 		return new DefaultCollectionExpression<>(values);
 	}
 
@@ -73,7 +75,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @return A new collection expression
 	 */
 	@SafeVarargs
-	static <T> ConstantExpression<Collection<T>, T> create(T... values) {
+	static <T> CollectionExpression<T> create(T... values) {
 		return new DefaultCollectionExpression<>(values);
 	}
 
@@ -97,8 +99,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
 	 */
-	static <T> ConstantExpression<Collection<T>, T> create(QueryExpression<T> expression,
-			Collection<? extends T> values) {
+	static <T> CollectionExpression<T> create(QueryExpression<T> expression, Collection<? extends T> values) {
 		return new DefaultCollectionExpression<>(expression, values);
 	}
 
@@ -111,7 +112,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @return A new collection expression
 	 */
 	@SafeVarargs
-	static <T> ConstantExpression<Collection<T>, T> create(QueryExpression<T> expression, T... values) {
+	static <T> CollectionExpression<T> create(QueryExpression<T> expression, T... values) {
 		return new DefaultCollectionExpression<>(expression, values);
 	}
 
