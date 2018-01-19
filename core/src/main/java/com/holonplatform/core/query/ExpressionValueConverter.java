@@ -20,8 +20,12 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
- * @author BODSI08
+ * The expression value converter associated to a {@link ConverterExpression}.
  *
+ * @param <TYPE> Expression type
+ * @param <MODEL> Model type
+ *
+ * @since 5.1.0
  */
 public interface ExpressionValueConverter<TYPE, MODEL> {
 
@@ -45,6 +49,13 @@ public interface ExpressionValueConverter<TYPE, MODEL> {
 	 */
 	Class<MODEL> getModelType();
 
+	/**
+	 * Create a new {@link ExpressionValueConverter} using given <code>property</code> and
+	 * {@link PropertyValueConverter} as conversion strategy.
+	 * @param property Property (not null)
+	 * @param converter Property value converter (not null)
+	 * @return A new {@link ExpressionValueConverter}
+	 */
 	static <TYPE, MODEL> ExpressionValueConverter<TYPE, MODEL> fromProperty(Property<TYPE> property,
 			PropertyValueConverter<TYPE, MODEL> converter) {
 		return new DefaultPropertyExpressionValueConverter<>(property, converter);

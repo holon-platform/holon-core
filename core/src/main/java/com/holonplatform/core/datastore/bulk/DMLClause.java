@@ -18,7 +18,7 @@ package com.holonplatform.core.datastore.bulk;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 
 /**
- * DML operation execution clause root interface.
+ * DML operation execution clause.
  * 
  * @param <C> Concrete subtype
  * 

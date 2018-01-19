@@ -20,9 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -40,6 +43,8 @@ import java.util.Spliterators;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
+
+import com.holonplatform.core.exceptions.TypeMismatchException;
 
 /**
  * Utility class to convert java types.
@@ -580,6 +585,81 @@ public final class ConversionUtils implements Serializable {
 		}
 		reader.close();
 		return buffer.toString();
+	}
+
+	/**
+	 * Try to convert given value to target type, if a default conversion logic is available.
+	 * @param value Value to convert
+	 * @param targetType Target type (not null)
+	 * @return Converted value or <code>null</code> if value was <code>null</code>
+	 * @throws TypeMismatchException If a conversion logic is not available
+	 * @since 5.1.0
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> T convert(Object value, Class<T> targetType) throws TypeMismatchException {
+		ObjectUtils.argumentNotNull(targetType, "Target type must be not null");
+		if (value != null) {
+
+			if (TypeUtils.isAssignable(value.getClass(), targetType)) {
+				return (T) value;
+			}
+
+			// enum
+			if (TypeUtils.isEnum(targetType)) {
+				return (T) ConversionUtils.convertEnumValue((Class<Enum>) targetType, value);
+			}
+
+			// number
+			if (TypeUtils.isNumber(targetType) && TypeUtils.isNumber(value.getClass())) {
+				return (T) ConversionUtils.convertNumberToTargetClass((Number) value, (Class<Number>) targetType);
+			}
+
+			// date and times
+			if (Date.class.isAssignableFrom(value.getClass())) {
+				if (LocalDate.class.isAssignableFrom(targetType)) {
+					return (T) ConversionUtils.toLocalDate((Date) value);
+				}
+				if (LocalDateTime.class.isAssignableFrom(targetType)) {
+					return (T) ConversionUtils.toLocalDateTime((Date) value);
+				}
+				if (LocalTime.class.isAssignableFrom(targetType)) {
+					return (T) ConversionUtils.toLocalTime((Date) value);
+				}
+			}
+
+			if (Timestamp.class.isAssignableFrom(value.getClass())) {
+				if (LocalDateTime.class.isAssignableFrom(targetType)) {
+					return (T) ((Timestamp) value).toLocalDateTime();
+				}
+				if (LocalDate.class.isAssignableFrom(targetType)) {
+					return (T) ((Timestamp) value).toLocalDateTime().toLocalDate();
+				}
+				if (LocalTime.class.isAssignableFrom(targetType)) {
+					return (T) ((Timestamp) value).toLocalDateTime().toLocalTime();
+				}
+				if (java.util.Date.class.isAssignableFrom(targetType)) {
+					Calendar c = Calendar.getInstance();
+					c.setTimeInMillis(((Timestamp) value).getTime());
+					return (T) c.getTime();
+				}
+			}
+
+			if (Time.class.isAssignableFrom(value.getClass())) {
+				if (LocalTime.class.isAssignableFrom(targetType)) {
+					return (T) ((Time) value).toLocalTime();
+				}
+			}
+
+			// String to Reader
+			if (TypeUtils.isString(value.getClass()) && Reader.class.isAssignableFrom(targetType)) {
+				return (T) new StringReader((String) value);
+			}
+
+			throw new TypeMismatchException(
+					"Cannot convert value type [" + value.getClass() + "] to type [" + targetType + "]");
+		}
+
+		return null;
 	}
 
 }

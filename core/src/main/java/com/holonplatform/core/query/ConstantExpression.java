@@ -116,12 +116,4 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 		return new DefaultCollectionExpression<>(expression, values);
 	}
 
-	/**
-	 * Create a {@link ConstantExpression} which represents a <code>null</code> value.
-	 * @return A new <code>null</code> value constant expression
-	 */
-	static ConstantExpression<Void, Void> nullValue() {
-		return new DefaultConstantExpression<>(null);
-	}
-
 }

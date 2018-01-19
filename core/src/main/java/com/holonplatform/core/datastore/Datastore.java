@@ -30,6 +30,7 @@ import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
+import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -250,6 +251,27 @@ public interface Datastore extends ExpressionResolverSupport, DataContextBound, 
 		 */
 		<T> Optional<T> getInsertedKey(Path<T> path);
 
+		/**
+		 * Get the first inserted key value, if available.
+		 * @param <T> Expected value type
+		 * @return Optional first inserted key value
+		 * @since 5.1.0
+		 */
+		default Optional<Object> getFirstInsertedKey() {
+			return Optional.ofNullable(getInsertedKeys().keySet().iterator().next()).map(p -> getInsertedKeys().get(p));
+		}
+
+		/**
+		 * Get the first inserted key value given target type, if available.
+		 * @param <T> Expected value type
+		 * @param targetType Expected value type (not null)
+		 * @return Optional first inserted key value
+		 * @since 5.1.0
+		 */
+		default <T> Optional<T> getFirstInsertedKey(Class<T> targetType) {
+			return getFirstInsertedKey().map(k -> ConversionUtils.convert(k, targetType));
+		}
+
 		// Builder
 
 		/**
@@ -260,6 +282,9 @@ public interface Datastore extends ExpressionResolverSupport, DataContextBound, 
 			return new DefaultOperationResult.DefaultBuilder();
 		}
 
+		/**
+		 * {@link OperationResult} builder.
+		 */
 		public interface Builder {
 
 			/**

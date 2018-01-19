@@ -15,15 +15,11 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
-
 /**
  * {@link BulkClause} to execute bulk UPDATE operations.
  * 
  * @since 5.0.0
  */
-public interface BulkUpdate
-		extends BulkClause<BulkUpdate>, ExpressionResolverBuilder<BulkUpdate>, QueryFilterSupport<BulkUpdate> {
+public interface BulkUpdate extends BulkUpdateOperation<BulkUpdate>, DMLClause<BulkUpdate> {
 
 }

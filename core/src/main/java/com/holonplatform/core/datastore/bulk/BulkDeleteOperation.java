@@ -15,11 +15,15 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
+import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
+
 /**
- * {@link BulkOperation} to execute bulk <code>DELETE</code> operations.
+ * A <code>DELETE</code> {@link BulkOperation}.
  * 
- * @since 5.0.0
+ * @param <O> Actual operation type
+ *
+ * @since 5.1.0
  */
-public interface BulkDelete extends BulkDeleteOperation<BulkDelete>, DMLClause<BulkDelete> {
+public interface BulkDeleteOperation<O extends BulkDeleteOperation<O>> extends BulkOperation<O>, QueryFilterSupport<O> {
 
 }

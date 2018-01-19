@@ -15,11 +15,21 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-/**
- * {@link BulkOperation} to execute bulk <code>DELETE</code> operations.
- * 
- * @since 5.0.0
- */
-public interface BulkDelete extends BulkDeleteOperation<BulkDelete>, DMLClause<BulkDelete> {
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 
+/**
+ * Represents a bulk operation.
+ * 
+ * @param <O> Actual operation type
+ *
+ * @since 5.1.0
+ */
+public interface BulkOperation<O extends BulkOperation<O>> extends ExpressionResolverBuilder<O> {
+
+	/**
+	 * Get the bulk operation configuration.
+	 * @return the bulk operation configuration
+	 */
+	BulkOperationConfiguration getConfiguration();
+	
 }
