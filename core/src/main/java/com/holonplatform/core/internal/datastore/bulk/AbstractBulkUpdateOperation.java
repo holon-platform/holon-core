@@ -17,12 +17,8 @@ package com.holonplatform.core.internal.datastore.bulk;
 
 import java.util.HashMap;
 
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
 import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -41,31 +37,9 @@ public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<
 
 	/**
 	 * Constructor.
-	 * @param target Operation target (not null)
 	 */
-	public AbstractBulkUpdateOperation(DataTarget<?> target) {
-		super(OperationType.UPDATE);
-		ObjectUtils.argumentNotNull(target, "Operation data target must be not null");
-		getDefinition().setTarget(target);
-	}
-
-	/**
-	 * Get the actual operation object.
-	 * @return actual operation object
-	 */
-	protected abstract O getActualOperation();
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core
-	 * .ExpressionResolver)
-	 */
-	@Override
-	public <E extends Expression, R extends Expression> O withExpressionResolver(
-			ExpressionResolver<E, R> expressionResolver) {
-		getDefinition().addExpressionResolver(expressionResolver);
-		return getActualOperation();
+	public AbstractBulkUpdateOperation() {
+		super();
 	}
 
 	/*

@@ -13,11 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.query;
+package com.holonplatform.core;
 
 import java.util.Optional;
-
-import com.holonplatform.core.TypedExpression;
 
 /**
  * A {@link TypedExpression} which supports an optional {@link ExpressionValueConverter} to perform expression type
@@ -34,6 +32,17 @@ public interface ConverterExpression<T> extends TypedExpression<T> {
 	 * @return Optional {@link ExpressionValueConverter}
 	 */
 	Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter();
+
+	/**
+	 * Get the model data type value of given <code>value</code>, using the {@link ExpressionValueConverter} to convert
+	 * the value, if available. If an {@link ExpressionValueConverter} is not available, the provided value itself is
+	 * returned.
+	 * @return The model-converted expression value if an {@link ExpressionValueConverter} is available, otherwise
+	 *         provided value itself is returned.
+	 */
+	default Object getModelValue(T value) {
+		return getExpressionValueConverter().map(converter -> (Object) converter.toModel(value)).orElse(value);
+	}
 
 	/**
 	 * Get the model expression type.

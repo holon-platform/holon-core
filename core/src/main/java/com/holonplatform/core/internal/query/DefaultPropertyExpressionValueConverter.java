@@ -15,10 +15,10 @@
  */
 package com.holonplatform.core.internal.query;
 
+import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter;
-import com.holonplatform.core.query.ExpressionValueConverter;
 
 /**
  * An {@link ExpressionValueConverter} implementation using a {@link PropertyValueConverter} to perform value

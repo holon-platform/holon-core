@@ -332,7 +332,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	static <T> QueryFilter in(QueryExpression<T> expression, T... values) {
-		return in(expression, ConstantExpression.create(expression, values));
+		return in(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
@@ -344,7 +344,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter in(QueryExpression<T> expression, Collection<T> values) {
-		return in(expression, ConstantExpression.create(expression, values));
+		return in(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
@@ -369,7 +369,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	static <T> QueryFilter nin(QueryExpression<T> expression, T... values) {
-		return nin(expression, ConstantExpression.create(expression, values));
+		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
@@ -381,7 +381,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter nin(QueryExpression<T> expression, Collection<T> values) {
-		return nin(expression, ConstantExpression.create(expression, values));
+		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**

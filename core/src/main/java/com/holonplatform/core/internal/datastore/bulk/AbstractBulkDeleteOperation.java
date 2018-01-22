@@ -15,12 +15,7 @@
  */
 package com.holonplatform.core.internal.datastore.bulk;
 
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
 import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
-import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -35,31 +30,9 @@ public abstract class AbstractBulkDeleteOperation<O extends BulkDeleteOperation<
 
 	/**
 	 * Constructor.
-	 * @param target Operation target (not null)
 	 */
-	public AbstractBulkDeleteOperation(DataTarget<?> target) {
-		super(OperationType.DELETE);
-		ObjectUtils.argumentNotNull(target, "Operation data target must be not null");
-		getDefinition().setTarget(target);
-	}
-
-	/**
-	 * Get the actual operation object.
-	 * @return actual operation object
-	 */
-	protected abstract O getActualOperation();
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core
-	 * .ExpressionResolver)
-	 */
-	@Override
-	public <E extends Expression, R extends Expression> O withExpressionResolver(
-			ExpressionResolver<E, R> expressionResolver) {
-		getDefinition().addExpressionResolver(expressionResolver);
-		return getActualOperation();
+	public AbstractBulkDeleteOperation() {
+		super();
 	}
 
 	/*

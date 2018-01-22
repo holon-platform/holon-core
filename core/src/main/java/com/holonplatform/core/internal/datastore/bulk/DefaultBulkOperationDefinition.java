@@ -29,16 +29,17 @@ import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 import com.holonplatform.core.ExpressionResolverRegistry;
+import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
-import com.holonplatform.core.datastore.Datastore.WriteOption;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PathPropertyBoxAdapter;
+import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.NullExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -47,11 +48,6 @@ import com.holonplatform.core.query.QueryFilter;
  * @since 5.1.0
  */
 public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
-
-	/*
-	 * Operation type
-	 */
-	private final OperationType operationType;
 
 	/*
 	 * Data target
@@ -64,14 +60,14 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	private QueryFilter filter;
 
 	/*
-	 * Values
+	 * Operation values
 	 */
 	private final List<Map<Path<?>, TypedExpression<?>>> values = new LinkedList<>();
 
 	/*
-	 * Property set
+	 * Operation paths
 	 */
-	private PropertySet<?> propertySet;
+	private Path<?>[] operationPaths;
 
 	/*
 	 * Write options
@@ -84,22 +80,10 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	protected ExpressionResolverRegistry expressionResolverRegistry = ExpressionResolverRegistry.create();
 
 	/**
-	 * Constructor
-	 * @param operationType Operation type (not null)
+	 * Constructor.
 	 */
-	public DefaultBulkOperationDefinition(OperationType operationType) {
+	public DefaultBulkOperationDefinition() {
 		super();
-		ObjectUtils.argumentNotNull(operationType, "OperationType must be not null");
-		this.operationType = operationType;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperationConfiguration#getOperationType()
-	 */
-	@Override
-	public OperationType getOperationType() {
-		return operationType;
 	}
 
 	/*
@@ -107,8 +91,8 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	 * @see com.holonplatform.core.datastore.bulk.BulkOperationConfiguration#getTarget()
 	 */
 	@Override
-	public Optional<DataTarget<?>> getTarget() {
-		return Optional.ofNullable(target);
+	public DataTarget<?> getTarget() {
+		return target;
 	}
 
 	/*
@@ -136,6 +120,18 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	@Override
 	public Set<WriteOption> getWriteOptions() {
 		return writeOptions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#addWriteOption(com.holonplatform.core.
+	 * datastore.DatastoreOperations.WriteOption)
+	 */
+	@Override
+	public void addWriteOption(WriteOption writeOption) {
+		ObjectUtils.argumentNotNull(writeOption, "WriteOption must be not null");
+		writeOptions.add(writeOption);
 	}
 
 	/*
@@ -214,12 +210,25 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#setPropertySet(com.holonplatform.core.
+	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#setOperationPaths(com.holonplatform.core.
+	 * Path[])
+	 */
+	@Override
+	public void setOperationPaths(Path<?>[] paths) {
+		this.operationPaths = paths;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#setOperationPaths(com.holonplatform.core.
 	 * property.PropertySet)
 	 */
 	@Override
-	public void setPropertySet(PropertySet<?> propertySet) {
-		this.propertySet = propertySet;
+	public void setOperationPaths(PropertySet<?> propertySet) {
+		ObjectUtils.argumentNotNull(propertySet, "Operation path property set must be not nulll");
+		setOperationPaths(PathPropertySetAdapter.create(propertySet).pathStream().collect(Collectors.toList())
+				.toArray(new Path<?>[0]));
 	}
 
 	/*
@@ -238,40 +247,36 @@ public class DefaultBulkOperationDefinition implements BulkOperationDefinition {
 	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#addValue(com.holonplatform.core.property.
 	 * PropertyBox, boolean)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void addValue(PropertyBox value, boolean includeNullValues) {
 		ObjectUtils.argumentNotNull(value, "PropertyBox must be not null");
 
 		final Map<Path<?>, TypedExpression<?>> values = new HashMap<>(value.size());
 
-		getPropertySet().orElse(value).stream().filter(p -> Path.class.isAssignableFrom(p.getClass()))
-				.collect(Collectors.toList()).forEach(p -> {
-					final Path<?> path = (Path<?>) p;
-					// check property present
-					if (!value.contains(p)) {
-						values.put(path, NullExpression.NULL);
-					} else {
-						// check null value
-						final Object v = value.getValue(p);
-						if (v != null) {
-							values.put((Path<?>) p, (value instanceof TypedExpression) ? (TypedExpression<?>) v
-									: ConstantExpression.create(v));
-						} else if (includeNullValues) {
-							values.put(path, NullExpression.NULL);
-						}
-					}
-				});
+		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
+
+		propertyBoxAdapter.pathStream().forEach(path -> {
+			propertyBoxAdapter.getValueOrElse(path, pathWithNoValue -> {
+				if (includeNullValues) {
+					values.put(path, NullExpression.create(path));
+				}
+			}).ifPresent(val -> {
+				values.put(path, (val instanceof TypedExpression) ? (TypedExpression<?>) val
+						: ConstantExpression.create((Path) path, val));
+			});
+		});
 
 		addValue(values);
 	}
 
-	/**
-	 * Get the optional {@link PropertySet} to use to extract operation path-value bindings from a {@link PropertyBox}.
-	 * @return Optional property set
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperationConfiguration#getOperationPaths()
 	 */
-	protected Optional<PropertySet<?>> getPropertySet() {
-		return Optional.ofNullable(propertySet);
+	@Override
+	public Optional<Path<?>[]> getOperationPaths() {
+		return Optional.ofNullable(operationPaths);
 	}
 
 }

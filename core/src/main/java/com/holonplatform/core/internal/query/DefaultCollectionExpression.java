@@ -22,15 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import com.holonplatform.core.ConverterExpression;
+import com.holonplatform.core.ExpressionValueConverter;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.CollectionExpression;
-import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.ConverterExpression;
-import com.holonplatform.core.query.ExpressionValueConverter;
-import com.holonplatform.core.query.QueryExpression;
 
 /**
- * {@link ConstantExpression} for a list of values implementation using an {@link ArrayList} as concrete collection
- * class
+ * Default {@link CollectionExpression} implementation.
  * 
  * @param <E> List elements type
  * 
@@ -68,7 +66,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param values Constant expression values
 	 */
 	@SafeVarargs
-	public DefaultCollectionExpression(QueryExpression<E> expression, E... values) {
+	public DefaultCollectionExpression(TypedExpression<E> expression, E... values) {
 		this(expression, Arrays.asList(values));
 	}
 
@@ -77,8 +75,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param expression Optional expression from which to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param values Constant expression values
 	 */
-	@SuppressWarnings("unchecked")
-	public DefaultCollectionExpression(QueryExpression<E> expression, Collection<? extends E> values) {
+	public DefaultCollectionExpression(TypedExpression<E> expression, Collection<? extends E> values) {
 		super(values);
 		this.expressionValueConverter = (expression instanceof ConverterExpression)
 				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null) : null;

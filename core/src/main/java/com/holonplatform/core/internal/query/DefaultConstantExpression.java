@@ -17,29 +17,25 @@ package com.holonplatform.core.internal.query;
 
 import java.util.Optional;
 
+import com.holonplatform.core.ConverterExpression;
+import com.holonplatform.core.ExpressionValueConverter;
+import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.internal.AbstractConverterExpression;
 import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.ConverterExpression;
-import com.holonplatform.core.query.ExpressionValueConverter;
-import com.holonplatform.core.query.QueryExpression;
 
 /**
- * A {@link QueryExpression} which represents a constant value
+ * Default {@link ConstantExpression} implementation.
  * 
  * @param <T> Value type
  * 
  * @since 5.0.0
  */
-public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
+public class DefaultConstantExpression<T> extends AbstractConverterExpression<T> implements ConstantExpression<T, T> {
 
 	/*
 	 * Constant value (immutable)
 	 */
 	private final T value;
-
-	/*
-	 * Optional value converter
-	 */
-	private final ExpressionValueConverter<T, ?> expressionValueConverter;
 
 	/**
 	 * Constructor
@@ -54,12 +50,10 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 * @param expression Optional expression from which to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param value Constant value (not null)
 	 */
-	@SuppressWarnings("unchecked")
-	public DefaultConstantExpression(QueryExpression<T> expression, T value) {
-		super();
+	public DefaultConstantExpression(TypedExpression<T> expression, T value) {
+		super((expression instanceof ConverterExpression)
+				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
 		this.value = value;
-		this.expressionValueConverter = (expression instanceof ConverterExpression)
-				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null;
 	}
 
 	/*
@@ -77,17 +71,11 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 */
 	@Override
 	public Object getModelValue() {
-		return getExpressionValueConverter().map(converter -> (Object) converter.toModel(getValue()))
-				.orElse(getValue());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.ConverterExpression#getExpressionValueConverter()
-	 */
-	@Override
-	public Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
-		return Optional.ofNullable(expressionValueConverter);
+		Optional<?> modelValue = getExpressionValueConverter().map(converter -> converter.toModel(getValue()));
+		if (modelValue.isPresent()) {
+			return modelValue.get();
+		}
+		return getValue();
 	}
 
 	/*
@@ -115,39 +103,6 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	@Override
 	public String toString() {
 		return "DefaultConstantExpression [value=" + value + "]";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DefaultConstantExpression<?> other = (DefaultConstantExpression<?>) obj;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
 	}
 
 }

@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.datastore;
 
-import com.holonplatform.core.datastore.Datastore.WriteOption;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 

@@ -15,9 +15,9 @@
  */
 package com.holonplatform.core.query;
 
-import java.util.Collection;
-
-import com.holonplatform.core.internal.query.DefaultCollectionExpression;
+import com.holonplatform.core.ConverterExpression;
+import com.holonplatform.core.ExpressionValueConverter;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
 
 /**
@@ -59,27 +59,6 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	}
 
 	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values.
-	 * @param <T> Expression type
-	 * @param values Expression values (not null)
-	 * @return A new collection expression
-	 */
-	static <T> CollectionExpression<T> create(Collection<? extends T> values) {
-		return new DefaultCollectionExpression<>(values);
-	}
-
-	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values.
-	 * @param <T> Expression type
-	 * @param values Expression values (not null)
-	 * @return A new collection expression
-	 */
-	@SafeVarargs
-	static <T> CollectionExpression<T> create(T... values) {
-		return new DefaultCollectionExpression<>(values);
-	}
-
-	/**
 	 * Create a {@link ConstantExpression} which represents a constant value, using given <code>expression</code> to
 	 * inherit an {@link ExpressionValueConverter}, if available.
 	 * @param <T> Expression type
@@ -87,33 +66,8 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @param value Constant value
 	 * @return A new constant expression
 	 */
-	static <T> ConstantExpression<T, T> create(QueryExpression<T> expression, T value) {
+	static <T> ConstantExpression<T, T> create(TypedExpression<T> expression, T value) {
 		return new DefaultConstantExpression<>(expression, value);
-	}
-
-	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values, using given
-	 * <code>expression</code> to inherit an {@link ExpressionValueConverter}, if available.
-	 * @param <T> Expression type
-	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available
-	 * @param values Expression values (not null)
-	 * @return A new collection expression
-	 */
-	static <T> CollectionExpression<T> create(QueryExpression<T> expression, Collection<? extends T> values) {
-		return new DefaultCollectionExpression<>(expression, values);
-	}
-
-	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values, using given
-	 * <code>expression</code> to inherit an {@link ExpressionValueConverter}, if available.
-	 * @param <T> Expression type
-	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available
-	 * @param values Expression values (not null)
-	 * @return A new collection expression
-	 */
-	@SafeVarargs
-	static <T> CollectionExpression<T> create(QueryExpression<T> expression, T... values) {
-		return new DefaultCollectionExpression<>(expression, values);
 	}
 
 }

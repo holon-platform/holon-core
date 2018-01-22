@@ -21,7 +21,7 @@ import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -62,18 +62,32 @@ public interface BulkOperationDefinition extends BulkOperationConfiguration, Exp
 	void addValue(PropertyBox value, boolean includeNullValues);
 
 	/**
-	 * Set the optional {@link PropertySet} to use to extract operation path-value bindings from a {@link PropertyBox}.
-	 * @param propertySet The property set to set
+	 * Set the paths to be used for operation values.
+	 * @param paths Operation value paths
 	 */
-	void setPropertySet(PropertySet<?> propertySet);
+	void setOperationPaths(Path<?>[] paths);
 
 	/**
-	 * Create a new {@link BulkOperationDefinition}.
-	 * @param operationType Operation type (not null)
+	 * Set the paths to be used for operation values using a {@link PropertySet}.
+	 * <p>
+	 * Each property of the property set which corresponds to a {@link Path} will be used as operation path.
+	 * </p>
+	 * @param propertySet The property set to set (not null)
+	 */
+	void setOperationPaths(PropertySet<?> propertySet);
+
+	/**
+	 * Add a {@link WriteOption} to this operation.
+	 * @param writeOption The write option to add (not null)
+	 */
+	void addWriteOption(WriteOption writeOption);
+
+	/**
+	 * Create a new default {@link BulkOperationDefinition}.
 	 * @return A new {@link BulkOperationDefinition}
 	 */
-	static BulkOperationDefinition create(OperationType operationType) {
-		return new DefaultBulkOperationDefinition(operationType);
+	static BulkOperationDefinition create() {
+		return new DefaultBulkOperationDefinition();
 	}
 
 }

@@ -15,11 +15,35 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
+import com.holonplatform.core.Expression;
+import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.datastore.ExecutableOperation;
+import com.holonplatform.core.property.PropertyBox;
+
 /**
- * {@link BulkOperation} to execute bulk <code>INSERT</code> operations.
+ * A {@link BulkOperation} expression to configure a bulk <code>INSERT</code> operation and execute it using the
+ * {@link ExecutableOperation} interface methods.
+ * <p>
+ * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
+ * paradigm.
+ * </p>
  * 
  * @since 5.0.0
  */
-public interface BulkInsert extends BulkInsertOperation<BulkInsert>, DMLClause<BulkInsert> {
+public interface BulkInsert
+		extends BulkInsertOperation<BulkInsert>, ExecutableOperation, Expression, DatastoreCommodity {
+
+	/**
+	 * Create a single value <code>INSERT</code> operation, using given {@link PropertyBox} to obtain the values to
+	 * insert.
+	 * <p>
+	 * The provided {@link PropertyBox} can also be used for other, implementation-dependent, purposes. For example to
+	 * set back auto generated keys.
+	 * </p>
+	 * @param propertyBox The {@link PropertyBox} to insert (not null)
+	 * @return this
+	 */
+	BulkInsert singleValue(PropertyBox propertyBox);
 
 }

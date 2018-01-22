@@ -15,11 +15,11 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
+import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.NullExpression;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
@@ -80,16 +80,17 @@ public interface BulkUpdateOperation<O extends BulkUpdateOperation<O>> extends B
 	 * @see #setNull(Path)
 	 */
 	default <T> O set(Path<T> path, T value) {
-		return set(path, ConstantExpression.create(value));
+		return set(path, ConstantExpression.create(path, value));
 	}
 
 	/**
 	 * Set the given {@link Path} to <code>null</code> value.
+	 * @param <P> Path type
 	 * @param path Path to be updated (not null)
 	 * @return this
 	 */
-	default O setNull(Path<?> path) {
-		return set(path, NullExpression.NULL);
+	default <P> O setNull(Path<P> path) {
+		return set(path, NullExpression.create(path));
 	}
 
 }

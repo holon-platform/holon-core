@@ -16,19 +16,15 @@
 package com.holonplatform.core.datastore;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.Path;
-import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
-import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityNotAvailableException;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
-import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.property.Property;
@@ -63,113 +59,58 @@ import com.holonplatform.core.query.QuerySort;
  * @see Query
  * @see DatastoreCommodityFactory
  */
-public interface Datastore extends ExpressionResolverSupport, DataContextBound, Serializable {
+public interface Datastore
+		extends DatastoreOperations<OperationResult, BulkInsert, BulkUpdate, BulkDelete, Query>, Serializable {
 
 	/**
-	 * Refresh a {@link PropertyBox}, updating all its model properties to current value in datastore and using given
-	 * <code>target</code> to denote persistent entity of datastore
-	 * @param target {@link DataTarget} to identify data entity to refresh
-	 * @param propertyBox PropertyBox to refresh
-	 * @return Refreshed PropertyBox
-	 * @throws DataAccessException If underlying Datastore implementation throws an Exception executing operation
+	 * Create a {@link Query} commodity, which can be used to configure and execute a query on the data managed by this
+	 * Datastore.
+	 * @return A new {@link Query} instance, which can be used to configure and execute a query
 	 */
-	PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox);
-
-	/**
-	 * Insert a {@link PropertyBox} using given <code>target</code> to denote persistent entity of datastore.
-	 * @param target {@link DataTarget} to identify data entity to insert
-	 * @param propertyBox PropertyBox to insert
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return the result of the operation execution
-	 * @throws DataAccessException If underlying Datastore implementation throws an Exception executing operation
-	 */
-	OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options);
-
-	/**
-	 * Update a {@link PropertyBox} using given <code>target</code> to denote persistent entity of datastore.
-	 * @param target {@link DataTarget} to identify data entity to update
-	 * @param propertyBox PropertyBox to update
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return the result of the operation execution
-	 * @throws DataAccessException If underlying Datastore implementation throws an Exception executing operation
-	 */
-	OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options);
-
-	/**
-	 * Save a {@link PropertyBox} using given <code>target</code> to denote persistent entity of datastore: insert data
-	 * if not exists, update it otherwise.
-	 * @param target {@link DataTarget} to identify data entity to save
-	 * @param propertyBox PropertyBox to save
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return the result of the operation execution
-	 * @throws DataAccessException If underlying Datastore implementation throws an Exception executing operation
-	 */
-	OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options);
-
-	/**
-	 * Remove a persistent element from datastore, using given <code>target</code> to denote persistent entity to delete
-	 * and given {@link PropertyBox} to provide key property values
-	 * @param target {@link DataTarget} to identify data entity to delete
-	 * @param propertyBox PropertyBox which contains key property values to identify element to delete
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return the result of the operation execution
-	 * @throws DataAccessException If underlying Datastore implementation throws an Exception executing operation
-	 */
-	OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options);
-
-	/**
-	 * Create a {@link BulkInsert} clause for bulk INSERT operations.
-	 * @param target {@link DataTarget} to identify data entity to insert
-	 * @param propertySet The property set to use to perform insert operations. Only the properties contained in given
-	 *        property set will be taken into account to insert the {@link PropertyBox} values
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return {@link BulkInsert} clause
-	 */
-	BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options);
-
-	/**
-	 * Create a {@link BulkUpdate} clause for bulk UPDATE operations.
-	 * @param target {@link DataTarget} to identify data entity to update
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return {@link BulkUpdate} clause
-	 */
-	BulkUpdate bulkUpdate(DataTarget<?> target, WriteOption... options);
-
-	/**
-	 * Create a {@link BulkDelete} clause for bulk DELETE operations.
-	 * @param target {@link DataTarget} to identify data entity to delete
-	 * @param options Optional write options. The write options are specific for each concrete Datastore implementation.
-	 * @return {@link BulkDelete} clause
-	 */
-	BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options);
-
-	// Commodities
-
-	/**
-	 * Get the available {@link DatastoreCommodity} types for this Datastore.
-	 * @return Available {@link DatastoreCommodity} types collection, empty if none
-	 */
-	Collection<Class<? extends DatastoreCommodity>> getAvailableCommodities();
-
-	/**
-	 * Create a new {@link DatastoreCommodity} of given <code>commodityType</code> type.
-	 * @param <C> Commodity type
-	 * @param commodityType Commodity type to create (not null)
-	 * @return The commodity instance
-	 * @throws CommodityNotAvailableException If a commodity of the required type is not available for this Datastore
-	 * @throws CommodityConfigurationException If a commodity configuration error occurred
-	 */
-	<C extends DatastoreCommodity> C create(Class<C> commodityType);
-
-	/**
-	 * Convenience method to create the default {@link Query} Datastore commodity, to be used to query the data store
-	 * using default {@link DataTarget}, {@link QueryFilter}, {@link QuerySort} and {@link QueryAggregation}
-	 * expressions.
-	 * @return A new {@link Query} representation and builder
-	 * @see Query
-	 */
+	@Override
 	default Query query() {
 		return create(Query.class);
+	}
+
+	/**
+	 * Create a {@link BulkInsert} operation, which can be used to configure and execute a bulk <code>INSERT</code>
+	 * operation.
+	 * @param target {@link DataTarget} to identify the data entity to insert (not null)
+	 * @param propertySet The property set to use to perform insert operations. Only the properties contained in given
+	 *        property set will be taken into account to insert the {@link PropertyBox} values
+	 * @param options Optional write options. The write options are specific for each concrete {@link Datastore}
+	 *        implementation.
+	 * @return A new {@link BulkInsert} operation
+	 */
+	@Override
+	default BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
+		return create(BulkInsert.class).target(target).operationPaths(propertySet).withWriteOptions(options);
+	}
+
+	/**
+	 * Create a {@link BulkUpdate} operation, which can be used to configure and execute a bulk <code>UPDATE</code>
+	 * operation.
+	 * @param target {@link DataTarget} to identify the data entity to update (not null)
+	 * @param options Optional write options. The write options are specific for each concrete {@link Datastore}
+	 *        implementation.
+	 * @return A new {@link BulkUpdate} operation
+	 */
+	@Override
+	default BulkUpdate bulkUpdate(DataTarget<?> target, WriteOption... options) {
+		return create(BulkUpdate.class).target(target).withWriteOptions(options);
+	}
+
+	/**
+	 * Create a {@link BulkDelete} operation, which can be used to configure and execute a bulk <code>DELETE</code>
+	 * operation.
+	 * @param target {@link DataTarget} to identify the data entity to delete (not null)
+	 * @param options Optional write options. The write options are specific for each concrete {@link Datastore}
+	 *        implementation.
+	 * @return A new {@link BulkDelete} operation
+	 */
+	@Override
+	default BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options) {
+		return create(BulkDelete.class).target(target).withWriteOptions(options);
 	}
 
 	// Operations
@@ -194,16 +135,6 @@ public interface Datastore extends ExpressionResolverSupport, DataContextBound, 
 		 */
 		DELETE
 
-	}
-
-	/**
-	 * Represents a <em>write</em> operation option.
-	 * <p>
-	 * The meaning and the available write options are specific of a concrete {@link Datastore} implementation.
-	 * </p>
-	 */
-	public interface WriteOption {
-		// marker interface
 	}
 
 	/**

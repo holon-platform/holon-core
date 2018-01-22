@@ -25,8 +25,8 @@ import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
-import com.holonplatform.core.datastore.Datastore.WriteOption;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -40,16 +40,10 @@ import com.holonplatform.core.query.QueryFilter;
 public interface BulkOperationConfiguration extends ExpressionResolverHandler {
 
 	/**
-	 * Get the operation type.
-	 * @return the operation type.
-	 */
-	OperationType getOperationType();
-
-	/**
 	 * Get the data target.
-	 * @return Optional operation {@link DataTarget}
+	 * @return The operation {@link DataTarget}
 	 */
-	Optional<DataTarget<?>> getTarget();
+	DataTarget<?> getTarget();
 
 	/**
 	 * Get the optional operation restrictions, expressed as a {@link QueryFilter}.
@@ -64,9 +58,25 @@ public interface BulkOperationConfiguration extends ExpressionResolverHandler {
 	List<Map<Path<?>, TypedExpression<?>>> getValues();
 
 	/**
+	 * Get the optional {@link Path}s which has to be used when configuring operation values.
+	 * @return Optional operation value paths
+	 */
+	Optional<Path<?>[]> getOperationPaths();
+
+	/**
 	 * Get the {@link WriteOption}s associated to this operation.
 	 * @return The {@link WriteOption}s set, empty if none
 	 */
 	Set<WriteOption> getWriteOptions();
+
+	/**
+	 * Checks whether given {@link WriteOption} is present in this configuration.
+	 * @param writeOption The write option to look for (not null)
+	 * @return <code>true</code> if the write option is present in this configuration, <code>false</code> otherwise
+	 */
+	default boolean hasWriteOption(WriteOption writeOption) {
+		ObjectUtils.argumentNotNull(writeOption, "Write option must be not null");
+		return getWriteOptions().contains(writeOption);
+	}
 
 }

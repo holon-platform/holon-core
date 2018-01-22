@@ -17,15 +17,10 @@ package com.holonplatform.core.internal.datastore.bulk;
 
 import java.util.Map;
 
-import com.holonplatform.core.Expression;
-import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.datastore.Datastore.OperationType;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
-import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyBox;
 
 /**
@@ -40,31 +35,13 @@ public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<
 
 	/**
 	 * Constructor.
-	 * @param target Operation target (not null)
 	 */
-	public AbstractBulkInsertOperation(DataTarget<?> target) {
-		super(OperationType.INSERT);
-		ObjectUtils.argumentNotNull(target, "Operation data target must be not null");
-		getDefinition().setTarget(target);
-	}
-	
-	/**
-	 * Get the actual operation object.
-	 * @return actual operation object
-	 */
-	protected abstract O getActualOperation();
-
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core.ExpressionResolver)
-	 */
-	@Override
-	public <E extends Expression, R extends Expression> O withExpressionResolver(
-			ExpressionResolver<E, R> expressionResolver) {
-		getDefinition().addExpressionResolver(expressionResolver);
-		return getActualOperation();
+	public AbstractBulkInsertOperation() {
+		super();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(java.util.Map)
 	 */
 	@Override
@@ -73,7 +50,8 @@ public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<
 		return getActualOperation();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(com.holonplatform.core.property.PropertyBox)
 	 */
 	@Override

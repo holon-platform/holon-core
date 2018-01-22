@@ -15,9 +15,15 @@
  */
 package com.holonplatform.core.internal.datastore.bulk;
 
-import com.holonplatform.core.datastore.Datastore.OperationType;
+import com.holonplatform.core.Expression;
+import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.Path;
+import com.holonplatform.core.datastore.DataTarget;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.bulk.BulkOperation;
 import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
+import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PropertySet;
 
 /**
  * Abstract {@link BulkOperation}.
@@ -32,11 +38,85 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O>> implemen
 
 	/**
 	 * Constructor.
-	 * @param operationType Operation type (not null)
 	 */
-	public AbstractBulkOperation(OperationType operationType) {
+	public AbstractBulkOperation() {
 		super();
-		this.definition = BulkOperationDefinition.create(operationType);
+		this.definition = BulkOperationDefinition.create();
+	}
+
+	/**
+	 * Get the actual operation object.
+	 * @return actual operation object
+	 */
+	protected abstract O getActualOperation();
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core
+	 * .ExpressionResolver)
+	 */
+	@Override
+	public <E extends Expression, R extends Expression> O withExpressionResolver(
+			ExpressionResolver<E, R> expressionResolver) {
+		getDefinition().addExpressionResolver(expressionResolver);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#target(com.holonplatform.core.datastore.DataTarget)
+	 */
+	@Override
+	public O target(DataTarget<?> target) {
+		getDefinition().setTarget(target);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#operationPaths(com.holonplatform.core.Path[])
+	 */
+	@Override
+	public O operationPaths(Path<?>[] paths) {
+		getDefinition().setOperationPaths(paths);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.datastore.bulk.BulkOperation#operationPaths(com.holonplatform.core.property.PropertySet)
+	 */
+	@Override
+	public O operationPaths(PropertySet<?> propertySet) {
+		getDefinition().setOperationPaths(propertySet);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#withWriteOption(com.holonplatform.core.datastore.
+	 * DatastoreOperations.WriteOption)
+	 */
+	@Override
+	public O withWriteOption(WriteOption writeOption) {
+		getDefinition().addWriteOption(writeOption);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#withWriteOptions(com.holonplatform.core.datastore.
+	 * DatastoreOperations.WriteOption[])
+	 */
+	@Override
+	public O withWriteOptions(WriteOption... writeOptions) {
+		ObjectUtils.argumentNotNull(writeOptions, "Write options must be not null");
+		for (WriteOption writeOption : writeOptions) {
+			getDefinition().addWriteOption(writeOption);
+		}
+		return getActualOperation();
 	}
 
 	/*

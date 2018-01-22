@@ -13,18 +13,16 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.datastore;
 
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 
 /**
- * DML operation execution clause.
+ * Represents a {@link Datastore} operation which can be executed obtaining an {@link OperationResult} type result.
  * 
- * @param <C> Concrete subtype
- * 
- * @since 5.0.0
+ * @since 5.1.0
  */
-public interface DMLClause<C extends DMLClause<C>> {
+public interface ExecutableOperation {
 
 	/**
 	 * Execute the clause and return the amount of affected data objects
