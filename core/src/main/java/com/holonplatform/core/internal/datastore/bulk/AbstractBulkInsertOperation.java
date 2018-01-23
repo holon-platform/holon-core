@@ -19,9 +19,11 @@ import java.util.Map;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
 
 /**
  * Abstract {@link BulkUpdate} operation.
@@ -30,14 +32,20 @@ import com.holonplatform.core.property.PropertyBox;
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<O>> extends AbstractBulkOperation<O>
-		implements BulkInsertOperation<O> {
+public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<O>> extends
+		AbstractBulkOperation<O, BulkInsertConfiguration, BulkInsertDefinition> implements BulkInsertOperation<O> {
 
-	/**
-	 * Constructor.
-	 */
 	public AbstractBulkInsertOperation() {
-		super();
+		super(new DefaultBulkInsertDefinition());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#getConfiguration()
+	 */
+	@Override
+	public BulkInsertConfiguration getConfiguration() {
+		return getDefinition();
 	}
 
 	/*
@@ -57,6 +65,27 @@ public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<
 	@Override
 	public O add(PropertyBox propertyBox) {
 		getDefinition().addValue(propertyBox, false);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#operationPaths(com.holonplatform.core.Path[])
+	 */
+	@Override
+	public O operationPaths(Path<?>[] paths) {
+		getDefinition().setOperationPaths(paths);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#operationPaths(com.holonplatform.core.property.
+	 * PropertySet)
+	 */
+	@Override
+	public O operationPaths(PropertySet<?> propertySet) {
+		getDefinition().setOperationPaths(propertySet);
 		return getActualOperation();
 	}
 

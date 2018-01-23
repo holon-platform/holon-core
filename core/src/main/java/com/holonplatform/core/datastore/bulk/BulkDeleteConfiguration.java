@@ -15,21 +15,21 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-import com.holonplatform.core.datastore.Datastore;
-import com.holonplatform.core.datastore.DatastoreCommodity;
-import com.holonplatform.core.datastore.ExecutableOperation;
+import java.util.Optional;
+
+import com.holonplatform.core.query.QueryFilter;
 
 /**
- * A {@link BulkOperation} builder to configure a bulk <code>DELETE</code> operation and execute it using the
- * {@link ExecutableOperation} interface methods.
- * <p>
- * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
- * paradigm.
- * </p>
- * 
- * @since 5.0.0
+ * Bulk <code>DELETE</code> operation configuration.
+ *
+ * @since 5.1.0
  */
-public interface BulkDelete
-		extends BulkDeleteOperation<BulkDelete>, ExecutableOperation, DatastoreCommodity {
+public interface BulkDeleteConfiguration extends BulkOperationConfiguration {
 
+	/**
+	 * Get the optional operation restrictions, expressed as a {@link QueryFilter}.
+	 * @return Optional operation filter
+	 */
+	Optional<QueryFilter> getFilter();
+	
 }

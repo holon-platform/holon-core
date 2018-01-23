@@ -16,19 +16,25 @@
 package com.holonplatform.core.datastore.bulk;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
-import com.holonplatform.core.property.PropertySet;
 
 /**
  * Represents a bulk operation.
  * 
  * @param <O> Actual operation type
+ * @param <C> Actual operation configuration type
  *
  * @since 5.1.0
  */
-public interface BulkOperation<O extends BulkOperation<O>> extends ExpressionResolverBuilder<O> {
+public interface BulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration>
+		extends ExpressionResolverBuilder<O> {
+
+	/**
+	 * Get the bulk operation configuration.
+	 * @return the bulk operation configuration
+	 */
+	C getConfiguration();
 
 	/**
 	 * Set the operation {@link DataTarget}.
@@ -36,23 +42,6 @@ public interface BulkOperation<O extends BulkOperation<O>> extends ExpressionRes
 	 * @return this
 	 */
 	O target(DataTarget<?> target);
-
-	/**
-	 * Set the paths to be used for operation values.
-	 * @param paths Operation value paths
-	 * @return this
-	 */
-	O operationPaths(Path<?>[] paths);
-
-	/**
-	 * Set the paths to be used for operation values using a {@link PropertySet}.
-	 * <p>
-	 * Each property of the property set which corresponds to a {@link Path} will be used as operation path.
-	 * </p>
-	 * @param propertySet The property set to set (not null)
-	 * @return this
-	 */
-	O operationPaths(PropertySet<?> propertySet);
 
 	/**
 	 * Add a {@link WriteOption} to this operation.
@@ -67,11 +56,5 @@ public interface BulkOperation<O extends BulkOperation<O>> extends ExpressionRes
 	 * @return this
 	 */
 	O withWriteOptions(WriteOption... writeOptions);
-
-	/**
-	 * Get the bulk operation configuration.
-	 * @return the bulk operation configuration
-	 */
-	BulkOperationConfiguration getConfiguration();
 
 }

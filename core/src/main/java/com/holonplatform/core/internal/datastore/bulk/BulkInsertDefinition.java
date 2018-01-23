@@ -13,44 +13,42 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.internal.datastore.bulk;
 
 import java.util.Map;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * A <code>INSERT</code> {@link BulkOperation}.
- * 
- * @param <O> Actual operation type
+ * Bulk <code>INSERT</code> operation definition.
  *
  * @since 5.1.0
  */
-public interface BulkInsertOperation<O extends BulkInsertOperation<O>> extends BulkOperation<O, BulkInsertConfiguration> {
+public interface BulkInsertDefinition extends BulkOperationDefinition, BulkInsertConfiguration {
 
 	/**
-	 * Add a path - value expression map to insert.
-	 * @param values Value map to add to the bulk insert operation (not null)
-	 * @return this
+	 * Add an operation value.
+	 * @param value The value to add (not null)
 	 */
-	O add(Map<Path<?>, TypedExpression<?>> values);
+	void addValue(Map<Path<?>, TypedExpression<?>> value);
 
 	/**
-	 * Add a {@link PropertyBox} to insert.
-	 * @param propertyBox PropertyBox to add to the bulk insert operation (not null)
-	 * @return this
+	 * Add an operation value using a {@link PropertyBox}.
+	 * @param value The value to add (not null)
+	 * @param includeNullValues Whether to set <code>null</code> path values in the PropertyBox to the <code>null</code>
+	 *        value
 	 */
-	O add(PropertyBox propertyBox);
+	void addValue(PropertyBox value, boolean includeNullValues);
 
 	/**
 	 * Set the paths to be used for operation values.
 	 * @param paths Operation value paths
-	 * @return this
 	 */
-	O operationPaths(Path<?>[] paths);
+	void setOperationPaths(Path<?>[] paths);
 
 	/**
 	 * Set the paths to be used for operation values using a {@link PropertySet}.
@@ -58,8 +56,7 @@ public interface BulkInsertOperation<O extends BulkInsertOperation<O>> extends B
 	 * Each property of the property set which corresponds to a {@link Path} will be used as operation path.
 	 * </p>
 	 * @param propertySet The property set to set (not null)
-	 * @return this
 	 */
-	O operationPaths(PropertySet<?> propertySet);
-
+	void setOperationPaths(PropertySet<?> propertySet);
+	
 }

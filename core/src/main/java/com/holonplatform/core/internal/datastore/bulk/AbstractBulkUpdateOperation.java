@@ -15,13 +15,11 @@
  */
 package com.holonplatform.core.internal.datastore.bulk;
 
-import java.util.HashMap;
-
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
+import com.holonplatform.core.datastore.bulk.BulkUpdateConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
-import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.QueryFilter;
 
@@ -32,14 +30,20 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<O>> extends AbstractBulkOperation<O>
-		implements BulkUpdateOperation<O> {
+public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<O>> extends
+		AbstractBulkOperation<O, BulkUpdateConfiguration, BulkUpdateDefinition> implements BulkUpdateOperation<O> {
 
-	/**
-	 * Constructor.
-	 */
 	public AbstractBulkUpdateOperation() {
-		super();
+		super(new DefaultBulkUpdateDefinition());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#getConfiguration()
+	 */
+	@Override
+	public BulkUpdateConfiguration getConfiguration() {
+		return getDefinition();
 	}
 
 	/*
@@ -59,12 +63,7 @@ public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<
 	 */
 	@Override
 	public <T> O set(Path<T> path, TypedExpression<? super T> expression) {
-		ObjectUtils.argumentNotNull(path, "Path must be not null");
-		ObjectUtils.argumentNotNull(expression, "Expression must be not null");
-		if (getDefinition().getValues().isEmpty()) {
-			getDefinition().addValue(new HashMap<>());
-		}
-		getDefinition().getValues().get(0).put(path, expression);
+		getDefinition().addValue(path, expression);
 		return getActualOperation();
 	}
 
@@ -75,9 +74,7 @@ public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<
 	 */
 	@Override
 	public O set(PropertyBox propertyBox, boolean includeNullValues) {
-		ObjectUtils.argumentNotNull(propertyBox, "PropertyBox must be not null");
-		getDefinition().getValues().clear();
-		getDefinition().addValue(propertyBox, includeNullValues);
+		getDefinition().setValue(propertyBox, includeNullValues);
 		return getActualOperation();
 	}
 

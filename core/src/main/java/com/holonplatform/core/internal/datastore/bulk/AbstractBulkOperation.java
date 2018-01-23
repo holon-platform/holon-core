@@ -17,38 +17,51 @@ package com.holonplatform.core.internal.datastore.bulk;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.bulk.BulkOperation;
 import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PropertySet;
 
 /**
  * Abstract {@link BulkOperation}.
  * 
  * @param <O> Actual operation type
+ * @param <C> Actual operation configuration type
+ * @param <D> Actual operation definition type
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkOperation<O extends BulkOperation<O>> implements BulkOperation<O> {
+public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration, D extends BulkOperationDefinition> implements BulkOperation<O, C> {
 
-	private final BulkOperationDefinition definition;
+	/**
+	 * Bulk operation definition
+	 */
+	private final D definition;
 
 	/**
 	 * Constructor.
+	 * @param definition Operation definition (not null)
 	 */
-	public AbstractBulkOperation() {
+	public AbstractBulkOperation(D definition) {
 		super();
-		this.definition = BulkOperationDefinition.create();
-	}
+		ObjectUtils.argumentNotNull(definition, "Operation definition must be not null");
+		this.definition = definition;
+	}	
 
 	/**
 	 * Get the actual operation object.
 	 * @return actual operation object
 	 */
 	protected abstract O getActualOperation();
+
+	/**
+	 * Get the bulk operation definition.
+	 * @return the bulk operation definition
+	 */
+	protected D getDefinition() {
+		return definition;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -75,27 +88,6 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O>> implemen
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#operationPaths(com.holonplatform.core.Path[])
-	 */
-	@Override
-	public O operationPaths(Path<?>[] paths) {
-		getDefinition().setOperationPaths(paths);
-		return getActualOperation();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.datastore.bulk.BulkOperation#operationPaths(com.holonplatform.core.property.PropertySet)
-	 */
-	@Override
-	public O operationPaths(PropertySet<?> propertySet) {
-		getDefinition().setOperationPaths(propertySet);
-		return getActualOperation();
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#withWriteOption(com.holonplatform.core.datastore.
 	 * DatastoreOperations.WriteOption)
 	 */
@@ -117,23 +109,6 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O>> implemen
 			getDefinition().addWriteOption(writeOption);
 		}
 		return getActualOperation();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#getConfiguration()
-	 */
-	@Override
-	public BulkOperationConfiguration getConfiguration() {
-		return definition;
-	}
-
-	/**
-	 * Get the operation definition.
-	 * @return the operation definition
-	 */
-	protected BulkOperationDefinition getDefinition() {
-		return definition;
 	}
 
 }

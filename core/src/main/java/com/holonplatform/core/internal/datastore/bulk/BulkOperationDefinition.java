@@ -15,17 +15,10 @@
  */
 package com.holonplatform.core.internal.datastore.bulk;
 
-import java.util.Map;
-
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
-import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
-import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.QueryFilter;
 
 /**
  * {@link BulkOperationConfiguration} definition with configuration setters.
@@ -42,52 +35,9 @@ public interface BulkOperationDefinition extends BulkOperationConfiguration, Exp
 	<T> void setTarget(DataTarget<T> target);
 
 	/**
-	 * Add an operation restriction filter.
-	 * @param filter the filter to add (not null)
-	 */
-	void addFilter(QueryFilter filter);
-
-	/**
-	 * Add an operation value.
-	 * @param value The value to add (not null)
-	 */
-	void addValue(Map<Path<?>, TypedExpression<?>> value);
-
-	/**
-	 * Add an operation value using a {@link PropertyBox}.
-	 * @param value The value to add (not null)
-	 * @param includeNullValues Whether to set <code>null</code> path values in the PropertyBox to the <code>null</code>
-	 *        value
-	 */
-	void addValue(PropertyBox value, boolean includeNullValues);
-
-	/**
-	 * Set the paths to be used for operation values.
-	 * @param paths Operation value paths
-	 */
-	void setOperationPaths(Path<?>[] paths);
-
-	/**
-	 * Set the paths to be used for operation values using a {@link PropertySet}.
-	 * <p>
-	 * Each property of the property set which corresponds to a {@link Path} will be used as operation path.
-	 * </p>
-	 * @param propertySet The property set to set (not null)
-	 */
-	void setOperationPaths(PropertySet<?> propertySet);
-
-	/**
 	 * Add a {@link WriteOption} to this operation.
 	 * @param writeOption The write option to add (not null)
 	 */
 	void addWriteOption(WriteOption writeOption);
-
-	/**
-	 * Create a new default {@link BulkOperationDefinition}.
-	 * @return A new {@link BulkOperationDefinition}
-	 */
-	static BulkOperationDefinition create() {
-		return new DefaultBulkOperationDefinition();
-	}
 
 }
