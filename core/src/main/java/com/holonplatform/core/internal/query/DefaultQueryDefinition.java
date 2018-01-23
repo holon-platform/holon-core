@@ -18,7 +18,6 @@ package com.holonplatform.core.internal.query;
 import java.util.Optional;
 
 import com.holonplatform.core.Expression;
-import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 import com.holonplatform.core.ExpressionResolverRegistry;
@@ -247,5 +246,11 @@ public class DefaultQueryDefinition extends DefaultParameterSet implements Query
 		return "DefaultQueryDefinition [target=" + target + ", limit=" + limit + ", offset=" + offset + ", sort=" + sort
 				+ ", filter=" + filter + ", aggregation=" + aggregation + "]";
 	}
+
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.Expression#validate()
+	 */
+	@Override
+	public void validate() throws InvalidExpressionException {}
 
 }

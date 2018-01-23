@@ -30,8 +30,6 @@ import com.holonplatform.core.query.QueryProjection;
  */
 public class DefaultSubQuery<T> extends AbstractQueryBuilder<SubQuery<T>, QueryDefinition> implements SubQuery<T> {
 
-	private static final long serialVersionUID = -4066833695954046808L;
-
 	/**
 	 * Selection type
 	 */
@@ -49,6 +47,14 @@ public class DefaultSubQuery<T> extends AbstractQueryBuilder<SubQuery<T>, QueryD
 	public DefaultSubQuery(Class<? extends T> selectionType) {
 		super(new DefaultQueryDefinition());
 		this.expressionType = selectionType;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
+	 */
+	@Override
+	protected SubQuery<T> getActualBuilder() {
+		return this;
 	}
 
 	@Override

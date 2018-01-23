@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.Query;
-import com.holonplatform.core.query.QueryExecution;
+import com.holonplatform.core.query.QueryAdapter;
 import com.holonplatform.core.query.QueryProjection;
 
 /**
@@ -51,6 +51,14 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 		this.queryAdapter = queryAdapter;
 	}
 
+	/* (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
+	 */
+	@Override
+	protected Query getActualBuilder() {
+		return this;
+	}
+
 	/**
 	 * Constructor
 	 * @param datastore Datastore (not null)
@@ -79,7 +87,7 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	@Override
 	public <R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException {
 		try {
-			return getQueryAdapter().stream(QueryExecution.create(getQueryDefinition(), projection));
+			return getQueryAdapter().stream(getQueryDefinition(), projection);
 		} catch (QueryExecutionException e) {
 			throw e;
 		} catch (Exception e) {

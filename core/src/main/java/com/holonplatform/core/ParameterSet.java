@@ -206,7 +206,7 @@ public interface ParameterSet extends Serializable {
 		Builder<S> parameter(String name, Object value);
 
 		/**
-		 * Add a parameter using a {@link ConfigProperty} an {@link ConfigProperty#getKey()} as parameter name
+		 * Add a parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name
 		 * @param <T> Property type
 		 * @param property ConfigProperty (not null) to obtain parameter name
 		 * @param value Parameter value

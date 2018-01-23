@@ -17,6 +17,7 @@ package com.holonplatform.core.query;
 
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DataTarget.DataTargetSupport;
 import com.holonplatform.core.query.QueryAggregation.QueryAggregationSupport;
@@ -71,5 +72,14 @@ public interface QueryBuilder<Q extends QueryBuilder<Q>> extends QueryFilterSupp
 	 * @return this
 	 */
 	Q parameter(String name, Object value);
+
+	/**
+	 * Add a parameter to query using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name.
+	 * @param <T> Config property type
+	 * @param property The configuration property (not null)
+	 * @param value Parameter value
+	 * @return this
+	 */
+	<T> Q parameter(ConfigProperty<T> property, T value);
 
 }
