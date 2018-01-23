@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.TemporalFunction.Month;
 
 /**
@@ -31,7 +31,7 @@ public class MonthFunction extends AbstractIntegerTemporalFunction implements Mo
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public MonthFunction(QueryExpression<?> argument) {
+	public MonthFunction(TypedExpression<?> argument) {
 		super(argument);
 		setMinimumArguments(1);
 		setMaximumArguments(1);

@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.internal.query;
 
+import com.holonplatform.core.query.ConstantExpressionProjection;
+
 /**
  * Default {@link ConstantExpressionProjection} implementation.
  *

@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.internal.query.filter;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -36,7 +36,7 @@ public class NotNullFilter extends AbstractOperationQueryFilter {
 	 * @param expression Operand expression
 	 */
 	@SuppressWarnings("unchecked")
-	public NotNullFilter(QueryExpression<?> expression) {
+	public NotNullFilter(TypedExpression<?> expression) {
 		super(expression, FilterOperator.NOT_NULL);
 	}
 

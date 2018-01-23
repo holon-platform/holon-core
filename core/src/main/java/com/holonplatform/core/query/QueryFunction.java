@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.function.AvgFunction;
 import com.holonplatform.core.internal.query.function.CountFunction;
 import com.holonplatform.core.internal.query.function.MaxFunction;
@@ -40,7 +41,7 @@ import com.holonplatform.core.query.TemporalFunction.Month;
 import com.holonplatform.core.query.TemporalFunction.Year;
 
 /**
- * Represents a <em>function</em> to be used as a {@link QueryExpression} and/or {@link QueryProjection}.
+ * Represents a <em>function</em> expression. A function can be used as {@link QueryProjection} too.
  * 
  * @param <T> Function result type
  * @param <A> Function arguments type
@@ -50,10 +51,10 @@ import com.holonplatform.core.query.TemporalFunction.Year;
 public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection<T> {
 
 	/**
-	 * If the function supports {@link QueryExpression} arguments, returns the arguments list.
+	 * If the function supports expression arguments, returns the arguments list.
 	 * @return Function arguments, an empty list if none
 	 */
-	List<QueryExpression<? extends A>> getExpressionArguments();
+	List<TypedExpression<? extends A>> getExpressionArguments();
 
 	/**
 	 * A {@link QueryFunction} which do not support any argument.
@@ -67,7 +68,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @see com.holonplatform.core.query.QueryFunction#getExpressionArguments()
 		 */
 		@Override
-		default List<QueryExpression<? extends Void>> getExpressionArguments() {
+		default List<TypedExpression<? extends Void>> getExpressionArguments() {
 			return Collections.emptyList();
 		}
 
@@ -105,7 +106,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Count} function
 	 */
-	public static Count count(QueryExpression<?> argument) {
+	public static Count count(TypedExpression<?> argument) {
 		return Count.create(argument);
 	}
 
@@ -114,7 +115,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Avg} function
 	 */
-	public static Avg avg(QueryExpression<? extends Number> argument) {
+	public static Avg avg(TypedExpression<? extends Number> argument) {
 		return Avg.create(argument);
 	}
 
@@ -124,7 +125,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Min} function
 	 */
-	public static <T> Min<T> min(QueryExpression<T> argument) {
+	public static <T> Min<T> min(TypedExpression<T> argument) {
 		return Min.create(argument);
 	}
 
@@ -134,7 +135,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Max} function
 	 */
-	public static <T> Max<T> max(QueryExpression<T> argument) {
+	public static <T> Max<T> max(TypedExpression<T> argument) {
 		return Max.create(argument);
 	}
 
@@ -144,7 +145,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Sum} function
 	 */
-	public static <T extends Number> Sum<T> sum(QueryExpression<T> argument) {
+	public static <T extends Number> Sum<T> sum(TypedExpression<T> argument) {
 		return Sum.create(argument);
 	}
 
@@ -155,7 +156,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Lower} function
 	 */
-	public static Lower lower(QueryExpression<String> argument) {
+	public static Lower lower(TypedExpression<String> argument) {
 		return Lower.create(argument);
 	}
 
@@ -164,7 +165,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A new {@link Lower} function
 	 */
-	public static Upper upper(QueryExpression<String> argument) {
+	public static Upper upper(TypedExpression<String> argument) {
 		return Upper.create(argument);
 	}
 
@@ -209,7 +210,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A function to extract the <em>year</em> part of a temporal data type.
 	 */
-	public static Year year(QueryExpression<?> argument) {
+	public static Year year(TypedExpression<?> argument) {
 		return Year.create(argument);
 	}
 
@@ -221,7 +222,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A function to extract the <em>month</em> part of a temporal data type.
 	 */
-	public static Month month(QueryExpression<?> argument) {
+	public static Month month(TypedExpression<?> argument) {
 		return Month.create(argument);
 	}
 
@@ -233,7 +234,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A function to extract the <em>day</em> part of a temporal data type.
 	 */
-	public static Day day(QueryExpression<?> argument) {
+	public static Day day(TypedExpression<?> argument) {
 		return Day.create(argument);
 	}
 
@@ -245,7 +246,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @param argument Function argument (not null)
 	 * @return A function to extract the <em>hour</em> part of a temporal data type.
 	 */
-	public static Hour hour(QueryExpression<?> argument) {
+	public static Hour hour(TypedExpression<?> argument) {
 		return Hour.create(argument);
 	}
 
@@ -264,7 +265,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @param argument Function argument (not null)
 		 * @return New {@link Count} function instance
 		 */
-		static Count create(QueryExpression<?> argument) {
+		static Count create(TypedExpression<?> argument) {
 			return new CountFunction(argument);
 		}
 
@@ -282,7 +283,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @param argument Function argument (not null)
 		 * @return New {@link Min} function instance
 		 */
-		static <T> Min<T> create(QueryExpression<T> argument) {
+		static <T> Min<T> create(TypedExpression<T> argument) {
 			return new MinFunction<>(argument);
 		}
 
@@ -300,7 +301,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @param argument Function argument (not null)
 		 * @return New {@link Max} function instance
 		 */
-		static <T> Max<T> create(QueryExpression<T> argument) {
+		static <T> Max<T> create(TypedExpression<T> argument) {
 			return new MaxFunction<>(argument);
 		}
 
@@ -319,7 +320,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @param argument Function argument (not null)
 		 * @return New {@link Avg} function instance
 		 */
-		static Avg create(QueryExpression<? extends Number> argument) {
+		static Avg create(TypedExpression<? extends Number> argument) {
 			return new AvgFunction(argument);
 		}
 
@@ -337,7 +338,7 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 		 * @param argument Function argument (not null)
 		 * @return New {@link Sum} function instance
 		 */
-		static <T extends Number> Sum<T> create(QueryExpression<T> argument) {
+		static <T extends Number> Sum<T> create(TypedExpression<T> argument) {
 			return new SumFunction<>(argument);
 		}
 

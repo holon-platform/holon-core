@@ -17,9 +17,9 @@ package com.holonplatform.core.internal.query.filter;
 
 import java.util.Optional;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor.VisitableQueryFilter;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.query.QueryExpression;
 
 /**
  * Abstract {@link OperationQueryFilter} implementation.
@@ -35,7 +35,7 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	/**
 	 * Left hand operand
 	 */
-	private final QueryExpression<T> left;
+	private final TypedExpression<T> left;
 
 	/**
 	 * Operator
@@ -45,14 +45,14 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	/**
 	 * Expression argument
 	 */
-	private final QueryExpression<? super T> right;
+	private final TypedExpression<? super T> right;
 
 	/**
 	 * Constructor with left hand operand only.
 	 * @param left Left hand operand (not null)
 	 * @param operator Operator (not null)
 	 */
-	public AbstractOperationQueryFilter(QueryExpression<T> left, FilterOperator operator) {
+	public AbstractOperationQueryFilter(TypedExpression<T> left, FilterOperator operator) {
 		this(left, operator, null);
 	}
 
@@ -62,8 +62,8 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	 * @param operator Operator (not null)
 	 * @param right Right hand operand
 	 */
-	public AbstractOperationQueryFilter(QueryExpression<T> left, FilterOperator operator,
-			QueryExpression<? super T> right) {
+	public AbstractOperationQueryFilter(TypedExpression<T> left, FilterOperator operator,
+			TypedExpression<? super T> right) {
 		super();
 		ObjectUtils.argumentNotNull(left, "Left hand operand must be not null");
 		ObjectUtils.argumentNotNull(operator, "Operator must be not null");
@@ -77,7 +77,7 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	 * @see com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getLeftOperand()
 	 */
 	@Override
-	public QueryExpression<T> getLeftOperand() {
+	public TypedExpression<T> getLeftOperand() {
 		return left;
 	}
 
@@ -86,7 +86,7 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	 * @see com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getRightOperand()
 	 */
 	@Override
-	public Optional<QueryExpression<? super T>> getRightOperand() {
+	public Optional<TypedExpression<? super T>> getRightOperand() {
 		return Optional.ofNullable(right);
 	}
 

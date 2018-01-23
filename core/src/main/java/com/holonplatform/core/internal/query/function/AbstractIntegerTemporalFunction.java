@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.TemporalFunction;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AbstractIntegerTemporalFunction extends AbstractPropertyQu
 
 	private static final long serialVersionUID = 7911584185529712160L;
 
-	public AbstractIntegerTemporalFunction(QueryExpression<?> argument) {
+	public AbstractIntegerTemporalFunction(TypedExpression<?> argument) {
 		super(argument, Integer.class);
 	}
 

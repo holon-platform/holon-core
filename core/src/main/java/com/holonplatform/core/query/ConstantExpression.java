@@ -15,13 +15,12 @@
  */
 package com.holonplatform.core.query;
 
-import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
 
 /**
- * Constant value {@link QueryExpression}, with {@link ExpressionValueConverter} support.
+ * Constant value expression, with {@link ExpressionValueConverter} support.
  * 
  * @param <T> Expression type
  * @param <E> Concrete value type
@@ -30,21 +29,7 @@ import com.holonplatform.core.internal.query.DefaultConstantExpression;
  * 
  * @see CollectionExpression
  */
-public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterExpression<E> {
-
-	/**
-	 * Get the constant expression value
-	 * @return The expression value
-	 */
-	T getValue();
-
-	/**
-	 * Get the model data type value, using the {@link ExpressionValueConverter} to convert constant expression value,
-	 * if available. If an {@link ExpressionValueConverter} is not available, the original expression value is returned.
-	 * @return The model-converted expression value if an {@link ExpressionValueConverter} is available, otherwise
-	 *         {@link #getValue()} is returned.
-	 */
-	Object getModelValue();
+public interface ConstantExpression<T> extends ConstantConverterExpression<T, T> {
 
 	// builders
 
@@ -54,7 +39,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @param value Constant value
 	 * @return A new constant expression
 	 */
-	static <T> ConstantExpression<T, T> create(T value) {
+	static <T> ConstantExpression<T> create(T value) {
 		return new DefaultConstantExpression<>(value);
 	}
 
@@ -66,7 +51,7 @@ public interface ConstantExpression<T, E> extends QueryExpression<E>, ConverterE
 	 * @param value Constant value
 	 * @return A new constant expression
 	 */
-	static <T> ConstantExpression<T, T> create(TypedExpression<T> expression, T value) {
+	static <T> ConstantExpression<T> create(TypedExpression<T> expression, T value) {
 		return new DefaultConstantExpression<>(expression, value);
 	}
 

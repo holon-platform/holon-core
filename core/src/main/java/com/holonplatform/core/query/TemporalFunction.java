@@ -19,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.function.CurrentDateFunction;
 import com.holonplatform.core.internal.query.function.CurrentLocalDateFunction;
 import com.holonplatform.core.internal.query.function.CurrentLocalDateTimeFunction;
@@ -112,7 +113,7 @@ public interface TemporalFunction<T> extends QueryFunction<T, Object> {
 		 * @param argument Function argument (not null)
 		 * @return New {@link Year} function instance
 		 */
-		static Year create(QueryExpression<?> argument) {
+		static Year create(TypedExpression<?> argument) {
 			return new YearFunction(argument);
 		}
 
@@ -132,7 +133,7 @@ public interface TemporalFunction<T> extends QueryFunction<T, Object> {
 		 * @param argument Function argument (not null)
 		 * @return New {@link Month} function instance
 		 */
-		static Month create(QueryExpression<?> argument) {
+		static Month create(TypedExpression<?> argument) {
 			return new MonthFunction(argument);
 		}
 
@@ -152,7 +153,7 @@ public interface TemporalFunction<T> extends QueryFunction<T, Object> {
 		 * @param argument Function argument (not null)
 		 * @return New {@link Day} function instance
 		 */
-		static Day create(QueryExpression<?> argument) {
+		static Day create(TypedExpression<?> argument) {
 			return new DayFunction(argument);
 		}
 
@@ -172,7 +173,7 @@ public interface TemporalFunction<T> extends QueryFunction<T, Object> {
 		 * @param argument Function argument (not null)
 		 * @return New {@link Hour} function instance
 		 */
-		static Hour create(QueryExpression<?> argument) {
+		static Hour create(TypedExpression<?> argument) {
 			return new HourFunction(argument);
 		}
 

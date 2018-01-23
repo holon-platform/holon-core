@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.internal.query.filter;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -37,7 +37,7 @@ public class NotInFilter<T> extends AbstractOperationQueryFilter<T> {
 	 * @param left Left operand
 	 * @param right Right operand
 	 */
-	public NotInFilter(QueryExpression<T> left, QueryExpression<? super T> right) {
+	public NotInFilter(TypedExpression<T> left, TypedExpression<? super T> right) {
 		super(left, FilterOperator.NOT_IN, right);
 	}
 

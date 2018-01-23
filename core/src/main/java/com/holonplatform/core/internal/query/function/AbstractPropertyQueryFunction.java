@@ -19,12 +19,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyValueConverter;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction.PropertyQueryFunction;
 
 /**
@@ -72,7 +72,7 @@ public abstract class AbstractPropertyQueryFunction<T, A> extends AbstractQueryF
 	 * @param resultType Function result type (not null)
 	 */
 	@SuppressWarnings("unchecked")
-	public AbstractPropertyQueryFunction(QueryExpression<? extends A> argument, Class<? extends T> resultType) {
+	public AbstractPropertyQueryFunction(TypedExpression<? extends A> argument, Class<? extends T> resultType) {
 		super(argument);
 		ObjectUtils.argumentNotNull(resultType, "Function result type must be not null");
 		this.resultType = resultType;

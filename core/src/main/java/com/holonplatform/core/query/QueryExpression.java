@@ -66,7 +66,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter eq(QueryExpression<? super T> expression) {
+	default QueryFilter eq(TypedExpression<? super T> expression) {
 		return QueryFilter.eq(this, expression);
 	}
 
@@ -85,7 +85,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter neq(QueryExpression<? super T> expression) {
+	default QueryFilter neq(TypedExpression<? super T> expression) {
 		return QueryFilter.neq(this, expression);
 	}
 
@@ -104,7 +104,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter lt(QueryExpression<? super T> expression) {
+	default QueryFilter lt(TypedExpression<? super T> expression) {
 		return QueryFilter.lt(this, expression);
 	}
 
@@ -123,7 +123,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter loe(QueryExpression<? super T> expression) {
+	default QueryFilter loe(TypedExpression<? super T> expression) {
 		return QueryFilter.loe(this, expression);
 	}
 
@@ -142,7 +142,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter gt(QueryExpression<? super T> expression) {
+	default QueryFilter gt(TypedExpression<? super T> expression) {
 		return QueryFilter.gt(this, expression);
 	}
 
@@ -162,7 +162,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter goe(QueryExpression<? super T> expression) {
+	default QueryFilter goe(TypedExpression<? super T> expression) {
 		return QueryFilter.goe(this, expression);
 	}
 
@@ -191,7 +191,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter in(QueryExpression<? super T> expression) {
+	default QueryFilter in(TypedExpression<? super T> expression) {
 		return QueryFilter.in(this, expression);
 	}
 
@@ -220,7 +220,7 @@ public interface QueryExpression<T> extends TypedExpression<T> {
 	 * @param expression Right operand expression (not null)
 	 * @return The QueryFilter
 	 */
-	default QueryFilter nin(QueryExpression<? super T> expression) {
+	default QueryFilter nin(TypedExpression<? super T> expression) {
 		return QueryFilter.nin(this, expression);
 	}
 

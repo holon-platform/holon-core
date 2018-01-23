@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.TemporalFunction.Day;
 
 /**
@@ -31,7 +31,7 @@ public class DayFunction extends AbstractIntegerTemporalFunction implements Day 
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public DayFunction(QueryExpression<?> argument) {
+	public DayFunction(TypedExpression<?> argument) {
 		super(argument);
 		setMinimumArguments(1);
 		setMaximumArguments(1);

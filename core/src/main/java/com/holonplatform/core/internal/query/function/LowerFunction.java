@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.StringFunction.Lower;
 
 /**
@@ -31,7 +31,7 @@ public class LowerFunction extends AbstractPropertyQueryFunction<String, String>
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public LowerFunction(QueryExpression<String> argument) {
+	public LowerFunction(TypedExpression<String> argument) {
 		super(argument, argument.getType());
 		setMinimumArguments(1);
 		setMaximumArguments(1);

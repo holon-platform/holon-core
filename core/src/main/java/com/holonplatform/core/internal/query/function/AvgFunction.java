@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.QueryFunction.Avg;
 
 /**
@@ -31,7 +31,7 @@ public class AvgFunction extends AbstractPropertyQueryFunction<Double, Number> i
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public AvgFunction(QueryExpression<? extends Number> argument) {
+	public AvgFunction(TypedExpression<? extends Number> argument) {
 		super(argument, Double.class);
 		setMinimumArguments(1);
 		setMaximumArguments(1);

@@ -13,10 +13,9 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query;
+package com.holonplatform.core.query;
 
-import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.QueryProjection;
+import com.holonplatform.core.internal.query.DefaultConstantExpressionProjection;
 
 /**
  * A {@link QueryProjection} using a {@link ConstantExpression} as selection.
@@ -25,7 +24,7 @@ import com.holonplatform.core.query.QueryProjection;
  *
  * @since 5.0.0
  */
-public interface ConstantExpressionProjection<T> extends ConstantExpression<T, T>, QueryProjection<T> {
+public interface ConstantExpressionProjection<T> extends ConstantExpression<T>, QueryProjection<T> {
 
 	/**
 	 * Create a {@link ConstantExpressionProjection} using given constant value.

@@ -30,7 +30,7 @@ import com.holonplatform.core.query.ConstantExpression;
  * 
  * @since 5.0.0
  */
-public class DefaultConstantExpression<T> extends AbstractConverterExpression<T> implements ConstantExpression<T, T> {
+public class DefaultConstantExpression<T> extends AbstractConverterExpression<T> implements ConstantExpression<T> {
 
 	/*
 	 * Constant value (immutable)

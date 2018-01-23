@@ -18,8 +18,8 @@ package com.holonplatform.core.internal.query.function;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFunction;
 
 /**
@@ -35,7 +35,7 @@ public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>
 	/**
 	 * Function arguments
 	 */
-	private final List<QueryExpression<? extends A>> arguments = new LinkedList<>();
+	private final List<TypedExpression<? extends A>> arguments = new LinkedList<>();
 
 	private int minimumArguments = 0;
 	private int maximumArguments = -1;
@@ -51,7 +51,7 @@ public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>
 	 * Constructor with single argument.
 	 * @param argument Function argument (not null)
 	 */
-	public AbstractQueryFunction(QueryExpression<? extends A> argument) {
+	public AbstractQueryFunction(TypedExpression<? extends A> argument) {
 		super();
 		ObjectUtils.argumentNotNull(argument, "Function argument must be not null");
 		this.arguments.add(argument);
@@ -62,10 +62,10 @@ public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>
 	 * @param arguments Function arguments
 	 */
 	@SafeVarargs
-	public AbstractQueryFunction(QueryExpression<? extends A>... arguments) {
+	public AbstractQueryFunction(TypedExpression<? extends A>... arguments) {
 		super();
 		if (arguments != null) {
-			for (QueryExpression<? extends A> argument : arguments) {
+			for (TypedExpression<? extends A> argument : arguments) {
 				this.arguments.add(argument);
 			}
 		}
@@ -108,7 +108,7 @@ public abstract class AbstractQueryFunction<T, A> implements QueryFunction<T, A>
 	 * @see com.holonplatform.core.query.QueryFunction#getExpressionArguments()
 	 */
 	@Override
-	public List<QueryExpression<? extends A>> getExpressionArguments() {
+	public List<TypedExpression<? extends A>> getExpressionArguments() {
 		return arguments;
 	}
 

@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.QueryFunction.Min;
 
 /**
@@ -33,7 +33,7 @@ public class MinFunction<T> extends AbstractPropertyQueryFunction<T, T> implemen
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public MinFunction(QueryExpression<T> argument) {
+	public MinFunction(TypedExpression<T> argument) {
 		super(argument, argument.getType());
 		setMinimumArguments(1);
 		setMaximumArguments(1);

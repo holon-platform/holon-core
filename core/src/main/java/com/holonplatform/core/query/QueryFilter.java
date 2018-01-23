@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.CallbackExpressionResolver;
 import com.holonplatform.core.internal.query.filter.AndFilter;
 import com.holonplatform.core.internal.query.filter.BetweenFilter;
@@ -85,7 +86,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter isNull(QueryExpression<T> expression) {
+	static <T> QueryFilter isNull(TypedExpression<T> expression) {
 		return new NullFilter(expression);
 	}
 
@@ -96,7 +97,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter isNotNull(QueryExpression<T> expression) {
+	static <T> QueryFilter isNotNull(TypedExpression<T> expression) {
 		return new NotNullFilter(expression);
 	}
 
@@ -108,7 +109,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter eq(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter eq(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new EqualFilter<>(left, right);
 	}
 
@@ -120,7 +121,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter eq(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter eq(TypedExpression<T> expression, T value) {
 		return new EqualFilter<>(expression, ConstantExpression.create(expression, value));
 	}
 
@@ -132,7 +133,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter neq(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter neq(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new NotEqualFilter<>(left, right);
 	}
 
@@ -144,7 +145,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter neq(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter neq(TypedExpression<T> expression, T value) {
 		return new NotEqualFilter<>(expression, ConstantExpression.create(expression, value));
 	}
 
@@ -157,7 +158,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lessThan(QueryExpression<T> left, QueryExpression<? super T> right, boolean includeEquals) {
+	static <T> QueryFilter lessThan(TypedExpression<T> left, TypedExpression<? super T> right, boolean includeEquals) {
 		return new LessFilter<>(left, right, includeEquals);
 	}
 
@@ -170,7 +171,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lessThan(QueryExpression<T> expression, T value, boolean includeEquals) {
+	static <T> QueryFilter lessThan(TypedExpression<T> expression, T value, boolean includeEquals) {
 		return new LessFilter<>(expression, ConstantExpression.create(expression, value), includeEquals);
 	}
 
@@ -182,7 +183,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lt(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter lt(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return lessThan(left, right, false);
 	}
 
@@ -194,7 +195,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lt(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter lt(TypedExpression<T> expression, T value) {
 		return lessThan(expression, ConstantExpression.create(expression, value), false);
 	}
 
@@ -206,7 +207,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter loe(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter loe(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return lessThan(left, right, true);
 	}
 
@@ -218,7 +219,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter loe(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter loe(TypedExpression<T> expression, T value) {
 		return lessThan(expression, ConstantExpression.create(expression, value), true);
 	}
 
@@ -231,7 +232,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter greaterThan(QueryExpression<T> left, QueryExpression<? super T> right,
+	static <T> QueryFilter greaterThan(TypedExpression<T> left, TypedExpression<? super T> right,
 			boolean includeEquals) {
 		return new GreaterFilter<>(left, right, includeEquals);
 	}
@@ -245,7 +246,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter greaterThan(QueryExpression<T> expression, T value, boolean includeEquals) {
+	static <T> QueryFilter greaterThan(TypedExpression<T> expression, T value, boolean includeEquals) {
 		return new GreaterFilter<>(expression, ConstantExpression.create(expression, value), includeEquals);
 	}
 
@@ -257,7 +258,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter gt(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter gt(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return greaterThan(left, right, false);
 	}
 
@@ -269,7 +270,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter gt(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter gt(TypedExpression<T> expression, T value) {
 		return greaterThan(expression, ConstantExpression.create(expression, value), false);
 	}
 
@@ -281,7 +282,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter goe(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter goe(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return greaterThan(left, right, true);
 	}
 
@@ -293,7 +294,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter goe(QueryExpression<T> expression, T value) {
+	static <T> QueryFilter goe(TypedExpression<T> expression, T value) {
 		return greaterThan(expression, ConstantExpression.create(expression, value), true);
 	}
 
@@ -306,7 +307,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param to To value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter between(QueryExpression<T> expression, T from, T to) {
+	static <T> QueryFilter between(TypedExpression<T> expression, T from, T to) {
 		return new BetweenFilter<>(expression, from, to);
 	}
 
@@ -318,7 +319,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter in(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter in(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new InFilter<>(left, right);
 	}
 
@@ -331,7 +332,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> QueryFilter in(QueryExpression<T> expression, T... values) {
+	static <T> QueryFilter in(TypedExpression<T> expression, T... values) {
 		return in(expression, CollectionExpression.create(expression, values));
 	}
 
@@ -343,7 +344,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter in(QueryExpression<T> expression, Collection<T> values) {
+	static <T> QueryFilter in(TypedExpression<T> expression, Collection<T> values) {
 		return in(expression, CollectionExpression.create(expression, values));
 	}
 
@@ -355,7 +356,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter nin(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter nin(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new NotInFilter<>(left, right);
 	}
 
@@ -368,7 +369,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> QueryFilter nin(QueryExpression<T> expression, T... values) {
+	static <T> QueryFilter nin(TypedExpression<T> expression, T... values) {
 		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
@@ -380,7 +381,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter nin(QueryExpression<T> expression, Collection<T> values) {
+	static <T> QueryFilter nin(TypedExpression<T> expression, Collection<T> values) {
 		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
@@ -392,7 +393,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter contains(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter contains(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.CONTAINS, ignoreCase);
 	}
 
@@ -404,7 +405,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter startsWith(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter startsWith(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.STARTS_WITH, ignoreCase);
 	}
 
@@ -416,7 +417,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter endsWith(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter endsWith(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.ENDS_WITH, ignoreCase);
 	}
 

@@ -28,7 +28,7 @@ import com.holonplatform.core.internal.query.DefaultCollectionExpression;
  *
  * @since 5.1.0
  */
-public interface CollectionExpression<T> extends ConstantExpression<Collection<T>, T> {
+public interface CollectionExpression<T> extends ConstantConverterExpression<Collection<T>, T> {
 
 	/**
 	 * Get whether the {@link Collection} expression value is not <code>null</code> or empty.

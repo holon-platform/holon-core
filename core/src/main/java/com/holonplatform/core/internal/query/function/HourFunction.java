@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.internal.query.function;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.TemporalFunction.Hour;
 
 /**
@@ -31,7 +31,7 @@ public class HourFunction extends AbstractIntegerTemporalFunction implements Hou
 	 * Constructor.
 	 * @param argument Function argument (not null)
 	 */
-	public HourFunction(QueryExpression<?> argument) {
+	public HourFunction(TypedExpression<?> argument) {
 		super(argument);
 		setMinimumArguments(1);
 		setMaximumArguments(1);

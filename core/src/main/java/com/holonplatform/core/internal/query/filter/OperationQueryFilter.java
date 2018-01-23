@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.query.filter;
 
 import java.util.Optional;
 
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -30,10 +30,10 @@ import com.holonplatform.core.query.QueryFilter;
 public interface OperationQueryFilter<T> extends QueryFilter {
 
 	/**
-	 * Get the left hand {@link QueryExpression} operand.
+	 * Get the left hand operand expression.
 	 * @return The left hand operand expression
 	 */
-	QueryExpression<T> getLeftOperand();
+	TypedExpression<T> getLeftOperand();
 
 	/**
 	 * Get the operator.
@@ -42,10 +42,10 @@ public interface OperationQueryFilter<T> extends QueryFilter {
 	FilterOperator getOperator();
 
 	/**
-	 * Get the right hand {@link QueryExpression} operand, if applicable.
+	 * Get the right hand operand expression, if supported.
 	 * @return Optional right hand operand expression
 	 */
-	Optional<QueryExpression<? super T>> getRightOperand();
+	Optional<TypedExpression<? super T>> getRightOperand();
 
 	/**
 	 * Filter operators.

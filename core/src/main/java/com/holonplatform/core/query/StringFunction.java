@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.query;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.function.LowerFunction;
 import com.holonplatform.core.internal.query.function.UpperFunction;
 import com.holonplatform.core.query.QueryFunction.PropertyQueryFunction;
@@ -45,7 +46,7 @@ public interface StringFunction extends PropertyQueryFunction<String, String>, S
 		 * @param argument Function argument (not null)
 		 * @return New {@link Lower} function instance
 		 */
-		static Lower create(QueryExpression<String> argument) {
+		static Lower create(TypedExpression<String> argument) {
 			return new LowerFunction(argument);
 		}
 
@@ -61,7 +62,7 @@ public interface StringFunction extends PropertyQueryFunction<String, String>, S
 		 * @param argument Function argument (not null)
 		 * @return New {@link Lower} function instance
 		 */
-		static Upper create(QueryExpression<String> argument) {
+		static Upper create(TypedExpression<String> argument) {
 			return new UpperFunction(argument);
 		}
 
