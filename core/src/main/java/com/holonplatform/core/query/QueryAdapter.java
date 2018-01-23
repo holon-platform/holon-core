@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 import com.holonplatform.core.query.QueryResults.QueryExecutionException;
 
 /**
- * Adapter to perform a <em>query</em> execution using a {@link QueryConfiguration} and a {@link QueryProjection}.
+ * Adapter to perform a <em>query</em> execution using a {@link QueryOperation}.
  * 
  * @since 5.0.0
  * 
@@ -29,14 +29,12 @@ import com.holonplatform.core.query.QueryResults.QueryExecutionException;
 public interface QueryAdapter<C extends QueryConfiguration> {
 
 	/**
-	 * Execute a query using provided {@link QueryConfiguration} and {@link QueryProjection}, returning query results as
-	 * a {@link Stream}.
+	 * Execute a query using provided {@link QueryOperation} and return query results as a {@link Stream}.
 	 * @param <R> Query results type
-	 * @param configuration Query configuration (not null)
-	 * @param projection Query projection (not null)
+	 * @param queryOperation Query operation (not null)
 	 * @return Query results stream. The stream elements type must match the query projection type
 	 * @throws QueryExecutionException If a query execution error occurred
 	 */
-	<R> Stream<R> stream(C configuration, QueryProjection<R> projection) throws QueryExecutionException;
+	<R> Stream<R> stream(QueryOperation<C, R> queryOperation) throws QueryExecutionException;
 
 }
