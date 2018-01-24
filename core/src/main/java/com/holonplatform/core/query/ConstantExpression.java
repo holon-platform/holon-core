@@ -18,6 +18,7 @@ package com.holonplatform.core.query;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Constant value expression, with {@link ExpressionValueConverter} support.
@@ -44,14 +45,26 @@ public interface ConstantExpression<T> extends ConstantConverterExpression<T, T>
 	}
 
 	/**
+	 * Create a {@link ConstantExpression} which represents a constant value.
+	 * @param <T> Expression type
+	 * @param value Constant value
+	 * @param value Constant value type (not null)
+	 * @return A new constant expression
+	 */
+	static <T> ConstantExpression<T> create(T value, Class<? extends T> type) {
+		return new DefaultConstantExpression<>(value, type);
+	}
+
+	/**
 	 * Create a {@link ConstantExpression} which represents a constant value, using given <code>expression</code> to
 	 * inherit an {@link ExpressionValueConverter}, if available.
 	 * @param <T> Expression type
-	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available
+	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available (not null)
 	 * @param value Constant value
 	 * @return A new constant expression
 	 */
 	static <T> ConstantExpression<T> create(TypedExpression<T> expression, T value) {
+		ObjectUtils.argumentNotNull(expression, "Expression must be not null");
 		return new DefaultConstantExpression<>(expression, value);
 	}
 

@@ -389,7 +389,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * Build a <em>contains</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value contains given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value which must be contained in expression value
+	 * @param value Value which must be contained in expression value (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
@@ -401,7 +401,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * Build a <em>starts with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value starts with given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value with which the expression value must start with
+	 * @param value Value with which the expression value must start with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
@@ -413,7 +413,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * Build a <em>ends with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value ends with given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value with which the expression value must end with
+	 * @param value Value with which the expression value must end with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */

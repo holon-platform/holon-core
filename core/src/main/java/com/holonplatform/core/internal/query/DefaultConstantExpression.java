@@ -21,6 +21,7 @@ import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.AbstractConverterExpression;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.ConstantExpression;
 
 /**
@@ -33,16 +34,34 @@ import com.holonplatform.core.query.ConstantExpression;
 public class DefaultConstantExpression<T> extends AbstractConverterExpression<T> implements ConstantExpression<T> {
 
 	/*
-	 * Constant value (immutable)
+	 * Constant value
 	 */
 	private final T value;
+
+	/*
+	 * Value type
+	 */
+	private final Class<? extends T> type;
 
 	/**
 	 * Constructor
 	 * @param value Constant value
 	 */
+	@SuppressWarnings("unchecked")
 	public DefaultConstantExpression(T value) {
-		this(null, value);
+		this(value, (value != null ? (Class<? extends T>) value.getClass() : (Class<? extends T>) Void.class));
+	}
+
+	/**
+	 * Constructor
+	 * @param value Constant value
+	 * @param type Value type (not null)
+	 */
+	public DefaultConstantExpression(T value, Class<? extends T> type) {
+		super();
+		ObjectUtils.argumentNotNull(type, "Value type must be not null");
+		this.value = value;
+		this.type = type;
 	}
 
 	/**
@@ -54,6 +73,7 @@ public class DefaultConstantExpression<T> extends AbstractConverterExpression<T>
 		super((expression instanceof ConverterExpression)
 				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
 		this.value = value;
+		this.type = expression.getType();
 	}
 
 	/*
@@ -82,10 +102,9 @@ public class DefaultConstantExpression<T> extends AbstractConverterExpression<T>
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryDataExpression#getType()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends T> getType() {
-		return (value == null) ? (Class<? extends T>) Void.class : (Class<? extends T>) value.getClass();
+		return type;
 	}
 
 	/*

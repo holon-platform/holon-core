@@ -39,6 +39,11 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	private static final long serialVersionUID = -3974289166776361490L;
 
 	/*
+	 * Value type
+	 */
+	private final Class<? extends E> type;
+
+	/*
 	 * Optional value converter
 	 */
 	private final ExpressionValueConverter<E, ?> expressionValueConverter;
@@ -75,10 +80,14 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param expression Optional expression from which to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param values Constant expression values
 	 */
+	@SuppressWarnings("unchecked")
 	public DefaultCollectionExpression(TypedExpression<E> expression, Collection<? extends E> values) {
 		super(values);
 		this.expressionValueConverter = (expression instanceof ConverterExpression)
 				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null) : null;
+		this.type = (expression != null) ? expression.getType()
+				: ((values != null && !values.isEmpty()) ? (Class<? extends E>) values.iterator().next().getClass()
+						: (Class<? extends E>) Void.class);
 	}
 
 	/*
@@ -95,7 +104,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @see com.holonplatform.core.query.ConstantExpression#getModelValue()
 	 */
 	@Override
-	public Object getModelValue() {
+	public Collection<?> getModelValue() {
 		if (getValue() == null || !getExpressionValueConverter().isPresent()) {
 			return getValue();
 		}
@@ -130,10 +139,9 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryDataExpression#getType()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends E> getType() {
-		return (Class<? extends E>) Collection.class;
+		return type;
 	}
 
 	/*

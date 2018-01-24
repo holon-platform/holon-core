@@ -40,6 +40,13 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 
 	// builders
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConstantConverterExpression#getModelValue()
+	 */
+	@Override
+	Collection<?> getModelValue();
+
 	/**
 	 * Create a {@link ConstantExpression} which represents a collection of constant values.
 	 * @param <T> Expression type

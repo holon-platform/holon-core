@@ -59,6 +59,11 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	}
 
 	/*
+	 * Value
+	 */
+	private final String value;
+
+	/*
 	 * Match mode
 	 */
 	private final MatchMode matchMode;
@@ -78,9 +83,19 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	public StringMatchFilter(TypedExpression<String> expression, String value, MatchMode matchMode,
 			boolean ignoreCase) {
 		super(expression, FilterOperator.MATCH, ConstantExpression.create(expression, value));
+		ObjectUtils.argumentNotNull(value, "Value must be not null");
 		ObjectUtils.argumentNotNull(matchMode, "Match mode must be not null");
+		this.value = value;
 		this.matchMode = matchMode;
 		this.ignoreCase = ignoreCase;
+	}
+
+	/**
+	 * Get the value to match.
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
 	}
 
 	/**
@@ -106,8 +121,8 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	@Override
 	public void validate() throws InvalidExpressionException {
 		super.validate();
-		if (!getRightOperand().isPresent()) {
-			throw new InvalidExpressionException("Missing right hand operand");
+		if (getValue() == null) {
+			throw new InvalidExpressionException("Null value to match");
 		}
 	}
 

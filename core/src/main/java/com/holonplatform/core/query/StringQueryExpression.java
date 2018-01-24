@@ -31,7 +31,7 @@ public interface StringQueryExpression extends QueryExpression<String> {
 
 	/**
 	 * Build a <em>contains</em> query filter, checking if the property value contains given value.
-	 * @param value Value which must be contained in expression value
+	 * @param value Value which must be contained in expression value (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return The QueryFilter
 	 */
@@ -41,7 +41,7 @@ public interface StringQueryExpression extends QueryExpression<String> {
 
 	/**
 	 * Build a <em>starts with</em> query filter, checking if the property value starts with given value.
-	 * @param value Value with which the expression value must start with
+	 * @param value Value with which the expression value must start with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return The QueryFilter
 	 */
@@ -51,7 +51,7 @@ public interface StringQueryExpression extends QueryExpression<String> {
 
 	/**
 	 * Build a <em>ends with</em> query filter, checking if the property value ends with given value.
-	 * @param value Value with which the expression value must end with
+	 * @param value Value with which the expression value must end with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return The QueryFilter
 	 */
