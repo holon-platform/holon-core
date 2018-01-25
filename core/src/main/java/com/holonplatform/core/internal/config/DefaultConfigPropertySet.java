@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -188,6 +189,11 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 		 */
 		protected final DefaultConfigPropertySet instance;
 
+		/*
+		 * Explicit values
+		 */
+		protected Map<ConfigProperty<?>, Object> values;
+
 		/**
 		 * Constructor
 		 * @param instance Instance to build
@@ -304,11 +310,36 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
+		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withProperty(com.holonplatform.core.config.
+		 * ConfigProperty, java.lang.Object)
+		 */
+		@Override
+		public <T> Builder<C> withProperty(ConfigProperty<T> property, T value) {
+			ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+			if (values == null) {
+				values = new HashMap<>(8);
+			}
+			values.put(property, value);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#build()
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public C build() {
+
+			// explicit values
+			if (values != null && !values.isEmpty()) {
+				final Properties properties = new Properties();
+				for (Entry<ConfigProperty<?>, Object> value : values.entrySet()) {
+					properties.put(instance.getName() + "." + value.getKey().getKey(), value.getValue());
+				}
+				instance.addPropertyProvider(ConfigPropertyProvider.using(properties));
+			}
+
 			return (C) instance;
 		}
 

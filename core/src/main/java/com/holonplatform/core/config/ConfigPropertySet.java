@@ -147,6 +147,15 @@ public interface ConfigPropertySet {
 		Builder<C> withSystemPropertySource();
 
 		/**
+		 * Add given config property value.
+		 * @param <T> Config property type
+		 * @param property Config property for which to provide the value (not null)
+		 * @param value Config property value
+		 * @return this
+		 */
+		<T> Builder<C> withProperty(ConfigProperty<T> property, T value);
+
+		/**
 		 * Build the {@link ConfigPropertySet} instance
 		 * @return ConfigPropertySet instance
 		 */
