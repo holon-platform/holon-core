@@ -25,6 +25,7 @@ import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
+import com.holonplatform.core.datastore.transaction.Transactional;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.property.Property;
@@ -111,6 +112,27 @@ public interface Datastore
 	@Override
 	default BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options) {
 		return create(BulkDelete.class).target(target).withWriteOptions(options);
+	}
+
+	// Transactions
+
+	/**
+	 * Check if this Datastore is {@link Transactional}, i.e. supports execution of transactional operations.
+	 * @return If this Datastore is transactional, return the Datastore as {@link Transactional}, or an empty Optional
+	 *         otherwise
+	 */
+	default Optional<Transactional> isTransactional() {
+		return Optional.ofNullable((this instanceof Transactional) ? (Transactional) this : null);
+	}
+
+	/**
+	 * Requires this Datastore to be {@link Transactional}, i.e. to support execution of transactional operations,
+	 * throwing an {@link IllegalStateException} if this Datastore is not transactional.
+	 * @return the Datastore as {@link Transactional}
+	 * @throws IllegalStateException If this Datastore is not transactional
+	 */
+	default Transactional requireTransactional() {
+		return isTransactional().orElseThrow(() -> new IllegalStateException("The Datastore is not not transactional"));
 	}
 
 	// Operations
