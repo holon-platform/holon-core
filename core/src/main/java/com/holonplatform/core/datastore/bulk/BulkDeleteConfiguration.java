@@ -31,5 +31,5 @@ public interface BulkDeleteConfiguration extends BulkOperationConfiguration {
 	 * @return Optional operation filter
 	 */
 	Optional<QueryFilter> getFilter();
-	
+
 }

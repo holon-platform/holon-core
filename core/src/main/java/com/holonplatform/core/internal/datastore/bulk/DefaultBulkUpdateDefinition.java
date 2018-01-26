@@ -91,15 +91,19 @@ public class DefaultBulkUpdateDefinition extends AbstractBulkOperationDefinition
 		values.put(path, value);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.internal.datastore.bulk.BulkUpdateDefinition#setValue(com.holonplatform.core.property.PropertyBox, boolean)
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.bulk.BulkUpdateDefinition#setValue(com.holonplatform.core.property.
+	 * PropertyBox, boolean)
 	 */
 	@Override
 	public void setValue(PropertyBox propertyBox, boolean includeNullValues) {
 		values = asPathValues(propertyBox, includeNullValues);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.datastore.bulk.AbstractBulkOperationDefinition#validate()
 	 */
 	@Override

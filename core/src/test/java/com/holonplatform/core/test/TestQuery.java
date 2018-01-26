@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -49,7 +48,7 @@ public class TestQuery {
 		DefaultCollectionExpression<String> le = new DefaultCollectionExpression<>("test", "test2");
 
 		assertNotNull(le.getValue());
-		assertEquals(Collection.class, le.getType());
+		assertEquals(String.class, le.getType());
 		assertEquals(2, le.size());
 
 		List<String> ls = new ArrayList<>();
@@ -58,7 +57,7 @@ public class TestQuery {
 
 		le = new DefaultCollectionExpression<>(ls);
 
-		assertEquals(Collection.class, le.getType());
+		assertEquals(String.class, le.getType());
 		assertEquals(2, le.size());
 
 	}

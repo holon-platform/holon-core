@@ -30,8 +30,7 @@ import com.holonplatform.core.property.PropertyBox;
  * 
  * @since 5.0.0
  */
-public interface BulkInsert
-		extends BulkInsertOperation<BulkInsert>, ExecutableOperation, DatastoreCommodity {
+public interface BulkInsert extends BulkInsertOperation<BulkInsert>, ExecutableOperation, DatastoreCommodity {
 
 	/**
 	 * Create a single value <code>INSERT</code> operation, using given {@link PropertyBox} to obtain the values to

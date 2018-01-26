@@ -52,7 +52,7 @@ public interface BulkOperation<O extends BulkOperation<O, C>, C extends BulkOper
 
 	/**
 	 * Add a set of {@link WriteOption}s to this operation.
-	 * @param writeOption The write options to add (not null)
+	 * @param writeOptions The write options to add (not null)
 	 * @return this
 	 */
 	O withWriteOptions(WriteOption... writeOptions);

@@ -24,6 +24,7 @@ import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
  *
  * @since 5.1.0
  */
-public interface BulkDeleteOperation<O extends BulkDeleteOperation<O>> extends BulkOperation<O, BulkDeleteConfiguration>, QueryFilterSupport<O> {
+public interface BulkDeleteOperation<O extends BulkDeleteOperation<O>>
+		extends BulkOperation<O, BulkDeleteConfiguration>, QueryFilterSupport<O> {
 
 }

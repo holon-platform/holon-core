@@ -206,7 +206,6 @@ public interface Datastore
 
 		/**
 		 * Get the first inserted key value, if available.
-		 * @param <T> Expected value type
 		 * @return Optional first inserted key value
 		 * @since 5.1.0
 		 */

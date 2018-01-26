@@ -32,7 +32,8 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration, D extends BulkOperationDefinition> implements BulkOperation<O, C> {
+public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration, D extends BulkOperationDefinition>
+		implements BulkOperation<O, C> {
 
 	/**
 	 * Bulk operation definition
@@ -47,7 +48,7 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 		super();
 		ObjectUtils.argumentNotNull(definition, "Operation definition must be not null");
 		this.definition = definition;
-	}	
+	}
 
 	/**
 	 * Get the actual operation object.

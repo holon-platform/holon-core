@@ -247,10 +247,12 @@ public class DefaultQueryDefinition extends DefaultParameterSet implements Query
 				+ ", filter=" + filter + ", aggregation=" + aggregation + "]";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.Expression#validate()
 	 */
 	@Override
-	public void validate() throws InvalidExpressionException {}
+	public void validate() throws InvalidExpressionException {
+	}
 
 }

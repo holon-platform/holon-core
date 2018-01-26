@@ -29,7 +29,8 @@ import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
  *
  * @since 5.1.0
  */
-public interface BulkUpdateOperation<O extends BulkUpdateOperation<O>> extends BulkOperation<O, BulkUpdateConfiguration>, QueryFilterSupport<O> {
+public interface BulkUpdateOperation<O extends BulkUpdateOperation<O>>
+		extends BulkOperation<O, BulkUpdateConfiguration>, QueryFilterSupport<O> {
 
 	/**
 	 * Set given <code>path</code> to given <code>expression</code> value.

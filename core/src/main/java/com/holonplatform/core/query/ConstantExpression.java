@@ -24,7 +24,6 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * Constant value expression, with {@link ExpressionValueConverter} support.
  * 
  * @param <T> Expression type
- * @param <E> Concrete value type
  * 
  * @since 5.0.0
  * 
@@ -48,7 +47,7 @@ public interface ConstantExpression<T> extends ConstantConverterExpression<T, T>
 	 * Create a {@link ConstantExpression} which represents a constant value.
 	 * @param <T> Expression type
 	 * @param value Constant value
-	 * @param value Constant value type (not null)
+	 * @param type Constant value type (not null)
 	 * @return A new constant expression
 	 */
 	static <T> ConstantExpression<T> create(T value, Class<? extends T> type) {

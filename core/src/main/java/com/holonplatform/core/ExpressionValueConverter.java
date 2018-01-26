@@ -52,6 +52,8 @@ public interface ExpressionValueConverter<TYPE, MODEL> {
 	/**
 	 * Create a new {@link ExpressionValueConverter} using given <code>property</code> and
 	 * {@link PropertyValueConverter} as conversion strategy.
+	 * @param <TYPE> Expression type
+	 * @param <MODEL> Model type
 	 * @param property Property (not null)
 	 * @param converter Property value converter (not null)
 	 * @return A new {@link ExpressionValueConverter}

@@ -29,7 +29,8 @@ import com.holonplatform.core.property.PropertySet;
  *
  * @since 5.1.0
  */
-public interface BulkInsertOperation<O extends BulkInsertOperation<O>> extends BulkOperation<O, BulkInsertConfiguration> {
+public interface BulkInsertOperation<O extends BulkInsertOperation<O>>
+		extends BulkOperation<O, BulkInsertConfiguration> {
 
 	/**
 	 * Add a path - value expression map to insert.

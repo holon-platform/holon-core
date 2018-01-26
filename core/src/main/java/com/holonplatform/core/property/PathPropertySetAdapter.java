@@ -39,6 +39,7 @@ public interface PathPropertySetAdapter {
 
 	/**
 	 * Check if a {@link Property} which corresponds to given <code>path</code> is present in the property set.
+	 * @param <T> Path type
 	 * @param path The path to check (not null)
 	 * @return If a {@link Property} which corresponds to given <code>path</code> is present in the property set,
 	 *         returns the property. Otherwise an empty Optional is returned.
@@ -47,6 +48,7 @@ public interface PathPropertySetAdapter {
 
 	/**
 	 * Check if given <code>property</code> is available in property set and if it can be represented as a {@link Path}.
+	 * @param <T> Path type
 	 * @param property The property to check (not null)
 	 * @return If given <code>property</code> is available in property set and if it can be represented as a
 	 *         {@link Path}, returns the property as a {@link Path}.Otherwise an empty Optional is returned.
@@ -93,6 +95,7 @@ public interface PathPropertySetAdapter {
 
 		/**
 		 * Get the {@link Path} representation of given {@link Property}, if the property can be represented by a path.
+		 * @param <T> Property type
 		 * @param property The property for which to obtain a path
 		 * @return Optional property path representation
 		 */

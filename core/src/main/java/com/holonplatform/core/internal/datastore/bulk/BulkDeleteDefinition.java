@@ -30,5 +30,5 @@ public interface BulkDeleteDefinition extends BulkOperationDefinition, BulkDelet
 	 * @param filter the filter to add (not null)
 	 */
 	void addFilter(QueryFilter filter);
-	
+
 }

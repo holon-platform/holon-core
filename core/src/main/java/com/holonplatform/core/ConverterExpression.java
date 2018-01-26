@@ -37,6 +37,7 @@ public interface ConverterExpression<T> extends TypedExpression<T> {
 	 * Get the model data type value of given <code>value</code>, using the {@link ExpressionValueConverter} to convert
 	 * the value, if available. If an {@link ExpressionValueConverter} is not available, the provided value itself is
 	 * returned.
+	 * @param value The expression value
 	 * @return The model-converted expression value if an {@link ExpressionValueConverter} is available, otherwise
 	 *         provided value itself is returned.
 	 */

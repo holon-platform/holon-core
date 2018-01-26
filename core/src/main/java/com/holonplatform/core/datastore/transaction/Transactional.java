@@ -29,6 +29,7 @@ public interface Transactional {
 	/**
 	 * Execute given operation within a transaction and return a result. A {@link Transaction} reference is provided to
 	 * perform <code>commit</code> and <code>rollback</code> operations.
+	 * @param <R> Operation result type
 	 * @param operation Operation to execute (not null)
 	 * @param transactionConfiguration Transaction configuration
 	 * @return The operation result
@@ -39,6 +40,7 @@ public interface Transactional {
 	/**
 	 * Execute given operation within a transaction and return a result. A {@link Transaction} reference is provided to
 	 * perform <code>commit</code> and <code>rollback</code> operations.
+	 * @param <R> Operation result type
 	 * @param operation Operation to execute (not null)
 	 * @return The operation result
 	 * @throws DataAccessException If an error occurred during transaction management or operation execution

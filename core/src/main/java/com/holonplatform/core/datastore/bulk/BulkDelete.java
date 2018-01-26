@@ -29,7 +29,6 @@ import com.holonplatform.core.datastore.ExecutableOperation;
  * 
  * @since 5.0.0
  */
-public interface BulkDelete
-		extends BulkDeleteOperation<BulkDelete>, ExecutableOperation, DatastoreCommodity {
+public interface BulkDelete extends BulkDeleteOperation<BulkDelete>, ExecutableOperation, DatastoreCommodity {
 
 }

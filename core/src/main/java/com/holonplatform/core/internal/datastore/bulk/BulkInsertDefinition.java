@@ -58,5 +58,5 @@ public interface BulkInsertDefinition extends BulkOperationDefinition, BulkInser
 	 * @param propertySet The property set to set (not null)
 	 */
 	void setOperationPaths(PropertySet<?> propertySet);
-	
+
 }

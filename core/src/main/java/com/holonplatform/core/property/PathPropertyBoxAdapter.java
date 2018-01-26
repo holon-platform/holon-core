@@ -34,7 +34,7 @@ public interface PathPropertyBoxAdapter extends PathPropertySetAdapter {
 	/**
 	 * Check if the {@link PropertyBox} contains a {@link Property} which corresponds to given <code>path</code> with a
 	 * not <code>null</code> value.
-	 * @param property Path to check (not null)
+	 * @param path Path to check (not null)
 	 * @param <T> Property type
 	 * @return <code>true</code> if a property which corresponds to given <code>path</code> is present and the property
 	 *         value is not <code>null</code>
@@ -45,7 +45,7 @@ public interface PathPropertyBoxAdapter extends PathPropertySetAdapter {
 	 * Get the value of the {@link PropertyBox} property which corresponds to given <code>path</code>, if the the
 	 * property is present and its value is not <code>null</code>.
 	 * @param <T> Path and value type
-	 * @param property Path for which obtain the property value (not null)
+	 * @param path Path for which obtain the property value (not null)
 	 * @return The value of the property which corresponds to given <code>path</code>, or an empty Optional if path does
 	 *         not corresponds to any property or the property has no value
 	 */
@@ -67,7 +67,7 @@ public interface PathPropertyBoxAdapter extends PathPropertySetAdapter {
 	 * Set the value of the {@link PropertyBox} property which corresponds to given <code>path</code>, if such property
 	 * is available.
 	 * @param <T> Path and value type
-	 * @param property Path for which to set the value (not null)
+	 * @param path Path for which to set the value (not null)
 	 * @param value The value to set
 	 * @return The property which corresponds to given <code>path</code> and for which the value was setted, or an empty
 	 *         Optional if no property corresponds to given <code>path</code>

@@ -32,8 +32,10 @@ public class DefaultBulkDeleteDefinition extends AbstractBulkOperationDefinition
 	 */
 	private QueryFilter filter;
 
-	/* (non-Javadoc)
-	 * @see com.holonplatform.core.internal.datastore.bulk.BulkDeleteDefinition#addFilter(com.holonplatform.core.query.QueryFilter)
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.datastore.bulk.BulkDeleteDefinition#addFilter(com.holonplatform.core.query.
+	 * QueryFilter)
 	 */
 	@Override
 	public void addFilter(QueryFilter filter) {
@@ -45,12 +47,13 @@ public class DefaultBulkDeleteDefinition extends AbstractBulkOperationDefinition
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.datastore.bulk.BulkDeleteConfiguration#getFilter()
 	 */
 	@Override
 	public Optional<QueryFilter> getFilter() {
 		return Optional.ofNullable(filter);
 	}
-	
+
 }

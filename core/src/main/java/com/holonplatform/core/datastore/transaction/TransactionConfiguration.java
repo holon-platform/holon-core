@@ -54,6 +54,7 @@ public interface TransactionConfiguration {
 
 	/**
 	 * Create a default {@link TransactionConfiguration} setting transaction rollback on errors to <code>true</code>.
+	 * @return A a default {@link TransactionConfiguration}
 	 */
 	static TransactionConfiguration getDefault() {
 		return new DefaultTransactionConfiguration(true, false, null);

@@ -48,7 +48,8 @@ public class DummyQuery extends AbstractQuery<QueryDefinition> {
 		return Collections.<R>emptyList().stream();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
 	 */
 	@Override

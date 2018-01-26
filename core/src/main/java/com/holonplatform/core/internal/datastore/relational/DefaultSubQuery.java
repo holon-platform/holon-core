@@ -49,7 +49,8 @@ public class DefaultSubQuery<T> extends AbstractQueryBuilder<SubQuery<T>, QueryD
 		this.expressionType = selectionType;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
 	 */
 	@Override
