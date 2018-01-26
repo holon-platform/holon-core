@@ -17,16 +17,22 @@ package com.holonplatform.spring.internal;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
 import org.springframework.beans.factory.ListableBeanFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AnnotatedBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionValidationException;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.core.type.StandardMethodMetadata;
@@ -71,18 +77,91 @@ public final class BeanRegistryUtils implements Serializable {
 	 * @param type Bean type (not null)
 	 * @return The list of all bean names of given <code>type</code> in given bean factory, an empty list if none.
 	 */
-	public static List<String> getBeanNames(ListableBeanFactory beanFactory, Class<?> type) {
+	public static List<String> getBeanNames(BeanFactory beanFactory, Class<?> type) {
 		ObjectUtils.argumentNotNull(beanFactory, "Bean factory must be not null");
 		ObjectUtils.argumentNotNull(type, "Type must be not null");
 
+		if (!(beanFactory instanceof ListableBeanFactory)) {
+			throw new IllegalArgumentException("The registry must be a ListableBeanFactory");
+		}
+
 		List<String> names = new LinkedList<>();
-		String[] dsBeanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, type, true, false);
+		String[] dsBeanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors((ListableBeanFactory) beanFactory,
+				type, true, false);
 		if (dsBeanNames != null) {
 			for (String dsBeanName : dsBeanNames) {
 				names.add((dsBeanName.startsWith("&")) ? dsBeanName.substring(1) : dsBeanName);
 			}
 		}
 		return names;
+	}
+
+	/**
+	 * Get the bean names from provided registry of given types.
+	 * @param beanFactory Bean factory
+	 * @param types Bean types to take into account
+	 * @return Names of the beans of given types, empty if none
+	 */
+	public static Set<String> getBeanNamesOfTypes(BeanFactory beanFactory, Class<?>... types) {
+		final Set<String> beanNames = new HashSet<>();
+		for (Class<?> type : types) {
+			beanNames.addAll(BeanRegistryUtils.getBeanNames(beanFactory, type));
+		}
+		return beanNames;
+	}
+
+	/**
+	 * Get the bean names from provided registry of given types and associated to given data context id.
+	 * @param registry Bean registry
+	 * @param beanFactory Bean factory
+	 * @param dataContextId The data context id, if <code>null</code> the name of any bean with given types will be
+	 *        returned
+	 * @param types Bean types to take into account
+	 * @return Names of the beans of given types associated to given data context id, empty if none
+	 */
+	public static Set<String> getDataContextBeanNames(BeanDefinitionRegistry registry, BeanFactory beanFactory,
+			String dataContextId, Class<?>... types) {
+
+		final Set<String> beanNames = getBeanNamesOfTypes(beanFactory, types);
+
+		if (dataContextId != null) {
+			// check data context id
+			return beanNames.stream().filter(name -> dataContextId.equals(getDataContextId(registry, name)))
+					.collect(Collectors.toSet());
+		}
+		return beanNames;
+	}
+
+	/**
+	 * Get the [name,data context id] pairs of the bean definition of given types.
+	 * @param registry Bean definitions registry
+	 * @param beanFactory Bean factory
+	 * @param types Bean types to take into account
+	 * @return A list of [name,data context id] pairs of the bean definition of given types, empty if none
+	 */
+	public static List<String[]> getBeanNamesWithDataContextId(BeanDefinitionRegistry registry, BeanFactory beanFactory,
+			Class<?>... types) {
+		return getBeanNamesOfTypes(beanFactory, types).stream()
+				.map(name -> new String[] { name, getDataContextId(registry, name) }).collect(Collectors.toList());
+	}
+
+	/**
+	 * If a bean with given <code>beanName</code> is available from provided registry, return the optional data context
+	 * id to which is associated, if available.
+	 * @param registry Bean registry
+	 * @param beanName Bean name
+	 * @return Bean definition data context id, <code>null</code> if not provided
+	 */
+	private static String getDataContextId(BeanDefinitionRegistry registry, String beanName) {
+		try {
+			BeanDefinition bd = registry.getBeanDefinition(beanName);
+			if (bd instanceof DataContextBoundBeanDefinition) {
+				return ((DataContextBoundBeanDefinition) bd).getDataContextId().orElse(null);
+			}
+		} catch (@SuppressWarnings("unused") NoSuchBeanDefinitionException e) {
+			// ignore
+		}
+		return null;
 	}
 
 	/**
