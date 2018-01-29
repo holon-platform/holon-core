@@ -13,18 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.datastore.bulk;
+package com.holonplatform.core.internal.datastore.operation;
+
+import java.util.Set;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
-import com.holonplatform.core.datastore.bulk.BulkOperation;
-import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
+import com.holonplatform.core.datastore.operation.DatastoreOperation;
+import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
- * Abstract {@link BulkOperation}.
+ * Abstract {@link DatastoreOperation}.
  * 
  * @param <O> Actual operation type
  * @param <C> Actual operation configuration type
@@ -32,11 +34,11 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration, D extends BulkOperationDefinition>
-		implements BulkOperation<O, C> {
+public abstract class AbstractDatastoreOperation<O extends DatastoreOperation<O, C>, C extends DatastoreOperationConfiguration, D extends DatastoreOperationDefinition>
+		implements DatastoreOperation<O, C> {
 
 	/**
-	 * Bulk operation definition
+	 * Operation definition
 	 */
 	private final D definition;
 
@@ -44,7 +46,7 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 	 * Constructor.
 	 * @param definition Operation definition (not null)
 	 */
-	public AbstractBulkOperation(D definition) {
+	public AbstractDatastoreOperation(D definition) {
 		super();
 		ObjectUtils.argumentNotNull(definition, "Operation definition must be not null");
 		this.definition = definition;
@@ -57,8 +59,8 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 	protected abstract O getActualOperation();
 
 	/**
-	 * Get the bulk operation definition.
-	 * @return the bulk operation definition
+	 * Get the operation definition.
+	 * @return the operation definition
 	 */
 	protected D getDefinition() {
 		return definition;
@@ -79,7 +81,8 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#target(com.holonplatform.core.datastore.DataTarget)
+	 * @see
+	 * com.holonplatform.core.datastore.operation.DatastoreOperation#target(com.holonplatform.core.datastore.DataTarget)
 	 */
 	@Override
 	public O target(DataTarget<?> target) {
@@ -89,7 +92,8 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#withWriteOption(com.holonplatform.core.datastore.
+	 * @see
+	 * com.holonplatform.core.datastore.operation.DatastoreOperation#withWriteOption(com.holonplatform.core.datastore.
 	 * DatastoreOperations.WriteOption)
 	 */
 	@Override
@@ -100,7 +104,8 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperation#withWriteOptions(com.holonplatform.core.datastore.
+	 * @see
+	 * com.holonplatform.core.datastore.operation.DatastoreOperation#withWriteOptions(com.holonplatform.core.datastore.
 	 * DatastoreOperations.WriteOption[])
 	 */
 	@Override
@@ -109,6 +114,17 @@ public abstract class AbstractBulkOperation<O extends BulkOperation<O, C>, C ext
 		for (WriteOption writeOption : writeOptions) {
 			getDefinition().addWriteOption(writeOption);
 		}
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.operation.DatastoreOperation#withWriteOptions(java.util.Set)
+	 */
+	@Override
+	public O withWriteOptions(Set<WriteOption> writeOptions) {
+		ObjectUtils.argumentNotNull(writeOptions, "Write options must be not null");
+		writeOptions.forEach(wo -> getDefinition().addWriteOption(wo));
 		return getActualOperation();
 	}
 

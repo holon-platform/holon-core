@@ -17,6 +17,7 @@ package com.holonplatform.core.internal.datastore.bulk;
 
 import java.util.Optional;
 
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperationDefinition;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryFilter;
 
@@ -25,7 +26,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public class DefaultBulkDeleteDefinition extends AbstractBulkOperationDefinition implements BulkDeleteDefinition {
+public class DefaultBulkDeleteDefinition extends AbstractDatastoreOperationDefinition implements BulkDeleteDefinition {
 
 	/*
 	 * Filter

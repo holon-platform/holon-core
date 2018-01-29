@@ -13,19 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.datastore.bulk;
+package com.holonplatform.core.internal.datastore.operation;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
-import com.holonplatform.core.datastore.bulk.BulkOperationConfiguration;
+import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
 
 /**
- * {@link BulkOperationConfiguration} definition with configuration setters.
+ * {@link DatastoreOperationConfiguration} definition with configuration setters.
  *
  * @since 5.1.0
  */
-public interface BulkOperationDefinition extends BulkOperationConfiguration, ExpressionResolverSupport {
+public interface DatastoreOperationDefinition extends DatastoreOperationConfiguration, ExpressionResolverSupport {
 
 	/**
 	 * Set the operation {@link DataTarget}.

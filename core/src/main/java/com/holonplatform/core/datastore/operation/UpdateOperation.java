@@ -13,24 +13,22 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.datastore.operation;
 
-import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreCommodity;
-import com.holonplatform.core.datastore.operation.ExecutableOperation;
+import com.holonplatform.core.datastore.DatastoreOperations;
+import com.holonplatform.core.property.PropertyBox;
 
 /**
- * A {@link BulkOperation} builder to configure a bulk <code>DELETE</code> operation and execute it using the
- * {@link ExecutableOperation} interface methods.
- * <p>
- * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
- * paradigm.
- * </p>
+ * Executable <em>update</em> datastore operation.
+ *
+ * @since 5.1.0
  * 
- * @since 5.0.0
+ * @see DatastoreOperations#update(com.holonplatform.core.datastore.DataTarget, PropertyBox,
+ *      com.holonplatform.core.datastore.DatastoreOperations.WriteOption...)
  */
-public interface BulkDelete
-		extends BulkDeleteOperation<BulkDelete>, ExecutableOperation<OperationResult>, DatastoreCommodity {
+public interface UpdateOperation extends PropertyBoxOperation<UpdateOperation, PropertyBoxOperationConfiguration>,
+		ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 }

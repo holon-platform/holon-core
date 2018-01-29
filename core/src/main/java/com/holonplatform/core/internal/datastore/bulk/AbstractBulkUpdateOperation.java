@@ -20,6 +20,7 @@ import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
 import com.holonplatform.core.datastore.bulk.BulkUpdateConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.QueryFilter;
 
@@ -31,7 +32,7 @@ import com.holonplatform.core.query.QueryFilter;
  * @since 5.1.0
  */
 public abstract class AbstractBulkUpdateOperation<O extends BulkUpdateOperation<O>> extends
-		AbstractBulkOperation<O, BulkUpdateConfiguration, BulkUpdateDefinition> implements BulkUpdateOperation<O> {
+		AbstractDatastoreOperation<O, BulkUpdateConfiguration, BulkUpdateDefinition> implements BulkUpdateOperation<O> {
 
 	public AbstractBulkUpdateOperation() {
 		super(new DefaultBulkUpdateDefinition());

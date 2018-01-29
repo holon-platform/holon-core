@@ -16,8 +16,9 @@
 package com.holonplatform.core.datastore.bulk;
 
 import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreCommodity;
-import com.holonplatform.core.datastore.ExecutableOperation;
+import com.holonplatform.core.datastore.operation.ExecutableOperation;
 import com.holonplatform.core.property.PropertyBox;
 
 /**
@@ -30,7 +31,8 @@ import com.holonplatform.core.property.PropertyBox;
  * 
  * @since 5.0.0
  */
-public interface BulkInsert extends BulkInsertOperation<BulkInsert>, ExecutableOperation, DatastoreCommodity {
+public interface BulkInsert
+		extends BulkInsertOperation<BulkInsert>, ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 	/**
 	 * Create a single value <code>INSERT</code> operation, using given {@link PropertyBox} to obtain the values to

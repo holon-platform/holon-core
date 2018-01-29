@@ -19,12 +19,19 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 
+import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
+import com.holonplatform.core.datastore.operation.DeleteOperation;
+import com.holonplatform.core.datastore.operation.InsertOperation;
+import com.holonplatform.core.datastore.operation.RefreshOperation;
+import com.holonplatform.core.datastore.operation.SaveOperation;
+import com.holonplatform.core.datastore.operation.UpdateOperation;
 import com.holonplatform.core.datastore.transaction.Transactional;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
 import com.holonplatform.core.internal.utils.ConversionUtils;
@@ -32,9 +39,6 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.Query;
-import com.holonplatform.core.query.QueryAggregation;
-import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QuerySort;
 
 /**
  * Datastore interface represents a generic data store abstraction and provides methods to perform data manipulation
@@ -44,15 +48,14 @@ import com.holonplatform.core.query.QuerySort;
  * </p>
  * <p>
  * To preserve abstraction and independence from the underlying persistence context, query and persistence methods rely
- * on {@link Property} to represent data attributes and {@link PropertyBox} to transport data values int both
- * directions.
+ * on {@link Property} to represent data attributes and {@link PropertyBox} to transport data values in both directions.
  * </p>
  * <p>
- * In addition to default data manipulation methods, a Datastore can provide a set of <em>commodities</em> which can be
- * used to perform specific data operations. The default {@link Query} Datastore commodity is provided by any Datastore
- * implementation and it is the main interface to configure and execute queries on the data model using the default and
- * implementation-independent {@link DataTarget}, {@link QueryFilter}, {@link QuerySort} and {@link QueryAggregation}
- * expressions. To obtain a {@link Query} builder, the {@link #query()} method is made available.
+ * Extends {@link DatastoreCommodityHandler} to support {@link DatastoreCommodity} creation by type.
+ * </p>
+ * <p>
+ * Extends {@link ExpressionResolverSupport} to allow {@link ExpressionResolver}s registration, which can be used to
+ * extend and/or customize the datastore operations.
  * </p>
  * 
  * @since 5.0.0
@@ -60,8 +63,58 @@ import com.holonplatform.core.query.QuerySort;
  * @see Query
  * @see DatastoreCommodityFactory
  */
-public interface Datastore
-		extends DatastoreOperations<OperationResult, BulkInsert, BulkUpdate, BulkDelete, Query>, Serializable {
+public interface Datastore extends DatastoreOperations<OperationResult, BulkInsert, BulkUpdate, BulkDelete, Query>,
+		DatastoreCommodityHandler, ExpressionResolverSupport, DataContextBound, Serializable {
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DatastoreOperations#refresh(com.holonplatform.core.datastore.DataTarget,
+	 * com.holonplatform.core.property.PropertyBox)
+	 */
+	@Override
+	default PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox) {
+		return create(RefreshOperation.class).target(target).value(propertyBox).execute();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DatastoreOperations#insert(com.holonplatform.core.datastore.DataTarget,
+	 * com.holonplatform.core.property.PropertyBox, com.holonplatform.core.datastore.DatastoreOperations.WriteOption[])
+	 */
+	@Override
+	default OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+		return create(InsertOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DatastoreOperations#update(com.holonplatform.core.datastore.DataTarget,
+	 * com.holonplatform.core.property.PropertyBox, com.holonplatform.core.datastore.DatastoreOperations.WriteOption[])
+	 */
+	@Override
+	default OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+		return create(UpdateOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DatastoreOperations#save(com.holonplatform.core.datastore.DataTarget,
+	 * com.holonplatform.core.property.PropertyBox, com.holonplatform.core.datastore.DatastoreOperations.WriteOption[])
+	 */
+	@Override
+	default OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+		return create(SaveOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DatastoreOperations#delete(com.holonplatform.core.datastore.DataTarget,
+	 * com.holonplatform.core.property.PropertyBox, com.holonplatform.core.datastore.DatastoreOperations.WriteOption[])
+	 */
+	@Override
+	default OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+		return create(DeleteOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+	}
 
 	/**
 	 * Create a {@link Query} commodity, which can be used to configure and execute a query on the data managed by this

@@ -22,6 +22,7 @@ import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
@@ -33,7 +34,7 @@ import com.holonplatform.core.property.PropertySet;
  * @since 5.1.0
  */
 public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<O>> extends
-		AbstractBulkOperation<O, BulkInsertConfiguration, BulkInsertDefinition> implements BulkInsertOperation<O> {
+		AbstractDatastoreOperation<O, BulkInsertConfiguration, BulkInsertDefinition> implements BulkInsertOperation<O> {
 
 	public AbstractBulkInsertOperation() {
 		super(new DefaultBulkInsertDefinition());

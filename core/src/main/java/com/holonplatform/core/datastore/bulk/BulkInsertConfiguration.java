@@ -21,13 +21,14 @@ import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
 
 /**
  * Bulk <code>INSERT</code> operation configuration.
  *
  * @since 5.1.0
  */
-public interface BulkInsertConfiguration extends BulkOperationConfiguration {
+public interface BulkInsertConfiguration extends DatastoreOperationConfiguration {
 
 	/**
 	 * Get the operation values, expressed as a List of {@link Path} - {@link TypedExpression} maps.

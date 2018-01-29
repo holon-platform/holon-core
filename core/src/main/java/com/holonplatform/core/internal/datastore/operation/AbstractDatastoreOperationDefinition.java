@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.datastore.bulk;
+package com.holonplatform.core.internal.datastore.operation;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,11 +36,11 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.ConstantExpression;
 
 /**
- * Base {@link BulkOperationDefinition} implementation.
+ * Base {@link DatastoreOperationDefinition} implementation.
  *
  * @since 5.1.0
  */
-public abstract class AbstractBulkOperationDefinition implements BulkOperationDefinition {
+public abstract class AbstractDatastoreOperationDefinition implements DatastoreOperationDefinition {
 
 	/*
 	 * Data target
@@ -60,13 +60,13 @@ public abstract class AbstractBulkOperationDefinition implements BulkOperationDe
 	/**
 	 * Constructor.
 	 */
-	public AbstractBulkOperationDefinition() {
+	public AbstractDatastoreOperationDefinition() {
 		super();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperationConfiguration#getTarget()
+	 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration#getTarget()
 	 */
 	@Override
 	public DataTarget<?> getTarget() {
@@ -75,7 +75,7 @@ public abstract class AbstractBulkOperationDefinition implements BulkOperationDe
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkOperationConfiguration#getWriteOptions()
+	 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration#getWriteOptions()
 	 */
 	@Override
 	public Set<WriteOption> getWriteOptions() {
@@ -85,8 +85,19 @@ public abstract class AbstractBulkOperationDefinition implements BulkOperationDe
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#addWriteOption(com.holonplatform.core.
-	 * datastore.DatastoreOperations.WriteOption)
+	 * com.holonplatform.core.internal.datastore.operation.DatastoreOperationDefinition#setTarget(com.holonplatform.core
+	 * .datastore.DataTarget)
+	 */
+	@Override
+	public <T> void setTarget(DataTarget<T> target) {
+		this.target = target;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.operation.DatastoreOperationDefinition#addWriteOption(com.holonplatform
+	 * .core.datastore.DatastoreOperations.WriteOption)
 	 */
 	@Override
 	public void addWriteOption(WriteOption writeOption) {
@@ -138,17 +149,6 @@ public abstract class AbstractBulkOperationDefinition implements BulkOperationDe
 	public <E extends Expression, R extends Expression> Optional<R> resolve(E expression, Class<R> resolutionType,
 			ResolutionContext context) throws InvalidExpressionException {
 		return expressionResolverRegistry.resolve(expression, resolutionType, context);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkOperationDefinition#setTarget(com.holonplatform.core.datastore
-	 * .DataTarget)
-	 */
-	@Override
-	public <T> void setTarget(DataTarget<T> target) {
-		this.target = target;
 	}
 
 	/*

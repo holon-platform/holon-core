@@ -18,6 +18,7 @@ package com.holonplatform.core.datastore.bulk;
 import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.operation.DatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
@@ -30,7 +31,7 @@ import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
  * @since 5.1.0
  */
 public interface BulkUpdateOperation<O extends BulkUpdateOperation<O>>
-		extends BulkOperation<O, BulkUpdateConfiguration>, QueryFilterSupport<O> {
+		extends DatastoreOperation<O, BulkUpdateConfiguration>, QueryFilterSupport<O> {
 
 	/**
 	 * Set given <code>path</code> to given <code>expression</code> value.

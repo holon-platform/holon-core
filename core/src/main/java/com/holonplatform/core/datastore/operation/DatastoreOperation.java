@@ -13,26 +13,28 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.datastore.operation;
+
+import java.util.Set;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 
 /**
- * Represents a bulk operation.
+ * Represents a generic datastore operation.
  * 
  * @param <O> Actual operation type
  * @param <C> Actual operation configuration type
  *
  * @since 5.1.0
  */
-public interface BulkOperation<O extends BulkOperation<O, C>, C extends BulkOperationConfiguration>
+public interface DatastoreOperation<O extends DatastoreOperation<O, C>, C extends DatastoreOperationConfiguration>
 		extends ExpressionResolverBuilder<O> {
 
 	/**
-	 * Get the bulk operation configuration.
-	 * @return the bulk operation configuration
+	 * Get the operation configuration.
+	 * @return the operation configuration
 	 */
 	C getConfiguration();
 
@@ -56,5 +58,12 @@ public interface BulkOperation<O extends BulkOperation<O, C>, C extends BulkOper
 	 * @return this
 	 */
 	O withWriteOptions(WriteOption... writeOptions);
+
+	/**
+	 * Add a set of {@link WriteOption}s to this operation.
+	 * @param writeOptions The write options to add (not null)
+	 * @return this
+	 */
+	O withWriteOptions(Set<WriteOption> writeOptions);
 
 }

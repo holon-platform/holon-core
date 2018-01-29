@@ -22,6 +22,7 @@ import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperationDefinition;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.QueryFilter;
@@ -31,7 +32,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public class DefaultBulkUpdateDefinition extends AbstractBulkOperationDefinition implements BulkUpdateDefinition {
+public class DefaultBulkUpdateDefinition extends AbstractDatastoreOperationDefinition implements BulkUpdateDefinition {
 
 	/*
 	 * Filter

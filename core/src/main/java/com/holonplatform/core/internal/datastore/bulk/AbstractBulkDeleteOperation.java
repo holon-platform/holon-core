@@ -17,6 +17,7 @@ package com.holonplatform.core.internal.datastore.bulk;
 
 import com.holonplatform.core.datastore.bulk.BulkDeleteConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -27,7 +28,7 @@ import com.holonplatform.core.query.QueryFilter;
  * @since 5.1.0
  */
 public abstract class AbstractBulkDeleteOperation<O extends BulkDeleteOperation<O>> extends
-		AbstractBulkOperation<O, BulkDeleteConfiguration, BulkDeleteDefinition> implements BulkDeleteOperation<O> {
+		AbstractDatastoreOperation<O, BulkDeleteConfiguration, BulkDeleteDefinition> implements BulkDeleteOperation<O> {
 
 	public AbstractBulkDeleteOperation() {
 		super(new DefaultBulkDeleteDefinition());

@@ -15,12 +15,6 @@
  */
 package com.holonplatform.core.datastore;
 
-import java.util.Collection;
-
-import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
-import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
-import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityNotAvailableException;
 import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
@@ -38,20 +32,10 @@ import com.holonplatform.core.query.QueryBuilder;
  * on the {@link Property} abstraction to represent data attributes and on the {@link PropertyBox} data container type
  * to transport data values in both directions.
  * </p>
- * <p>
- * In addition to default data manipulation methods, a set of <em>commodities</em> can be registered and used to perform
- * specific data operations. See specific {@link DatastoreOperations} extensions to learn how to register and handle a
- * commodity.
- * </p>
- * <p>
- * Extends {@link ExpressionResolverSupport} to allow {@link ExpressionResolver}s registration, which can be used to
- * extend and/or customize the datastore operations.
- * </p>
  *
  * @since 5.1.0
  */
-public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>>
-		extends ExpressionResolverSupport, DataContextBound {
+public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>> {
 
 	/**
 	 * Refresh a {@link PropertyBox}, updating all its model properties to current value in data store and using given
@@ -154,28 +138,6 @@ public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU e
 	 * @return A new query builder
 	 */
 	Q query();
-
-	// Commodities
-
-	/**
-	 * Get the available {@link DatastoreCommodity} types. A registered {@link DatastoreCommodity} can be created using
-	 * the {@link #create(Class)} method.
-	 * @return Available {@link DatastoreCommodity} types collection, empty if none
-	 */
-	Collection<Class<? extends DatastoreCommodity>> getAvailableCommodities();
-
-	/**
-	 * Create a new {@link DatastoreCommodity} of given <code>commodityType</code> type.
-	 * <p>
-	 * Available commodity types can be obtained using {@link #getAvailableCommodities()}.
-	 * </p>
-	 * @param <C> Commodity type
-	 * @param commodityType The commodity type to create (not null)
-	 * @return The commodity instance
-	 * @throws CommodityNotAvailableException If a commodity of the required type is not available
-	 * @throws CommodityConfigurationException If a commodity configuration error occurred
-	 */
-	<C extends DatastoreCommodity> C create(Class<C> commodityType);
 
 	// ------- types
 

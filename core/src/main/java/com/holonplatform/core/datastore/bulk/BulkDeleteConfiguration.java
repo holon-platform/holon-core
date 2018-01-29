@@ -17,6 +17,7 @@ package com.holonplatform.core.datastore.bulk;
 
 import java.util.Optional;
 
+import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -24,7 +25,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public interface BulkDeleteConfiguration extends BulkOperationConfiguration {
+public interface BulkDeleteConfiguration extends DatastoreOperationConfiguration {
 
 	/**
 	 * Get the optional operation restrictions, expressed as a {@link QueryFilter}.

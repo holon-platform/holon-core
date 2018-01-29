@@ -16,8 +16,9 @@
 package com.holonplatform.core.datastore.bulk;
 
 import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreCommodity;
-import com.holonplatform.core.datastore.ExecutableOperation;
+import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
  * A {@link BulkOperation} builder to configure a bulk <code>UPDATE</code> operation and execute it using the
@@ -29,6 +30,7 @@ import com.holonplatform.core.datastore.ExecutableOperation;
  * 
  * @since 5.0.0
  */
-public interface BulkUpdate extends BulkUpdateOperation<BulkUpdate>, ExecutableOperation, DatastoreCommodity {
+public interface BulkUpdate
+		extends BulkUpdateOperation<BulkUpdate>, ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 }

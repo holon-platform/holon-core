@@ -13,19 +13,20 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.datastore.operation;
 
-import com.holonplatform.core.datastore.operation.DatastoreOperation;
-import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
+import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.datastore.DatastoreOperations;
+import com.holonplatform.core.property.PropertyBox;
 
 /**
- * A <code>DELETE</code> {@link BulkOperation}.
- * 
- * @param <O> Actual operation type
+ * Executable <em>refresh</em> datastore operation.
  *
  * @since 5.1.0
+ * 
+ * @see DatastoreOperations#refresh(com.holonplatform.core.datastore.DataTarget, PropertyBox)
  */
-public interface BulkDeleteOperation<O extends BulkDeleteOperation<O>>
-		extends DatastoreOperation<O, BulkDeleteConfiguration>, QueryFilterSupport<O> {
+public interface RefreshOperation extends PropertyBoxOperation<RefreshOperation, PropertyBoxOperationConfiguration>,
+		ExecutableOperation<PropertyBox>, DatastoreCommodity {
 
 }

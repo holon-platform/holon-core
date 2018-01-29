@@ -13,19 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.bulk;
+package com.holonplatform.core.datastore.operation;
 
-import com.holonplatform.core.datastore.operation.DatastoreOperation;
-import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
+import com.holonplatform.core.datastore.Datastore;
 
 /**
- * A <code>DELETE</code> {@link BulkOperation}.
+ * Represents a {@link Datastore} operation which can be executed to obtain a result.
  * 
- * @param <O> Actual operation type
- *
+ * @param <R> Operation result type
+ * 
  * @since 5.1.0
  */
-public interface BulkDeleteOperation<O extends BulkDeleteOperation<O>>
-		extends DatastoreOperation<O, BulkDeleteConfiguration>, QueryFilterSupport<O> {
+public interface ExecutableOperation<R> {
+
+	/**
+	 * Execute the clause and return the amount of affected data objects
+	 * @return the result of the operation execution
+	 */
+	R execute();
 
 }

@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperationDefinition;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PropertyBox;
@@ -34,7 +35,7 @@ import com.holonplatform.core.property.PropertySet;
  *
  * @since 5.1.0
  */
-public class DefaultBulkInsertDefinition extends AbstractBulkOperationDefinition implements BulkInsertDefinition {
+public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefinition implements BulkInsertDefinition {
 
 	/*
 	 * Operation values

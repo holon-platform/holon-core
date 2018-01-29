@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.datastore.bulk;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.bulk.BulkUpdateConfiguration;
+import com.holonplatform.core.internal.datastore.operation.DatastoreOperationDefinition;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.query.QueryFilter;
 
@@ -26,7 +27,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public interface BulkUpdateDefinition extends BulkOperationDefinition, BulkUpdateConfiguration {
+public interface BulkUpdateDefinition extends DatastoreOperationDefinition, BulkUpdateConfiguration {
 
 	/**
 	 * Add an operation restriction filter.

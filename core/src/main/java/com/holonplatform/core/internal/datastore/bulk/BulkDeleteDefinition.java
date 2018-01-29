@@ -16,6 +16,7 @@
 package com.holonplatform.core.internal.datastore.bulk;
 
 import com.holonplatform.core.datastore.bulk.BulkDeleteConfiguration;
+import com.holonplatform.core.internal.datastore.operation.DatastoreOperationDefinition;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -23,7 +24,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public interface BulkDeleteDefinition extends BulkOperationDefinition, BulkDeleteConfiguration {
+public interface BulkDeleteDefinition extends DatastoreOperationDefinition, BulkDeleteConfiguration {
 
 	/**
 	 * Add an operation restriction filter.

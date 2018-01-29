@@ -13,21 +13,23 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore;
+package com.holonplatform.core.internal.datastore.operation;
 
-import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.datastore.operation.PropertyBoxOperationConfiguration;
+import com.holonplatform.core.property.PropertyBox;
 
 /**
- * Represents a {@link Datastore} operation which can be executed obtaining an {@link OperationResult} type result.
- * 
+ * {@link PropertyBoxOperationConfiguration} definition with configuration setters.
+ *
  * @since 5.1.0
  */
-public interface ExecutableOperation {
+public interface PropertyBoxOperationDefinition
+		extends DatastoreOperationDefinition, PropertyBoxOperationConfiguration {
 
 	/**
-	 * Execute the clause and return the amount of affected data objects
-	 * @return the result of the operation execution
+	 * Set the operation {@link PropertyBox} value.
+	 * @param value The value to set
 	 */
-	OperationResult execute();
+	void setValue(PropertyBox value);
 
 }

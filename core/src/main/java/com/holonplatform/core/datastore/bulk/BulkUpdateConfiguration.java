@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -27,7 +28,7 @@ import com.holonplatform.core.query.QueryFilter;
  *
  * @since 5.1.0
  */
-public interface BulkUpdateConfiguration extends BulkOperationConfiguration {
+public interface BulkUpdateConfiguration extends DatastoreOperationConfiguration {
 
 	/**
 	 * Get the optional operation restrictions, expressed as a {@link QueryFilter}.

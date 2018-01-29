@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.operation.DatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
@@ -30,7 +31,7 @@ import com.holonplatform.core.property.PropertySet;
  * @since 5.1.0
  */
 public interface BulkInsertOperation<O extends BulkInsertOperation<O>>
-		extends BulkOperation<O, BulkInsertConfiguration> {
+		extends DatastoreOperation<O, BulkInsertConfiguration> {
 
 	/**
 	 * Add a path - value expression map to insert.
