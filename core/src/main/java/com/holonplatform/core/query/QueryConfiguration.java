@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverProvider;
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.datastore.DataTarget;
 
@@ -29,7 +29,7 @@ import com.holonplatform.core.datastore.DataTarget;
  * 
  * @since 5.0.0
  */
-public interface QueryConfiguration extends ParameterSet, Expression, ExpressionResolverHandler {
+public interface QueryConfiguration extends ParameterSet, Expression, ExpressionResolverProvider {
 
 	/**
 	 * Get the data target.

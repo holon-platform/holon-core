@@ -13,36 +13,35 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core;
+package com.holonplatform.core.internal;
 
 import java.util.Optional;
 
-import com.holonplatform.core.internal.DefaultProvider;
+import com.holonplatform.core.Provider;
 
 /**
- * Optional object provider.
+ * Default {@link Provider} implementation.
  * 
  * @param <T> Provided object type
  *
  * @since 5.1.0
  */
-@FunctionalInterface
-public interface Provider<T> {
+public class DefaultProvider<T> implements Provider<T> {
 
-	/**
-	 * Get the object provided by this provider, if available.
-	 * @return The optional provided object
-	 */
-	Optional<T> get();
+	private final T value;
 
-	/**
-	 * Create a new {@link Provider} using given value.
-	 * @param <T> Provided value type
-	 * @param value The value to provide (may be null)
-	 * @return A new {@link Provider}
+	public DefaultProvider(T value) {
+		super();
+		this.value = value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.Provider#get()
 	 */
-	static <T> Provider<T> create(T value) {
-		return new DefaultProvider<>(value);
+	@Override
+	public Optional<T> get() {
+		return Optional.ofNullable(value);
 	}
 
 }

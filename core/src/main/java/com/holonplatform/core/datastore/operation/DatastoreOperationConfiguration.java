@@ -20,6 +20,7 @@ import java.util.Set;
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverProvider;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -32,7 +33,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.1.0
  */
-public interface DatastoreOperationConfiguration extends Expression, ExpressionResolverHandler {
+public interface DatastoreOperationConfiguration extends Expression, ExpressionResolverProvider {
 
 	/**
 	 * Get the data target.

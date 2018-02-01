@@ -17,6 +17,7 @@ package com.holonplatform.core.datastore.operation;
 
 import java.util.Set;
 
+import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
@@ -65,5 +66,13 @@ public interface DatastoreOperation<O extends DatastoreOperation<O, C>, C extend
 	 * @return this
 	 */
 	O withWriteOptions(Set<WriteOption> writeOptions);
+
+	/**
+	 * Add all the expression resolvers provided by given {@link Iterable}.
+	 * @param expressionResolvers Expression resolvers to add (not null)
+	 * @return this
+	 */
+	@SuppressWarnings("rawtypes")
+	O withExpressionResolvers(Iterable<? extends ExpressionResolver> expressionResolvers);
 
 }

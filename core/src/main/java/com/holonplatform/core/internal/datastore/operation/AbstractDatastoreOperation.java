@@ -81,6 +81,18 @@ public abstract class AbstractDatastoreOperation<O extends DatastoreOperation<O,
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.operation.DatastoreOperation#withExpressionResolvers(java.lang.Iterable)
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public O withExpressionResolvers(Iterable<? extends ExpressionResolver> expressionResolvers) {
+		ObjectUtils.argumentNotNull(expressionResolvers, "Expression resolvers must be not null");
+		expressionResolvers.forEach(er -> getDefinition().addExpressionResolver(er));
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * com.holonplatform.core.datastore.operation.DatastoreOperation#target(com.holonplatform.core.datastore.DataTarget)
 	 */

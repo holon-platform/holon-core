@@ -15,16 +15,14 @@
  */
 package com.holonplatform.core.internal.datastore.operation;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.ExpressionResolver.ResolutionContext;
-import com.holonplatform.core.ExpressionResolverRegistry;
 import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
@@ -55,7 +53,8 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	/*
 	 * Expression resolvers
 	 */
-	protected ExpressionResolverRegistry expressionResolverRegistry = ExpressionResolverRegistry.create();
+	@SuppressWarnings("rawtypes")
+	protected Set<ExpressionResolver> expressionResolvers = null;
 
 	/**
 	 * Constructor.
@@ -114,7 +113,11 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	@Override
 	public <E extends Expression, R extends Expression> void addExpressionResolver(
 			ExpressionResolver<E, R> expressionResolver) {
-		expressionResolverRegistry.addExpressionResolver(expressionResolver);
+		ObjectUtils.argumentNotNull(expressionResolver, "Expression resolver must be not null");
+		if (expressionResolvers == null) {
+			expressionResolvers = new HashSet<>(8);
+		}
+		expressionResolvers.add(expressionResolver);
 	}
 
 	/*
@@ -126,7 +129,10 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	@Override
 	public <E extends Expression, R extends Expression> void removeExpressionResolver(
 			ExpressionResolver<E, R> expressionResolver) {
-		expressionResolverRegistry.removeExpressionResolver(expressionResolver);
+		ObjectUtils.argumentNotNull(expressionResolver, "Expression resolver must be not null");
+		if (expressionResolvers != null) {
+			expressionResolvers.remove(expressionResolver);
+		}
 	}
 
 	/*
@@ -136,19 +142,8 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Iterable<ExpressionResolver> getExpressionResolvers() {
-		return expressionResolverRegistry.getExpressionResolvers();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler#resolve(com.holonplatform.core.Expression,
-	 * java.lang.Class, com.holonplatform.core.ExpressionResolver.ResolutionContext)
-	 */
-	@Override
-	public <E extends Expression, R extends Expression> Optional<R> resolve(E expression, Class<R> resolutionType,
-			ResolutionContext context) throws InvalidExpressionException {
-		return expressionResolverRegistry.resolve(expression, resolutionType, context);
+		return (expressionResolvers == null) ? Collections.emptySet()
+				: Collections.unmodifiableSet(expressionResolvers);
 	}
 
 	/*

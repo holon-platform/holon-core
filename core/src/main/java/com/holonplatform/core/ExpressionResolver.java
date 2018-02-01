@@ -80,16 +80,25 @@ public interface ExpressionResolver<E extends Expression, R extends Expression>
 	}
 
 	/**
-	 * Handler to perform {@link Expression} resolution using a set of registered {@link ExpressionResolver}s.
+	 * {@link ExpressionResolver} provider.
+	 * 
+	 * @since 5.1.0
 	 */
-	public interface ExpressionResolverHandler {
+	public interface ExpressionResolverProvider {
 
 		/**
-		 * Get all the registered {@link ExpressionResolver}s.
-		 * @return the registered {@link ExpressionResolver}s iterable
+		 * Get the available {@link ExpressionResolver}s.
+		 * @return the available {@link ExpressionResolver}s iterable (not null)
 		 */
 		@SuppressWarnings("rawtypes")
 		Iterable<ExpressionResolver> getExpressionResolvers();
+
+	}
+
+	/**
+	 * Handler to perform {@link Expression} resolution using a set of registered {@link ExpressionResolver}s.
+	 */
+	public interface ExpressionResolverHandler extends ExpressionResolverProvider {
 
 		/**
 		 * Try to resolve given <code>expression</code> to obtain an {@link Expression} of the specified
@@ -141,7 +150,7 @@ public interface ExpressionResolver<E extends Expression, R extends Expression>
 		 * @param resolvers Expression resolvers to add (not null)
 		 */
 		@SuppressWarnings({ "unchecked", "rawtypes" })
-		default void addExpressionResolvers(Iterable<ExpressionResolver> resolvers) {
+		default void addExpressionResolvers(Iterable<? extends ExpressionResolver> resolvers) {
 			ObjectUtils.argumentNotNull(resolvers, "ExpressionResolvers to add must be not null");
 			resolvers.forEach(r -> addExpressionResolver(r));
 		}
