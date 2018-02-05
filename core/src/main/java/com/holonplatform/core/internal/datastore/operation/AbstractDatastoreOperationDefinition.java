@@ -185,4 +185,13 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 		return values;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DatastoreOperationConfiguration [target=" + target + ", writeOptions=" + writeOptions
+				+ ", expressionResolvers=" + expressionResolvers + "]";
+	}
+
 }

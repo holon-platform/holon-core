@@ -59,4 +59,13 @@ public class DefaultPropertyBoxOperationDefinition extends AbstractDatastoreOper
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "PropertyBoxOperationConfiguration [value=" + value + ", target=" + getTarget() + "]";
+	}
+
 }
