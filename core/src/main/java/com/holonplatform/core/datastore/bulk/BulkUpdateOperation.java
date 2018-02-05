@@ -24,7 +24,7 @@ import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
- * A <code>UPDATE</code> {@link BulkOperation}.
+ * Bulk <code>UPDATE</code> {@link DatastoreOperation} configuration.
  * 
  * @param <O> Actual operation type
  *

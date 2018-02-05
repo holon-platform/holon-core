@@ -62,7 +62,6 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	 * Base {@link DatastoreOperationConfiguration} builder.
 	 *
 	 * @param <B> Concrete builder type
-	 * @param <C> Concrete configuration type
 	 */
 	public interface Builder<B extends Builder<B>> extends ExpressionResolverBuilder<B> {
 

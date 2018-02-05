@@ -24,7 +24,7 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.ConstantExpression;
 
 /**
- * A <code>INSERT</code> {@link BulkOperation}.
+ * Bulk <code>INSERT</code> {@link DatastoreOperation} configuration.
  * 
  * @param <O> Actual operation type
  *

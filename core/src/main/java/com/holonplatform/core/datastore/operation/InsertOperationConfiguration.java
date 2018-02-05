@@ -49,7 +49,7 @@ public interface InsertOperationConfiguration extends DatastoreOperationConfigur
 
 		/**
 		 * Set the operation values.
-		 * @param value The values to set (not null)
+		 * @param values The values to set (not null)
 		 * @return this
 		 */
 		Builder values(Map<Path<?>, TypedExpression<?>> values);

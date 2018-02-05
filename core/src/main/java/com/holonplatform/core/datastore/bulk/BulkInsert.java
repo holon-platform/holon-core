@@ -21,7 +21,7 @@ import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
- * A {@link BulkOperation} builder to configure a bulk <code>INSERT</code> operation and execute it using the
+ * A {@link BulkInsertOperation} builder to configure a bulk <code>INSERT</code> operation and execute it using the
  * {@link ExecutableOperation} interface methods.
  * <p>
  * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities

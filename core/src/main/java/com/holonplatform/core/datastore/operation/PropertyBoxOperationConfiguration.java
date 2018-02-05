@@ -46,7 +46,6 @@ public interface PropertyBoxOperationConfiguration extends DatastoreOperationCon
 	 * {@link PropertyBoxOperationConfiguration} builder.
 	 *
 	 * @param <B> Concrete builder type
-	 * @param <C> Concrete configuration type
 	 */
 	public interface Builder<B extends Builder<B>> extends DatastoreOperationConfiguration.Builder<B> {
 

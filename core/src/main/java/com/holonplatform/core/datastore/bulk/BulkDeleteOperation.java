@@ -19,7 +19,7 @@ import com.holonplatform.core.datastore.operation.DatastoreOperation;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
- * A <code>DELETE</code> {@link BulkOperation}.
+ * Bulk <code>DELETE</code> {@link DatastoreOperation} configuration.
  * 
  * @param <O> Actual operation type
  *
