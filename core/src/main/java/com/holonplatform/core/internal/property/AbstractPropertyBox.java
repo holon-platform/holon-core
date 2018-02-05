@@ -180,16 +180,6 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertyBox#propertyValues()
-	 */
-	@Override
-	public <T> Stream<PropertyValue<T>> propertyValues() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertyBox#containsValue(com.holonplatform.core.property.Property)
 	 */
 	@Override
