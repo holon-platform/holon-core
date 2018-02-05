@@ -18,10 +18,10 @@ package com.holonplatform.core.datastore.bulk;
 import java.util.Map;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.operation.DatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * A <code>INSERT</code> {@link BulkOperation}.
@@ -38,7 +38,7 @@ public interface BulkInsertOperation<O extends BulkInsertOperation<O>>
 	 * @param values Value map to add to the bulk insert operation (not null)
 	 * @return this
 	 */
-	O add(Map<Path<?>, TypedExpression<?>> values);
+	O add(Map<Path<?>, ConstantExpression<?>> values);
 
 	/**
 	 * Add a {@link PropertyBox} to insert.

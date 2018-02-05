@@ -19,7 +19,6 @@ import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.operation.ExecutableOperation;
-import com.holonplatform.core.property.PropertyBox;
 
 /**
  * A {@link BulkOperation} builder to configure a bulk <code>INSERT</code> operation and execute it using the
@@ -33,17 +32,5 @@ import com.holonplatform.core.property.PropertyBox;
  */
 public interface BulkInsert
 		extends BulkInsertOperation<BulkInsert>, ExecutableOperation<OperationResult>, DatastoreCommodity {
-
-	/**
-	 * Create a single value <code>INSERT</code> operation, using given {@link PropertyBox} to obtain the values to
-	 * insert.
-	 * <p>
-	 * The provided {@link PropertyBox} can also be used for other, implementation-dependent, purposes. For example to
-	 * set back auto generated keys.
-	 * </p>
-	 * @param propertyBox The {@link PropertyBox} to insert (not null)
-	 * @return this
-	 */
-	BulkInsert singleValue(PropertyBox propertyBox);
 
 }

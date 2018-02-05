@@ -19,6 +19,7 @@ import java.util.Set;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverProvider;
 import com.holonplatform.core.datastore.DataTarget;
@@ -55,6 +56,52 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	default boolean hasWriteOption(WriteOption writeOption) {
 		ObjectUtils.argumentNotNull(writeOption, "Write option must be not null");
 		return getWriteOptions().contains(writeOption);
+	}
+
+	/**
+	 * Base {@link DatastoreOperationConfiguration} builder.
+	 *
+	 * @param <B> Concrete builder type
+	 * @param <C> Concrete configuration type
+	 */
+	public interface Builder<B extends Builder<B>> extends ExpressionResolverBuilder<B> {
+
+		/**
+		 * Set the operation {@link DataTarget}.
+		 * @param target the operation data target to set
+		 * @return this
+		 */
+		B target(DataTarget<?> target);
+
+		/**
+		 * Add a {@link WriteOption} to this operation.
+		 * @param writeOption The write option to add (not null)
+		 * @return this
+		 */
+		B withWriteOption(WriteOption writeOption);
+
+		/**
+		 * Add a set of {@link WriteOption}s to this operation.
+		 * @param writeOptions The write options to add (not null)
+		 * @return this
+		 */
+		B withWriteOptions(WriteOption... writeOptions);
+
+		/**
+		 * Add a set of {@link WriteOption}s to this operation.
+		 * @param writeOptions The write options to add (not null)
+		 * @return this
+		 */
+		B withWriteOptions(Set<WriteOption> writeOptions);
+
+		/**
+		 * Add all the expression resolvers provided by given {@link Iterable}.
+		 * @param expressionResolvers Expression resolvers to add (not null)
+		 * @return this
+		 */
+		@SuppressWarnings("rawtypes")
+		B withExpressionResolvers(Iterable<? extends ExpressionResolver> expressionResolvers);
+
 	}
 
 }

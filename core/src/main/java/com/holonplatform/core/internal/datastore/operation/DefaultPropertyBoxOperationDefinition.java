@@ -15,6 +15,11 @@
  */
 package com.holonplatform.core.internal.datastore.operation;
 
+import java.util.Collections;
+import java.util.Map;
+
+import com.holonplatform.core.Path;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.property.PropertyBox;
 
 /**
@@ -45,6 +50,18 @@ public class DefaultPropertyBoxOperationDefinition extends AbstractDatastoreOper
 	@Override
 	public PropertyBox getValue() {
 		return value;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.operation.PropertyBoxOperationConfiguration#getValueExpressions(boolean)
+	 */
+	@Override
+	public Map<Path<?>, TypedExpression<?>> getValueExpressions(boolean includeNullValues) {
+		if (getValue() != null) {
+			return asPathValues(getValue(), includeNullValues);
+		}
+		return Collections.emptyMap();
 	}
 
 	/*

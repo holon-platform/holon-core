@@ -18,13 +18,13 @@ package com.holonplatform.core.internal.datastore.bulk;
 import java.util.Map;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
 import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Abstract {@link BulkUpdate} operation.
@@ -54,7 +54,7 @@ public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<
 	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(java.util.Map)
 	 */
 	@Override
-	public O add(Map<Path<?>, TypedExpression<?>> values) {
+	public O add(Map<Path<?>, ConstantExpression<?>> values) {
 		getDefinition().addValue(values);
 		return getActualOperation();
 	}
@@ -65,7 +65,7 @@ public abstract class AbstractBulkInsertOperation<O extends BulkInsertOperation<
 	 */
 	@Override
 	public O add(PropertyBox propertyBox) {
-		getDefinition().addValue(propertyBox, false);
+		getDefinition().addValue(propertyBox);
 		return getActualOperation();
 	}
 

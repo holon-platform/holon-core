@@ -16,6 +16,7 @@
 package com.holonplatform.core.internal.datastore.bulk;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperationDefinition;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PathPropertyBoxAdapter;
 import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Default {@link BulkInsertDefinition}.
@@ -40,7 +42,7 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	/*
 	 * Operation values
 	 */
-	private final List<Map<Path<?>, TypedExpression<?>>> values = new LinkedList<>();
+	private final List<Map<Path<?>, ConstantExpression<?>>> values = new LinkedList<>();
 
 	/*
 	 * Operation paths
@@ -52,7 +54,7 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	 * @see com.holonplatform.core.datastore.bulk.BulkInsertConfiguration#getValues()
 	 */
 	@Override
-	public List<Map<Path<?>, TypedExpression<?>>> getValues() {
+	public List<Map<Path<?>, ConstantExpression<?>>> getValues() {
 		return Collections.unmodifiableList(values);
 	}
 
@@ -70,7 +72,7 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	 * @see com.holonplatform.core.internal.datastore.bulk.BulkInsertDefinition#addValue(java.util.Map)
 	 */
 	@Override
-	public void addValue(Map<Path<?>, TypedExpression<?>> value) {
+	public void addValue(Map<Path<?>, ConstantExpression<?>> value) {
 		ObjectUtils.argumentNotNull(value, "Value must be not null");
 		values.add(value);
 	}
@@ -82,8 +84,8 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	 * PropertyBox, boolean)
 	 */
 	@Override
-	public void addValue(PropertyBox value, boolean includeNullValues) {
-		values.add(asPathValues(value, includeNullValues));
+	public void addValue(PropertyBox value) {
+		values.add(asPathConstantValues(value));
 	}
 
 	/*
@@ -120,6 +122,28 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 		if (getValues().isEmpty()) {
 			throw new InvalidExpressionException("No values to insert");
 		}
+	}
+
+	/**
+	 * Get given {@link PropertyBox} as a map of {@link Path} and {@link ConstantExpression} values.
+	 * @param value The property box value (not null)
+	 * @return Values map
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	protected Map<Path<?>, ConstantExpression<?>> asPathConstantValues(PropertyBox value) {
+		ObjectUtils.argumentNotNull(value, "PropertyBox must be not null");
+
+		final Map<Path<?>, ConstantExpression<?>> values = new HashMap<>(value.size());
+
+		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
+
+		propertyBoxAdapter.pathStream().forEach(path -> {
+			propertyBoxAdapter.getValue(path).ifPresent(val -> {
+				values.put(path, ConstantExpression.create((Path) path, val));
+			});
+		});
+
+		return values;
 	}
 
 }

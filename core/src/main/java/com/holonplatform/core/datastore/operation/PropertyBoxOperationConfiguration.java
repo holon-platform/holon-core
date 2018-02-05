@@ -15,6 +15,10 @@
  */
 package com.holonplatform.core.datastore.operation;
 
+import java.util.Map;
+
+import com.holonplatform.core.Path;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.property.PropertyBox;
 
 /**
@@ -29,5 +33,30 @@ public interface PropertyBoxOperationConfiguration extends DatastoreOperationCon
 	 * @return the {@link PropertyBox} value
 	 */
 	PropertyBox getValue();
+
+	/**
+	 * Get the {@link PropertyBox} value as a {@link Path} - {@link TypedExpression} map.
+	 * @param includeNullValues Whether to include <code>null</code> property box values
+	 * @return Map of the {@link PropertyBox} properties which can be represented as a {@link Path} and their values as
+	 *         {@link TypedExpression}s
+	 */
+	Map<Path<?>, TypedExpression<?>> getValueExpressions(boolean includeNullValues);
+
+	/**
+	 * {@link PropertyBoxOperationConfiguration} builder.
+	 *
+	 * @param <B> Concrete builder type
+	 * @param <C> Concrete configuration type
+	 */
+	public interface Builder<B extends Builder<B>> extends DatastoreOperationConfiguration.Builder<B> {
+
+		/**
+		 * Set the operation {@link PropertyBox} value.
+		 * @param value The value to set
+		 * @return this
+		 */
+		B value(PropertyBox value);
+
+	}
 
 }

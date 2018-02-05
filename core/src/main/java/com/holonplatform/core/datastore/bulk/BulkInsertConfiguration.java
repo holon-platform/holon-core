@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
+import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Bulk <code>INSERT</code> operation configuration.
@@ -31,10 +31,10 @@ import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguratio
 public interface BulkInsertConfiguration extends DatastoreOperationConfiguration {
 
 	/**
-	 * Get the operation values, expressed as a List of {@link Path} - {@link TypedExpression} maps.
+	 * Get the operation values, expressed as a List of {@link Path} - {@link ConstantExpression} maps.
 	 * @return The path-value expression map list, empty if none
 	 */
-	List<Map<Path<?>, TypedExpression<?>>> getValues();
+	List<Map<Path<?>, ConstantExpression<?>>> getValues();
 
 	/**
 	 * Get the optional {@link Path}s which has to be used when configuring operation values.

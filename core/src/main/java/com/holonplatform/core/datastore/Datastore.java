@@ -33,6 +33,7 @@ import com.holonplatform.core.datastore.operation.RefreshOperation;
 import com.holonplatform.core.datastore.operation.SaveOperation;
 import com.holonplatform.core.datastore.operation.UpdateOperation;
 import com.holonplatform.core.datastore.transaction.Transactional;
+import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.property.Property;
@@ -73,7 +74,11 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox) {
-		return create(RefreshOperation.class).target(target).value(propertyBox).execute();
+		try {
+			return create(RefreshOperation.class).target(target).value(propertyBox).execute();
+		} catch (Exception e) {
+			throw new DataAccessException("REFRESH operation failed", e);
+		}
 	}
 
 	/*
@@ -83,7 +88,11 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-		return create(InsertOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		try {
+			return create(InsertOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		} catch (Exception e) {
+			throw new DataAccessException("INSERT operation failed", e);
+		}
 	}
 
 	/*
@@ -93,7 +102,11 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-		return create(UpdateOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		try {
+			return create(UpdateOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		} catch (Exception e) {
+			throw new DataAccessException("UPDATE operation failed", e);
+		}
 	}
 
 	/*
@@ -103,7 +116,11 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-		return create(SaveOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		try {
+			return create(SaveOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		} catch (Exception e) {
+			throw new DataAccessException("SAVE operation failed", e);
+		}
 	}
 
 	/*
@@ -113,7 +130,11 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-		return create(DeleteOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		try {
+			return create(DeleteOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+		} catch (Exception e) {
+			throw new DataAccessException("DELETE operation failed", e);
+		}
 	}
 
 	/**

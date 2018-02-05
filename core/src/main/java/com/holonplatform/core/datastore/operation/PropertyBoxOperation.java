@@ -26,13 +26,6 @@ import com.holonplatform.core.property.PropertyBox;
  * @since 5.1.0
  */
 public interface PropertyBoxOperation<O extends PropertyBoxOperation<O, C>, C extends PropertyBoxOperationConfiguration>
-		extends DatastoreOperation<O, C> {
-
-	/**
-	 * Set the operation {@link PropertyBox} value.
-	 * @param value The value to set
-	 * @return this
-	 */
-	O value(PropertyBox value);
+		extends DatastoreOperation<O, C>, PropertyBoxOperationConfiguration.Builder<O> {
 
 }
