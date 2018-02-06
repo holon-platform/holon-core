@@ -568,14 +568,12 @@ public final class ConversionUtils implements Serializable {
 
 	/**
 	 * Flush the contents of a {@link Reader} into a String.
-	 * <p>
-	 * The Reader is closed at the end of the operation.
-	 * </p>
 	 * @param reader Reader to flush (not null)
+	 * @param closeReader Whether to close the Reader after it has been read
 	 * @return A String with the charachters read from given <code>reader</code>
 	 * @throws IOException Read error
 	 */
-	public static String readerToString(Reader reader) throws IOException {
+	public static String readerToString(Reader reader, boolean closeReader) throws IOException {
 		ObjectUtils.argumentNotNull(reader, "Reader must be not null");
 		char[] arr = new char[8 * 1024];
 		StringBuilder buffer = new StringBuilder();
@@ -583,7 +581,9 @@ public final class ConversionUtils implements Serializable {
 		while ((numCharsRead = reader.read(arr, 0, arr.length)) != -1) {
 			buffer.append(arr, 0, numCharsRead);
 		}
-		reader.close();
+		if (closeReader) {
+			reader.close();
+		}
 		return buffer.toString();
 	}
 
