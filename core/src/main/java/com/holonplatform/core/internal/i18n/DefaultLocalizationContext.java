@@ -519,7 +519,7 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	@Override
 	public String format(Temporal temporal, TemporalFormat dateFormat, TemporalFormat timeFormat) {
 		if (temporal != null) {
-			return getDateTimeFormatter(TemporalType.getTemporalType(temporal), dateFormat, timeFormat)
+			return getDateTimeFormatter(TemporalType.getTemporalType(temporal).orElse(null), dateFormat, timeFormat)
 					.format(temporal);
 		}
 		return null;

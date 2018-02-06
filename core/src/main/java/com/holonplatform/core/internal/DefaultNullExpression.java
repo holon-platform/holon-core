@@ -50,6 +50,7 @@ public class DefaultNullExpression<T> extends AbstractConverterExpression<T> imp
 		super((expression instanceof ConverterExpression)
 				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
 		this.type = expression.getType();
+		expression.getTemporalType().ifPresent(t -> setTemporalType(t));
 	}
 
 	/*

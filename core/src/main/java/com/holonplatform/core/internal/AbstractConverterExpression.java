@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
+import com.holonplatform.core.temporal.TemporalType;
 
 /**
  * Abstract {@link ConverterExpression} implementation.
@@ -28,6 +29,11 @@ import com.holonplatform.core.ExpressionValueConverter;
  * @since 5.1.0
  */
 public abstract class AbstractConverterExpression<T> implements ConverterExpression<T> {
+
+	/**
+	 * Expression temporal type
+	 */
+	private TemporalType temporalType;
 
 	/**
 	 * Optional value converter
@@ -57,6 +63,26 @@ public abstract class AbstractConverterExpression<T> implements ConverterExpress
 	@Override
 	public Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
 		return Optional.ofNullable(expressionValueConverter);
+	}
+
+	/**
+	 * Set the expression value temporal type.
+	 * @param temporalType the temporal type to set
+	 */
+	public void setTemporalType(TemporalType temporalType) {
+		this.temporalType = temporalType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.TypedExpression#getTemporalType()
+	 */
+	@Override
+	public Optional<TemporalType> getTemporalType() {
+		if (temporalType != null) {
+			return Optional.of(temporalType);
+		}
+		return ConverterExpression.super.getTemporalType();
 	}
 
 }

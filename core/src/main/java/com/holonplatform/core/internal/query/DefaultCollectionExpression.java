@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.query.CollectionExpression;
+import com.holonplatform.core.temporal.TemporalType;
 
 /**
  * Default {@link CollectionExpression} implementation.
@@ -42,6 +44,11 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * Value type
 	 */
 	private final Class<? extends E> type;
+
+	/*
+	 * Expression temporal type
+	 */
+	private TemporalType temporalType;
 
 	/*
 	 * Optional value converter
@@ -82,12 +89,14 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 */
 	@SuppressWarnings("unchecked")
 	public DefaultCollectionExpression(TypedExpression<E> expression, Collection<? extends E> values) {
-		super(values);
+		super((values != null) ? values : Collections.emptySet());
 		this.expressionValueConverter = (expression instanceof ConverterExpression)
 				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null) : null;
 		this.type = (expression != null) ? expression.getType()
 				: ((values != null && !values.isEmpty()) ? (Class<? extends E>) values.iterator().next().getClass()
 						: (Class<? extends E>) Void.class);
+		if (expression != null)
+			expression.getTemporalType().ifPresent(t -> setTemporalType(t));
 	}
 
 	/*
@@ -142,6 +151,26 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	@Override
 	public Class<? extends E> getType() {
 		return type;
+	}
+
+	/**
+	 * Set the expression value temporal type.
+	 * @param temporalType the temporal type to set
+	 */
+	public void setTemporalType(TemporalType temporalType) {
+		this.temporalType = temporalType;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.TypedExpression#getTemporalType()
+	 */
+	@Override
+	public Optional<TemporalType> getTemporalType() {
+		if (temporalType != null) {
+			return Optional.of(temporalType);
+		}
+		return CollectionExpression.super.getTemporalType();
 	}
 
 	/*

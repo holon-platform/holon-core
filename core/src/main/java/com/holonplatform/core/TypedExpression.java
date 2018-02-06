@@ -35,11 +35,11 @@ public interface TypedExpression<T> extends Expression {
 	Class<? extends T> getType();
 
 	/**
-	 * If the value type is a generic temporal type, get the actual {@link TemporalType} of the type.
+	 * If the expression type represents a temporal type, get the actual {@link TemporalType} of the type.
 	 * @return Optional temporal type
 	 */
 	default Optional<TemporalType> getTemporalType() {
-		return Optional.empty();
+		return TemporalType.getTemporalType(getType());
 	}
 
 }

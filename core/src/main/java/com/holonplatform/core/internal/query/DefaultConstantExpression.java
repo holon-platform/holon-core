@@ -66,7 +66,7 @@ public class DefaultConstantExpression<T> extends AbstractConverterExpression<T>
 
 	/**
 	 * Constructor
-	 * @param expression Optional expression from which to inherit an {@link ExpressionValueConverter}, if available.
+	 * @param expression Expression from which to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param value Constant value (not null)
 	 */
 	public DefaultConstantExpression(TypedExpression<T> expression, T value) {
@@ -74,6 +74,7 @@ public class DefaultConstantExpression<T> extends AbstractConverterExpression<T>
 				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
 		this.value = value;
 		this.type = expression.getType();
+		expression.getTemporalType().ifPresent(t -> setTemporalType(t));
 	}
 
 	/*
