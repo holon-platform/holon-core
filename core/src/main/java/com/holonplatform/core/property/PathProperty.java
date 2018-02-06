@@ -70,7 +70,10 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 	 */
 	@Override
 	default Optional<TemporalType> getTemporalType() {
-		return getConfiguration().getTemporalType();
+		Optional<TemporalType> configurationTemporalType = getConfiguration().getTemporalType();
+		if (configurationTemporalType.isPresent())
+			return configurationTemporalType;
+		return PathExpression.super.getTemporalType();
 	}
 
 	/*
