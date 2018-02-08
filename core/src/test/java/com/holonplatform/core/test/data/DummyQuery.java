@@ -35,7 +35,7 @@ public class DummyQuery extends AbstractQuery<QueryDefinition> {
 	 * @see com.holonplatform.core.query.QueryResults#count()
 	 */
 	@Override
-	public long count() throws QueryExecutionException {
+	public long count() {
 		return 0;
 	}
 
@@ -44,7 +44,7 @@ public class DummyQuery extends AbstractQuery<QueryDefinition> {
 	 * @see com.holonplatform.core.internal.query.QueryResults#stream(com.holonplatform.core.query.QueryProjection)
 	 */
 	@Override
-	public <R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException {
+	public <R> Stream<R> stream(QueryProjection<R> projection) {
 		return Collections.<R>emptyList().stream();
 	}
 

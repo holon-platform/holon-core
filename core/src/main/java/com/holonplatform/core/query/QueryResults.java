@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.query.QueryUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
@@ -44,18 +45,18 @@ public interface QueryResults {
 	 * @param <R> Results type
 	 * @param projection Query projection
 	 * @return Query results stream
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	<R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException;
+	<R> Stream<R> stream(QueryProjection<R> projection);
 
 	/**
 	 * Convenience method to obtain query results {@link #stream(QueryProjection)} as a {@link List}
 	 * @param <R> Results type
 	 * @param projection Query projection
 	 * @return Query results list
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default <R> List<R> list(QueryProjection<R> projection) throws QueryExecutionException {
+	default <R> List<R> list(QueryProjection<R> projection) {
 		return stream(projection).collect(Collectors.toList());
 	}
 
@@ -67,20 +68,19 @@ public interface QueryResults {
 	 * @param <R> Result type
 	 * @param projection Query projection
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
-	 * @throws QueryExecutionException Error in query execution
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
+	 * @throws DataAccessException Error in query execution
 	 */
-	default <R> Optional<R> findOne(QueryProjection<R> projection)
-			throws QueryExecutionException, QueryNonUniqueResultException {
+	default <R> Optional<R> findOne(QueryProjection<R> projection) throws QueryNonUniqueResultException {
 		return stream(projection).collect(Collectors.collectingAndThen(Collectors.toList(), QueryUtils.uniqueResult()));
 	}
 
 	/**
 	 * Count all the results of a query.
 	 * @return Total results count
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default long count() throws QueryExecutionException {
+	default long count() {
 		return findOne(CountAllProjection.create()).orElse(0L);
 	}
 
@@ -94,9 +94,9 @@ public interface QueryResults {
 	 * @param <P> Property type
 	 * @param properties Property set to fetch
 	 * @return Query results {@link PropertyBox} stream
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default <P extends Property> Stream<PropertyBox> stream(Iterable<P> properties) throws QueryExecutionException {
+	default <P extends Property> Stream<PropertyBox> stream(Iterable<P> properties) {
 		return stream(PropertySetProjection.of(properties));
 	}
 
@@ -110,11 +110,11 @@ public interface QueryResults {
 	 * @param <P> Property type
 	 * @param properties Property set to fetch
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
-	 * @throws QueryExecutionException Error in query execution
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
+	 * @throws DataAccessException Error in query execution
 	 */
 	default <P extends Property> Optional<PropertyBox> findOne(Iterable<P> properties)
-			throws QueryExecutionException, QueryNonUniqueResultException {
+			throws QueryNonUniqueResultException {
 		return findOne(PropertySetProjection.of(properties));
 	}
 
@@ -128,9 +128,9 @@ public interface QueryResults {
 	 * @param <P> Property type
 	 * @param properties Property set to fetch
 	 * @return Query results {@link PropertyBox} list
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default <P extends Property> List<PropertyBox> list(Iterable<P> properties) throws QueryExecutionException {
+	default <P extends Property> List<PropertyBox> list(Iterable<P> properties) {
 		return list(PropertySetProjection.of(properties));
 	}
 
@@ -143,9 +143,9 @@ public interface QueryResults {
 	 * </p>
 	 * @param properties Property set to fetch
 	 * @return Query results {@link PropertyBox} stream
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default Stream<PropertyBox> stream(Property... properties) throws QueryExecutionException {
+	default Stream<PropertyBox> stream(Property... properties) {
 		return stream(PropertySet.of(properties));
 	}
 
@@ -158,11 +158,10 @@ public interface QueryResults {
 	 * </p>
 	 * @param properties Property set to fetch
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
-	 * @throws QueryExecutionException Error in query execution
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
+	 * @throws DataAccessException Error in query execution
 	 */
-	default Optional<PropertyBox> findOne(Property... properties)
-			throws QueryExecutionException, QueryNonUniqueResultException {
+	default Optional<PropertyBox> findOne(Property... properties) throws QueryNonUniqueResultException {
 		return findOne(PropertySet.of(properties));
 	}
 
@@ -175,43 +174,10 @@ public interface QueryResults {
 	 * </p>
 	 * @param properties Property set to fetch
 	 * @return Query results {@link PropertyBox} list
-	 * @throws QueryExecutionException Error in query execution
+	 * @throws DataAccessException Error in query execution
 	 */
-	default List<PropertyBox> list(Property... properties) throws QueryExecutionException {
+	default List<PropertyBox> list(Property... properties) {
 		return list(PropertySet.of(properties));
-	}
-
-	/**
-	 * Exception thrown for {@link Query} execution errors.
-	 */
-	@SuppressWarnings("serial")
-	public class QueryExecutionException extends RuntimeException {
-
-		/**
-		 * Constructor with error message
-		 * @param message Error message
-		 */
-		public QueryExecutionException(String message) {
-			super(message);
-		}
-
-		/**
-		 * Constructor with nested exception
-		 * @param cause Nested exception
-		 */
-		public QueryExecutionException(Throwable cause) {
-			super(cause);
-		}
-
-		/**
-		 * Constructor with error message and nested exception
-		 * @param message Error message
-		 * @param cause Nested exception
-		 */
-		public QueryExecutionException(String message, Throwable cause) {
-			super(message, cause);
-		}
-
 	}
 
 	/**
@@ -233,39 +199,6 @@ public interface QueryResults {
 		 */
 		public QueryNonUniqueResultException(String message) {
 			super(message);
-		}
-
-	}
-
-	/**
-	 * Exception thrown for {@link Query} results conversion or parsing errors.
-	 */
-	@SuppressWarnings("serial")
-	public class QueryResultConversionException extends RuntimeException {
-
-		/**
-		 * Constructor with error message
-		 * @param message Error message
-		 */
-		public QueryResultConversionException(String message) {
-			super(message);
-		}
-
-		/**
-		 * Constructor with nested exception
-		 * @param cause Nested exception
-		 */
-		public QueryResultConversionException(Throwable cause) {
-			super(cause);
-		}
-
-		/**
-		 * Constructor with error message and nested exception
-		 * @param message Error message
-		 * @param cause Nested exception
-		 */
-		public QueryResultConversionException(String message, Throwable cause) {
-			super(message, cause);
 		}
 
 	}

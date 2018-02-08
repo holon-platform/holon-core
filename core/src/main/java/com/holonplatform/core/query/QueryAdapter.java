@@ -17,7 +17,7 @@ package com.holonplatform.core.query;
 
 import java.util.stream.Stream;
 
-import com.holonplatform.core.query.QueryResults.QueryExecutionException;
+import com.holonplatform.core.exceptions.DataAccessException;
 
 /**
  * Adapter to perform a <em>query</em> execution using a {@link QueryOperation}.
@@ -33,8 +33,8 @@ public interface QueryAdapter<C extends QueryConfiguration> {
 	 * @param <R> Query results type
 	 * @param queryOperation Query operation (not null)
 	 * @return Query results stream. The stream elements type must match the query projection type
-	 * @throws QueryExecutionException If a query execution error occurred
+	 * @throws DataAccessException If a query execution error occurred
 	 */
-	<R> Stream<R> stream(QueryOperation<C, R> queryOperation) throws QueryExecutionException;
+	<R> Stream<R> stream(QueryOperation<C, R> queryOperation) throws DataAccessException;
 
 }

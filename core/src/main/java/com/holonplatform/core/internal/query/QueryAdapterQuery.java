@@ -18,6 +18,7 @@ package com.holonplatform.core.internal.query;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.Query;
 import com.holonplatform.core.query.QueryAdapter;
@@ -87,13 +88,13 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	 * @see com.holonplatform.core.internal.query.QueryResults#stream(com.holonplatform.core.query.QueryProjection)
 	 */
 	@Override
-	public <R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException {
+	public <R> Stream<R> stream(QueryProjection<R> projection) throws DataAccessException {
 		try {
 			return getQueryAdapter().stream(QueryOperation.create(getQueryDefinition(), projection));
-		} catch (QueryExecutionException e) {
+		} catch (DataAccessException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new QueryExecutionException(e);
+			throw new DataAccessException(e);
 		}
 	}
 
