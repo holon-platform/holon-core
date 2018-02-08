@@ -36,6 +36,7 @@ import com.holonplatform.core.datastore.transaction.Transactional;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
 import com.holonplatform.core.internal.utils.ConversionUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -138,16 +139,6 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	}
 
 	/**
-	 * Create a {@link Query} commodity, which can be used to configure and execute a query on the data managed by this
-	 * Datastore.
-	 * @return A new {@link Query} instance, which can be used to configure and execute a query
-	 */
-	@Override
-	default Query query() {
-		return create(Query.class);
-	}
-
-	/**
 	 * Create a {@link BulkInsert} operation, which can be used to configure and execute a bulk <code>INSERT</code>
 	 * operation.
 	 * @param target {@link DataTarget} to identify the data entity to insert (not null)
@@ -186,6 +177,26 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options) {
 		return create(BulkDelete.class).target(target).withWriteOptions(options);
+	}
+
+	/**
+	 * Create a {@link Query} commodity, which can be used to configure and execute a query on the data managed by this
+	 * Datastore.
+	 * @return A new {@link Query} instance, which can be used to configure and execute a query
+	 */
+	@Override
+	default Query query() {
+		return create(Query.class);
+	}
+
+	/**
+	 * Create a {@link Query} commodity, setting given <code>target</code> as query data target.
+	 * @param target Query data target (not null)
+	 * @return A new {@link Query} instance, which can be used to configure and execute a query
+	 */
+	default Query query(DataTarget<?> target) {
+		ObjectUtils.argumentNotNull(target, "Query target must be not null");
+		return query().target(target);
 	}
 
 	// Transactions
