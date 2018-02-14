@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityNotAvailableException;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Represents a {@link DatastoreCommodity} handler, which provides available commodities and allow to create
@@ -34,6 +35,16 @@ public interface DatastoreCommodityHandler {
 	 * @return Available {@link DatastoreCommodity} types collection, empty if none
 	 */
 	Collection<Class<? extends DatastoreCommodity>> getAvailableCommodities();
+
+	/**
+	 * Get whether given {@link DatastoreCommodity} type is available.
+	 * @param commodityType The commodity type to check (not null)
+	 * @return <code>true</code> if given commodity type is available, <code>false</code> otherwise
+	 */
+	default boolean hasCommodity(Class<? extends DatastoreCommodity> commodityType) {
+		ObjectUtils.argumentNotNull(commodityType, "Commodity type must be not null");
+		return getAvailableCommodities().contains(commodityType);
+	}
 
 	/**
 	 * Create a new {@link DatastoreCommodity} of given <code>commodityType</code> type.
