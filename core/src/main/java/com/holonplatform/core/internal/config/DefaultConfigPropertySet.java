@@ -331,7 +331,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 			// explicit values
 			if (values != null && !values.isEmpty()) {
-				final Properties properties = new Properties();
+				final Map<String, Object> properties = new HashMap<>(values.size());
 				for (Entry<ConfigProperty<?>, Object> value : values.entrySet()) {
 					properties.put(instance.getName() + "." + value.getKey().getKey(), value.getValue());
 				}
