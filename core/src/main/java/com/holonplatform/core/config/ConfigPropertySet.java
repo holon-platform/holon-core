@@ -17,6 +17,7 @@ package com.holonplatform.core.config;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import com.holonplatform.core.internal.config.DefaultConfig;
@@ -53,13 +54,23 @@ public interface ConfigPropertySet {
 	<T> boolean hasConfigProperty(ConfigProperty<T> property);
 
 	/**
+	 * Get the value associated to given <code>property</code>, if available.
+	 * @param <T> Property type
+	 * @param property Configuration property to read (not null)
+	 * @return Optional config property value
+	 */
+	<T> Optional<T> getConfigPropertyValue(ConfigProperty<T> property);
+
+	/**
 	 * Returns the value associated to given <code>property</code>.
 	 * @param <T> Property type
 	 * @param property Configuration property to read (not null)
 	 * @param defaultValue Default value to return if property was not found or has no value
 	 * @return Property value, or <code>defaultValue</code> if not found
 	 */
-	<T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue);
+	default <T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue) {
+		return getConfigPropertyValue(property).orElse(defaultValue);
+	}
 
 	/**
 	 * Get a key-value {@link Map} of all the properties at sub levels of this property set, starting from given prefix.

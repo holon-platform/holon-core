@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -119,12 +120,12 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.config.ConfigPropertyResolver#getConfigPropertyValue(com.holonplatform.core.config.
-	 * ConfigProperty, java.lang.Object)
+	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyValue(com.holonplatform.core.config.
+	 * ConfigProperty)
 	 */
 	@Override
-	public <T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue) {
-		ObjectUtils.argumentNotNull(property, "Configuration property to read must be not null");
+	public <T> Optional<T> getConfigPropertyValue(ConfigProperty<T> property) {
+		ObjectUtils.argumentNotNull(property, "Configuration property must be not null");
 
 		T value = null;
 
@@ -135,10 +136,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 			}
 		}
 
-		if (value != null) {
-			return value;
-		}
-		return defaultValue;
+		return Optional.ofNullable(value);
 	}
 
 	/*
