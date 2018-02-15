@@ -19,8 +19,10 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import com.holonplatform.core.internal.config.DefaultConfig;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * A set of configuration properties, identified by a specific name, used as property definition prefix.
@@ -70,6 +72,20 @@ public interface ConfigPropertySet {
 	 */
 	default <T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue) {
 		return getConfigPropertyValue(property).orElse(defaultValue);
+	}
+
+	/**
+	 * Get the value associated to given <code>property</code>, if available. If not available, try to obtain the value
+	 * from the provided <code>orElse</code> supplier.
+	 * @param <T> Property type
+	 * @param property Configuration property to read (not null)
+	 * @param orElse Fallback value supplier (not null)
+	 * @return Optional config property value
+	 */
+	default <T> Optional<T> getConfigPropertyValueOrElse(ConfigProperty<T> property, Supplier<Optional<T>> orElse) {
+		ObjectUtils.argumentNotNull(property, "Fallback value supplier must be not null");
+		final Optional<T> value = getConfigPropertyValue(property);
+		return (value.isPresent()) ? value : orElse.get();
 	}
 
 	/**
