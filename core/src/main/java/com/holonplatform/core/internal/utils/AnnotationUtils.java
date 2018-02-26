@@ -22,6 +22,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Utility class for {@link Annotation} management.
@@ -99,11 +100,27 @@ public final class AnnotationUtils implements Serializable {
 	}
 
 	/**
+	 * Get a single annotation of given <code>annotationType</code> present in given <code>element</code>, including any
+	 * meta-annotation and supporting repeatable annotations.
+	 * @param <A> Annotation type
+	 * @param element Annotated element to inspect (not null)
+	 * @param annotationType Annotation type to lookup (not null)
+	 * @return Optional annotation value, if found. If more than one annotation is found, the first one is returned
+	 */
+	public static <A extends Annotation> Optional<A> getAnnotation(AnnotatedElement element, Class<A> annotationType) {
+		List<A> annotations = getAnnotations(element, annotationType);
+		if (!annotations.isEmpty()) {
+			return Optional.ofNullable(annotations.get(0));
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Get all the annotations of given <code>annotationType</code> present in given <code>element</code>, including any
 	 * meta-annotation and supporting repeatable annotations.
 	 * @param <A> Annotation type
 	 * @param element Annotated element to inspect (not null)
-	 * @param annotationType Annotation type to lookup
+	 * @param annotationType Annotation type to lookup (not null)
 	 * @return List of detected annotation of given <code>annotationType</code>, an empty List if none found
 	 */
 	public static <A extends Annotation> List<A> getAnnotations(AnnotatedElement element, Class<A> annotationType) {
