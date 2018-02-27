@@ -60,7 +60,7 @@ public enum DefaultPropertyBoxEqualsHashCodeHandler
 		return getIdentifierValues(pb).map(values -> {
 			int result = (defaultHashCode != null) ? (31 * defaultHashCode.intValue()) : 1;
 			return 31 * result + Arrays.hashCode(values);
-		}).orElse(pb.hashCode()); // defaults to Object hashCode
+		}).orElse(defaultHashCode); // defaults to Object hashCode
 	}
 
 	/**
