@@ -333,7 +333,7 @@ public class ExampleQuery {
 		final DataTarget TARGET2 = DataTarget.named("testTarget2");
 		final PathProperty<Integer> PROPERTY2 = TARGET2.property("test", Integer.class);
 
-		SubQuery<Integer> subQuery = SubQuery.create(datastore).target(TARGET2).filter(PROPERTY1.goe(1))
+		SubQuery<Integer> subQuery = SubQuery.create().target(TARGET2).filter(PROPERTY1.goe(1))
 				.select(PROPERTY1); // <1>
 
 		Stream<Integer> results = datastore.query().target(TARGET1).filter(PROPERTY2.in(subQuery)).stream(PROPERTY2); // <2>
@@ -352,11 +352,11 @@ public class ExampleQuery {
 		final PathProperty<Integer> PROPERTY2 = TARGET2.property("test", Integer.class);
 
 		Stream<Integer> results = datastore.query().target(TARGET1)
-				.filter(SubQuery.create(datastore).target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).exists())
+				.filter(SubQuery.create().target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).exists())
 				.stream(PROPERTY2); // <1>
 
 		results = datastore.query().target(TARGET1)
-				.filter(SubQuery.create(datastore).target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).notExists())
+				.filter(SubQuery.create().target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).notExists())
 				.stream(PROPERTY2); // <2>
 		// end::subquery2[]
 	}
