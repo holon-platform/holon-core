@@ -120,21 +120,20 @@ public class ExampleProperty {
 			propertyBox -> propertyBox.getValue(NAME) + " " + propertyBox.getValue(SURNAME)); // <4>
 	// end::vrtproperty[]
 
-	@SuppressWarnings("rawtypes")
 	public void propertySet() {
 		// tag::propertyset[]
 		final PathProperty<String> NAME = PathProperty.create("name", String.class);
 		final PathProperty<String> SURNAME = PathProperty.create("surname", String.class);
 		final PathProperty<Long> ID = PathProperty.create("id", Long.class);
 
-		PropertySet<Property> set = PropertySet.of(NAME, SURNAME); // <1>
+		PropertySet<Property<?>> set = PropertySet.of(NAME, SURNAME); // <1>
 		set = PropertySet.builder().add(NAME).add(SURNAME).build(); // <2>
 
 		boolean contains = set.contains(NAME); // <3>
 		set.forEach(p -> p.toString()); // <4>
 		String captions = set.stream().map(p -> p.getMessage()).collect(Collectors.joining()); // <5>
 
-		PropertySet<Property> newSet = PropertySet.builder().add(set).add(ID).build(); // <6>
+		PropertySet<Property<?>> newSet = PropertySet.builder().add(set).add(ID).build(); // <6>
 		int size = newSet.size(); // <7>
 
 		newSet = PropertySet.builder().add(set).remove(SURNAME).build(); // <8>

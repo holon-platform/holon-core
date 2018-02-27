@@ -122,26 +122,37 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	// Builders
 
 	/**
-	 * Obtain a builder to create and populate a {@link PropertySet}.
-	 * @param <P> Type of the property managed by the property set
+	 * Obtain a builder to create and populate a generic {@link PropertySet}.
 	 * @return A new {@link PropertySet} builder
 	 */
-	static <P extends Property> Builder<P> builder() {
+	static Builder<Property<?>> builder() {
+		return new DefaultPropertySet.DefaultBuilder<>();
+	}
+
+	/**
+	 * Obtain a builder to create and populate a {@link PropertySet} which supports given {@link Property} type.
+	 * @param <P> Property type
+	 * @param propertyType The property type managed by the {@link PropertySet} to build (not null)
+	 * @return A new {@link PropertySet} builder
+	 * @since 5.1.0
+	 */
+	static <P extends Property> Builder<P> builder(Class<? extends P> propertyType) {
+		ObjectUtils.argumentNotNull(propertyType, "Property type must be not null");
 		return new DefaultPropertySet.DefaultBuilder<>();
 	}
 
 	/**
 	 * Obtain a builder to create and populate a {@link PropertySet}, and add given <code>properties</code> to the
 	 * property set to build.
-	 * @param <P> Type of the property managed by the property set
+	 * @param <P> Property type
 	 * @param properties Properties to initially add to the property set (not null)
 	 * @return A new {@link PropertySet} builder
 	 * @since 5.1.0
 	 */
 	@SafeVarargs
-	static <P extends Property> Builder<P> builderOf(P... properties) {
+	static <P extends Property> Builder<Property<?>> builderOf(P... properties) {
 		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
-		Builder<P> builder = builder();
+		Builder<Property<?>> builder = builder();
 		for (P property : properties) {
 			builder.add(property);
 		}
@@ -182,10 +193,11 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 * @return A new {@link PropertySet} instance containing the properties of given <code>propertySet</code> and any
 	 *         additional provided property
 	 */
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> of(PropertySet<? extends P> propertySet, P... properties) {
 		ObjectUtils.argumentNotNull(propertySet, "Source property set must be not null");
-		final Builder<P> builder = builder();
+		final Builder builder = builder();
 		propertySet.forEach(p -> builder.add(p));
 		// identifiers
 		propertySet.identifiers().forEach(i -> builder.identifier(i));
@@ -213,13 +225,14 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 *             declaration. Use the default PropertySet builder to compose a new PropertySet from different property
 	 *             sources.
 	 */
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> join(PropertySet<? extends P>... propertySets) {
 		if (propertySets == null || propertySets.length == 0) {
 			throw new IllegalArgumentException("No PropertySet to join");
 		}
-		Builder<P> builder = builder();
+		Builder builder = builder();
 		for (PropertySet<? extends P> ps : propertySets) {
 			ps.forEach(p -> builder.add(p));
 		}

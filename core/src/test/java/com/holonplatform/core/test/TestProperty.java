@@ -794,9 +794,9 @@ public class TestProperty {
 		ps = PropertySet.of(pi);
 		assertTrue(ps.contains(TestPropertySet.NAME));
 
-		PropertySet<Property> p1 = PropertySet.of(TestPropertySet.NAME);
+		PropertySet<Property<?>> p1 = PropertySet.of(TestPropertySet.NAME);
 
-		PropertySet<Property> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
+		PropertySet<Property<?>> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
 
@@ -804,7 +804,7 @@ public class TestProperty {
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
 
-		PropertySet<Property> p4 = PropertySet.builder().add(p3).remove(TestPropertySet.GENERIC).build();
+		PropertySet<Property<?>> p4 = PropertySet.builder().add(p3).remove(TestPropertySet.GENERIC).build();
 		assertTrue(p4.contains(TestPropertySet.NAME));
 		assertFalse(p4.contains(TestPropertySet.GENERIC));
 
@@ -820,8 +820,17 @@ public class TestProperty {
 		assertTrue(joined.contains(TestPropertySet.GENERIC));
 		assertTrue(joined.contains(TestPropertySet.VIRTUAL));
 
-		PropertySet<?> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME).build();
+		PropertySet<Property<?>> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME)
+				.build();
 		assertEquals(1, ps2.size());
+
+		PropertySet<Property<?>> pbo = PropertySet.builderOf(TestPropertySet.NAME, TestPropertySet.SEQUENCE)
+				.identifier(TestPropertySet.SEQUENCE).build();
+		assertTrue(pbo.contains(TestPropertySet.NAME));
+		assertTrue(pbo.contains(TestPropertySet.SEQUENCE));
+
+		PropertySet<PathProperty> pps = PropertySet.builder(PathProperty.class).add(TestPropertySet.NAME).build();
+		assertTrue(pps.contains(TestPropertySet.NAME));
 	}
 
 	@Test
