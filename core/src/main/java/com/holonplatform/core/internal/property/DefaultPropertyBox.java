@@ -22,7 +22,6 @@ import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
@@ -124,32 +123,17 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("PropertyBox - PROPERTIES: ");
 		sb.append(getPropertySet().stream()
-				.map(p -> "[" + displayPropertyName(p) + ":"
-						+ ((p.getType() != null) ? p.getType().getName() : "NOTYPE") + "]")
+				.map(p -> "[" + p.getName() + ":" + ((p.getType() != null) ? p.getType().getName() : "NOTYPE") + "]")
 				.collect(Collectors.joining(",")));
 		sb.append(" - VALUES: ");
 		String values = propertyValues.entrySet().stream().filter(e -> e.getValue() != null)
-				.map(e -> "(" + displayPropertyName(e.getKey()) + "=" + e.getValue() + ")")
-				.collect(Collectors.joining(","));
+				.map(e -> "(" + e.getKey().getName() + "=" + e.getValue() + ")").collect(Collectors.joining(","));
 		if (values == null || values.trim().equals("")) {
 			sb.append("<EMPTY>");
 		} else {
 			sb.append(values);
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Get the property name for display purposes.
-	 * @param property The property to display
-	 * @return The property display name
-	 */
-	private static String displayPropertyName(Property<?> property) {
-		if (property != null) {
-			return (Path.class.isAssignableFrom(property.getClass())) ? ("\"" + ((Path) property).getName() + "\"")
-					: "UNNAMED";
-		}
-		return "[NULL]";
 	}
 
 	// Builder

@@ -16,6 +16,7 @@
 package com.holonplatform.core.internal.property;
 
 import com.holonplatform.core.i18n.Localizable;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.VirtualProperty;
 import com.holonplatform.core.property.VirtualProperty.Builder;
@@ -32,7 +33,12 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtua
 
 	private static final long serialVersionUID = -7091967623813118367L;
 
-	/*
+	/**
+	 * Property name
+	 */
+	private String name;
+
+	/**
 	 * Optional value provider
 	 */
 	private PropertyValueProvider<T> valueProvider;
@@ -43,6 +49,29 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtua
 	 */
 	public DefaultVirtualProperty(Class<? extends T> type) {
 		super(type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.Property#getName()
+	 */
+	@Override
+	public String getName() {
+		if (name == null) {
+			return VirtualProperty.class.getSimpleName() + "|" + hashCode();
+		}
+		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.VirtualProperty.Builder#name(java.lang.String)
+	 */
+	@Override
+	public DefaultVirtualProperty<T> name(String name) {
+		ObjectUtils.argumentNotNull(name, "Property name must be not null");
+		this.name = name;
+		return this;
 	}
 
 	/*
@@ -61,6 +90,7 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtua
 	 */
 	@Override
 	public DefaultVirtualProperty<T> valueProvider(PropertyValueProvider<T> valueProvider) {
+		ObjectUtils.argumentNotNull(valueProvider, "PropertyValueProvider must be not null");
 		this.valueProvider = valueProvider;
 		return this;
 	}
@@ -71,7 +101,13 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtua
 	 */
 	@Override
 	public String toString() {
-		return "VirtualProperty [type=" + ((getType() != null) ? getType().getName() : "null") + "]";
+		StringBuilder sb = new StringBuilder();
+		sb.append("VirtualProperty [name=");
+		sb.append(getName());
+		sb.append(", type=");
+		sb.append(((getType() != null) ? getType().getName() : "null"));
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

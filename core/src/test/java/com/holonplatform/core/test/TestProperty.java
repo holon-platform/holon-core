@@ -102,7 +102,7 @@ public class TestProperty {
 	}
 
 	@Test
-	public void testBase() {
+	public void testVirtualProperty() {
 
 		Property<String> gp = VirtualProperty.create(String.class);
 		assertEquals(String.class, gp.getType());
@@ -123,6 +123,9 @@ public class TestProperty {
 
 		assertEquals("Test caption", vp2.getMessage());
 		assertEquals("test.message", vp2.getMessageCode());
+
+		VirtualProperty vp3 = VirtualProperty.create(String.class).valueProvider(pb -> "TEST").name("virtualName");
+		assertEquals("virtualName", vp3.getName());
 	}
 
 	@Test

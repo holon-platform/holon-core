@@ -35,6 +35,9 @@ import com.holonplatform.core.temporal.TemporalType;
  * Property is the base interface to represent a generic data attribute. Declares its value type through
  * {@link #getType()} method and it is generalized on such type.
  * <p>
+ * A property can be identified by a symbolic name, which can be obtained through the {@link #getName()} method.
+ * </p>
+ * <p>
  * Supports a {@link PropertyValueConverter} to be used within a {@link PropertyBox} abstraction when property is bound
  * to a data model, allowing property value conversion in both directions when property value type and data model value
  * type does not match.
@@ -50,7 +53,7 @@ import com.holonplatform.core.temporal.TemporalType;
  * Extends {@link Localizable} to optionally provide a localizable message which describes the property.
  * </p>
  * 
- * @since 4.4.0
+ * @since 5.0.0
  * 
  * @see PathProperty
  * @see VirtualProperty
@@ -60,8 +63,14 @@ import com.holonplatform.core.temporal.TemporalType;
 public interface Property<T> extends Validatable<T>, Localizable, Serializable {
 
 	/**
-	 * Type of values supported by this property
-	 * @return Property value type
+	 * Get the name which identifies this property.
+	 * @return The property name (should be not null)
+	 */
+	String getName();
+
+	/**
+	 * Get the type of values supported by this property
+	 * @return Property value type (not null)
 	 */
 	Class<? extends T> getType();
 

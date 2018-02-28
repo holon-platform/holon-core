@@ -32,10 +32,19 @@ import com.holonplatform.core.temporal.TemporalType;
 /**
  * A {@link Property} bound to a {@link Path}, using {@link Path#getName()} as property name.
  * <p>
- * This property can be used as {@link QueryExpression} and {@link QueryProjection}.
+ * This property can be used as {@link QueryExpression} and {@link QueryProjection} through the {@link PathExpression}
+ * super interface.
+ * </p>
+ * <p>
+ * A {@link PathProperty} is a {@link ConverterExpression} too, using the {@link PropertyValueConverter} as expression
+ * value converter, if available.
  * </p>
  * <p>
  * Type specific extensions are available to provide query expression convenience builder methods.
+ * </p>
+ * <p>
+ * The {@link #create(String, Class)} and {@link #create(Path)} builder methods can be used to create and configure a
+ * new {@link PathProperty} instance.
  * </p>
  * 
  * @param <T> Property value type

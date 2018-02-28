@@ -141,4 +141,13 @@ public abstract class AbstractPropertyQueryFunction<T, A> extends AbstractQueryF
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.Property#getName()
+	 */
+	@Override
+	public String getName() {
+		return getClass().getSimpleName() + "|" + hashCode();
+	}
+
 }
