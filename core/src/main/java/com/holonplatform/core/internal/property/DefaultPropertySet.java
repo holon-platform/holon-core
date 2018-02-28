@@ -188,7 +188,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		sb.append("DefaultPropertySet [");
+		sb.append("PropertySet [");
 		sb.append(super.toString());
 		if (identifiers != null && !identifiers.isEmpty()) {
 			sb.append(" / Identifiers: {");

@@ -15,15 +15,14 @@
  */
 package com.holonplatform.core.internal.property;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
@@ -122,22 +121,42 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("DefaultPropertyBox [");
-		sb.append(getPropertySet());
-		sb.append("]: ");
-		if (propertyValues == null || propertyValues.isEmpty()) {
-			sb.append("[EMPTY]");
+		final StringBuilder sb = new StringBuilder();
+		sb.append("PropertyBox - PROPERTIES: ");
+		sb.append(getPropertySet().stream()
+				.map(p -> "[" + displayPropertyName(p) + ":"
+						+ ((p.getType() != null) ? p.getType().getName() : "NOTYPE") + "]")
+				.collect(Collectors.joining(",")));
+		sb.append(" - VALUES: ");
+		String values = propertyValues.entrySet().stream().filter(e -> e.getValue() != null)
+				.map(e -> "(" + displayPropertyName(e.getKey()) + "=" + e.getValue() + ")")
+				.collect(Collectors.joining(","));
+		if (values == null || values.trim().equals("")) {
+			sb.append("<EMPTY>");
 		} else {
-			final List<String> pv = new ArrayList<>(propertyValues.size());
-			propertyValues.forEach((p, v) -> pv.add(p + "=" + v));
-			sb.append(pv.stream().collect(Collectors.joining(",", "[", "]")));
+			sb.append(values);
 		}
 		return sb.toString();
 	}
 
+	/**
+	 * Get the property name for display purposes.
+	 * @param property The property to display
+	 * @return The property display name
+	 */
+	private static String displayPropertyName(Property<?> property) {
+		if (property != null) {
+			return (Path.class.isAssignableFrom(property.getClass())) ? ("\"" + ((Path) property).getName() + "\"")
+					: "UNNAMED";
+		}
+		return "[NULL]";
+	}
+
 	// Builder
 
+	/**
+	 * Default {@link Builder}.
+	 */
 	public static class PropertyBoxBuilder implements Builder {
 
 		private final DefaultPropertyBox instance;
