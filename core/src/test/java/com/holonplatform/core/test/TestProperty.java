@@ -34,9 +34,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -915,6 +917,22 @@ public class TestProperty {
 		assertTrue(box5.equals(box1));
 		assertTrue(box5.equals(null));
 		assertEquals(1, box5.hashCode());
+		
+		Map<Object, Object> map = new HashMap<>();
+		
+		PropertyBox m1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
+		
+		map.put(m1, m1);
+		
+		Object value = map.get(m1);
+		assertNotNull(value);
+		
+		PropertyBox m2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
+		
+		value = map.get(m2);
+		assertNotNull(value);
 	}
 
 	@Test

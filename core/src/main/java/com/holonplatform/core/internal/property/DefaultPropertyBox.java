@@ -122,12 +122,12 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("PropertyBox - PROPERTIES: ");
-		sb.append(getPropertySet().stream()
-				.map(p -> "[" + p.getName() + ":" + ((p.getType() != null) ? p.getType().getName() : "NOTYPE") + "]")
+		sb.append(getPropertySet().stream().map(
+				p -> "[\"" + p.getName() + "\":" + ((p.getType() != null) ? p.getType().getName() : "NOTYPE") + "]")
 				.collect(Collectors.joining(",")));
 		sb.append(" - VALUES: ");
 		String values = propertyValues.entrySet().stream().filter(e -> e.getValue() != null)
-				.map(e -> "(" + e.getKey().getName() + "=" + e.getValue() + ")").collect(Collectors.joining(","));
+				.map(e -> "(\"" + e.getKey().getName() + "\"=" + e.getValue() + ")").collect(Collectors.joining(","));
 		if (values == null || values.trim().equals("")) {
 			sb.append("<EMPTY>");
 		} else {

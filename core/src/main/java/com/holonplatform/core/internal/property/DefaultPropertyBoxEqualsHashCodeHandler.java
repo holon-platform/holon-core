@@ -57,10 +57,7 @@ public enum DefaultPropertyBoxEqualsHashCodeHandler
 	@Override
 	public Integer apply(PropertyBox pb, Integer defaultHashCode) {
 		// check identifier
-		return getIdentifierValues(pb).map(values -> {
-			int result = (defaultHashCode != null) ? (31 * defaultHashCode.intValue()) : 1;
-			return 31 * result + Arrays.hashCode(values);
-		}).orElse(defaultHashCode); // defaults to Object hashCode
+		return getIdentifierValues(pb).map(values -> Arrays.hashCode(values)).orElse(defaultHashCode);
 	}
 
 	/**
