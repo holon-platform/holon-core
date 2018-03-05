@@ -95,9 +95,9 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 */
 	private static final Logger LOGGER = BeanLogger.create();
 
-	private static final Comparator<BeanPropertyPostProcessor> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : BeanPropertyPostProcessor.DEFAULT_PRIORITY);
+	private static final Comparator<BeanPropertyPostProcessor> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: BeanPropertyPostProcessor.DEFAULT_PRIORITY);
 
 	private static final Comparator<BeanProperty<?>> SEQUENCE_COMPARATOR = new Comparator<BeanProperty<?>>() {
 
@@ -312,10 +312,13 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 					for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 						if (!EXCLUDE_DEFAULT_BEAN_PROPERTY_NAMES.contains(propertyDescriptor.getName())) {
 							buildBeanProperty(beanClass, parentPath, parent, propertyDescriptor).ifPresent(p -> {
-								properties.add(p);
-								LOGGER.debug(() -> "Bean class [" + beanClass + "] - added bean property [" + p + "]");
+								if (p.addToPropertySet) {
+									properties.add(p.property);
+									LOGGER.debug(
+											() -> "Bean class [" + beanClass + "] - added bean property [" + p + "]");
+								}
 								// check nested
-								properties.addAll(resolveBeanProperties(p.getType(), null, p));
+								properties.addAll(resolveBeanProperties(p.property.getType(), null, p.property));
 							});
 						}
 					}
@@ -337,17 +340,28 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 * @return BeanProperty instance
 	 * @throws BeanIntrospectionException Error introspecting bean class
 	 */
-	private Optional<BeanProperty<?>> buildBeanProperty(Class<?> beanClass, Path<?> parentPath, BeanProperty<?> parent,
-			PropertyDescriptor propertyDescriptor) throws BeanIntrospectionException {
+	private Optional<ResolvedBeanProperty<?>> buildBeanProperty(Class<?> beanClass, Path<?> parentPath,
+			BeanProperty<?> parent, PropertyDescriptor propertyDescriptor) throws BeanIntrospectionException {
+
+		boolean addToPropertySet = true;
+
 		// annotations
 		Annotation[] annotations = null;
 		Field propertyField = findDeclaredField(beanClass, propertyDescriptor.getName());
 		if (propertyField != null) {
 			// check ignore
 			if (propertyField.isAnnotationPresent(Ignore.class)) {
+				final Ignore ignore = propertyField.getAnnotation(Ignore.class);
+
 				LOGGER.debug(() -> "Bean class [" + beanClass + "] - Property " + propertyDescriptor.getName()
-						+ " ignored according to IgnoreProperty annotation ");
-				return Optional.empty();
+						+ " ignored according to IgnoreProperty annotation - Include nested: "
+						+ ignore.includeNested());
+
+				addToPropertySet = false;
+
+				if (ignore.includeNested()) {
+					return Optional.empty();
+				}
 			}
 
 			annotations = propertyField.getAnnotations();
@@ -363,9 +377,11 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		}
 
 		// post processors
-		property = postProcessBeanProperty(property, beanClass);
+		if (addToPropertySet) {
+			property = postProcessBeanProperty(property, beanClass);
+		}
 
-		return Optional.of(property);
+		return Optional.of(new ResolvedBeanProperty<>(property, addToPropertySet));
 
 	}
 
@@ -408,6 +424,22 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 				&& !propertyClass.isEnum() && !TypeUtils.isString(propertyClass) && !TypeUtils.isNumber(propertyClass)
 				&& !TypeUtils.isTemporalOrCalendar(propertyClass) && !TypeUtils.isBoolean(propertyClass)
 				&& !Collection.class.isAssignableFrom(propertyClass);
+	}
+
+	/*
+	 * Support class
+	 */
+	private static final class ResolvedBeanProperty<T> {
+
+		final BeanProperty<T> property;
+		final boolean addToPropertySet;
+
+		ResolvedBeanProperty(BeanProperty<T> property, boolean addToPropertySet) {
+			super();
+			this.property = property;
+			this.addToPropertySet = addToPropertySet;
+		}
+
 	}
 
 }

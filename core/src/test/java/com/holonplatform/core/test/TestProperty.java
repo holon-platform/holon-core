@@ -77,6 +77,7 @@ import com.holonplatform.core.query.QuerySort.SortDirection;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.core.test.data.TestBean;
 import com.holonplatform.core.test.data.TestBean2;
+import com.holonplatform.core.test.data.TestBean3;
 import com.holonplatform.core.test.data.TestIdentifiablePropertySet;
 import com.holonplatform.core.test.data.TestNested;
 import com.holonplatform.core.test.data.TestPropertySet;
@@ -718,6 +719,16 @@ public class TestProperty {
 
 		Object value = testBean2Context.read("someDecimal", testMock);
 		assertEquals(BigDecimal.valueOf(2.7), value);
+	}
+	
+	@Test
+	public void testIgnorePropertyNotNested() {
+
+		BeanPropertySet<TestBean3> testBean3Context = BeanIntrospector.get().getPropertySet(TestBean3.class);
+
+		assertFalse(testBean3Context.getProperty("nested").isPresent());
+		assertTrue(testBean3Context.getProperty("nested.nestedId").isPresent());
+		assertTrue(testBean3Context.getProperty("nested.nestedDate").isPresent());
 	}
 
 	@Test

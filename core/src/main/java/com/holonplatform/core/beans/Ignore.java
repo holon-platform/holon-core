@@ -34,6 +34,10 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Ignore {
 
-	// marker annotation
+	/**
+	 * Whether to ignore any nested property too, if any. Defaults to <code>true</code>.
+	 * @return Whether to ignore nested properties
+	 */
+	boolean includeNested() default true;
 
 }
