@@ -23,7 +23,7 @@ import com.holonplatform.core.property.BooleanProperty.BooleanPropertyBuilder;
  *
  * @since 5.1.0
  */
-public class DefaultBooleanProperty extends AbstractPathProperty<Boolean, BooleanPropertyBuilder>
+public class DefaultBooleanProperty extends AbstractPathProperty<Boolean, BooleanProperty, BooleanPropertyBuilder>
 		implements BooleanPropertyBuilder {
 
 	private static final long serialVersionUID = -907186669849021056L;
@@ -34,6 +34,24 @@ public class DefaultBooleanProperty extends AbstractPathProperty<Boolean, Boolea
 	 */
 	public DefaultBooleanProperty(String name) {
 		super(name, Boolean.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected BooleanProperty getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected BooleanPropertyBuilder getActualBuilder() {
+		return this;
 	}
 
 }

@@ -18,7 +18,6 @@ package com.holonplatform.core.internal.property;
 import java.util.Optional;
 
 import com.holonplatform.core.Path;
-import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathProperty.Builder;
@@ -26,21 +25,18 @@ import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
- * Abstract {@link PathProperty} implementation which acts as base class for concrete implementations.
- * 
- * <p>
- * Extends {@link AbstractProperty} inheriting {@link Localizable} support.
- * </p>
+ * Abstract {@link PathProperty} implementation and builder.
  * 
  * @param <T> Property value type
- * @param <P> Concrete property type
+ * @param <P> Property type
+ * @param <B> Concrete property type
  * 
  * @since 5.0.0
  * 
  * @see DefaultPathProperty
  */
-public abstract class AbstractPathProperty<T, P extends Builder<T, P>> extends AbstractProperty<T, P>
-		implements Builder<T, P>, PathProperty<T> {
+public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B extends Builder<T, P, B>> extends AbstractProperty<T, P, B>
+		implements Builder<T, P, B>, PathProperty<T> {
 
 	private static final long serialVersionUID = 2939113810465856718L;
 
@@ -99,13 +95,13 @@ public abstract class AbstractPathProperty<T, P extends Builder<T, P>> extends A
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public P parent(Path<?> parent) {
+	public B parent(Path<?> parent) {
 		// check final paths
 		if (parent != null && FinalPath.class.isAssignableFrom(this.getClass())) {
 			throw new UnsupportedOperationException("Cannot declare a parent path for a final path: " + this);
 		}
 		this.parent = parent;
-		return (P) this;
+		return (B) this;
 	}
 
 	/*

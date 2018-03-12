@@ -64,7 +64,8 @@ public interface BooleanProperty extends PathProperty<Boolean> {
 	/**
 	 * {@link BooleanProperty} builder.
 	 */
-	public interface BooleanPropertyBuilder extends Builder<Boolean, BooleanPropertyBuilder>, BooleanProperty {
+	public interface BooleanPropertyBuilder
+			extends Builder<Boolean, BooleanProperty, BooleanPropertyBuilder>, BooleanProperty {
 
 	}
 

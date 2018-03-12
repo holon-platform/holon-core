@@ -55,7 +55,8 @@ public interface StringProperty extends PathProperty<String>, StringQueryExpress
 	/**
 	 * {@link StringProperty} builder.
 	 */
-	public interface StringPropertyBuilder extends Builder<String, StringPropertyBuilder>, StringProperty {
+	public interface StringPropertyBuilder
+			extends Builder<String, StringProperty, StringPropertyBuilder>, StringProperty {
 
 	}
 

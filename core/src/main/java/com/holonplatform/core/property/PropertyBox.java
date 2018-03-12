@@ -17,8 +17,6 @@ package com.holonplatform.core.property;
 
 import java.io.Serializable;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Context;
@@ -27,6 +25,8 @@ import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.internal.property.DefaultPropertyBox;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
 import com.holonplatform.core.property.Property.PropertyReadOnlyException;
@@ -40,9 +40,9 @@ import com.holonplatform.core.property.Property.PropertyReadOnlyException;
  * <p>
  * If the {@link PropertySet} to which the {@link PropertyBox} is bound provides a set of <em>identifier</em>
  * properties, the identifier property values are used by default to check {@link PropertyBox} objects equality and to
- * provide the object hash code. The default builder allows to provide a custom equals/hashCode logic using a sutiable
- * {@link BiPredicate} and {@link BiFunction}. See {@link Builder#equalsHandler(BiPredicate)} and
- * {@link Builder#hashCodeHandler(BiFunction)} for further details.
+ * provide the object hash code. The default builder allows to provide a custom equals/hashCode logic using suitable
+ * {@link EqualsHandler} and {@link HashCodeProvider} functions. See {@link Builder#equalsHandler(EqualsHandler)} and
+ * {@link Builder#hashCodeProvider(HashCodeProvider)} methods for further details.
  * </p>
  * <p>
  * By default, property value validation is enabled, and when a property value is setted in the {@link PropertyBox}
@@ -306,37 +306,33 @@ public interface PropertyBox extends PropertySet<Property> {
 
 		/**
 		 * Set the predicate to use to check the {@link PropertyBox} object equality using the
-		 * {@link Object#equals(Object)} method. The first parameter is the {@link PropertyBox} itself, while the second
-		 * parameter is the the reference object with which to compare. The predicate must return <code>true</code> if
-		 * the two object should be considered equal, or <code>false</code> otherwise.
+		 * {@link Object#equals(Object)} method.
 		 * <p>
 		 * By default, {@link PropertyBox} objects equality is checked using the property set identifier property
 		 * values, if available.
 		 * </p>
 		 * <p>
-		 * If a custom <code>equals</code> predicate is provided, a <code>hashCode</code> function should be provided
-		 * too, using the {@link #hashCodeHandler(BiFunction)} builder mthod.
+		 * If a custom <code>equals</code> handler is provided, a <code>hashCode</code> provider should be provided too,
+		 * using the {@link #hashCodeProvider(HashCodeProvider)} builder mthod.
 		 * </p>
-		 * @param equalsHandler The predicate to use to check {@link PropertyBox} object equality
+		 * @param equalsHandler The function to use to check {@link PropertyBox} object equality
 		 * @return this
 		 * @see PropertySet#getIdentifiers()
 		 */
-		Builder equalsHandler(BiPredicate<PropertyBox, Object> equalsHandler);
+		Builder equalsHandler(EqualsHandler<PropertyBox> equalsHandler);
 
 		/**
 		 * Set the function to use to provide the {@link PropertyBox} object hash code using the
-		 * {@link Object#hashCode()} method. The first parameter is the {@link PropertyBox} itself, while the second
-		 * function parameter is the default hashCode, calculated through the default {@link Object#hashCode()}
-		 * function. The function must return the {@link PropertyBox} object hash code value (never null)
+		 * {@link Object#hashCode()} method.
 		 * <p>
 		 * By default, {@link PropertyBox} objects hash code is calculated using the property set identifier property
 		 * values, if available.
 		 * </p>
-		 * @param hashCodeHandler The function to use to provide the {@link PropertyBox} object hash code
+		 * @param hashCodeProvider The function to use to provide the {@link PropertyBox} object hash code
 		 * @return this
 		 * @see PropertySet#getIdentifiers()
 		 */
-		Builder hashCodeHandler(BiFunction<PropertyBox, Integer, Integer> hashCodeHandler);
+		Builder hashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider);
 
 		/**
 		 * Set value of given <code>property</code>. Value type must be consistent with declared {@link Property} type.

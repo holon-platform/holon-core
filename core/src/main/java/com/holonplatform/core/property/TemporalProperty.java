@@ -115,7 +115,8 @@ public interface TemporalProperty<T> extends PathProperty<T>, TemporalQueryExpre
 	 * 
 	 * @param <T> Property type
 	 */
-	public interface TemporalPropertyBuilder<T> extends Builder<T, TemporalPropertyBuilder<T>>, TemporalProperty<T> {
+	public interface TemporalPropertyBuilder<T>
+			extends Builder<T, TemporalProperty<T>, TemporalPropertyBuilder<T>>, TemporalProperty<T> {
 
 	}
 

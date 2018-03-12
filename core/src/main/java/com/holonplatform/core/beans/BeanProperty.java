@@ -125,7 +125,7 @@ public interface BeanProperty<T> extends PathProperty<T> {
 	 * BeanProperty builder.
 	 * @param <T> Property type
 	 */
-	public interface Builder<T> extends PathProperty.Builder<T, Builder<T>>, BeanProperty<T> {
+	public interface Builder<T> extends PathProperty.Builder<T, BeanProperty<T>, Builder<T>>, BeanProperty<T> {
 
 		/**
 		 * Set the bean property read (get) method

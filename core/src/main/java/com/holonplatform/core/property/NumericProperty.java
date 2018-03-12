@@ -140,7 +140,7 @@ public interface NumericProperty<N extends Number> extends PathProperty<N>, Nume
 	 * @param <N> Property type
 	 */
 	public interface NumericPropertyBuilder<N extends Number>
-			extends Builder<N, NumericPropertyBuilder<N>>, NumericProperty<N> {
+			extends Builder<N, NumericProperty<N>, NumericPropertyBuilder<N>>, NumericProperty<N> {
 
 	}
 

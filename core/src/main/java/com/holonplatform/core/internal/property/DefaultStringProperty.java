@@ -23,7 +23,7 @@ import com.holonplatform.core.property.StringProperty.StringPropertyBuilder;
  *
  * @since 5.1.0
  */
-public class DefaultStringProperty extends AbstractPathProperty<String, StringPropertyBuilder>
+public class DefaultStringProperty extends AbstractPathProperty<String, StringProperty, StringPropertyBuilder>
 		implements StringPropertyBuilder {
 
 	private static final long serialVersionUID = -3647255339530687803L;
@@ -34,6 +34,24 @@ public class DefaultStringProperty extends AbstractPathProperty<String, StringPr
 	 */
 	public DefaultStringProperty(String name) {
 		super(name, String.class);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected StringProperty getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected StringPropertyBuilder getActualBuilder() {
+		return this;
 	}
 
 }

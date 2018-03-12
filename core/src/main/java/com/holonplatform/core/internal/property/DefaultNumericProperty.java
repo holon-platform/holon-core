@@ -25,8 +25,8 @@ import com.holonplatform.core.property.NumericProperty.NumericPropertyBuilder;
  *
  * @since 5.1.0
  */
-public class DefaultNumericProperty<N extends Number> extends AbstractPathProperty<N, NumericPropertyBuilder<N>>
-		implements NumericPropertyBuilder<N> {
+public class DefaultNumericProperty<N extends Number> extends
+		AbstractPathProperty<N, NumericProperty<N>, NumericPropertyBuilder<N>> implements NumericPropertyBuilder<N> {
 
 	private static final long serialVersionUID = -2278164109480762076L;
 
@@ -37,6 +37,24 @@ public class DefaultNumericProperty<N extends Number> extends AbstractPathProper
 	 */
 	public DefaultNumericProperty(String name, Class<? extends N> type) {
 		super(name, type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected NumericProperty<N> getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected NumericPropertyBuilder<N> getActualBuilder() {
+		return this;
 	}
 
 }

@@ -18,9 +18,9 @@ package com.holonplatform.core.internal.property;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 
@@ -31,17 +31,23 @@ import com.holonplatform.core.property.PropertyBox;
  * @since 5.1.0
  */
 public enum DefaultPropertyBoxEqualsHashCodeHandler
-		implements BiFunction<PropertyBox, Integer, Integer>, BiPredicate<PropertyBox, Object> {
+		implements HashCodeProvider<PropertyBox>, EqualsHandler<PropertyBox> {
 
 	/**
 	 * Singleton istance
 	 */
 	INSTANCE;
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.objects.EqualsHandler#equals(java.lang.Object, java.lang.Object)
+	 */
 	@Override
-	public boolean test(final PropertyBox pb, final Object other) {
+	public boolean equals(PropertyBox pb, Object other) {
 		if (pb == other)
 			return true;
+		if (pb == null)
+			return false;
 		if (other == null)
 			return false;
 		if (!(other instanceof PropertyBox))
@@ -54,10 +60,14 @@ public enum DefaultPropertyBoxEqualsHashCodeHandler
 				.orElse(pb == other);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.objects.HashCodeProvider#hashCode(java.lang.Object)
+	 */
 	@Override
-	public Integer apply(PropertyBox pb, Integer defaultHashCode) {
+	public Optional<Integer> hashCode(PropertyBox pb) {
 		// check identifier
-		return getIdentifierValues(pb).map(values -> Arrays.hashCode(values)).orElse(defaultHashCode);
+		return getIdentifierValues(pb).map(values -> Arrays.hashCode(values));
 	}
 
 	/**

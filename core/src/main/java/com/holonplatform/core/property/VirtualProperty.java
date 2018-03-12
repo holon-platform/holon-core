@@ -68,7 +68,7 @@ public interface VirtualProperty<T> extends Property<T> {
 	 * @param type Property value type
 	 * @return A {@link Builder} to setup property attributes
 	 */
-	static <T> Builder<T, ?> create(Class<? extends T> type) {
+	static <T> VirtualPropertyBuilder<T> create(Class<? extends T> type) {
 		return new DefaultVirtualProperty<>(type);
 	}
 
@@ -80,18 +80,19 @@ public interface VirtualProperty<T> extends Property<T> {
 	 * @param valueProvider Property value provider
 	 * @return A {@link Builder} to setup property attributes
 	 */
-	static <T> Builder<T, ?> create(Class<T> type, PropertyValueProvider<T> valueProvider) {
+	static <T> VirtualPropertyBuilder<T> create(Class<T> type, PropertyValueProvider<T> valueProvider) {
 		return new DefaultVirtualProperty<>(type).valueProvider(valueProvider);
 	}
 
-	// Builder
+	// Builders
 
 	/**
-	 * Base interface for {@link VirtualProperty} building.
+	 * Base {@link VirtualProperty} builder.
 	 * @param <T> Property value type
+	 * @param <P> Property type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, B extends Builder<T, B>> extends Property.Builder<T, B>, VirtualProperty<T> {
+	public interface Builder<T, P extends VirtualProperty<T>, B extends Builder<T, P, B>> extends Property.Builder<T, P, B>, VirtualProperty<T> {
 
 		/**
 		 * Set the property name.
@@ -107,6 +108,14 @@ public interface VirtualProperty<T> extends Property<T> {
 		 */
 		B valueProvider(PropertyValueProvider<T> valueProvider);
 
+	}
+	
+	/**
+	 * Default {@link VirtualProperty} builder.
+	 * @param <T> Property value type
+	 */
+	public interface VirtualPropertyBuilder<T> extends Builder<T, VirtualProperty<T>, VirtualPropertyBuilder<T>> {
+		
 	}
 
 }

@@ -18,6 +18,7 @@ package com.holonplatform.core.test;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -55,6 +56,8 @@ import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.presentation.StringValuePresenter;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
@@ -69,7 +72,7 @@ import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.VirtualProperty;
-import com.holonplatform.core.property.VirtualProperty.Builder;
+import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.PathQuerySort;
@@ -110,7 +113,7 @@ public class TestProperty {
 		Property<String> gp = VirtualProperty.create(String.class);
 		assertEquals(String.class, gp.getType());
 
-		Builder<String, ?> vp = VirtualProperty.create(String.class).message("Test caption")
+		VirtualPropertyBuilder<String> vp = VirtualProperty.create(String.class).message("Test caption")
 				.messageCode("test.message");
 		assertEquals(String.class, vp.getType());
 		assertEquals("Test caption", ((Localizable) vp).getMessage());
@@ -129,6 +132,36 @@ public class TestProperty {
 
 		VirtualProperty vp3 = VirtualProperty.create(String.class).valueProvider(pb -> "TEST").name("virtualName");
 		assertEquals("virtualName", vp3.getName());
+	}
+	
+	@Test
+	public void testPropertyEqualsHashCode() {
+		
+		PathProperty<String> p1 = PathProperty.create("p1", String.class);
+		PathProperty<String> p2 = PathProperty.create("p1", String.class);
+		
+		assertFalse(p1.equals(p2));
+		assertNotEquals(p1.hashCode(), p2.hashCode());
+		
+		EqualsHandler<PathProperty<?>> eh = (p,o) -> {
+			if (p != null && o != null) {
+				if (o instanceof PathProperty) {
+					return p.getName().equals(((PathProperty<?>)o).getName());
+				}
+			}
+			return false;
+		};
+		
+		HashCodeProvider<PathProperty<?>> hcp = p -> {
+			return Optional.of(p.getName().hashCode());
+		};
+		
+		p1 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
+		p2 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
+		
+		assertTrue(p1.equals(p2));
+		assertEquals(p1.hashCode(), p2.hashCode());
+		
 	}
 
 	@Test
@@ -924,7 +957,7 @@ public class TestProperty {
 		assertTrue(box4.equals(box4));
 
 		PropertyBox box5 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES).equalsHandler((a, b) -> true)
-				.hashCodeHandler((a, b) -> 1).build();
+				.hashCodeProvider(pb -> Optional.of(1)).build();
 		assertTrue(box5.equals(box1));
 		assertTrue(box5.equals(null));
 		assertEquals(1, box5.hashCode());

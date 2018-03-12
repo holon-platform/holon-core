@@ -34,12 +34,12 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	private static final long serialVersionUID = -4226232700674616194L;
 
-	private final Class<TYPE> propertyType;
+	private final Class<? extends TYPE> propertyType;
 	private final Class<MODEL> modelType;
 	private final Function<MODEL, TYPE> fromModel;
 	private final Function<TYPE, MODEL> toModel;
 
-	public CallbackPropertyValueConverter(Class<TYPE> propertyType, Class<MODEL> modelType,
+	public CallbackPropertyValueConverter(Class<? extends TYPE> propertyType, Class<MODEL> modelType,
 			Function<MODEL, TYPE> fromModel, Function<TYPE, MODEL> toModel) {
 		super();
 		ObjectUtils.argumentNotNull(propertyType, "Property type must be not null");
@@ -78,9 +78,10 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertyValueConverter#getPropertyType()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Class<TYPE> getPropertyType() {
-		return propertyType;
+		return (Class<TYPE>) propertyType;
 	}
 
 	/*

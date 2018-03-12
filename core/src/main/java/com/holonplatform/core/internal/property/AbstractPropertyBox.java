@@ -19,8 +19,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.ParameterSet;
@@ -30,6 +28,8 @@ import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
@@ -67,14 +67,14 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	private transient boolean invalidAllowed;
 
 	/**
-	 * Optional hash code provider function
+	 * Optional hash code provider
 	 */
-	private BiFunction<PropertyBox, Integer, Integer> hashCodeHandler;
+	private HashCodeProvider<PropertyBox> hashCodeProvider;
 
 	/**
-	 * Optional equals handler predicate
+	 * Optional equals handler
 	 */
-	private BiPredicate<PropertyBox, Object> equalsHandler;
+	private EqualsHandler<PropertyBox> equalsHandler;
 
 	/**
 	 * Constructor
@@ -403,44 +403,41 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	}
 
 	/**
-	 * Get the function to use to provide the {@link PropertyBox} <code>hashCode</code>.
-	 * @return the hashCodeHandler Optional hash code provider function
+	 * Get the provider to use to obtain the {@link PropertyBox} <code>hashCode</code>.
+	 * @return Optional hash code provider
 	 */
-	protected Optional<BiFunction<PropertyBox, Integer, Integer>> getHashCodeHandler() {
-		return Optional.ofNullable(hashCodeHandler);
+	protected Optional<HashCodeProvider<PropertyBox>> getHashCodeProvider() {
+		return Optional.ofNullable(hashCodeProvider);
 	}
 
 	/**
-	 * Set the function to use to provide the {@link PropertyBox} <code>hashCode</code>.
-	 * <p>
-	 * The second argument is the default Object hash code value.
-	 * </p>
-	 * @param hashCodeHandler the hash code function to set
+	 * Set the provider to use to obtain the {@link PropertyBox} <code>hashCode</code>.
+	 * @param hashCodeProvider the hash code provider to set
 	 */
-	protected void setHashCodeHandler(BiFunction<PropertyBox, Integer, Integer> hashCodeHandler) {
-		this.hashCodeHandler = hashCodeHandler;
+	protected void setHashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider) {
+		this.hashCodeProvider = hashCodeProvider;
 	}
 
 	/**
-	 * Get the predicate to use for the {@link PropertyBox} <code>equals</code> logic.
-	 * @return Optional equals handler predicate
+	 * Get the handler to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @return Optional equals handler
 	 */
-	protected Optional<BiPredicate<PropertyBox, Object>> getEqualsHandler() {
+	protected Optional<EqualsHandler<PropertyBox>> getEqualsHandler() {
 		return Optional.ofNullable(equalsHandler);
 	}
 
 	/**
-	 * Set the predicate to use for the {@link PropertyBox} <code>equals</code> logic.
-	 * @param equalsHandler the equals handler predicate to set
+	 * Set the handler to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @param equalsHandler the equals handler to set
 	 */
-	protected void setEqualsHandler(BiPredicate<PropertyBox, Object> equalsHandler) {
+	protected void setEqualsHandler(EqualsHandler<PropertyBox> equalsHandler) {
 		this.equalsHandler = equalsHandler;
 	}
 
 	/**
 	 * Get the {@link PropertyBox} hash code.
 	 * <p>
-	 * If a hash code handler function is provided, it is used to provide the hash code. Otherwise, the default
+	 * If an hash code provider function is provided, it is used to provide the hash code. Otherwise, the default
 	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
 	 * values, if available, to provide the object's hash code.
 	 * </p>
@@ -448,18 +445,14 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 */
 	@Override
 	public int hashCode() {
-		Integer hashCode = getHashCodeHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).apply(this,
-				super.hashCode());
-		if (hashCode == null) {
-			throw new IllegalStateException("The hash code handler function returned a null hash code value");
-		}
-		return hashCode.intValue();
+		return getHashCodeProvider().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).hashCode(this)
+				.orElse(super.hashCode());
 	}
 
 	/**
 	 * Checks whether some other object is "equal to" this {@link PropertyBox}.
 	 * <p>
-	 * If an equals predicate is provided, it is used to check objects equality. Otherwise, the default
+	 * If an equals handler is provided, it is used to check objects equality. Otherwise, the default
 	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
 	 * values, if available, to check objects equality.
 	 * </p>
@@ -467,7 +460,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		return getEqualsHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).test(this, obj);
+		return getEqualsHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).equals(this, obj);
 	}
 
 	// ------- Abstract methods

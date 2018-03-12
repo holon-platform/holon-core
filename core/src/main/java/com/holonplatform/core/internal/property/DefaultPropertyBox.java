@@ -17,12 +17,12 @@ package com.holonplatform.core.internal.property;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiFunction;
-import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.PropertyBox;
@@ -178,21 +178,23 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#equalsHandler(java.util.function.BiPredicate)
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#equalsHandler(com.holonplatform.core.objects.
+		 * EqualsHandler)
 		 */
 		@Override
-		public Builder equalsHandler(BiPredicate<PropertyBox, Object> equalsHandler) {
+		public Builder equalsHandler(EqualsHandler<PropertyBox> equalsHandler) {
 			this.instance.setEqualsHandler(equalsHandler);
 			return this;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#hashCodeHandler(java.util.function.BiFunction)
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#hashCodeProvider(com.holonplatform.core.objects.
+		 * HashCodeProvider)
 		 */
 		@Override
-		public Builder hashCodeHandler(BiFunction<PropertyBox, Integer, Integer> hashCodeHandler) {
-			this.instance.setHashCodeHandler(hashCodeHandler);
+		public Builder hashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider) {
+			this.instance.setHashCodeProvider(hashCodeProvider);
 			return this;
 		}
 

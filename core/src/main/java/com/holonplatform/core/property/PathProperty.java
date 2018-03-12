@@ -140,19 +140,22 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 	}
 
 	/**
-	 * {@link PathProperty} builder.
+	 * Base interface for {@link PathProperty} building.
 	 * @param <T> Property value type
+	 * @param <P> Property type
+	 * @param <B> Concrete builder type
 	 */
-	public interface PathPropertyBuilder<T> extends Builder<T, PathPropertyBuilder<T>>, PathProperty<T> {
+	public interface Builder<T, P extends PathProperty<T>, B extends Builder<T, P, B>>
+			extends Path.Builder<T, B>, Property.Builder<T, P, B> {
 
 	}
 
 	/**
-	 * Base interface for {@link PathProperty} building.
+	 * {@link PathProperty} builder.
 	 * @param <T> Property value type
-	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, B extends Builder<T, B>> extends Path.Builder<T, B>, Property.Builder<T, B> {
+	public interface PathPropertyBuilder<T>
+			extends Builder<T, PathProperty<T>, PathPropertyBuilder<T>>, PathProperty<T> {
 
 	}
 

@@ -25,7 +25,7 @@ import com.holonplatform.core.property.TemporalProperty.TemporalPropertyBuilder;
  *
  * @since 5.1.0
  */
-public class DefaultTemporalProperty<T> extends AbstractPathProperty<T, TemporalPropertyBuilder<T>>
+public class DefaultTemporalProperty<T> extends AbstractPathProperty<T, TemporalProperty<T>, TemporalPropertyBuilder<T>>
 		implements TemporalPropertyBuilder<T> {
 
 	private static final long serialVersionUID = 8579232846776577003L;
@@ -37,6 +37,24 @@ public class DefaultTemporalProperty<T> extends AbstractPathProperty<T, Temporal
 	 */
 	public DefaultTemporalProperty(String name, Class<? extends T> type) {
 		super(name, type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected TemporalProperty<T> getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected TemporalPropertyBuilder<T> getActualBuilder() {
+		return this;
 	}
 
 }

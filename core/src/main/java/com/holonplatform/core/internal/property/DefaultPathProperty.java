@@ -25,7 +25,7 @@ import com.holonplatform.core.property.PathProperty.PathPropertyBuilder;
  *
  * @since 5.0.0
  */
-public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathPropertyBuilder<T>>
+public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathProperty<T>, PathPropertyBuilder<T>>
 		implements PathPropertyBuilder<T> {
 
 	private static final long serialVersionUID = 5796523880557314657L;
@@ -37,6 +37,24 @@ public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathProperty
 	 */
 	public DefaultPathProperty(String name, Class<? extends T> type) {
 		super(name, type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected PathProperty<T> getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected PathPropertyBuilder<T> getActualBuilder() {
+		return this;
 	}
 
 }

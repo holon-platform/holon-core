@@ -38,7 +38,7 @@ import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurati
  * 
  * @since 5.0.0
  */
-public class DefaultBeanProperty<T> extends AbstractPathProperty<T, Builder<T>> implements Builder<T> {
+public class DefaultBeanProperty<T> extends AbstractPathProperty<T, BeanProperty<T>, Builder<T>> implements Builder<T> {
 
 	private static final long serialVersionUID = -136356340742425752L;
 
@@ -89,6 +89,24 @@ public class DefaultBeanProperty<T> extends AbstractPathProperty<T, Builder<T>> 
 	 */
 	public DefaultBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
 		super(name, type, configuration);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected BeanProperty<T> getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected BeanProperty.Builder<T> getActualBuilder() {
+		return this;
 	}
 
 	/*

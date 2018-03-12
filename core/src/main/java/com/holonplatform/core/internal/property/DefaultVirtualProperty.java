@@ -19,7 +19,7 @@ import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.VirtualProperty;
-import com.holonplatform.core.property.VirtualProperty.Builder;
+import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
 
 /**
  * Default {@link VirtualProperty} implementation with {@link Localizable} support.
@@ -28,8 +28,8 @@ import com.holonplatform.core.property.VirtualProperty.Builder;
  * 
  * @since 5.0.0
  */
-public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtualProperty<T>>
-		implements Builder<T, DefaultVirtualProperty<T>> {
+public class DefaultVirtualProperty<T> extends AbstractProperty<T, VirtualProperty<T>, VirtualPropertyBuilder<T>>
+		implements VirtualPropertyBuilder<T> {
 
 	private static final long serialVersionUID = -7091967623813118367L;
 
@@ -49,6 +49,24 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, DefaultVirtua
 	 */
 	public DefaultVirtualProperty(Class<? extends T> type) {
 		super(type);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualProperty()
+	 */
+	@Override
+	protected VirtualProperty<T> getActualProperty() {
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.property.AbstractProperty#getActualBuilder()
+	 */
+	@Override
+	protected DefaultVirtualProperty<T> getActualBuilder() {
+		return this;
 	}
 
 	/*
