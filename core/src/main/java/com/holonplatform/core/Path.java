@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.DefaultPath;
 
 /**
@@ -37,7 +38,7 @@ import com.holonplatform.core.internal.DefaultPath;
  *
  * @since 5.0.0
  */
-public interface Path<T> extends TypedExpression<T>, Serializable {
+public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable {
 
 	/**
 	 * Separator character used as separator between path hierarchy elements when composing or parsing a path name.
@@ -55,6 +56,15 @@ public interface Path<T> extends TypedExpression<T>, Serializable {
 	 * @return Optional parent path, empty if none
 	 */
 	Optional<Path<?>> getParent();
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.DataMappable#getDataPath()
+	 */
+	@Override
+	default Optional<String> getDataPath() {
+		return Optional.ofNullable(getName());
+	}
 
 	/**
 	 * Checks whether this path is a root path, i.e. it has no parent path.

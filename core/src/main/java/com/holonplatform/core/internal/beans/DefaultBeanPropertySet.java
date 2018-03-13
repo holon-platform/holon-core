@@ -19,9 +19,11 @@ import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -453,6 +455,68 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 					+ " doesn't match property type " + property.getType().getName());
 		}
 		return (PathProperty<PT>) property;
+	}
+
+	// Builder
+
+	/**
+	 * Default {@link BeanPropertySet.Builder}.
+	 * 
+	 * @param <T> Bean class
+	 */
+	static class DefaultBuilder<T> implements BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> {
+
+		private final DefaultBeanPropertySet<T> instance;
+
+		/**
+		 * Constructor.
+		 * @param <P> Actual property type
+		 * @param beanClass Bean class to which this property set refers
+		 * @param properties Properties of the set
+		 */
+		public <P extends PathProperty<?>> DefaultBuilder(Class<? extends T> beanClass, Collection<P> properties) {
+			super();
+			this.instance = new DefaultBeanPropertySet<>(beanClass, properties);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#identifiers(java.lang.String[])
+		 */
+		@Override
+		public BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> identifiers(String... propertyNames) {
+			if (propertyNames != null) {
+				Set<PathProperty<?>> identifiers = new LinkedHashSet<>();
+				for (String propertyName : propertyNames) {
+					identifiers.add(this.instance.getProperty(propertyName)
+							.orElseThrow(() -> new IllegalStateException("Declared identifier property name ["
+									+ propertyName + "] is not part of the bean class [" + this.instance.getBeanClass()
+									+ "] property set")));
+				}
+				this.instance.setIdentifers(identifiers);
+			}
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#configuration(java.lang.String, java.lang.Object)
+		 */
+		@Override
+		public BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> configuration(String name, Object value) {
+			this.instance.addConfigurationParameter(name, value);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#build()
+		 */
+		@Override
+		public DefaultBeanPropertySet<T> build() {
+			return instance;
+		}
+
 	}
 
 }

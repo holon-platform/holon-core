@@ -30,10 +30,12 @@ import org.junit.Test;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
+import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.temporal.TemporalType;
+import com.holonplatform.core.test.data.TestBean4;
 import com.holonplatform.core.test.data.TestBeanPropertyBean;
 import com.holonplatform.core.test.data.TestEnum;
 import com.holonplatform.core.test.data.TestEnum2;
@@ -226,6 +228,28 @@ public class TestBeanIntrospector {
 
 		assertFalse(p1.equals(p2));
 		assertTrue(p1.equals(p3));
+	}
+	
+	@Test
+	public void testDataPath() {
+		BeanPropertySet<TestBean4> set = BeanIntrospector.get().getPropertySet(TestBean4.class);
+		
+		assertTrue(set.getConfiguration().getParameter(DataMappable.PATH).isPresent());
+		assertEquals("beanPath", set.getConfiguration().getParameter(DataMappable.PATH, null));
+		
+		assertTrue(set.getProperty("id").isPresent());
+		PathProperty<Long> p1 = set.requireProperty("id");
+		assertFalse(p1.getConfiguration().getParameter(DataMappable.PATH).isPresent());
+		
+		assertTrue(set.getProperty("text").isPresent());
+		PathProperty<String> p2 = set.requireProperty("text");
+		assertTrue(p2.getConfiguration().getParameter(DataMappable.PATH).isPresent());
+		assertEquals("path1", p2.getConfiguration().getParameter(DataMappable.PATH, null));
+		
+		assertTrue(set.getProperty("value").isPresent());
+		PathProperty<Double> p3 = set.requireProperty("value");
+		assertTrue(p3.getConfiguration().getParameter(DataMappable.PATH).isPresent());
+		assertEquals("path3", p3.getConfiguration().getParameter(DataMappable.PATH, null));
 	}
 
 }

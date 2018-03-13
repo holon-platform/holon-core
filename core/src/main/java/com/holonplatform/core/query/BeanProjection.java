@@ -36,7 +36,7 @@ public interface BeanProjection<T> extends QueryProjection<T> {
 	 * Get the projection bean class.
 	 * @return Projection bean class (not null)
 	 */
-	Class<T> getBeanClass();
+	Class<? extends T> getBeanClass();
 
 	/**
 	 * Get the optional projection selection bean {@link Path}s. If not provided, all valid bean property paths will be
@@ -61,7 +61,7 @@ public interface BeanProjection<T> extends QueryProjection<T> {
 	 * @param selection Optional selection paths. If not provided, all valid bean property paths will be used.
 	 * @return BeanProjection using given bean class
 	 */
-	static <T> BeanProjection<T> of(Class<T> beanClass, Path... selection) {
+	static <T> BeanProjection<T> of(Class<? extends T> beanClass, Path... selection) {
 		return new DefaultBeanProjection<>(beanClass, selection);
 	}
 

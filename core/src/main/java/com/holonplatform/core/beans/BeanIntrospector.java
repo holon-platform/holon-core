@@ -21,10 +21,10 @@ import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
  * Provides functionalities to introspect Java Beans and obtain informations about bean properties, methods and
@@ -171,6 +171,20 @@ public interface BeanIntrospector {
 		return write(propertyBox, instance, false);
 	}
 
+	// ------- Post processors
+
+	/**
+	 * Adds a {@link BeanPropertySetPostProcessor} to setup {@link BeanPropertySet} configuration during introspection.
+	 * @param beanPropertySetPostProcessor BeanPropertySetPostProcessor to add (not null)
+	 */
+	void addBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor);
+
+	/**
+	 * Removes a {@link BeanPropertySetPostProcessor}.
+	 * @param beanPropertySetPostProcessor BeanPropertySetPostProcessor to remove (not null)
+	 */
+	void removeBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor);
+
 	/**
 	 * Adds a {@link BeanPropertyPostProcessor} to handle {@link BeanProperty} configuration during introspection.
 	 * @param beanPropertyPostProcessor BeanPropertyPostProcessor to add (not null)
@@ -183,13 +197,15 @@ public interface BeanIntrospector {
 	 */
 	void removeBeanPropertyPostProcessor(BeanPropertyPostProcessor beanPropertyPostProcessor);
 
+	// ------- Caching
+
 	/**
 	 * If caching is enabled and supported, clear current introspection cache.
 	 * @return <code>true</code> if caching is supported and was cleared
 	 */
 	boolean clearCache();
 
-	// Accessors
+	// ------- Accessors
 
 	/**
 	 * Gets the current {@link BeanIntrospector} instance.
@@ -200,7 +216,7 @@ public interface BeanIntrospector {
 		return Context.get().resource(CONTEXT_KEY, BeanIntrospector.class).orElse(getDefault());
 	}
 
-	// Defaults
+	// ------- Defaults
 
 	/**
 	 * Return the default {@link BeanIntrospector} using given <code>classLoader</code>.
@@ -228,6 +244,8 @@ public interface BeanIntrospector {
 	static BeanIntrospector getDefault() {
 		return DefaultBeanIntrospector.getDefault(null);
 	}
+
+	// ------- Exceptions
 
 	/**
 	 * Exception thrown for bean introspection failures.

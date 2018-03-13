@@ -22,6 +22,7 @@ import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
@@ -36,7 +37,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * @since 5.0.0
  */
 @SuppressWarnings("rawtypes")
-public interface PropertySet<P extends Property> extends Iterable<P> {
+public interface PropertySet<P extends Property> extends Iterable<P>, HasConfiguration<ParameterSet> {
 
 	/**
 	 * Default {@link Context} resource reference
@@ -95,9 +96,15 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	}
 
 	/**
-	 * Get the property set configuration, which can be used for extension and application-specific purposes.
-	 * @return the property set configuration {@link ParameterSet}
+	 * Get the property set configuration, which can be used for extensions and application-specific purposes.
+	 * <p>
+	 * This configuration is considered as immutable. The configuration parameters has to setted at {@link PropertySet}
+	 * build time, using the appropriate {@link Builder} methods: {@link Builder#configuration(String, Object)} and
+	 * {@link Builder#configuration(ConfigProperty, Object)}.
+	 * </p>
+	 * @return The property set configuration {@link ParameterSet} (never null)
 	 */
+	@Override
 	ParameterSet getConfiguration();
 
 	/**
@@ -301,7 +308,8 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		 * @param <PT> Actual property type
 		 * @param properties The properties to declare as property set identifiers (not null)
 		 * @return this
-		 * @throws IllegalStateException If one the properties to declare as identifier is not part of the property set
+		 * @throws IllegalStateException If one of the properties to declare as identifier is not part of the property
+		 *         set
 		 * @since 5.1.0
 		 */
 		<PT extends P> Builder<P> identifiers(Iterable<PT> properties);
@@ -315,7 +323,7 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		Builder<P> configuration(String name, Object value);
 
 		/**
-		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, using
+		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
 		 * {@link ConfigProperty#getKey()} as parameter name.
 		 * @param <C> Config property type
 		 * @param configurationProperty The {@link ConfigProperty} to add (not null)

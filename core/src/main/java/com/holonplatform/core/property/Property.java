@@ -22,6 +22,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.config.ConfigProperty;
@@ -67,7 +68,8 @@ import com.holonplatform.core.temporal.TemporalType;
  * @see PropertySet
  * @see PropertyBox
  */
-public interface Property<T> extends Validatable<T>, Localizable, Serializable {
+public interface Property<T>
+		extends Validatable<T>, Localizable, HasConfiguration<PropertyConfiguration>, Serializable {
 
 	/**
 	 * Get the name which identifies this property.
@@ -94,13 +96,14 @@ public interface Property<T> extends Validatable<T>, Localizable, Serializable {
 	/**
 	 * Gets the configuration associated to this property.
 	 * <p>
-	 * This configuration is considered as immutable, and only provide methods to read configuration parameters. The
-	 * configuration parameters setting is done at property creation time, using
+	 * This configuration is considered as immutable: it only provides methods to read configuration parameters. The
+	 * configuration parameters setting is done at property creation time, using the
 	 * {@link Builder#configuration(String, Object)} and {@link Builder#configuration(ConfigProperty, Object)} methods
 	 * provided by Property {@link Builder}.
 	 * </p>
 	 * @return The {@link PropertyConfiguration} of this property (immutable and not null)
 	 */
+	@Override
 	PropertyConfiguration getConfiguration();
 
 	/**

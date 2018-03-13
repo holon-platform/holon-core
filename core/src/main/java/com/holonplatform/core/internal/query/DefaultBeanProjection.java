@@ -35,7 +35,7 @@ public class DefaultBeanProjection<T> implements BeanProjection<T> {
 	/**
 	 * Bean class
 	 */
-	private final Class<T> beanClass;
+	private final Class<? extends T> beanClass;
 
 	/**
 	 * Selection
@@ -47,7 +47,7 @@ public class DefaultBeanProjection<T> implements BeanProjection<T> {
 	 * @param beanClass Bean class (not null)
 	 * @param selection Optional selection paths
 	 */
-	public DefaultBeanProjection(Class<T> beanClass, Path[] selection) {
+	public DefaultBeanProjection(Class<? extends T> beanClass, Path[] selection) {
 		super();
 		ObjectUtils.argumentNotNull(beanClass, "Bean class must be not null");
 		this.beanClass = beanClass;
@@ -59,7 +59,7 @@ public class DefaultBeanProjection<T> implements BeanProjection<T> {
 	 * @see com.holonplatform.core.query.BeanProjection#getBeanClass()
 	 */
 	@Override
-	public Class<T> getBeanClass() {
+	public Class<? extends T> getBeanClass() {
 		return beanClass;
 	}
 

@@ -41,6 +41,7 @@ import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.BeanPropertySet;
+import com.holonplatform.core.beans.BeanPropertySetPostProcessor;
 import com.holonplatform.core.beans.Ignore;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
@@ -95,8 +96,14 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 */
 	private static final Logger LOGGER = BeanLogger.create();
 
-	private static final Comparator<BeanPropertyPostProcessor> PRIORITY_COMPARATOR = Comparator.comparingInt(
-			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+	private static final Comparator<BeanPropertySetPostProcessor> PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR = Comparator
+			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
+					? p.getClass().getAnnotation(Priority.class).value()
+					: BeanPropertySetPostProcessor.DEFAULT_PRIORITY);
+
+	private static final Comparator<BeanPropertyPostProcessor> PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR = Comparator
+			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
+					? p.getClass().getAnnotation(Priority.class).value()
 					: BeanPropertyPostProcessor.DEFAULT_PRIORITY);
 
 	private static final Comparator<BeanProperty<?>> SEQUENCE_COMPARATOR = new Comparator<BeanProperty<?>>() {
@@ -139,7 +146,12 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	}
 
 	/**
-	 * Post processors
+	 * Property set post processors
+	 */
+	private final List<BeanPropertySetPostProcessor> propertySetPostProcessors = new LinkedList<>();
+
+	/**
+	 * Property post processors
 	 */
 	private final List<BeanPropertyPostProcessor> propertyPostProcessors = new LinkedList<>();
 
@@ -154,27 +166,72 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	}
 
 	/**
-	 * Load {@link BeanPropertyPostProcessor}s from <code>META-INF/services</code> extensions.
+	 * Load {@link BeanPropertySetPostProcessor}s and {@link BeanPropertyPostProcessor}s from
+	 * <code>META-INF/services</code> extensions.
 	 * @param classLoader ClassLoader to use
-	 * @return {@link BeanPropertyPostProcessor}s list, empty if none found
 	 */
 	private void init(final ClassLoader classLoader) {
+		// property set post processors
+		LOGGER.debug(() -> "Load BeanPropertySetPostProcessor for classloader [" + classLoader
+				+ "] using ServiceLoader with service name: " + BeanPropertySetPostProcessor.class.getName());
+		Iterable<BeanPropertySetPostProcessor> propertySetPostProcessors = AccessController
+				.doPrivileged(new PrivilegedAction<Iterable<BeanPropertySetPostProcessor>>() {
+					@Override
+					public Iterable<BeanPropertySetPostProcessor> run() {
+						return ServiceLoader.load(BeanPropertySetPostProcessor.class, classLoader);
+					}
+				});
+		propertySetPostProcessors.forEach(pr -> {
+			this.propertySetPostProcessors.add(pr);
+			LOGGER.debug(() -> "Loaded and registered BeanPropertySetPostProcessor [" + pr + "] for classloader ["
+					+ classLoader + "]");
+		});
+		// sort by priority
+		Collections.sort(this.propertySetPostProcessors, PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR);
+		// property post processors
 		LOGGER.debug(() -> "Load BeanPropertyPostProcessors for classloader [" + classLoader
 				+ "] using ServiceLoader with service name: " + BeanPropertyPostProcessor.class.getName());
-		Iterable<BeanPropertyPostProcessor> postProcessors = AccessController
+		Iterable<BeanPropertyPostProcessor> propertyPostProcessors = AccessController
 				.doPrivileged(new PrivilegedAction<Iterable<BeanPropertyPostProcessor>>() {
 					@Override
 					public Iterable<BeanPropertyPostProcessor> run() {
 						return ServiceLoader.load(BeanPropertyPostProcessor.class, classLoader);
 					}
 				});
-		postProcessors.forEach(pr -> {
-			propertyPostProcessors.add(pr);
+		propertyPostProcessors.forEach(pr -> {
+			this.propertyPostProcessors.add(pr);
 			LOGGER.debug(() -> "Loaded and registered BeanPropertyPostProcessor [" + pr + "] for classloader ["
 					+ classLoader + "]");
 		});
 		// sort by priority
-		Collections.sort(propertyPostProcessors, PRIORITY_COMPARATOR);
+		Collections.sort(this.propertyPostProcessors, PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#addBeanPropertySetPostProcessor(com.holonplatform.core.beans.
+	 * BeanPropertySetPostProcessor)
+	 */
+	@Override
+	public void addBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor) {
+		ObjectUtils.argumentNotNull(propertySetPostProcessors, "BeanPropertySetPostProcessor must be not null");
+		propertySetPostProcessors.add(beanPropertySetPostProcessor);
+		LOGGER.debug(() -> "Registered BeanPropertySetPostProcessor [" + beanPropertySetPostProcessor + "]");
+		// sort by priority
+		Collections.sort(propertySetPostProcessors, PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.beans.BeanIntrospector#removeBeanPropertySetPostProcessor(com.holonplatform.core.beans.
+	 * BeanPropertySetPostProcessor)
+	 */
+	@Override
+	public void removeBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor) {
+		ObjectUtils.argumentNotNull(beanPropertySetPostProcessor, "BeanPropertySetPostProcessor must be not null");
+		propertySetPostProcessors.remove(beanPropertySetPostProcessor);
+		LOGGER.debug(() -> "Unregistered BeanPropertySetPostProcessor [" + beanPropertySetPostProcessor + "]");
 	}
 
 	/*
@@ -188,7 +245,7 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		propertyPostProcessors.add(beanPropertyPostProcessor);
 		LOGGER.debug(() -> "Registered BeanPropertyPostProcessor [" + beanPropertyPostProcessor + "]");
 		// sort by priority
-		Collections.sort(propertyPostProcessors, PRIORITY_COMPARATOR);
+		Collections.sort(propertyPostProcessors, PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR);
 	}
 
 	/*
@@ -201,6 +258,24 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		ObjectUtils.argumentNotNull(beanPropertyPostProcessor, "BeanPropertyPostProcessor must be not null");
 		propertyPostProcessors.remove(beanPropertyPostProcessor);
 		LOGGER.debug(() -> "Unregistered BeanPropertyPostProcessor [" + beanPropertyPostProcessor + "]");
+	}
+
+	/**
+	 * Post-process given {@link BeanPropertySet} using registered {@link BeanPropertySetPostProcessor}s.
+	 * @param <T> Bean type
+	 * @param propertySet Property set to process
+	 * @param beanClass Bean class
+	 * @return Processed property set
+	 */
+	private <T> void postProcessBeanPropertySet(BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> propertySet,
+			Class<?> beanClass) {
+		BeanPropertySet.Builder<?, ?> processed = propertySet;
+		for (BeanPropertySetPostProcessor propertySetPostProcessor : propertySetPostProcessors) {
+			LOGGER.debug(() -> "Invoke BeanPropertySetPostProcessor [" + propertySetPostProcessor
+					+ "] on property set of bean class [" + beanClass + "]");
+			propertySetPostProcessor.processBeanPropertySet(processed, beanClass);
+
+		}
 	}
 
 	/**
@@ -283,12 +358,20 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	private <T> BeanPropertySet<T> buildBeanPropertySet(Class<? extends T> beanClass, Path<?> parentPath)
 			throws BeanIntrospectionException {
 		LOGGER.debug(() -> "Build BeanPropertySet for bean class [" + beanClass + "]");
+		// resolve bean properties
 		List<BeanProperty<?>> properties = resolveBeanProperties(beanClass, parentPath, null);
 		// sort
 		properties.sort(SEQUENCE_COMPARATOR);
-		final DefaultBeanPropertySet<T> beanPropertySet = new DefaultBeanPropertySet<>(beanClass, properties);
+		// property set
+		BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> builder = new DefaultBeanPropertySet.DefaultBuilder<>(
+				beanClass, properties);
+		// post processing
+		postProcessBeanPropertySet(builder, beanClass);
+		// build property set
+		final DefaultBeanPropertySet<T> beanPropertySet = builder.build();
 		// check identifiers
 		properties.stream().filter(p -> p.isIdentifier()).forEach(p -> beanPropertySet.addIdentifier(p));
+		// return bean property set
 		return beanPropertySet;
 	}
 

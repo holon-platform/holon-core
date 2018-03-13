@@ -13,22 +13,44 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore;
+package com.holonplatform.core.test.data;
 
-import java.util.Optional;
+import com.holonplatform.core.beans.DataPath;
 
-/**
- * Declares support for a symbolic <em>data context id</em>, i.e. a String identifier to identify a data related objects
- * stack with the same type within the overall persistence context.
- * 
- * @since 5.0.0
- */
-public interface DataContextBound {
+@DataPath("beanPath")
+public class TestBean4 {
 
-	/**
-	 * Get data context id, if available.
-	 * @return Optional data context id
-	 */
-	Optional<String> getDataContextId();
+	private Long id;
+
+	@DataPath("path1")
+	private String text;
+
+	@DataPath("path2")
+	private Double value;
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	@DataPath("path3")
+	public Double getValue() {
+		return value;
+	}
+
+	public void setValue(Double value) {
+		this.value = value;
+	}
 
 }
