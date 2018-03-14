@@ -20,7 +20,6 @@ import java.util.Optional;
 import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.Path;
-import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.property.DefaultPathProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.PathExpression;
@@ -73,19 +72,6 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 	 * @return A new {@link PathPropertyBuilder} using property name, type and configuration cloned from this property
 	 */
 	PathPropertyBuilder<T> clone();
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.Path#getDataPath()
-	 */
-	@Override
-	default Optional<String> getDataPath() {
-		Optional<String> path = getConfiguration().getParameter(DataMappable.PATH);
-		if (path.isPresent()) {
-			return path;
-		}
-		return PathExpression.super.getDataPath();
-	}
 
 	/*
 	 * (non-Javadoc)

@@ -36,6 +36,8 @@ import java.util.WeakHashMap;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.Path.FinalPath;
+import com.holonplatform.core.Path.FinalPath.FinalPathBuilder;
 import com.holonplatform.core.beans.BeanConfigProperties;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
@@ -335,16 +337,33 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.beans.BeanIntrospector#getPropertySet(java.lang.Class, com.holonplatform.core.Path)
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass, Path<?> parentPath) {
+		return getPropertySet(beanClass);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#getPropertySet(java.lang.Class)
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass) {
 		ObjectUtils.argumentNotNull(beanClass, "Bean class must be not null");
 		LOGGER.debug(() -> "Get BeanPropertySet for bean class [" + beanClass + "]");
 		synchronized (cache) {
 			if (CACHE_ENABLED && cache.containsKey(beanClass)) {
 				return cache.get(beanClass);
 			}
-			BeanPropertySet beanPropertySet = buildBeanPropertySet(beanClass, parentPath);
+
+			// get bean path
+			final FinalPathBuilder<T> rootBeanPath = FinalPath.of(beanClass.getName(), beanClass);
+
+			final BeanPropertySet beanPropertySet = buildBeanPropertySet(beanClass, rootBeanPath);
+
+			// check data path
+			((BeanPropertySet<?>) beanPropertySet).getDataPath().ifPresent(dp -> rootBeanPath.dataPath(dp));
+
 			if (CACHE_ENABLED) {
 				BeanPropertySet existing = cache.putIfAbsent(beanClass, beanPropertySet);
 				return (existing != null ? existing : beanPropertySet);
@@ -467,10 +486,10 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		if (addToPropertySet) {
 			property = postProcessBeanProperty(property, beanClass);
 		}
-		
+
 		// check ignore mode
 		IgnoreMode ignoreMode = property.getIgnoreMode().orElse(IgnoreMode.DO_NOT_IGNORE);
-		
+
 		if (ignoreMode != IgnoreMode.DO_NOT_IGNORE) {
 			if (ignoreMode == IgnoreMode.IGNORE_INCLUDE_NESTED) {
 				return Optional.empty();
@@ -478,7 +497,7 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 				addToPropertySet = false;
 			}
 		}
-		
+
 		return Optional.of(new ResolvedBeanProperty<>(property, addToPropertySet));
 
 	}

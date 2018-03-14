@@ -236,7 +236,7 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 
 			} catch (Exception e) {
 				throw new BeanIntrospectionException(
-						"Failed to configure property validation for property [" + property.fullName() + "]", e);
+						"Failed to configure property validation for property [" + property + "]", e);
 			}
 
 		} else {

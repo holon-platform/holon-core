@@ -19,11 +19,11 @@ import java.util.Optional;
 
 import javax.annotation.Priority;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.DataPath;
-import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.Logger;
 
 /**

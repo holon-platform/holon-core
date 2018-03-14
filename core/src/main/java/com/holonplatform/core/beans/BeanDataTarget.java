@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.beans;
 
-import com.holonplatform.core.datastore.DataMappable;
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.internal.beans.DefaultBeanDataTarget;
 

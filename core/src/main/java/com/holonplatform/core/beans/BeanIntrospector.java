@@ -17,6 +17,7 @@ package com.holonplatform.core.beans;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.Path;
+import com.holonplatform.core.Path.FinalPath;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
@@ -42,14 +43,16 @@ public interface BeanIntrospector {
 	/**
 	 * Introspect given Java Bean <code>beanClass</code> and provides a {@link BeanPropertySet} to learn about bean
 	 * properties and configuration.
+	 * <p>
+	 * The root bean property path will always be a {@link FinalPath} typed on bean class and with the bean class name
+	 * as path name.
+	 * </p>
 	 * @param beanClass Bean class to introspect (not null)
 	 * @return A {@link BeanPropertySet} describing the target bean properties and configuration
 	 * @param <T> Bean class type
 	 * @throws BeanIntrospectionException If an exception occurs during introspection
 	 */
-	default <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass) {
-		return getPropertySet(beanClass, null);
-	}
+	<T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass);
 
 	/**
 	 * Introspect given Java Bean <code>beanClass</code> and provides a {@link BeanPropertySet} to learn about bean
@@ -60,7 +63,10 @@ public interface BeanIntrospector {
 	 * @return A {@link BeanPropertySet} describing the target bean properties and configuration
 	 * @param <T> Bean class type
 	 * @throws BeanIntrospectionException If an exception occurs during introspection
+	 * @deprecated The root bean property path will always be a {@link FinalPath} typed on bean class and with the bean
+	 *             class name as path name. Use {@link #getPropertySet(Class)} instead.
 	 */
+	@Deprecated
 	<T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass, Path<?> parentPath);
 
 	/**

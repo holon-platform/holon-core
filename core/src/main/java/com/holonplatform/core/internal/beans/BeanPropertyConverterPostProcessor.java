@@ -60,13 +60,13 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 			if (BUILTIN.NONE == builtin && PropertyValueConverter.class == converterClass) {
 				throw new BeanIntrospectionException(
 						"No builtin or custom PropertyValueConverter declared using Converter annotation on bean property ["
-								+ property.fullName() + "]");
+								+ property + "]");
 			}
 
 			if (BUILTIN.NONE != builtin && PropertyValueConverter.class != converterClass) {
 				throw new BeanIntrospectionException(
 						"Both builtin and custom PropertyValueConverter declared using Converter annotation on bean property ["
-								+ property.fullName() + "]: only one is admitted");
+								+ property + "]: only one is admitted");
 			}
 
 			if (BUILTIN.NONE != builtin) {
@@ -77,7 +77,7 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 			Constructor<?>[] constructors = converterClass.getDeclaredConstructors();
 			if (constructors == null || constructors.length == 0) {
 				throw new BeanIntrospectionException("Invalid PropertyValueConverter [" + converterClass.getName()
-						+ "] declared using Converter annotation on bean property [" + property.fullName()
+						+ "] declared using Converter annotation on bean property [" + property
 						+ "]: no accessible Constructor found");
 			}
 
@@ -87,14 +87,15 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 				Constructor<?> constructor = getNoArgumentsConstructor(constructors);
 				if (constructor == null) {
 					throw new BeanIntrospectionException("Invalid PropertyValueConverter [" + converterClass.getName()
-							+ "] declared using Converter annotation on bean property [" + property.fullName()
+							+ "] declared using Converter annotation on bean property [" + property
 							+ "]: no public Constructor with no arguments found");
 				}
 				converter = (PropertyValueConverter) constructor.newInstance();
 			} catch (Exception e) {
-				throw new BeanIntrospectionException("Failed to instantiate PropertyValueConverter ["
-						+ converterClass.getName() + "] declared using Converter annotation on bean property ["
-						+ property.fullName() + "]", e);
+				throw new BeanIntrospectionException(
+						"Failed to instantiate PropertyValueConverter [" + converterClass.getName()
+								+ "] declared using Converter annotation on bean property [" + property + "]",
+						e);
 			}
 
 			property.converter(converter);

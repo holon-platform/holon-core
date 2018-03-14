@@ -17,12 +17,13 @@ package com.holonplatform.core.beans;
 
 import java.util.Optional;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Path;
+import com.holonplatform.core.Path.FinalPath;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.config.ConfigProperty;
-import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
@@ -238,7 +239,7 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPr
 	 * @return {@link PropertySet} of the properties detected from given bean class
 	 */
 	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass) {
-		return create(beanClass, null);
+		return BeanIntrospector.get().getPropertySet(beanClass);
 	}
 
 	/**
@@ -248,7 +249,10 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPr
 	 * @param beanClass Bean class for which to create the property set (not null)
 	 * @param parentPath Optional parent path to set as bean root properties parent path
 	 * @return {@link PropertySet} of the properties detected from given bean class
+	 * @deprecated The root bean property path will always be a {@link FinalPath} typed on bean class and with the bean
+	 *             class name as path name. Use {@link #create(Class)} instead.
 	 */
+	@Deprecated
 	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass, Path<?> parentPath) {
 		return BeanIntrospector.get().getPropertySet(beanClass, parentPath);
 	}

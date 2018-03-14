@@ -17,10 +17,10 @@ package com.holonplatform.core.internal.beans;
 
 import javax.annotation.Priority;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySetPostProcessor;
 import com.holonplatform.core.beans.DataPath;
-import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 

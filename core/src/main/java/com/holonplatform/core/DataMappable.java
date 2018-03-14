@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore;
+package com.holonplatform.core;
 
 import java.util.Optional;
 
@@ -55,6 +55,21 @@ public interface DataMappable {
 		return (object != null && DataMappable.class.isAssignableFrom(object.getClass()))
 				? Optional.of((DataMappable) object)
 				: Optional.empty();
+	}
+
+	/**
+	 * Base {@link DataMappable} builder.
+	 * @param <B> Concrete builder type
+	 */
+	public interface Builder<B extends Builder<B>> {
+
+		/**
+		 * Sets the data model path name to which this object is bound.
+		 * @param dataPath The data path to set
+		 * @return this
+		 */
+		B dataPath(String dataPath);
+
 	}
 
 }

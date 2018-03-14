@@ -316,7 +316,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(path, "Path must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) property(path.fullName());
+		final BeanProperty<?> property = (BeanProperty<?>) property(path.relativeName());
 		return read(property, instance, path.getType());
 	}
 
@@ -343,7 +343,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(path, "Path must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) property(path.fullName());
+		final BeanProperty<?> property = (BeanProperty<?>) property(path.relativeName());
 		write(property, path.getType(), value, instance);
 	}
 

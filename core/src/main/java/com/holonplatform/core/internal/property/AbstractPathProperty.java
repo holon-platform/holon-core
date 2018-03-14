@@ -17,6 +17,7 @@ package com.holonplatform.core.internal.property;
 
 import java.util.Optional;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
@@ -35,8 +36,8 @@ import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurati
  * 
  * @see DefaultPathProperty
  */
-public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B extends Builder<T, P, B>> extends AbstractProperty<T, P, B>
-		implements Builder<T, P, B>, PathProperty<T> {
+public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B extends Builder<T, P, B>>
+		extends AbstractProperty<T, P, B> implements Builder<T, P, B>, PathProperty<T> {
 
 	private static final long serialVersionUID = 2939113810465856718L;
 
@@ -78,6 +79,24 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.DataMappable#getDataPath()
+	 */
+	@Override
+	public Optional<String> getDataPath() {
+		return getConfiguration().getParameter(DataMappable.PATH);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.DataMappable.Builder#dataPath(java.lang.String)
+	 */
+	@Override
+	public B dataPath(String dataPath) {
+		return configuration(DataMappable.PATH, dataPath);
 	}
 
 	/*
@@ -138,13 +157,7 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("PathProperty [name=");
-		sb.append(fullName());
-		sb.append(", type=");
-		sb.append(((getType() != null) ? getType().getName() : "null"));
-		sb.append("]");
-		return sb.toString();
+		return "AbstractPathProperty [name=" + name + ", getType()=" + getType() + "]";
 	}
 
 }

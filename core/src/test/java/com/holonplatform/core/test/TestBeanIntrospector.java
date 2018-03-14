@@ -27,10 +27,10 @@ import java.util.Date;
 
 import org.junit.Test;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
-import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.BooleanProperty;
 import com.holonplatform.core.property.NumericProperty;

@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.holonplatform.core.datastore.DataMappable;
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.property.PathProperty;
 
 /**

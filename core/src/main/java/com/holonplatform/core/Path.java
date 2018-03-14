@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import com.holonplatform.core.datastore.DataMappable;
+import com.holonplatform.core.internal.DefaultFinalPath;
 import com.holonplatform.core.internal.DefaultPath;
 
 /**
@@ -56,15 +56,6 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 	 * @return Optional parent path, empty if none
 	 */
 	Optional<Path<?>> getParent();
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.DataMappable#getDataPath()
-	 */
-	@Override
-	default Optional<String> getDataPath() {
-		return Optional.ofNullable(getName());
-	}
 
 	/**
 	 * Checks whether this path is a root path, i.e. it has no parent path.
@@ -147,11 +138,11 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 	}
 
 	/**
-	 * Base path builder
+	 * Base path builder.
 	 * @param <T> Path type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, B extends Builder<T, B>> {
+	public interface Builder<T, B extends Builder<T, B>> extends DataMappable.Builder<B> {
 
 		/**
 		 * Sets the parent path
@@ -177,6 +168,25 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 		@Override
 		default Optional<Path<?>> getParent() {
 			return Optional.empty();
+		}
+
+		/**
+		 * Create a default {@link FinalPath} implementation with given <code>name</code> and <code>type</code>.
+		 * @param <T> Path type
+		 * @param name Path name (not null)
+		 * @param type Path type (not null)
+		 * @return New PathBuilder path instance
+		 */
+		static <T> FinalPathBuilder<T> of(String name, Class<? extends T> type) {
+			return new DefaultFinalPath<>(name, type);
+		}
+
+		/**
+		 * {@link FinalPath} builder.
+		 * @param <T> Path type
+		 */
+		public interface FinalPathBuilder<T> extends PathBuilder<T>, FinalPath<T> {
+
 		}
 
 	}

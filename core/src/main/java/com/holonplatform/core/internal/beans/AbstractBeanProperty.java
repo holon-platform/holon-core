@@ -274,17 +274,11 @@ public abstract class AbstractBeanProperty<T> extends AbstractPathProperty<T, Be
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.internal.property.AbstractPathProperty#toString()
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("BeanProperty[name=");
-		sb.append(fullName());
-		sb.append(", type=");
-		sb.append(getType());
-		sb.append("]");
-		return sb.toString();
+		return "BeanProperty [getName()=" + getName() + ", getType()=" + getType() + "]";
 	}
 
 }
