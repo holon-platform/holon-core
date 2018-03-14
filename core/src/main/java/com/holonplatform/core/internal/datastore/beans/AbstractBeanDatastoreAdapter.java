@@ -23,7 +23,6 @@ import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
-import com.holonplatform.core.datastore.DefaultWriteOption;
 import com.holonplatform.core.datastore.beans.BeanDatastore.BeanOperationResult;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -182,16 +181,22 @@ public abstract class AbstractBeanDatastoreAdapter<E> {
 	}
 
 	/**
-	 * Process given {@link WriteOption}s, esuring the {@link DefaultWriteOption#BRING_BACK_GENERATED_IDS} is present.
+	 * Process given {@link WriteOption}s, esuring the given <code>addWiteOption</code> is present.
 	 * @param options Write options to process
+	 * @param addWriteOption The {@link WriteOption} to add if not present
 	 * @return Processed write options
 	 */
-	protected static WriteOption[] processWriteOptions(WriteOption[] options) {
-		List<WriteOption> wos = (options != null) ? Arrays.asList(options) : new LinkedList<>();
-		if (!wos.contains(DefaultWriteOption.BRING_BACK_GENERATED_IDS)) {
-			wos.add(DefaultWriteOption.BRING_BACK_GENERATED_IDS);
+	protected static WriteOption[] processWriteOptions(WriteOption[] options, WriteOption addWriteOption) {
+		if (addWriteOption == null) {
+			return options;
 		}
-		return wos.toArray(new WriteOption[wos.size()]);
+		List<WriteOption> wos = (options != null) ? Arrays.asList(options) : new LinkedList<>();
+		if (!wos.contains(addWriteOption)) {
+			List<WriteOption> nwos = new LinkedList<>(wos);
+			nwos.add(addWriteOption);
+			return nwos.toArray(new WriteOption[nwos.size()]);
+		}
+		return options;
 	}
 
 }

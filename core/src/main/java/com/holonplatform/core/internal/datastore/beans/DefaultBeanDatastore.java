@@ -23,6 +23,7 @@ import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
+import com.holonplatform.core.datastore.DefaultWriteOption;
 import com.holonplatform.core.datastore.beans.BeanBulkDelete;
 import com.holonplatform.core.datastore.beans.BeanBulkInsert;
 import com.holonplatform.core.datastore.beans.BeanBulkUpdate;
@@ -132,7 +133,9 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	@Override
 	public <T> BeanOperationResult<T> insert(T bean, WriteOption... options) {
 		final PropertyBox propertyBox = asPropertyBox(bean);
-		return convert(getExecutor().insert(getDataTarget(bean), propertyBox, processWriteOptions(options)),
+		return convert(
+				getExecutor().insert(getDataTarget(bean), propertyBox,
+						processWriteOptions(options, DefaultWriteOption.BRING_BACK_GENERATED_IDS)),
 				asBean(getBeanClass(bean), propertyBox));
 	}
 
@@ -144,7 +147,9 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	@Override
 	public <T> BeanOperationResult<T> update(T bean, WriteOption... options) {
 		final PropertyBox propertyBox = asPropertyBox(bean);
-		return convert(getExecutor().insert(getDataTarget(bean), propertyBox, processWriteOptions(options)),
+		return convert(
+				getExecutor().insert(getDataTarget(bean), propertyBox,
+						processWriteOptions(options, DefaultWriteOption.BRING_BACK_GENERATED_IDS)),
 				asBean(getBeanClass(bean), propertyBox));
 	}
 
@@ -156,7 +161,9 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	@Override
 	public <T> BeanOperationResult<T> save(T bean, WriteOption... options) {
 		final PropertyBox propertyBox = asPropertyBox(bean);
-		return convert(getExecutor().insert(getDataTarget(bean), propertyBox, processWriteOptions(options)),
+		return convert(
+				getExecutor().insert(getDataTarget(bean), propertyBox,
+						processWriteOptions(options, DefaultWriteOption.BRING_BACK_GENERATED_IDS)),
 				asBean(getBeanClass(bean), propertyBox));
 	}
 
