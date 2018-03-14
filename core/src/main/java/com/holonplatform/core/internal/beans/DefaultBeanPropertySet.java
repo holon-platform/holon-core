@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertySet;
@@ -662,6 +663,15 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		public <P extends PathProperty<?>> DefaultBuilder(Class<? extends T> beanClass, Collection<P> properties) {
 			super();
 			this.instance = new DefaultBeanPropertySet<>(beanClass, properties);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.HasConfiguration#getConfiguration()
+		 */
+		@Override
+		public ParameterSet getConfiguration() {
+			return instance.getConfiguration();
 		}
 
 		/*

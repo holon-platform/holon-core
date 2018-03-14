@@ -17,6 +17,8 @@ package com.holonplatform.core.beans;
 
 import java.util.Optional;
 
+import com.holonplatform.core.HasConfiguration;
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.config.ConfigProperty;
@@ -261,7 +263,7 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPr
 	 * 
 	 * @since 5.1.0
 	 */
-	public interface Builder<T, B extends BeanPropertySet<T>> {
+	public interface Builder<T, B extends BeanPropertySet<T>> extends HasConfiguration<ParameterSet> {
 
 		/**
 		 * Set given property names as {@link BeanPropertySet} identifier properties. Any previously declared identifier
