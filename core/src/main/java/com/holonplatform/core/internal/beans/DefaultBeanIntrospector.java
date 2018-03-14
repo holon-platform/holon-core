@@ -44,6 +44,7 @@ import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.beans.BeanPropertySetPostProcessor;
 import com.holonplatform.core.beans.BooleanBeanProperty;
 import com.holonplatform.core.beans.Ignore;
+import com.holonplatform.core.beans.IgnoreMode;
 import com.holonplatform.core.beans.NumericBeanProperty;
 import com.holonplatform.core.beans.StringBeanProperty;
 import com.holonplatform.core.beans.TemporalBeanProperty;
@@ -466,7 +467,18 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		if (addToPropertySet) {
 			property = postProcessBeanProperty(property, beanClass);
 		}
-
+		
+		// check ignore mode
+		IgnoreMode ignoreMode = property.getIgnoreMode().orElse(IgnoreMode.DO_NOT_IGNORE);
+		
+		if (ignoreMode != IgnoreMode.DO_NOT_IGNORE) {
+			if (ignoreMode == IgnoreMode.IGNORE_INCLUDE_NESTED) {
+				return Optional.empty();
+			} else {
+				addToPropertySet = false;
+			}
+		}
+		
 		return Optional.of(new ResolvedBeanProperty<>(property, addToPropertySet));
 
 	}

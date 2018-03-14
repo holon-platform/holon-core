@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.beans.BeanProperty;
+import com.holonplatform.core.beans.IgnoreMode;
 import com.holonplatform.core.internal.property.AbstractPathProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PropertyConfiguration;
@@ -71,6 +72,11 @@ public abstract class AbstractBeanProperty<T> extends AbstractPathProperty<T, Be
 	 * Identifier property
 	 */
 	private boolean identifier;
+
+	/**
+	 * Optional ignore mode
+	 */
+	private IgnoreMode ignoreMode;
 
 	/**
 	 * Constructor.
@@ -245,6 +251,25 @@ public abstract class AbstractBeanProperty<T> extends AbstractPathProperty<T, Be
 	 */
 	protected void setAnnotations(Map<Class<? extends Annotation>, Annotation> annotations) {
 		this.annotations = annotations;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanProperty.Builder#ignoreMode(com.holonplatform.core.beans.IgnoreMode)
+	 */
+	@Override
+	public BeanProperty.Builder<T> ignoreMode(IgnoreMode ignoreMode) {
+		this.ignoreMode = ignoreMode;
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanProperty.Builder#getIgnoreMode()
+	 */
+	@Override
+	public Optional<IgnoreMode> getIgnoreMode() {
+		return Optional.ofNullable(ignoreMode);
 	}
 
 	/*

@@ -157,6 +157,19 @@ public interface BeanProperty<T> extends PathProperty<T> {
 		 */
 		Builder<T> annotations(Annotation[] annotations);
 
+		/**
+		 * Mark the property as to be ignored (i.e. not to be part of the bean property set) or not.
+		 * @param ignoreMode The ignore mode
+		 * @return this
+		 */
+		Builder<T> ignoreMode(IgnoreMode ignoreMode);
+
+		/**
+		 * Get whether the property is marked as to be ignored and the ignore modality.
+		 * @return Optional property ignore mode
+		 */
+		Optional<IgnoreMode> getIgnoreMode();
+
 	}
 
 }
