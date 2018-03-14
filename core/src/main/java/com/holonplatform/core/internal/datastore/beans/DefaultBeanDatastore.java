@@ -148,7 +148,7 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	public <T> BeanOperationResult<T> update(T bean, WriteOption... options) {
 		final PropertyBox propertyBox = asPropertyBox(bean);
 		return convert(
-				getExecutor().insert(getDataTarget(bean), propertyBox,
+				getExecutor().update(getDataTarget(bean), propertyBox,
 						processWriteOptions(options, DefaultWriteOption.BRING_BACK_GENERATED_IDS)),
 				asBean(getBeanClass(bean), propertyBox));
 	}
@@ -162,7 +162,7 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	public <T> BeanOperationResult<T> save(T bean, WriteOption... options) {
 		final PropertyBox propertyBox = asPropertyBox(bean);
 		return convert(
-				getExecutor().insert(getDataTarget(bean), propertyBox,
+				getExecutor().save(getDataTarget(bean), propertyBox,
 						processWriteOptions(options, DefaultWriteOption.BRING_BACK_GENERATED_IDS)),
 				asBean(getBeanClass(bean), propertyBox));
 	}
@@ -174,7 +174,7 @@ public class DefaultBeanDatastore extends AbstractBeanDatastoreAdapter<Datastore
 	 */
 	@Override
 	public <T> BeanOperationResult<T> delete(T bean, WriteOption... options) {
-		return convert(getExecutor().insert(getDataTarget(bean), asPropertyBox(bean), options), null);
+		return convert(getExecutor().delete(getDataTarget(bean), asPropertyBox(bean), options), null);
 	}
 
 	/*
