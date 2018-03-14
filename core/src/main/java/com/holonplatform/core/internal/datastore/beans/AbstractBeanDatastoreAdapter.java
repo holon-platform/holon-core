@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.holonplatform.core.beans.BeanDataTarget;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
@@ -146,9 +147,8 @@ public abstract class AbstractBeanDatastoreAdapter<E> {
 	 * @return The bean class data target
 	 * @throws DataAccessException If the data target cannot be obtained
 	 */
-	protected static <T> DataTarget<String> getDataTarget(final Class<T> beanClass) {
-		return DataTarget.named(getBeanPropertySet(beanClass).getDataPath().orElseThrow(() -> new DataAccessException(
-				"Failed to obtain a valid DataTarget path name form bean class [" + beanClass + "]")));
+	protected static <T> DataTarget<T> getDataTarget(final Class<? extends T> beanClass) {
+		return BeanDataTarget.of(beanClass);
 	}
 
 	/**
@@ -158,9 +158,9 @@ public abstract class AbstractBeanDatastoreAdapter<E> {
 	 * @return The bean class data target
 	 * @throws DataAccessException If the data target cannot be obtained
 	 */
-	protected static <T> DataTarget<String> getDataTarget(final T bean) {
+	protected static <T> DataTarget<T> getDataTarget(final T bean) {
 		ObjectUtils.argumentNotNull(bean, "Bean instance must be not null");
-		return getDataTarget(bean.getClass());
+		return getDataTarget(getBeanClass(bean));
 	}
 
 	/**

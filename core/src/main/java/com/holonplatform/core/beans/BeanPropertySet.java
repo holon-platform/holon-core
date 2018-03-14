@@ -224,11 +224,7 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPr
 	 */
 	@Override
 	default Optional<String> getDataPath() {
-		Optional<String> path = getConfiguration().getParameter(DataMappable.PATH);
-		if (path.isPresent()) {
-			return path;
-		}
-		return Optional.of(getBeanClass().getSimpleName().toLowerCase());
+		return getConfiguration().getParameter(DataMappable.PATH);
 	}
 
 	// ------- Creation
