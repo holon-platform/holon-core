@@ -18,7 +18,7 @@ package com.holonplatform.core.internal.beans;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Config;
 import com.holonplatform.core.beans.Configs;
@@ -48,7 +48,7 @@ public class BeanPropertyConfigPostProcessor implements BeanPropertyPostProcesso
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		if (property.getAnnotation(Config.class).isPresent()) {
 			setupPropertyConfiguration(property, property.getAnnotation(Config.class).get());
 		} else {
@@ -64,7 +64,7 @@ public class BeanPropertyConfigPostProcessor implements BeanPropertyPostProcesso
 	 * @param property Property to setup
 	 * @param annotations {@link Config} annotations
 	 */
-	private static void setupPropertyConfiguration(Builder<?> property, Config... annotations) {
+	private static void setupPropertyConfiguration(BeanProperty.Builder<?> property, Config... annotations) {
 		if (annotations != null) {
 			for (Config annotation : annotations) {
 				String key = AnnotationUtils.getStringValue(annotation.key());

@@ -15,38 +15,36 @@
  */
 package com.holonplatform.core.internal.beans;
 
-import com.holonplatform.core.beans.BeanProperty;
+import com.holonplatform.core.beans.BooleanBeanProperty;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
- * Default {@link BeanProperty} implementation.
- * 
- * @param <T> Property type
- * 
- * @since 5.0.0
+ * Default {@link BooleanBeanProperty} implementation.
+ *
+ * @since 5.1.0
  */
-public class DefaultBeanProperty<T> extends AbstractBeanProperty<T> {
+public class DefaultBooleanBeanProperty extends AbstractBeanProperty<Boolean> implements BooleanBeanProperty {
 
-	private static final long serialVersionUID = -136356340742425752L;
+	private static final long serialVersionUID = -8900420385684447894L;
 
 	/**
 	 * Constructor.
 	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
+	 * @param primitive Whether to use the primitive <code>boolean</code> type
 	 */
-	public DefaultBeanProperty(String name, Class<T> type) {
-		this(name, type, null);
+	public DefaultBooleanBeanProperty(String name, boolean primitive) {
+		this(name, primitive, null);
 	}
 
 	/**
 	 * Constructor with custom {@link PropertyConfiguration}.
 	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
+	 * @param primitive Whether to use the primitive <code>boolean</code> type
 	 * @param configuration Optional property configuration instance
 	 */
-	public DefaultBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	public DefaultBooleanBeanProperty(String name, boolean primitive, PropertyConfigurationEditor configuration) {
+		super(name, primitive ? boolean.class : Boolean.class, configuration);
 	}
 
 }

@@ -22,7 +22,7 @@ import java.lang.reflect.Modifier;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Converter;
 import com.holonplatform.core.beans.Converter.BUILTIN;
@@ -49,7 +49,7 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		if (property.getAnnotation(Converter.class).isPresent()) {
 
 			BUILTIN builtin = property.getAnnotation(Converter.class).get().builtin();

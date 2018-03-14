@@ -589,6 +589,7 @@ public final class ConversionUtils implements Serializable {
 
 	/**
 	 * Try to convert given value to target type, if a default conversion logic is available.
+	 * @param <T> Target type
 	 * @param value Value to convert
 	 * @param targetType Target type (not null)
 	 * @return Converted value or <code>null</code> if value was <code>null</code>

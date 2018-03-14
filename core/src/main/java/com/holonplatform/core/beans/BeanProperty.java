@@ -20,10 +20,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import com.holonplatform.core.Validator;
 import com.holonplatform.core.internal.beans.DefaultBeanProperty;
 import com.holonplatform.core.property.PathProperty;
-import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
  * Represents a Java Bean property as a {@link PathProperty}, providing additional configuration informations and
@@ -96,17 +94,6 @@ public interface BeanProperty<T> extends PathProperty<T> {
 	default <A extends Annotation> boolean hasAnnotation(Class<A> annotationClass) {
 		return getAnnotation(annotationClass).isPresent();
 	}
-
-	// Clone
-
-	/**
-	 * Clone this property to obtain a property with same configuration but different type. Because of the potential
-	 * type change, any {@link PropertyValueConverter} or {@link Validator} is not inherited from the cloned property.
-	 * @param <NT> Type of the cloned property
-	 * @param type New property type (not null)
-	 * @return {@link BeanProperty} builder for the newly created property
-	 */
-	<NT> Builder<NT> clone(Class<NT> type);
 
 	// Builder
 

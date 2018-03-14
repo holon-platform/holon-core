@@ -15,38 +15,34 @@
  */
 package com.holonplatform.core.internal.beans;
 
-import com.holonplatform.core.beans.BeanProperty;
+import com.holonplatform.core.beans.StringBeanProperty;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
- * Default {@link BeanProperty} implementation.
- * 
- * @param <T> Property type
- * 
- * @since 5.0.0
+ * Default {@link StringBeanProperty} implementation.
+ *
+ * @since 5.1.0
  */
-public class DefaultBeanProperty<T> extends AbstractBeanProperty<T> {
+public class DefaultStringBeanProperty extends AbstractBeanProperty<String> implements StringBeanProperty {
 
-	private static final long serialVersionUID = -136356340742425752L;
+	private static final long serialVersionUID = 8247229897767365467L;
 
 	/**
 	 * Constructor.
 	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
 	 */
-	public DefaultBeanProperty(String name, Class<T> type) {
-		this(name, type, null);
+	public DefaultStringBeanProperty(String name) {
+		this(name, null);
 	}
 
 	/**
 	 * Constructor with custom {@link PropertyConfiguration}.
 	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
 	 * @param configuration Optional property configuration instance
 	 */
-	public DefaultBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	public DefaultStringBeanProperty(String name, PropertyConfigurationEditor configuration) {
+		super(name, String.class, configuration);
 	}
 
 }

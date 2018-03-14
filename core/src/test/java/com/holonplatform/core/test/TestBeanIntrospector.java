@@ -32,8 +32,12 @@ import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataMappable;
 import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.core.test.data.TestBean4;
 import com.holonplatform.core.test.data.TestBeanPropertyBean;
@@ -73,13 +77,13 @@ public class TestBeanIntrospector {
 		assertEquals(TestEnum.class, set.getProperty("enmOrdinal").get().getType());
 		assertEquals(LocalDate.class, set.getProperty("date").get().getType());
 
-		PathProperty<Boolean> property1 = set.requireProperty("numbool");
+		PathProperty<Boolean> property1 = set.property("numbool");
 		assertEquals(Integer.valueOf(1), property1.getConvertedValue(Boolean.TRUE));
 
-		PathProperty<TestEnum2> property2 = set.requireProperty("enm");
+		PathProperty<TestEnum2> property2 = set.property("enm");
 		assertEquals(TestEnum2.B.getStringValue(), property2.getConvertedValue(TestEnum2.B));
 
-		PathProperty<LocalDate> property3 = set.requireProperty("date");
+		PathProperty<LocalDate> property3 = set.property("date");
 		Date date = (Date) property3.getConvertedValue(LocalDate.of(1979, Month.MARCH, 9));
 		assertNotNull(date);
 
@@ -90,48 +94,48 @@ public class TestBeanIntrospector {
 		assertEquals(2, c.get(Calendar.MONTH));
 		assertEquals(9, c.get(Calendar.DAY_OF_MONTH));
 
-		set.requireProperty("name").validate("xxx");
+		set.property("name").validate("xxx");
 
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("name").validate(null));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate(null));
 
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("name").validate("   "));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate("   "));
 
 		try {
-			set.requireProperty("name").validate(null);
+			set.property("name").validate(null);
 		} catch (ValidationException e) {
 			assertEquals("Name is required; Name is empty", e.getMessage());
 		}
 
-		set.requireProperty("numbool").validate(0);
-		set.requireProperty("numbool").validate(1);
+		set.property("numbool").validate(0);
+		set.property("numbool").validate(1);
 
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("intval").validate(-1));
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("intval").validate(11));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(-1));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(11));
 
 		try {
-			set.requireProperty("intval").validate(11);
+			set.property("intval").validate(11);
 		} catch (ValidationException e) {
 			assertEquals("0-10 range", e.getMessage());
 			assertEquals("test-mc", e.getMessageCode());
 		}
 
-		set.requireProperty("lng").validate(7L);
+		set.property("lng").validate(7L);
 
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("lng").validate(3L));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("lng").validate(3L));
 
 		try {
-			set.requireProperty("lng").validate(0L);
+			set.property("lng").validate(0L);
 		} catch (ValidationException e) {
 			assertEquals("Must be 7", e.getMessage());
 		}
 
-		TestUtils.expectedException(ValidationException.class, () -> set.requireProperty("notneg").validate(-1));
+		TestUtils.expectedException(ValidationException.class, () -> set.property("notneg").validate(-1));
 
-		assertTrue(set.requireProperty("notneg").getConfiguration().hasNotNullParameter("k1"));
-		assertEquals("v1", set.requireProperty("notneg").getConfiguration().getParameter("k1", String.class, null));
+		assertTrue(set.property("notneg").getConfiguration().hasNotNullParameter("k1"));
+		assertEquals("v1", set.property("notneg").getConfiguration().getParameter("k1", String.class, null));
 
-		assertTrue(set.requireProperty("notneg").getConfiguration().hasNotNullParameter("k2"));
-		assertEquals("v2", set.requireProperty("notneg").getConfiguration().getParameter("k2", String.class, null));
+		assertTrue(set.property("notneg").getConfiguration().hasNotNullParameter("k2"));
+		assertEquals("v2", set.property("notneg").getConfiguration().getParameter("k2", String.class, null));
 
 	}
 
@@ -181,29 +185,29 @@ public class TestBeanIntrospector {
 
 		assertNotNull(pb);
 
-		assertTrue(pb.containsValue(set.requireProperty("name")));
-		assertTrue(pb.containsValue(set.requireProperty("numbool")));
-		assertTrue(pb.containsValue(set.requireProperty("enm")));
-		assertTrue(pb.containsValue(set.requireProperty("lng")));
-		assertTrue(pb.containsValue(set.requireProperty("notneg")));
+		assertTrue(pb.containsValue(set.property("name")));
+		assertTrue(pb.containsValue(set.property("numbool")));
+		assertTrue(pb.containsValue(set.property("enm")));
+		assertTrue(pb.containsValue(set.property("lng")));
+		assertTrue(pb.containsValue(set.property("notneg")));
 
-		assertEquals("test", pb.getValue(set.requireProperty("name")));
-		assertEquals(Boolean.TRUE, pb.getValue(set.requireProperty("numbool")));
-		assertEquals(TestEnum2.B, pb.getValue(set.requireProperty("enm")));
-		assertEquals(Long.valueOf(7), pb.getValue(set.requireProperty("lng")));
-		assertEquals(Integer.valueOf(1), pb.getValue(set.requireProperty("notneg")));
+		assertEquals("test", pb.getValue(set.property("name")));
+		assertEquals(Boolean.TRUE, pb.getValue(set.property("numbool")));
+		assertEquals(TestEnum2.B, pb.getValue(set.property("enm")));
+		assertEquals(Long.valueOf(7), pb.getValue(set.property("lng")));
+		assertEquals(Integer.valueOf(1), pb.getValue(set.property("notneg")));
 
-		PropertyBox box = PropertyBox.create(set.requireProperty("name"), set.requireProperty("enm"));
+		PropertyBox box = PropertyBox.create(set.property("name"), set.property("enm"));
 		box = set.read(box, instance);
 
-		assertEquals("test", box.getValue(set.requireProperty("name")));
-		assertEquals(TestEnum2.B, box.getValue(set.requireProperty("enm")));
+		assertEquals("test", box.getValue(set.property("name")));
+		assertEquals(TestEnum2.B, box.getValue(set.property("enm")));
 
 		// write
 
-		PropertyBox wb = PropertyBox.builder(set).set(set.requireProperty("name"), "test2")
-				.set(set.requireProperty("numbool"), Boolean.FALSE).set(set.requireProperty("enm"), TestEnum2.A)
-				.set(set.requireProperty("lng"), 7L).build();
+		PropertyBox wb = PropertyBox.builder(set).set(set.property("name"), "test2")
+				.set(set.property("numbool"), Boolean.FALSE).set(set.property("enm"), TestEnum2.A)
+				.set(set.property("lng"), 7L).build();
 
 		set.write(wb, instance);
 
@@ -229,25 +233,60 @@ public class TestBeanIntrospector {
 		assertFalse(p1.equals(p2));
 		assertTrue(p1.equals(p3));
 	}
-	
+
+	@Test
+	public void testPathPropertyTypes() {
+		final BeanPropertySet<TestBeanPropertyBean> set = BeanPropertySet.create(TestBeanPropertyBean.class);
+
+		StringProperty sp = set.propertyString("name");
+		assertNotNull(sp);
+
+		BooleanProperty bp = set.propertyBoolean("numbool");
+		assertNotNull(bp);
+
+		NumericProperty<Number> np1 = set.propertyNumeric("intval");
+		assertNotNull(np1);
+
+		NumericProperty<Integer> np2 = set.propertyNumeric("intval");
+		assertNotNull(np2);
+
+		NumericProperty<Integer> np3 = set.propertyNumeric("intval", Integer.class);
+		assertNotNull(np3);
+
+		NumericProperty<Long> np4 = set.propertyNumeric("lng", Long.class);
+		assertNotNull(np4);
+
+		TemporalProperty<Date> tp1 = set.propertyTemporal("legacyDate");
+		assertNotNull(tp1);
+
+		TemporalProperty<Date> tp2 = set.propertyTemporal("legacyDate", Date.class);
+		assertNotNull(tp2);
+
+		TemporalProperty<LocalDate> tp3 = set.propertyTemporal("date");
+		assertNotNull(tp3);
+
+		TemporalProperty<LocalDate> tp4 = set.propertyTemporal("date", LocalDate.class);
+		assertNotNull(tp4);
+	}
+
 	@Test
 	public void testDataPath() {
 		BeanPropertySet<TestBean4> set = BeanIntrospector.get().getPropertySet(TestBean4.class);
-		
+
 		assertTrue(set.getConfiguration().getParameter(DataMappable.PATH).isPresent());
 		assertEquals("beanPath", set.getConfiguration().getParameter(DataMappable.PATH, null));
-		
+
 		assertTrue(set.getProperty("id").isPresent());
-		PathProperty<Long> p1 = set.requireProperty("id");
+		PathProperty<Long> p1 = set.property("id");
 		assertFalse(p1.getConfiguration().getParameter(DataMappable.PATH).isPresent());
-		
+
 		assertTrue(set.getProperty("text").isPresent());
-		PathProperty<String> p2 = set.requireProperty("text");
+		PathProperty<String> p2 = set.property("text");
 		assertTrue(p2.getConfiguration().getParameter(DataMappable.PATH).isPresent());
 		assertEquals("path1", p2.getConfiguration().getParameter(DataMappable.PATH, null));
-		
+
 		assertTrue(set.getProperty("value").isPresent());
-		PathProperty<Double> p3 = set.requireProperty("value");
+		PathProperty<Double> p3 = set.property("value");
 		assertTrue(p3.getConfiguration().getParameter(DataMappable.PATH).isPresent());
 		assertEquals("path3", p3.getConfiguration().getParameter(DataMappable.PATH, null));
 	}

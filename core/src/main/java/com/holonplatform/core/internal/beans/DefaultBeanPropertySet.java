@@ -35,6 +35,8 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
@@ -42,6 +44,8 @@ import com.holonplatform.core.property.Property.PropertyReadException;
 import com.holonplatform.core.property.Property.PropertyWriteException;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertyValueConverter;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.TemporalProperty;
 
 /**
  * Default {@link BeanPropertySet} implementation.
@@ -110,10 +114,175 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	@Override
 	public <PT> Optional<PathProperty<PT>> getProperty(String propertyName, Class<PT> type) {
 		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
-		ObjectUtils.argumentNotNull(type, "Property type name must be not null");
+		ObjectUtils.argumentNotNull(type, "Property type must be not null");
 		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
 				.map(p -> checkPropertyType(p, type));
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyString(java.lang.String)
+	 */
+	@Override
+	public Optional<StringProperty> getPropertyString(String propertyName) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPathPropertyType(p, StringProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyBoolean(java.lang.String)
+	 */
+	@Override
+	public Optional<BooleanProperty> getPropertyBoolean(String propertyName) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPathPropertyType(p, BooleanProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <N extends Number> Optional<NumericProperty<N>> getPropertyNumeric(String propertyName) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPathPropertyType(p, NumericProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java.lang.String, java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <N extends Number> Optional<NumericProperty<N>> getPropertyNumeric(String propertyName, Class<N> type) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		ObjectUtils.argumentNotNull(type, "Property type must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPropertyType(p, type)).map(p -> checkPathPropertyType(p, NumericProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <X> Optional<TemporalProperty<X>> getPropertyTemporal(String propertyName) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPathPropertyType(p, TemporalProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java.lang.String, java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <X> Optional<TemporalProperty<X>> getPropertyTemporal(String propertyName, Class<X> type) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		ObjectUtils.argumentNotNull(type, "Property type must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findFirst()
+				.map(p -> checkPropertyType(p, type)).map(p -> checkPathPropertyType(p, TemporalProperty.class));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <P> PathProperty<P> property(String propertyName) {
+		return (PathProperty<P>) getProperty(propertyName)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String, java.lang.Class)
+	 */
+	@Override
+	public <P> PathProperty<P> property(String propertyName, Class<P> type) {
+		return getProperty(propertyName, type)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyString(java.lang.String)
+	 */
+	@Override
+	public StringProperty propertyString(String propertyName) {
+		return getPropertyString(propertyName)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyBoolean(java.lang.String)
+	 */
+	@Override
+	public BooleanProperty propertyBoolean(String propertyName) {
+		return getPropertyBoolean(propertyName)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <N extends Number> NumericProperty<N> propertyNumeric(String propertyName) {
+		return (NumericProperty<N>) getPropertyNumeric(propertyName)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang.String, java.lang.Class)
+	 */
+	@Override
+	public <N extends Number> NumericProperty<N> propertyNumeric(String propertyName, Class<N> type) {
+		return getPropertyNumeric(propertyName, type)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang.String)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <X> TemporalProperty<X> propertyTemporal(String propertyName) {
+		return (TemporalProperty<X>) getPropertyTemporal(propertyName)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang.String, java.lang.Class)
+	 */
+	@Override
+	public <X> TemporalProperty<X> propertyTemporal(String propertyName, Class<X> type) {
+		return getPropertyTemporal(propertyName, type)
+				.orElseThrow(() -> new PropertyNotFoundException(null, "Property with name [" + propertyName
+						+ "] not found in bean [" + getBeanClass().getName() + "] property set"));
+	}
+
+	// ------- Read and write operations
 
 	/*
 	 * (non-Javadoc)
@@ -125,7 +294,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) requireProperty(propertyName);
+		final BeanProperty<?> property = (BeanProperty<?>) property(propertyName);
 		final Object value = read(property, instance, null);
 
 		// check type
@@ -146,7 +315,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(path, "Path must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) requireProperty(path.fullName());
+		final BeanProperty<?> property = (BeanProperty<?>) property(path.fullName());
 		return read(property, instance, path.getType());
 	}
 
@@ -159,7 +328,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) requireProperty(propertyName);
+		final BeanProperty<?> property = (BeanProperty<?>) property(propertyName);
 		write(property, null, value, instance);
 	}
 
@@ -173,7 +342,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 		ObjectUtils.argumentNotNull(path, "Path must be not null");
 		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
 
-		final BeanProperty<?> property = (BeanProperty<?>) requireProperty(path.fullName());
+		final BeanProperty<?> property = (BeanProperty<?>) property(path.fullName());
 		write(property, path.getType(), value, instance);
 	}
 
@@ -442,7 +611,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	}
 
 	/**
-	 * Check the given property is of given type
+	 * Check the given property is of given value type.
 	 * @param property Property to check
 	 * @param type Required type
 	 * @return Typed property
@@ -455,6 +624,22 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 					+ " doesn't match property type " + property.getType().getName());
 		}
 		return (PathProperty<PT>) property;
+	}
+
+	/**
+	 * Check the given {@link PathProperty} is of given type.
+	 * @param property Property to check
+	 * @param type Required property type
+	 * @return Typed property
+	 * @throws TypeMismatchException If the given type is not consistent with actual property type
+	 */
+	@SuppressWarnings("unchecked")
+	private static <X extends PathProperty<?>> X checkPathPropertyType(PathProperty<?> property, Class<X> type) {
+		if (!type.isAssignableFrom(property.getClass())) {
+			throw new TypeMismatchException("Requested property type " + type.getName()
+					+ " doesn't match the actual property type " + property.getClass().getName());
+		}
+		return (X) property;
 	}
 
 	// Builder

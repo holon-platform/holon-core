@@ -50,7 +50,7 @@ public interface QueryResults {
 	<R> Stream<R> stream(QueryProjection<R> projection);
 
 	/**
-	 * Convenience method to obtain query results {@link #stream(QueryProjection)} as a {@link List}
+	 * Convenience method to obtain the query results {@link #stream(QueryProjection)} as a {@link List}
 	 * @param <R> Results type
 	 * @param projection Query projection
 	 * @return Query results list

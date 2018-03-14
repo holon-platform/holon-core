@@ -32,6 +32,12 @@ import com.holonplatform.core.query.QueryBuilder;
  * on the {@link Property} abstraction to represent data attributes and on the {@link PropertyBox} data container type
  * to transport data values in both directions.
  * </p>
+ * 
+ * @param <R> Operation result type
+ * @param <BI> Bulk insert operation type
+ * @param <BU> Bulk update operation type
+ * @param <BD> Bulk delete operation type
+ * @param <Q> Query builder type
  *
  * @since 5.1.0
  */
@@ -134,7 +140,7 @@ public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU e
 
 	/**
 	 * Create a {@link QueryBuilder} actuator, which can be used to configure and execute a query on the data managed by
-	 * this {@link Datastore}.
+	 * this Datastore.
 	 * @return A new query builder
 	 */
 	Q query();

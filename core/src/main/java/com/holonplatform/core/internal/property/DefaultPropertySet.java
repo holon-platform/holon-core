@@ -147,7 +147,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/**
 	 * Add a parameter to the property set configuration.
-	 * @param parameterName Parameter name (not null)
+	 * @param name Parameter name (not null)
 	 * @param value Parameter value
 	 */
 	protected void addConfigurationParameter(String name, Object value) {

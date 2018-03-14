@@ -76,9 +76,9 @@ public class ExampleBeans {
 
 	public void propertySet() {
 		Optional<PathProperty<Long>> idProperty = PROPERTIES.<Long>getProperty("id"); // <2>
-		PathProperty<Long> id = PROPERTIES.requireProperty("id", Long.class); // <3>
+		PathProperty<Long> id = PROPERTIES.property("id", Long.class); // <3>
 
-		PathProperty<String> nestedName = PROPERTIES.requireProperty("nested.nestedName"); // <4>
+		PathProperty<String> nestedName = PROPERTIES.property("nested.nestedName"); // <4>
 
 		// read
 		MyBean instance = new MyBean();
@@ -86,14 +86,14 @@ public class ExampleBeans {
 
 		Long value = PROPERTIES.read("id", instance); // <5>
 		PropertyBox box = PROPERTIES.read(instance); // <6>
-		value = box.getValue(PROPERTIES.requireProperty("id")); // <7>
+		value = box.getValue(PROPERTIES.property("id")); // <7>
 
 		// write
 		instance = new MyBean();
 		PROPERTIES.write("nested.nestedName", "test", instance); // <8>
 
 		MyBean written = PROPERTIES
-				.write(PropertyBox.builder(PROPERTIES).set(PROPERTIES.requireProperty("id"), 1L).build(), new MyBean()); // <9>
+				.write(PropertyBox.builder(PROPERTIES).set(PROPERTIES.property("id"), 1L).build(), new MyBean()); // <9>
 	}
 	// end::set[]
 

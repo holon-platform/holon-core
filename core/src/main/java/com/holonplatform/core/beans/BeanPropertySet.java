@@ -38,64 +38,13 @@ import com.holonplatform.core.property.PropertyValueConverter;
  * 
  * @see BeanIntrospector
  */
-public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, DataMappable {
+public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPropertyInspector, DataMappable {
 
 	/**
 	 * Get the bean class to which this property set refers.
 	 * @return the bean class
 	 */
 	Class<? extends T> getBeanClass();
-
-	/**
-	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
-	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @return The bean property with given name, or an empty Optional if not found
-	 */
-	<PT> Optional<PathProperty<PT>> getProperty(String propertyName);
-
-	/**
-	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
-	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
-	 * is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @param type Property type
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws TypeMismatchException If the given type is not consistent with actual property type
-	 */
-	<PT> Optional<PathProperty<PT>> getProperty(String propertyName, Class<PT> type);
-
-	/**
-	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
-	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
-	 */
-	@SuppressWarnings("unchecked")
-	default <PT> PathProperty<PT> requireProperty(String propertyName) {
-		return (PathProperty<PT>) getProperty(propertyName).orElseThrow(
-				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
-	}
-
-	/**
-	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
-	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
-	 * is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @param type Property type
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
-	 * @throws TypeMismatchException If the given type is not consistent with actual property type
-	 */
-	default <PT> PathProperty<PT> requireProperty(String propertyName, Class<PT> type) {
-		return getProperty(propertyName, type).orElseThrow(
-				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
-	}
 
 	/**
 	 * Read the value of the property with given <code>propertyName</code> from given bean instance.
@@ -324,7 +273,7 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, DataMa
 		 * <p>
 		 * The property names to declare as identifiers must be present in the bean property set.
 		 * </p>
-		 * @param properties The property names to declare as property set identifiers
+		 * @param propertyNames The property names to declare as property set identifiers
 		 * @return this
 		 * @throws IllegalStateException If one of the property name to declare as identifier is not part of the bean
 		 *         property set

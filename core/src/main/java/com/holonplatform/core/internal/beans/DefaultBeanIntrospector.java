@@ -42,7 +42,11 @@ import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.beans.BeanPropertySetPostProcessor;
+import com.holonplatform.core.beans.BooleanBeanProperty;
 import com.holonplatform.core.beans.Ignore;
+import com.holonplatform.core.beans.NumericBeanProperty;
+import com.holonplatform.core.beans.StringBeanProperty;
+import com.holonplatform.core.beans.TemporalBeanProperty;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -450,8 +454,7 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 			annotations = propertyField.getAnnotations();
 		}
 
-		BeanProperty.Builder<?> property = BeanProperty
-				.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType()).parent(parent)
+		BeanProperty.Builder<?> property = getPropertyBuilder(propertyDescriptor).parent(parent)
 				.readMethod(propertyDescriptor.getReadMethod()).writeMethod(propertyDescriptor.getWriteMethod())
 				.field(propertyField).annotations(annotations);
 
@@ -466,6 +469,33 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 
 		return Optional.of(new ResolvedBeanProperty<>(property, addToPropertySet));
 
+	}
+
+	/**
+	 * Get a suitable {@link BeanProperty} builder according to property type.
+	 * @param propertyDescriptor Property descriptor
+	 * @return {@link BeanProperty} builder
+	 */
+	@SuppressWarnings("unchecked")
+	private static BeanProperty.Builder<?> getPropertyBuilder(PropertyDescriptor propertyDescriptor) {
+		// check type
+		if (TypeUtils.isString(propertyDescriptor.getPropertyType())) {
+			return StringBeanProperty.builder(propertyDescriptor.getName());
+		}
+		if (TypeUtils.isBoolean(propertyDescriptor.getPropertyType())) {
+			return BooleanBeanProperty.builder(propertyDescriptor.getName(),
+					propertyDescriptor.getPropertyType().isPrimitive());
+		}
+		if (TypeUtils.isNumber(propertyDescriptor.getPropertyType())) {
+			return NumericBeanProperty.builder(propertyDescriptor.getName(),
+					(Class<? extends Number>) propertyDescriptor.getPropertyType());
+		}
+		if (TypeUtils.isDate(propertyDescriptor.getPropertyType())
+				|| TypeUtils.isTemporal(propertyDescriptor.getPropertyType())) {
+			return TemporalBeanProperty.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType());
+		}
+		// default
+		return BeanProperty.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType());
 	}
 
 	/**

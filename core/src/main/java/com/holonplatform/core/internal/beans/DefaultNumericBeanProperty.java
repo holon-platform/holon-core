@@ -15,27 +15,28 @@
  */
 package com.holonplatform.core.internal.beans;
 
-import com.holonplatform.core.beans.BeanProperty;
+import com.holonplatform.core.beans.NumericBeanProperty;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
- * Default {@link BeanProperty} implementation.
+ * Default {@link NumericBeanProperty} implementation.
  * 
- * @param <T> Property type
- * 
- * @since 5.0.0
+ * @param <N> Number type
+ *
+ * @since 5.1.0
  */
-public class DefaultBeanProperty<T> extends AbstractBeanProperty<T> {
+public class DefaultNumericBeanProperty<N extends Number> extends AbstractBeanProperty<N>
+		implements NumericBeanProperty<N> {
 
-	private static final long serialVersionUID = -136356340742425752L;
+	private static final long serialVersionUID = 378869124643300794L;
 
 	/**
 	 * Constructor.
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
 	 */
-	public DefaultBeanProperty(String name, Class<T> type) {
+	public DefaultNumericBeanProperty(String name, Class<N> type) {
 		this(name, type, null);
 	}
 
@@ -45,7 +46,7 @@ public class DefaultBeanProperty<T> extends AbstractBeanProperty<T> {
 	 * @param type Property value type (not null)
 	 * @param configuration Optional property configuration instance
 	 */
-	public DefaultBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
+	public DefaultNumericBeanProperty(String name, Class<? extends N> type, PropertyConfigurationEditor configuration) {
 		super(name, type, configuration);
 	}
 

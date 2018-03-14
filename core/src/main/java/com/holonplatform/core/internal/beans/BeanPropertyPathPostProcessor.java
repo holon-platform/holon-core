@@ -20,7 +20,7 @@ import java.util.Optional;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.DataPath;
 import com.holonplatform.core.datastore.DataMappable;
@@ -49,7 +49,8 @@ public class BeanPropertyPathPostProcessor implements BeanPropertyPostProcessor 
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(final Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(final BeanProperty.Builder<?> property,
+			Class<?> beanOrNestedClass) {
 		// check read method
 		final Optional<DataPath> methodPath = property.getReadMethod().map(m -> m.getAnnotation(DataPath.class))
 				.filter(a -> a.value().trim().length() > 0);

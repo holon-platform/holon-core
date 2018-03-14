@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.beans;
 
 import javax.annotation.Priority;
 
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Identifier;
 import com.holonplatform.core.internal.Logger;
@@ -41,7 +41,7 @@ public class BeanPropertyIdentifierPostProcessor implements BeanPropertyPostProc
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		property.getAnnotation(Identifier.class).ifPresent(a -> {
 			property.identifier(true);
 			LOGGER.debug(() -> "BeanPropertyIdentifierPostProcessor: property [" + property + "] setted as identifier");
