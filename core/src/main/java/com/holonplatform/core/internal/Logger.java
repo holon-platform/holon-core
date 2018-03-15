@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Axioma srl.
+ * Copyright 2016-2018 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.function.Supplier;
 
 import com.holonplatform.core.internal.utils.ClassUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Logger service.
@@ -135,9 +136,10 @@ public interface Logger extends Serializable {
 
 	/**
 	 * Log a {@link Level#DEBUG} type message, if debug log level is enabled.
-	 * @param messageSupplier Message supplier
+	 * @param messageSupplier Message supplier (not null)
 	 */
 	default void debug(final Supplier<String> messageSupplier) {
+		ObjectUtils.argumentNotNull(messageSupplier, "Message supplier must be not null");
 		if (isEnabled(Level.DEBUG)) {
 			log(Level.DEBUG, messageSupplier.get());
 		}
@@ -145,10 +147,11 @@ public interface Logger extends Serializable {
 
 	/**
 	 * Log a {@link Level#DEBUG} type message and exception, if debug log level is enabled.
-	 * @param messageSupplier Message supplier
+	 * @param messageSupplier Message supplier (not null)
 	 * @param throwable Exception to log
 	 */
 	default void debug(final Supplier<String> messageSupplier, final Throwable throwable) {
+		ObjectUtils.argumentNotNull(messageSupplier, "Message supplier must be not null");
 		if (isEnabled(Level.DEBUG)) {
 			log(Level.DEBUG, messageSupplier.get(), throwable);
 		}
