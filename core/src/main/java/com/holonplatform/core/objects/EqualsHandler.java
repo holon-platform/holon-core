@@ -22,6 +22,7 @@ package com.holonplatform.core.objects;
  *
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface EqualsHandler<T> {
 
 	/**
