@@ -230,11 +230,45 @@ public interface AuthContext extends AuthenticationNotifier {
 
 	/**
 	 * Create a default {@link AuthContext} using given <code>realm</code>.
-	 * @param realm Realm which acts as {@link Authenticator} and {@link Authorizer}
-	 * @return New {@link AuthContext} instance
+	 * @param realm The {@link Realm} which acts as {@link Authenticator} and {@link Authorizer} (not null)
+	 * @return A new {@link AuthContext} instance
 	 */
 	static AuthContext create(Realm realm) {
 		return new DefaultAuthContext(realm);
+	}
+
+	/**
+	 * Create a default {@link AuthContext} using given <code>realm</code> and a custom {@link AuthenticationHolder} to
+	 * handle the current {@link Authentication} reference.
+	 * @param realm The {@link Realm} Realm which acts as {@link Authenticator} and {@link Authorizer} (not null)
+	 * @param authenticationHolder The {@link AuthenticationHolder} to which the current {@link Authentication} handling
+	 *        is delegated (not null)
+	 * @return A new {@link AuthContext} instance
+	 */
+	static AuthContext create(Realm realm, AuthenticationHolder authenticationHolder) {
+		return new DefaultAuthContext(realm, authenticationHolder);
+	}
+
+	/**
+	 * Auth context {@link Authentication} holder, which handles the current {@link Authentication} reference on behalf
+	 * of the Auth context.
+	 * 
+	 * @since 5.1.0
+	 */
+	public interface AuthenticationHolder {
+
+		/**
+		 * Get the current {@link Authentication}.
+		 * @return Optional {@link Authentication}, empty if not present
+		 */
+		Optional<Authentication> getAuthentication();
+
+		/**
+		 * Set the current {@link Authentication}.
+		 * @param authentication The authentication to set (may be null)
+		 */
+		void setAuthentication(Authentication authentication);
+
 	}
 
 }

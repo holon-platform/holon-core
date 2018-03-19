@@ -40,40 +40,58 @@ import com.holonplatform.core.messaging.Message;
  * 
  * @since 5.0.0
  */
-@SuppressWarnings("boxing")
 public class DefaultAuthContext implements AuthContext {
 
 	/*
-	 * Realm (immutable)
+	 * Realm
 	 */
 	private final Realm realm;
+
+	/*
+	 * Authentication holder
+	 */
+	private final AuthenticationHolder authenticationHolder;
 
 	/*
 	 * Authentication listeners
 	 */
 	private List<AuthenticationListener> authenticationListeners;
 
-	/*
-	 * Current authentication
-	 */
-	private Authentication authentication;
-
 	/**
-	 * Constructor
-	 * @param realm Realm which will be used as {@link Authenticator} and {@link Authorizer} (not null)
+	 * Constructor using the default {@link AuthenticationHolder}.
+	 * @param realm the Realm which will be used as {@link Authenticator} and {@link Authorizer} (not null)
 	 */
 	public DefaultAuthContext(Realm realm) {
-		super();
-		ObjectUtils.argumentNotNull(realm, "Realm must be not null");
-		this.realm = realm;
+		this(realm, new DefaultAuthenticationHolder());
 	}
 
 	/**
-	 * AuthContext Realm
-	 * @return Realm
+	 * Constructor.
+	 * @param realm the Realm which will be used as {@link Authenticator} and {@link Authorizer} (not null)
+	 * @param authenticationHolder {@link Authentication} holder (not null)
+	 */
+	public DefaultAuthContext(Realm realm, AuthenticationHolder authenticationHolder) {
+		super();
+		ObjectUtils.argumentNotNull(realm, "Realm must be not null");
+		ObjectUtils.argumentNotNull(authenticationHolder, "AuthenticationHolder must be not null");
+		this.realm = realm;
+		this.authenticationHolder = authenticationHolder;
+	}
+
+	/**
+	 * Get the {@link Realm} bound to this auth context.
+	 * @return The auth context realm
 	 */
 	protected Realm getRealm() {
 		return realm;
+	}
+
+	/**
+	 * Get the {@link AuthenticationHolder} bound to this auth context.
+	 * @return the auth context Authentication holder
+	 */
+	protected AuthenticationHolder getAuthenticationHolder() {
+		return authenticationHolder;
 	}
 
 	/**
@@ -85,12 +103,12 @@ public class DefaultAuthContext implements AuthContext {
 	}
 
 	/**
-	 * Set the current Authentication
+	 * Set the current {@link Authentication}.
 	 * @param fireEvents Whether to trigger or not any registered {@link AuthenticationListener}
 	 * @param authentication Authentication to set, may be null
 	 */
 	protected void setAuthentication(Authentication authentication, boolean fireEvents) {
-		this.authentication = authentication;
+		getAuthenticationHolder().setAuthentication(authentication);
 
 		if (fireEvents) {
 			fireAuthenticationListeners(authentication);
@@ -102,8 +120,8 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#getAuthentication()
 	 */
 	@Override
-	public synchronized Optional<Authentication> getAuthentication() {
-		return Optional.ofNullable(authentication);
+	public Optional<Authentication> getAuthentication() {
+		return getAuthenticationHolder().getAuthentication();
 	}
 
 	/*
@@ -111,8 +129,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.auth.AuthenticationToken)
 	 */
 	@Override
-	public synchronized Authentication authenticate(AuthenticationToken authenticationToken)
-			throws AuthenticationException {
+	public Authentication authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
 		Authentication authentication = getRealm().authenticate(authenticationToken);
 		if (authentication == null) {
 			throw new UnexpectedAuthenticationException("Authenticator returned a null Authentication");
@@ -141,7 +158,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#unauthenticate()
 	 */
 	@Override
-	public synchronized Optional<Authentication> unauthenticate() {
+	public Optional<Authentication> unauthenticate() {
 		Optional<Authentication> authc = getAuthentication();
 		if (authc.isPresent()) {
 			// remove authentication
@@ -163,7 +180,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(com.holonplatform.auth.Permission[])
 	 */
 	@Override
-	public synchronized boolean isPermitted(Permission... permissions) {
+	public boolean isPermitted(Permission... permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -172,7 +189,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.lang.String[])
 	 */
 	@Override
-	public synchronized boolean isPermitted(String... permissions) {
+	public boolean isPermitted(String... permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -181,7 +198,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.Permission[])
 	 */
 	@Override
-	public synchronized boolean isPermittedAny(Permission... permissions) {
+	public boolean isPermittedAny(Permission... permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -190,7 +207,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(java.lang.String[])
 	 */
 	@Override
-	public synchronized boolean isPermittedAny(String... permissions) {
+	public boolean isPermittedAny(String... permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -199,7 +216,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.util.Collection)
 	 */
 	@Override
-	public synchronized boolean isPermitted(Collection<? extends Permission> permissions) {
+	public boolean isPermitted(Collection<? extends Permission> permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
@@ -209,7 +226,7 @@ public class DefaultAuthContext implements AuthContext {
 	 * java.util.Collection)
 	 */
 	@Override
-	public synchronized boolean isPermittedAny(Collection<? extends Permission> permissions) {
+	public boolean isPermittedAny(Collection<? extends Permission> permissions) {
 		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
