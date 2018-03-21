@@ -15,7 +15,6 @@
  */
 package com.holonplatform.auth;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import com.holonplatform.auth.Authentication.AuthenticationListener;
@@ -27,63 +26,33 @@ import com.holonplatform.core.Context;
 import com.holonplatform.core.messaging.Message;
 
 /**
- * Represents current authentication/authorization context, typically bound to an application session or a service
- * request.
+ * Represents the current authentication/authorization context.
  * <p>
- * The AuthContext stores an {@link Authentication} obtained through an {@link Authenticator} using an
- * AuthenticationToken. The {@link #authenticate(AuthenticationToken)} method is provided to perform an authentication
- * operation. As opposite, the {@link #unauthenticate()} method removes any authentication informations from the
- * AuthContext.
+ * As an {@link AuthenticationInspector}, provides methods to check if an authentication is currently available and
+ * obtain the {@link Authentication} reference.
  * </p>
  * <p>
- * The {@link #getAuthentication()} method can be used to check whether an Authentication is currently bound to
- * AuthContext and obtain it.
+ * Additionally, provides methods to perform authentication operations using an {@link AuthenticationToken}. As an
+ * {@link AuthenticationNotifier}, supports {@link AuthenticationListener} registration to be notified when an
+ * authentication request is successful, providing the {@link Authentication} reference.
  * </p>
  * <p>
- * A list of authorization control methods are provided to perform access control decisions using current context
- * Authentication.
- * </p>
- * <p>
- * Extends {@link AuthenticationNotifier} to allow {@link AuthenticationListener} registration.
+ * An AuthContext is tipically bound to a {@link Realm}, to which authentication operations and permission control
+ * strategies are delegated. In such situation, the authentication and authorization semantics are the same as those
+ * implemented by the {@link Realm} through the registered {@link Authenticator}s and {@link Authorizer}s. The
+ * {@link #create(Realm)} static methods can be used to create a default {@link AuthContext} instance using a
+ * {@link Realm}. The {@link AuthenticationHolder} interface can be used to customize how the {@link Authentication}
+ * reference is managed by the AuthContext.
  * </p>
  * 
  * @since 3.0.0
  */
-public interface AuthContext extends AuthenticationNotifier {
+public interface AuthContext extends AuthenticationInspector, AuthenticationNotifier {
 
 	/**
 	 * Default {@link Context} resource reference
 	 */
 	public static final String CONTEXT_KEY = AuthContext.class.getName();
-
-	/**
-	 * Get the current {@link Authentication} in this context.
-	 * <p>
-	 * Principals are authenticated using {@link #authenticate(AuthenticationToken)}. When authentication process is
-	 * successful, an {@link Authentication} is bound to this AuthContext and can be obtained using this method.
-	 * </p>
-	 * 
-	 * @return Optional {@link Authentication}, an empty Optional is returned if no {@link Authentication} is bound to
-	 *         this AuthContext
-	 */
-	Optional<Authentication> getAuthentication();
-
-	/**
-	 * Get the current {@link Authentication} in this context, throwing an {@link IllegalStateException} if not
-	 * authentication is available.
-	 * @return The current {@link Authentication}
-	 */
-	default Authentication requireAuthentication() {
-		return getAuthentication().orElseThrow(() -> new IllegalStateException("No Authentication available"));
-	}
-
-	/**
-	 * Gets whether this {@link AuthContext} is authenticated, i.e. an {@link Authentication} is available.
-	 * @return <code>true</code> if this {@link AuthContext} is authenticated, <code>false</code> otherwise
-	 */
-	default boolean isAuthenticated() {
-		return getAuthentication().isPresent();
-	}
 
 	/**
 	 * Attempts to authenticate a user using given {@link AuthenticationToken}.
@@ -127,81 +96,7 @@ public interface AuthContext extends AuthenticationNotifier {
 	 */
 	Optional<Authentication> unauthenticate();
 
-	/**
-	 * Check if current Authentication has all specified permission/s.
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has all specified permission
-	 */
-	boolean isPermitted(Permission... permissions);
-
-	/**
-	 * Check if current Authentication has all specified permission/s using String permission form.
-	 * <p>
-	 * String permission match against Authentication {@link Permission}s will be performed using
-	 * {@link Permission#getPermission()} method.
-	 * </p>
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has all specified permission
-	 */
-	boolean isPermitted(String... permissions);
-
-	/**
-	 * Check if current Authentication has any of specified permission/s
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has any of specified permission
-	 */
-	boolean isPermittedAny(Permission... permissions);
-
-	/**
-	 * Check if current Authentication has any of specified permission/s using String permission form.
-	 * <p>
-	 * String permission match against Authentication {@link Permission}s will be performed using
-	 * {@link Permission#getPermission()} method.
-	 * </p>
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has any of specified permission
-	 */
-	boolean isPermittedAny(String... permissions);
-
-	/**
-	 * Check if current Authentication has all specified permission/s using a Collection
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has all specified permission
-	 */
-	boolean isPermitted(Collection<? extends Permission> permissions);
-
-	/**
-	 * Check if current Authentication has any of specified permission/s using a Collection
-	 * <p>
-	 * If no Authentication in bound to this context, always returns <code>false</code>.
-	 * </p>
-	 * 
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if current Authentication has any of specified permission
-	 */
-	boolean isPermittedAny(Collection<? extends Permission> permissions);
-
-	// Context resource
+	// ------- Context resource
 
 	/**
 	 * Convenience method to obtain the current {@link AuthContext} made available as {@link Context} resource, using
@@ -226,7 +121,7 @@ public interface AuthContext extends AuthenticationNotifier {
 				.orElseThrow(() -> new IllegalStateException("AuthContext is not available as context resource"));
 	}
 
-	// Builder
+	// ------- Builders
 
 	/**
 	 * Create a default {@link AuthContext} using given <code>realm</code>.
