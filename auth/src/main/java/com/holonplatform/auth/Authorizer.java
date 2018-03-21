@@ -15,6 +15,7 @@
  */
 package com.holonplatform.auth;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.holonplatform.auth.internal.DefaultAuthorizer;
@@ -36,6 +37,14 @@ public interface Authorizer<P extends Permission> {
 	Class<? extends P> getPermissionType();
 
 	/**
+	 * Check if given Authentication has all the specified permissions.
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has all the specified permissions
+	 */
+	boolean isPermitted(Authentication authentication, Collection<? extends P> permissions);
+
+	/**
 	 * Check if given Authentication has all the specified permission/s.
 	 * @param <T> Permission type
 	 * @param authentication The Authentication for which to check the permissions
@@ -43,7 +52,9 @@ public interface Authorizer<P extends Permission> {
 	 * @return <code>true</code> if given Authentication has all the specified permissions
 	 */
 	@SuppressWarnings("unchecked")
-	<T extends P> boolean isPermitted(Authentication authentication, T... permissions);
+	default <T extends P> boolean isPermitted(Authentication authentication, T... permissions) {
+		return isPermitted(authentication, Arrays.asList(permissions));
+	}
 
 	/**
 	 * Check if given Authentication has all specified permission/s, using the {@link String} permission representation.
@@ -58,6 +69,14 @@ public interface Authorizer<P extends Permission> {
 	boolean isPermitted(Authentication authentication, String... permissions);
 
 	/**
+	 * Check if given Authentication has any of the specified permissions.
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has any of the specified permission
+	 */
+	boolean isPermittedAny(Authentication authentication, Collection<? extends P> permissions);
+
+	/**
 	 * Check if given Authentication has any of the specified permission/s.
 	 * @param <T> Permission type
 	 * @param authentication The Authentication for which to check the permissions
@@ -65,7 +84,9 @@ public interface Authorizer<P extends Permission> {
 	 * @return <code>true</code> if given Authentication has any of the specified permission
 	 */
 	@SuppressWarnings("unchecked")
-	<T extends P> boolean isPermittedAny(Authentication authentication, T... permissions);
+	default <T extends P> boolean isPermittedAny(Authentication authentication, T... permissions) {
+		return isPermittedAny(authentication, Arrays.asList(permissions));
+	}
 
 	/**
 	 * Check if given Authentication has any of the specified permission/s, using the {@link String} permission
@@ -79,22 +100,6 @@ public interface Authorizer<P extends Permission> {
 	 * @return <code>true</code> if given Authentication has any of the specified permission
 	 */
 	boolean isPermittedAny(Authentication authentication, String... permissions);
-
-	/**
-	 * Check if given Authentication has all the specified permissions.
-	 * @param authentication The Authentication for which to check the permissions
-	 * @param permissions The permissions to be checked
-	 * @return <code>true</code> if given Authentication has all the specified permissions
-	 */
-	boolean isPermitted(Authentication authentication, Collection<? extends P> permissions);
-
-	/**
-	 * Check if given Authentication has any of the specified permissions.
-	 * @param authentication The Authentication for which to check the permissions
-	 * @param permissions The permissions to be checked
-	 * @return <code>true</code> if given Authentication has any of the specified permission
-	 */
-	boolean isPermittedAny(Authentication authentication, Collection<? extends P> permissions);
 
 	/**
 	 * Create a default Authorizer.
