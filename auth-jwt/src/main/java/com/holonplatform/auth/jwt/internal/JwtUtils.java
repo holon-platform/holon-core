@@ -17,15 +17,20 @@ package com.holonplatform.auth.jwt.internal;
 
 import java.io.Serializable;
 import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Base64;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.holonplatform.auth.exceptions.ExpiredCredentialsException;
-import com.holonplatform.auth.internal.KeysReader;
 import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtConfiguration.InvalidJwtConfigurationException;
+import com.holonplatform.auth.keys.KeyEncoding;
+import com.holonplatform.auth.keys.KeyFormat;
+import com.holonplatform.auth.keys.KeyReader;
+import com.holonplatform.auth.keys.KeySource;
 import com.holonplatform.core.config.ConfigPropertyProvider;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -219,35 +224,16 @@ public final class JwtUtils implements Serializable {
 					}
 					cfg.setSharedKey(Base64.getDecoder().decode(sharedKey));
 				} else {
-					String publicKey = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY, null);
-					String publicKeyFile = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_FILE, null);
-					String privateKey = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY, null);
-					String privateKeyFile = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_FILE, null);
-
-					Key prvKey = null;
-					Key pubKey = null;
 
 					String keyAlgorithm = getAsymmetricKeyAlgorithm(signatureAlgorithm);
 
-					// public key
-					if (!StringUtils.isEmpty(publicKey) || !StringUtils.isEmpty(publicKeyFile)) {
-						if (StringUtils.isEmpty(publicKeyFile)) {
-							pubKey = KeysReader.readPublicKey(keyAlgorithm, publicKey);
-						} else {
-							pubKey = KeysReader.readPublicKeyFromFile(keyAlgorithm, publicKeyFile);
-						}
-					}
-					// private key
-					if (!StringUtils.isEmpty(privateKey) || !StringUtils.isEmpty(privateKeyFile)) {
-						if (StringUtils.isEmpty(privateKeyFile)) {
-							prvKey = KeysReader.readPrivateKey(keyAlgorithm, privateKey);
-						} else {
-							prvKey = KeysReader.readPrivateKeyFromFile(keyAlgorithm, privateKeyFile);
-						}
+					if (keyAlgorithm == null) {
+						throw new InvalidJwtConfigurationException(
+								"Unsupported JWT signature algorithm: " + signatureAlgorithm.getValue());
 					}
 
-					cfg.setPrivateKey(prvKey);
-					cfg.setPublicKey(pubKey);
+					cfg.setPrivateKey(loadPrivateKey(keyAlgorithm, config));
+					cfg.setPublicKey(loadPublicKey(keyAlgorithm, config));
 
 				}
 
@@ -289,6 +275,103 @@ public final class JwtUtils implements Serializable {
 			break;
 		}
 		return null;
+	}
+
+	private static PrivateKey loadPrivateKey(String algorithm, JwtConfigProperties config)
+			throws InvalidJwtConfigurationException {
+
+		final KeySource source = buildKeySource(true, config);
+		final KeyFormat format = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_FORMAT, KeyFormat.PKCS8);
+		final KeyEncoding encoding = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_ENCODING,
+				KeyEncoding.BASE64);
+
+		final Map<String, String> parameters = new HashMap<>(4);
+		config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_PASSWORD).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_PASSWORD, v);
+		});
+		config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_ALIAS).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_ALIAS, v);
+		});
+		config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_ALIAS_PASSWORD).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_PASSWORD, v);
+		});
+
+		try {
+			return KeyReader.getDefault().privateKey(source, algorithm, format, encoding, parameters);
+		} catch (Exception e) {
+			throw new InvalidJwtConfigurationException("Failed to load JWT sign private key from configuration", e);
+		}
+	}
+
+	private static PublicKey loadPublicKey(String algorithm, JwtConfigProperties config)
+			throws InvalidJwtConfigurationException {
+
+		final KeySource source = buildKeySource(true, config);
+		final KeyFormat format = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_FORMAT, KeyFormat.X509);
+		final KeyEncoding encoding = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_ENCODING,
+				KeyEncoding.BASE64);
+
+		final Map<String, String> parameters = new HashMap<>(4);
+		config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_PASSWORD).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_PASSWORD, v);
+		});
+		config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_ALIAS).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_ALIAS, v);
+		});
+		config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_ALIAS_PASSWORD).ifPresent(v -> {
+			parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_PASSWORD, v);
+		});
+
+		try {
+			return KeyReader.getDefault().publicKey(source, algorithm, format, encoding, parameters);
+		} catch (Exception e) {
+			throw new InvalidJwtConfigurationException("Failed to load JWT sign public key from configuration", e);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private static KeySource buildKeySource(boolean privateKey, JwtConfigProperties config)
+			throws InvalidJwtConfigurationException {
+
+		String source = config.getConfigPropertyValue(
+				privateKey ? JwtConfigProperties.PRIVATE_KEY_SOURCE : JwtConfigProperties.PUBLIC_KEY_SOURCE, null);
+
+		if (source == null || source.trim().length() == 0) {
+			// check compatibility
+			source = config.getConfigPropertyValue(
+					privateKey ? JwtConfigProperties.PRIVATE_KEY : JwtConfigProperties.PUBLIC_KEY, null);
+			if (source == null || source.trim().length() == 0) {
+				String sourceFile = config.getConfigPropertyValue(
+						privateKey ? JwtConfigProperties.PRIVATE_KEY_FILE : JwtConfigProperties.PUBLIC_KEY_FILE, null);
+				if (sourceFile != null && sourceFile.trim().length() > 0) {
+					source = JwtConfigProperties.KEY_SOURCE_FILE_PREFIX + sourceFile;
+				}
+			}
+		}
+
+		if (source == null || source.trim().length() == 0) {
+			throw new InvalidJwtConfigurationException("Missing JWT signing key source - Check configuration property ["
+					+ JwtConfigProperties.NAME + "." + (privateKey ? JwtConfigProperties.PRIVATE_KEY_SOURCE.getKey()
+							: JwtConfigProperties.PUBLIC_KEY_SOURCE.getKey())
+					+ "]");
+		}
+
+		if (source.startsWith(JwtConfigProperties.KEY_SOURCE_FILE_PREFIX)) {
+			if (source.length() == JwtConfigProperties.KEY_SOURCE_FILE_PREFIX.length()) {
+				throw new InvalidJwtConfigurationException("Invalid JWT signing key source file name: " + source);
+			}
+			return KeySource.file(source.substring(JwtConfigProperties.KEY_SOURCE_FILE_PREFIX.length()));
+		}
+
+		if (source.startsWith(JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX)) {
+			if (source.length() == JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX.length()) {
+				throw new InvalidJwtConfigurationException(
+						"Invalid JWT signing key source classpath resource name: " + source);
+			}
+			return KeySource.resource(source.substring(JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX.length()));
+		}
+
+		return KeySource.string(source);
 	}
 
 }
