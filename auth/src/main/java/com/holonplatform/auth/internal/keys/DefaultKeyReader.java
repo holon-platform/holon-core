@@ -17,6 +17,7 @@ package com.holonplatform.auth.internal.keys;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyStore;
@@ -174,7 +175,7 @@ public enum DefaultKeyReader implements KeyReader {
 		case BASE64:
 			return Base64.getDecoder().decode(source);
 		case PEM:
-			return Base64.getDecoder().decode(extractPEMContent(new String(source)));
+			return Base64.getDecoder().decode(extractPEMContent(source));
 		case NONE:
 		default:
 			break;
@@ -187,8 +188,8 @@ public enum DefaultKeyReader implements KeyReader {
 	 * @param source PEM source
 	 * @return The key content
 	 */
-	private static String extractPEMContent(String source) {
-		String pemSource = source;
+	private static byte[] extractPEMContent(byte[] source) {
+		String pemSource = new String(source, StandardCharsets.UTF_8);
 		int idx = pemSource.indexOf("-----BEGIN ");
 		if (idx > -1) {
 			pemSource = pemSource.substring("-----BEGIN ".length());
@@ -201,7 +202,8 @@ public enum DefaultKeyReader implements KeyReader {
 				}
 			}
 		}
-		return pemSource.trim().replace("\n", "").replace("\r", "").replace("\t", "");
+		pemSource = pemSource.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll("\\s+", "").trim();
+		return pemSource.getBytes(StandardCharsets.UTF_8);
 	}
 
 	/**
