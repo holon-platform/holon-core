@@ -19,7 +19,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Arrays;
@@ -90,9 +89,6 @@ public class TestKeys {
 
 		KeySource ks = KeySource.bytes(TEST_PRIVATE_KEY);
 		assertTrue(Arrays.equals(TEST_PRIVATE_KEY, ks.getBytes()));
-
-		ks = KeySource.string(new String(TEST_PRIVATE_KEY, StandardCharsets.ISO_8859_1));
-		assertTrue(Arrays.equals(new String(TEST_PRIVATE_KEY, StandardCharsets.ISO_8859_1).getBytes(), ks.getBytes()));
 
 	}
 

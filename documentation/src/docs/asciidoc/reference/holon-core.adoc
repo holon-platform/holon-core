@@ -54,6 +54,10 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+== What's new in version 5.1.x
+
+* The `PropertySet` interface now supports _identifier_ properties declaration, which can be used to provide a virtual primary key to distinguish a `PropertyBox` instance from another (using the _identifier_ property values), both at Java objects level (`equals` and `hashCode`) and at persistence architecture level.
+
 == Core API, services and components
 
 === Introduction
@@ -129,6 +133,7 @@ include::include/auth/_annotation.adoc[]
 
 include::include/auth/_jwt.adoc[]
 
+[[SpringIntegration]]
 == Spring framework integration
 
 The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^] for the Holon platform core module.
