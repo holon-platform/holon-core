@@ -18,6 +18,7 @@ package com.holonplatform.core.examples;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import com.holonplatform.core.ParameterSet;
@@ -67,7 +68,11 @@ public class ExampleConfig {
 		boolean present = set.hasParameter("testParameter"); // <3>
 		present = set.hasNotNullParameter("testParameter"); // <4>
 
-		set.getParameter(property).ifPresent(p -> p.toString()); // <5>
+		Optional<String> value = set.getParameter("testParameter", String.class); // <5>
+		String val = set.getParameter("testParameter", String.class, "default"); // <6>
+
+		Optional<String> configPropertyValue = set.getParameter(property); // <7>
+		String configPropertyVal = set.getParameter(property, "default"); // <8>
 		// end::params[]
 	}
 
