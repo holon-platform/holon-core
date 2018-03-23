@@ -22,38 +22,40 @@ package com.holonplatform.auth.jwt;
  */
 public enum JwtSignatureAlgorithm {
 
-	NONE("none", "No signature"),
+	NONE("none", "No signature", false),
 
-	HS256("HS256", "HMAC using SHA-256"),
+	HS256("HS256", "HMAC using SHA-256", true),
 
-	HS384("HS384", "HMAC using SHA-384"),
+	HS384("HS384", "HMAC using SHA-384", true),
 
-	HS512("HS512", "HMAC using SHA-512"),
+	HS512("HS512", "HMAC using SHA-512", true),
 
-	RS256("RS256", "RSASSA-PKCS-v1_5 using SHA-256"),
+	RS256("RS256", "RSASSA-PKCS-v1_5 using SHA-256", false),
 
-	RS384("RS384", "RSASSA-PKCS-v1_5 using SHA-384"),
+	RS384("RS384", "RSASSA-PKCS-v1_5 using SHA-384", false),
 
-	RS512("RS512", "RSASSA-PKCS-v1_5 using SHA-512"),
+	RS512("RS512", "RSASSA-PKCS-v1_5 using SHA-512", false),
 
-	ES256("ES256", "ECDSA using P-256 and SHA-256"),
+	ES256("ES256", "ECDSA using P-256 and SHA-256", false),
 
-	ES384("ES384", "ECDSA using P-384 and SHA-384"),
+	ES384("ES384", "ECDSA using P-384 and SHA-384", false),
 
-	ES512("ES512", "ECDSA using P-512 and SHA-512"),
+	ES512("ES512", "ECDSA using P-512 and SHA-512", false),
 
-	PS256("PS256", "RSASSA-PSS using SHA-256 and MGF1 with SHA-256"),
+	PS256("PS256", "RSASSA-PSS using SHA-256 and MGF1 with SHA-256", false),
 
-	PS384("PS384", "RSASSA-PSS using SHA-384 and MGF1 with SHA-384"),
+	PS384("PS384", "RSASSA-PSS using SHA-384 and MGF1 with SHA-384", false),
 
-	PS512("PS512", "RSASSA-PSS using SHA-512 and MGF1 with SHA-512");
+	PS512("PS512", "RSASSA-PSS using SHA-512 and MGF1 with SHA-512", false);
 
 	private final String value;
 	private final String description;
+	private final boolean symmetric;
 
-	private JwtSignatureAlgorithm(String value, String description) {
+	private JwtSignatureAlgorithm(String value, String description, boolean symmetric) {
 		this.value = value;
 		this.description = description;
+		this.symmetric = symmetric;
 	}
 
 	/**
@@ -70,6 +72,14 @@ public enum JwtSignatureAlgorithm {
 	 */
 	public String getDescription() {
 		return description;
+	}
+
+	/**
+	 * Get whether the algorithm is symmetric.
+	 * @return <code>true</code> if symmetric, <code>false</code> if asymmetric
+	 */
+	public boolean isSymmetric() {
+		return symmetric;
 	}
 
 }

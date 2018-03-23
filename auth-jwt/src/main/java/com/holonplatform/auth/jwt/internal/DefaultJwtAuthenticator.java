@@ -165,13 +165,20 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 			JwtParser parser = Jwts.parser();
 
-			if (getConfiguration().getSignatureAlgorithm() != null
-					&& getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
+			if (getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
-				if (getConfiguration().getSharedKey() != null) {
-					parser = parser.setSigningKey(getConfiguration().getSharedKey());
-				} else if (getConfiguration().getPublicKey() != null) {
-					parser = parser.setSigningKey(getConfiguration().getPublicKey());
+				if (getConfiguration().getSignatureAlgorithm().isSymmetric()) {
+					parser = parser.setSigningKey(getConfiguration().getSharedKey()
+							.orElseThrow(() -> new UnexpectedAuthenticationException(
+									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
+											+ getConfiguration().getSignatureAlgorithm().getDescription()
+											+ "] - JWT configuration: [" + getConfiguration() + "]")));
+				} else {
+					parser = parser.setSigningKey(getConfiguration().getPublicKey()
+							.orElseThrow(() -> new UnexpectedAuthenticationException(
+									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
+											+ getConfiguration().getSignatureAlgorithm().getDescription()
+											+ "] - JWT configuration: [" + getConfiguration() + "]")));
 				}
 				claims = parser.parseClaimsJws(jwt).getBody();
 			} else {

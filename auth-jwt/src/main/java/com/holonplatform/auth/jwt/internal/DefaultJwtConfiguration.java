@@ -16,6 +16,8 @@
 package com.holonplatform.auth.jwt.internal;
 
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Optional;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.jwt.JwtConfiguration;
@@ -75,8 +77,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getIssuer()
 	 */
 	@Override
-	public String getIssuer() {
-		return issuer;
+	public Optional<String> getIssuer() {
+		return Optional.ofNullable(issuer);
 	}
 
 	/*
@@ -93,8 +95,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSharedKey()
 	 */
 	@Override
-	public byte[] getSharedKey() {
-		return sharedKey;
+	public Optional<byte[]> getSharedKey() {
+		return Optional.ofNullable(sharedKey);
 	}
 
 	/*
@@ -102,8 +104,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPublicKey()
 	 */
 	@Override
-	public Key getPublicKey() {
-		return publicKey;
+	public Optional<Key> getPublicKey() {
+		return Optional.ofNullable(publicKey);
 	}
 
 	/*
@@ -111,8 +113,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPrivateKey()
 	 */
 	@Override
-	public Key getPrivateKey() {
-		return privateKey;
+	public Optional<Key> getPrivateKey() {
+		return Optional.ofNullable(privateKey);
 	}
 
 	/*
@@ -206,7 +208,19 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		this.includePermissions = includePermissions;
 	}
 
-	// Builder
+	// ------ Builder
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "JwtConfiguration [issuer=" + issuer + ", signatureAlgorithm=" + signatureAlgorithm + ", sharedKey="
+				+ Arrays.toString(sharedKey) + ", publicKey=" + publicKey + ", privateKey=" + privateKey
+				+ ", expireTime=" + expireTime + ", includeDetails=" + includeDetails + ", includePermissions="
+				+ includePermissions + "]";
+	}
 
 	/**
 	 * Default {@link Builder} implementation.
