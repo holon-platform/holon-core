@@ -18,8 +18,10 @@ package com.holonplatform.auth.internal.keys;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 import com.holonplatform.auth.keys.KeySource;
+import com.holonplatform.auth.keys.KeySource.KetSourceWithCharset;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
@@ -27,17 +29,17 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.1.0
  */
-public class StringKeySource implements KeySource {
+public class StringKeySource implements KetSourceWithCharset {
 
 	private final String source;
 	private final Charset charset;
 
 	/**
-	 * Constructor using the ISO-LATIN-1 charset.
+	 * Constructor using the UTF-8 charset.
 	 * @param source Key source (not null)
 	 */
 	public StringKeySource(String source) {
-		this(source, StandardCharsets.ISO_8859_1);
+		this(source, StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -62,7 +64,17 @@ public class StringKeySource implements KeySource {
 		return source.getBytes(charset);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.keys.KeySource.KetSourceWithCharset#getCharset()
+	 */
+	@Override
+	public Optional<Charset> getCharset() {
+		return Optional.ofNullable(charset);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Optional;
 
 import com.holonplatform.auth.internal.keys.ByteKeySource;
 import com.holonplatform.auth.internal.keys.ClasspathKeySource;
@@ -46,6 +47,23 @@ public interface KeySource {
 	 */
 	byte[] getBytes() throws IOException;
 
+	// ------- Charset support
+
+	/**
+	 * A {@link KeySource} which can support a charset.
+	 */
+	public interface KetSourceWithCharset extends KeySource {
+
+		/**
+		 * Get the key source encoding charset, if available.
+		 * @return Optional the key source encoding charset
+		 */
+		Optional<Charset> getCharset();
+
+	}
+
+	// ------- Builders
+
 	/**
 	 * Create a key source from an array of bytes.
 	 * @param source Key source (not null)
@@ -56,8 +74,7 @@ public interface KeySource {
 	}
 
 	/**
-	 * Create a key source from a {@link String}. The <code>ISO-LATIN-1</code> (<code>ISO-8859-1</code>) charset is used
-	 * by default.
+	 * Create a key source from a {@link String}. The <code>UTF-8</code> charset is used by default.
 	 * @param source Key source (not null)
 	 * @return A new {@link KeySource}
 	 */

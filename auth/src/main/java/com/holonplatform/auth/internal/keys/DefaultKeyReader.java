@@ -17,6 +17,7 @@ package com.holonplatform.auth.internal.keys;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.KeyFactory;
@@ -39,6 +40,7 @@ import com.holonplatform.auth.keys.KeyEncoding;
 import com.holonplatform.auth.keys.KeyFormat;
 import com.holonplatform.auth.keys.KeyReader;
 import com.holonplatform.auth.keys.KeySource;
+import com.holonplatform.auth.keys.KeySource.KetSourceWithCharset;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
@@ -69,7 +71,9 @@ public enum DefaultKeyReader implements KeyReader {
 			}
 
 			// encoding
-			byte[] keySource = decodeKeySource(bytes, encoding);
+			byte[] keySource = decodeKeySource(bytes, encoding,
+					(source instanceof KetSourceWithCharset) ? ((KetSourceWithCharset) source).getCharset().orElse(null)
+							: null);
 
 			// format
 			if (format == KeyFormat.PKCS11 || format == KeyFormat.PKCS12) {
@@ -117,7 +121,9 @@ public enum DefaultKeyReader implements KeyReader {
 			}
 
 			// encoding
-			byte[] keySource = decodeKeySource(bytes, encoding);
+			byte[] keySource = decodeKeySource(bytes, encoding,
+					(source instanceof KetSourceWithCharset) ? ((KetSourceWithCharset) source).getCharset().orElse(null)
+							: null);
 
 			// format
 			if (format == KeyFormat.PKCS11 || format == KeyFormat.PKCS12) {
@@ -168,14 +174,15 @@ public enum DefaultKeyReader implements KeyReader {
 	 * Decode given key source using the specified encoding.
 	 * @param source Key source
 	 * @param encoding Key encoding
+	 * @param charset Optional encoding charset
 	 * @return Decoded key
 	 */
-	private static byte[] decodeKeySource(byte[] source, KeyEncoding encoding) {
+	private static byte[] decodeKeySource(byte[] source, KeyEncoding encoding, Charset charset) {
 		switch (encoding) {
 		case BASE64:
 			return Base64.getDecoder().decode(source);
 		case PEM:
-			return Base64.getDecoder().decode(extractPEMContent(source));
+			return Base64.getDecoder().decode(extractPEMContent(source, charset));
 		case NONE:
 		default:
 			break;
@@ -186,10 +193,14 @@ public enum DefaultKeyReader implements KeyReader {
 	/**
 	 * Extract key content from a PEM format String.
 	 * @param source PEM source
+	 * @param charset Optional encoding charset
 	 * @return The key content
 	 */
-	private static byte[] extractPEMContent(byte[] source) {
-		String pemSource = new String(source, StandardCharsets.UTF_8);
+	private static byte[] extractPEMContent(byte[] source, Charset charset) {
+
+		final Charset cs = (charset != null) ? charset : StandardCharsets.UTF_8;
+
+		String pemSource = new String(source, cs);
 		int idx = pemSource.indexOf("-----BEGIN ");
 		if (idx > -1) {
 			pemSource = pemSource.substring("-----BEGIN ".length());
@@ -202,8 +213,11 @@ public enum DefaultKeyReader implements KeyReader {
 				}
 			}
 		}
-		pemSource = pemSource.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll("\\s+", "").trim();
-		return pemSource.getBytes(StandardCharsets.UTF_8);
+
+		final String content = pemSource.replace("\n", "").replace("\r", "").replace("\t", "").replaceAll("\\s+", "")
+				.trim();
+
+		return content.getBytes(cs);
 	}
 
 	/**

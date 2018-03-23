@@ -92,7 +92,7 @@ public class TestKeys {
 		assertTrue(Arrays.equals(TEST_PRIVATE_KEY, ks.getBytes()));
 
 		ks = KeySource.string(new String(TEST_PRIVATE_KEY, StandardCharsets.ISO_8859_1));
-		assertTrue(Arrays.equals(TEST_PRIVATE_KEY, ks.getBytes()));
+		assertTrue(Arrays.equals(new String(TEST_PRIVATE_KEY, StandardCharsets.ISO_8859_1).getBytes(), ks.getBytes()));
 
 	}
 
