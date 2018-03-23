@@ -25,6 +25,7 @@ import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.http.HttpRequest;
 
@@ -37,7 +38,7 @@ public class ExampleJwt {
 				.expireTime(10000) // token expire time in milliseconds
 				.includeDetails(true) // include the Authentication details in JWT token generation
 				.includePermissions(true) // include the Authentication permissions in JWT token generation
-				.signatureAlgorithm("HS256") // use HS256 as signature algorithm
+				.signatureAlgorithm(JwtSignatureAlgorithm.HS256) // use HS256 as signature algorithm
 				.sharedKey(new byte[] { 1, 2, 3 }) // shared key to use with the symmetric signing algorithm
 				.build();
 		// end::config[]
@@ -67,7 +68,7 @@ public class ExampleJwt {
 				.expireTime(10000) // token expire time in milliseconds
 				.includeDetails(true) // include the Authentication details in JWT token generation
 				.includePermissions(true) // include the Authentication permissions in JWT token generation
-				.signatureAlgorithm("HS256") // use HS256 as signature algorithm
+				.signatureAlgorithm(JwtSignatureAlgorithm.HS256) // use HS256 as signature algorithm
 				.sharedKey(new byte[] { 1, 2, 3 }) // shared key to use with the symmetric signing algorithm
 				.build();
 

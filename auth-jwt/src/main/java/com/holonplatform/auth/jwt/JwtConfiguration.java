@@ -47,7 +47,7 @@ public interface JwtConfiguration extends Serializable {
 	 * JWT token signature algorithm
 	 * @return Signature algorithm name
 	 */
-	String getSignatureAlgorithm();
+	JwtSignatureAlgorithm getSignatureAlgorithm();
 
 	/**
 	 * JWT signing shared key for signature algorithms such as HMAC
@@ -132,11 +132,11 @@ public interface JwtConfiguration extends Serializable {
 		Builder issuer(String issuer);
 
 		/**
-		 * Set JWT token signature algorithm name
-		 * @param signatureAlgorithm Signature algorithm name
+		 * Set JWT token signature algorithm
+		 * @param signatureAlgorithm Signature algorithm
 		 * @return this
 		 */
-		Builder signatureAlgorithm(String signatureAlgorithm);
+		Builder signatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm);
 
 		/**
 		 * Set JWT signing shared key to use with symmetric signing algorithms (such as HMAC)

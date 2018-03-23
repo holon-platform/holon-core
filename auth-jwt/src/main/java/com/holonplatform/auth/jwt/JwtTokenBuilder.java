@@ -89,8 +89,9 @@ public final class JwtTokenBuilder implements Serializable {
 		Long expire = (configuration.getExpireTime() > 0) ? configuration.getExpireTime() : null;
 
 		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.NONE;
-		if (configuration.getSignatureAlgorithm() != null) {
-			signatureAlgorithm = SignatureAlgorithm.forName(configuration.getSignatureAlgorithm());
+		if (configuration.getSignatureAlgorithm() != null
+				&& configuration.getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
+			signatureAlgorithm = SignatureAlgorithm.forName(configuration.getSignatureAlgorithm().getValue());
 		}
 
 		if (signatureAlgorithm == SignatureAlgorithm.NONE) {

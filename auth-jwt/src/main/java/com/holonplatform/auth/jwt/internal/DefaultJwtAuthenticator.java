@@ -30,6 +30,7 @@ import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.jwt.AuthenticationClaims;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.token.BearerAuthenticationToken;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
@@ -165,7 +166,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 			JwtParser parser = Jwts.parser();
 
 			if (getConfiguration().getSignatureAlgorithm() != null
-					&& !"none".equalsIgnoreCase(getConfiguration().getSignatureAlgorithm())) {
+					&& getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
 				if (getConfiguration().getSharedKey() != null) {
 					parser = parser.setSigningKey(getConfiguration().getSharedKey());

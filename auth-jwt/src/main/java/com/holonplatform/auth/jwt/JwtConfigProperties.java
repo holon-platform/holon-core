@@ -22,8 +22,6 @@ import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.config.ConfigPropertySet;
 import com.holonplatform.core.internal.config.DefaultConfigPropertySet;
 
-import io.jsonwebtoken.SignatureAlgorithm;
-
 /**
  * A {@link ConfigPropertySet} for JWT configuration.
  *
@@ -42,11 +40,6 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	public static final long DEFAULT_EXPIRE_TIME = 86400000L; // 1 day
 
 	/**
-	 * Default JWT signature algorithm
-	 */
-	public static final String DEFAULT_SIGNATURE_ALGORITHM = "HS256"; // HMAC using SHA-256
-
-	/**
 	 * Required JWT issuer
 	 */
 	public static final ConfigProperty<String> ISSUER = ConfigProperty.create("issuer", String.class);
@@ -54,11 +47,11 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	// ------- Sign
 
 	/**
-	 * JWT signature algorithm name
-	 * @see SignatureAlgorithm
+	 * JWT signature algorithm name. Must be one of those listed in the {@link JwtSignatureAlgorithm} enumeration.
+	 * @see JwtSignatureAlgorithm
 	 */
-	public static final ConfigProperty<String> SIGNATURE_ALGORITHM = ConfigProperty.create("signature-algorithm",
-			String.class);
+	public static final ConfigProperty<JwtSignatureAlgorithm> SIGNATURE_ALGORITHM = ConfigProperty
+			.create("signature-algorithm", JwtSignatureAlgorithm.class);
 
 	// ------- Shared key
 

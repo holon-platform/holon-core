@@ -27,6 +27,7 @@ import com.holonplatform.auth.exceptions.ExpiredCredentialsException;
 import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtConfiguration.InvalidJwtConfigurationException;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.keys.KeyEncoding;
 import com.holonplatform.auth.keys.KeyFormat;
 import com.holonplatform.auth.keys.KeyReader;
@@ -200,16 +201,13 @@ public final class JwtUtils implements Serializable {
 
 			// signing algorithm
 
-			SignatureAlgorithm signatureAlgorithm = null;
+			final JwtSignatureAlgorithm jwtSignatureAlgorithm = config
+					.getConfigPropertyValue(JwtConfigProperties.SIGNATURE_ALGORITHM).orElse(JwtSignatureAlgorithm.NONE);
+			cfg.setSignatureAlgorithm(jwtSignatureAlgorithm);
 
-			String algoName = config.getConfigPropertyValue(JwtConfigProperties.SIGNATURE_ALGORITHM, null);
-			if (algoName != null) {
-				signatureAlgorithm = SignatureAlgorithm.forName(algoName);
-				cfg.setSignatureAlgorithm(algoName);
-			} else {
-				signatureAlgorithm = SignatureAlgorithm.HS256;
-				cfg.setSignatureAlgorithm(JwtConfigProperties.DEFAULT_SIGNATURE_ALGORITHM);
-			}
+			final SignatureAlgorithm signatureAlgorithm = (jwtSignatureAlgorithm != JwtSignatureAlgorithm.NONE)
+					? SignatureAlgorithm.forName(jwtSignatureAlgorithm.getValue())
+					: SignatureAlgorithm.NONE;
 
 			// keys
 			if (signatureAlgorithm != SignatureAlgorithm.NONE) {

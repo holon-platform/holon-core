@@ -19,6 +19,7 @@ import java.security.Key;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 
 /**
  * {@link JwtConfiguration} implementation
@@ -37,7 +38,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	/*
 	 * Signature algorithm
 	 */
-	private String signatureAlgorithm;
+	private JwtSignatureAlgorithm signatureAlgorithm;
 
 	/*
 	 * Shared key
@@ -83,8 +84,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSignatureAlgorithm()
 	 */
 	@Override
-	public String getSignatureAlgorithm() {
-		return signatureAlgorithm;
+	public JwtSignatureAlgorithm getSignatureAlgorithm() {
+		return (signatureAlgorithm != null) ? signatureAlgorithm : JwtSignatureAlgorithm.NONE;
 	}
 
 	/*
@@ -150,10 +151,10 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	}
 
 	/**
-	 * Set JWT token signature algorithm name
-	 * @param signatureAlgorithm Signature algorithm name
+	 * Set JWT token signature algorithm
+	 * @param signatureAlgorithm Signature algorithm
 	 */
-	public void setSignatureAlgorithm(String signatureAlgorithm) {
+	public void setSignatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm) {
 		this.signatureAlgorithm = signatureAlgorithm;
 	}
 
@@ -237,7 +238,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		 * @see com.holonplatform.auth.jwt.internal.JwtConfigurationBuilder#signatureAlgorithm(java.lang.String)
 		 */
 		@Override
-		public Builder signatureAlgorithm(String signatureAlgorithm) {
+		public Builder signatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm) {
 			this.configuration.setSignatureAlgorithm(signatureAlgorithm);
 			return this;
 		}
