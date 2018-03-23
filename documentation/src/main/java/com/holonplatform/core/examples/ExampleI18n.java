@@ -30,6 +30,8 @@ import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.i18n.MessageProvider;
 import com.holonplatform.core.i18n.NumberFormatFeature;
 import com.holonplatform.core.i18n.TemporalFormat;
+import com.holonplatform.core.internal.CoreLogger;
+import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.temporal.TemporalType;
 
 @SuppressWarnings("unused")
@@ -42,6 +44,14 @@ public class ExampleI18n {
 		localizable = Localizable.builder().message("message &").messageCode("message.code").messageArguments("test") // <2>
 				.build();
 		// end::localizable[]
+	}
+
+	public void messageProviders() {
+		// tag::pmp[]
+		MessageProvider messageProvider = MessageProvider.fromProperties("messages").build(); // <1>
+
+		messageProvider = MessageProvider.fromProperties("i18n/messages").encoding("UTF-8").build(); // <2>
+		// end::pmp[]
 	}
 
 	public void contextbuild() {
@@ -101,6 +111,17 @@ public class ExampleI18n {
 		DateFormat df = ctx.getDateFormat(TemporalType.DATE); // <12>
 		DateTimeFormatter dtf = ctx.getDateTimeFormatter(TemporalType.DATE_TIME); // <13>
 		// end::localization[]
+	}
+
+	private static final Logger LOGGER = CoreLogger.create();
+
+	public void missingLocalization() {
+		// tag::missing[]
+		LocalizationContext ctx = LocalizationContext.builder()
+				.withMissingMessageLocalizationListener((locale, messageCode, defaultMessage) -> { // <1>
+					LOGGER.warn("Missing message localization [" + messageCode + "] for locale [" + locale + "]");
+				}).build();
+		// end::missing[]
 	}
 
 }

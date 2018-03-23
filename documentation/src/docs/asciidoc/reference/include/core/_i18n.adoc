@@ -1,17 +1,17 @@
 [[i18n]]
 === Internationalization
 
-The internationalization architecture of the Holon platform relies upon the <<LocalizationContext>> interface, which is the main entry point for localization of messages, numbers and date/time elements.
+The internationalization architecture of the Holon platform relies upon the <<LocalizationContext>> interface, which is the main entry point for the localization of messages, numbers and date/time elements.
 
 ==== Localizable messages
 
 A _localizable_ message is represented using the following attributes:
 
-* A *default* message: This is the default message to use if a localization attribute or provider is not available
-* A localization *message code*: The symbolic message code to use as identifier to provide message translations
-* Optional message *arguments*: A set of arguments to be used to replace a conventional placeholder in the message String with actual values
+* A *default* message: The default message to use if the localized message is not available or a localization provider is not available.
+* A localization *message code*: The symbolic message code to use as identifier to provide message localizations.
+* Optional message *arguments*: A set of arguments to be used to replace conventional placeholders in the message String with the actual values at message localization time.
 
-The link:{apidir}/com/holonplatform/core/i18n/Localizable.html[Localizable^] interface is available to represent a localizable message, providing a convenience fluent builder to create `Localizable` instances.
+The link:{apidir}/com/holonplatform/core/i18n/Localizable.html[Localizable^] interface is available to represent a localizable message.
 
 [source, java]
 .Building a Localizable
@@ -26,25 +26,34 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 
 The link:{apidir}/com/holonplatform/core/i18n/Caption.html[Caption^] annotation can be used to provide the localizable message to use as the _caption_ (i.e. the short description or explanatory label of an element) of an element.
 
-The relevant annotation attributes are:
+The annotation attributes are:
 
-* `value`: The _default_ message to use as caption
-* `messageCode`: The symbolic message code to use as identifier to provide message translations
+* `value`: The _default_ message to use as a caption
+* `messageCode`: The symbolic message code to use to provide message translations
 
-The support for the `@Caption` annotation must be declared and documented by the classes/elements which support it.
+The `@Caption` annotation support must be declared and documented by the classes/elements which actually support it.
 
-TIP: For example, the default <<StringValuePresenter>>, used also as default <<Property>> value presenter supports the `@Caption` annotation for `enum` values presentation.
+TIP: For example, the default <<StringValuePresenter>> supports the `@Caption` annotation for `enum` values presentation.
 
 [[i18n.MessageProvider]]
 ==== Message providers
 
-To perform actual messages localization the link:{apidir}/com/holonplatform/core/i18n/MessageProvider.html[MessageProvider^] functional interface is used. A `MessageProvider` provides a message translation for a specified message localization identifier and a `Locale` representing the language/country for which the translation is required.
+To perform actual messages localization the link:{apidir}/com/holonplatform/core/i18n/MessageProvider.html[MessageProvider^] API interface is used. A `MessageProvider` provides a message translation for a specified message localization identifier and a `Locale` representing the language/country for which the translation is required.
 
-The platform makes available a default `MessageProvider` using _properties_ files as message localization containers, which can be created using the static `fromProperties(String... basenames)` method.
+The Holon platform makes available a default `MessageProvider`, which uses _properties_ files as message localization containers. It can be created using the `fromProperties(String... basenames)` static method:
 
-Properties files are resolved using a configured basenames as prefix, and `Locale` language, country and variant separated by an underscore as file name. Files must have the _.properties_ extension.
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=pmp,indent=0]
+----
+<1> Build a `MessageProvider` which uses _properties_ files with `messages` as base name
+<2> Build a `MessageProvider` which uses _properties_ files with `messages` as base name in the `i18n` folder and set `UTF-8` as encoding
 
-The basenames follow the `java.util.ResourceBundle` conventions: essentially, a fully-qualified classpath location. If it doesn't contain a package qualifier, it will be resolved from the classpath root. Note that the JDK's standard `ResourceBundle` treats dots as package separators: this means that `test.messages` is equivalent to `test/messages`.
+Properties file names are resolved using the configured _basenames_ as prefix. This prefix can be followed by the  `Locale` language, country and variant codes, separated by an underscore (`_`) character. The files must have the `.properties` extension.
+
+The _basenames_ follow the `java.util.ResourceBundle` conventions: essentially, a fully-qualified classpath location. If the base name doesn't contain a package qualifier, it will be resolved from the classpath root. Note that the JDK's standard `ResourceBundle` treats dots as package separators: this means that `test.messages` is equivalent to `test/messages` as folder structure.
+
+The `Locale` attributes are used to build a fallback message localization resolution chain, starting from the most qualified `Locale` definition and matched against the `Locale` for which the message localization is requested.
 
 As an example, suppose to have a `messages` folder under the classpath root containing the following files:
 
@@ -54,7 +63,8 @@ As an example, suppose to have a `messages` folder under the classpath root cont
 * *messages_it.properties*: This file will be used for a `Locale` with `it` as language, ignoring country or variant
 * *messages.properties*: This is the default file to use as fallback if no other match is found for a `Locale`
 
-A message localization properties file simply contains a list of the localization (translation) of the available message localization identifiers (or message codes), e.g. `test.msg=translation`.
+A message localization properties file simply contains the list of the available localizations (translations), 
+organized by message localization code. For example the `test.msg=translation` line declares `translation` as the localization of the `test.msg` message code.
 
 [[LocalizationContext]]
 ==== LocalizationContext
@@ -63,7 +73,7 @@ The link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.html[Localizat
 
 ==== Building a LocalizationContext
 
-The simplest way to build a `LocalizationContext` is to use the fluent builder:
+The `LocalizationContext` interface provides a fluent builder to create `LocalizationContext` instances:
 
 [source, java]
 ----
@@ -81,7 +91,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=ctxb
 
 ==== Obtaining a LocalizationContext
 
-If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key, i.e. the fully qualified LocalizationContext class name, the current `LocalizationContext` can be obtained by using the convenience `getCurrent()` static method.
+If the `LocalizationContext` is registered as a <<Context>> resource using the default context resource key ( i.e. the fully qualified `LocalizationContext` class name), it can be obtained by using the convenience `getCurrent()` static method.
 
 The `require()` static method can be used to obtain the current `LocalizationContext` or throwing an exception if it's not available as context resource.
 
@@ -89,11 +99,13 @@ Furthermore, the `requireLocalized()` static method acts the same as the `requir
 
 ==== Localizing a LocalizationContext
 
-Before using a `LocalizationContext`, you must ensure that it is _localized_, i.e. bound to a specific `Locale`. This will be the `Locale` used for the localization of messages, numbers and date/time elements. To _localize_ a `LocalizationContext`, use the `localize(...)` method of the LocalizationContext interface, providing a `Locale` instance.
+Before using a `LocalizationContext`, you must ensure that it is _localized_, i.e. bound to a specific `Locale`. This will be the `Locale` used for the localization of messages, numbers and date/time elements. To _localize_ a `LocalizationContext`, the `localize(...)` method con be used, providing the `Locale` instance.
 
-To have more control on context localization, a link:{apidir}/com/holonplatform/core/i18n/Localization.html[Localization^] object can be used, which allows to setup:
+To fine tune the context localization, a link:{apidir}/com/holonplatform/core/i18n/Localization.html[Localization^] object can be used instead of a simple `Locale`.
 
-* A _parent_ `Localization`, i.e. the Localization to use as fallback when a localization operation cannot be successfully performed using current localization, for example because a message translation is not available. This allows the creation of a hierarchy of `Localization`s;
+A `Localization` is bound to a `Locale` and allows to setup:
+
+* A _parent_ `Localization`, i.e. the Localization to use as fallback when a localization operation cannot be successfully performed using the current localization, for example because a message translation is not available. This allows the creation of a `Localization` hierarchy;
 * The default decimal positions to use to format a localized numeric decimal value, if decimal positions are not explicitly given;
 * The default date format style
 * The default time format style
@@ -104,16 +116,18 @@ To have more control on context localization, a link:{apidir}/com/holonplatform/
 include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=localize,indent=0]
 ----
 <1> Require a `LocalizationContext` to be available as context resource 
-<2> Localize the LocalizationContext using the `US` `Locale`
-<3> Check the LocalizationContext is localized
-<4> Localize the LocalizationContext using a `Localization`
+<2> Localize the `LocalizationContext` using the `US` `Locale`
+<3> Check the `LocalizationContext` is localized
+<4> Localize the `LocalizationContext` using a `Localization`
 
 ==== Using the LocalizationContext
 
-The `LocalizationContext` provides several methods to perform localizations of messages, dates and numbers.
+The `LocalizationContext` API provides several methods to perform localizations of messages, temporal values and numbers.
 
 * For numbers formatting, the `NumberFormatFeature` enumeration can be used to tune the format style
 * For date and times formatting, the `TemporalFormat` enumeration can be used to specify the format style 
+
+The Java 8 `java.time.*` API is fully supported by the `LocalizationContext` API.
 
 [source, java]
 ----
@@ -137,6 +151,12 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 
 One or more link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.MissingMessageLocalizationListener.html[MissingMessageLocalizationListener^] can be registered to a `LocalizationContext` to be notified when a message localization is missing from any of the available `MessageProvider`.
 
-The `MissingMessageLocalizationListener` the localization message code for which the localization was requested, in addition to the `Locale` and the optionally provided default message.
+The `MissingMessageLocalizationListener` provides the localization message code for which the localization was requested, in addition to the `Locale` and the optionally provided default message.
 
 The `withMissingMessageLocalizationListener(...)` method of the `LocalizationContext` builder can be used to register a `MissingMessageLocalizationListener`.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=missing,indent=0]
+----
+<1> Add a `MissingMessageLocalizationListener` to the `LocalizationContext` which logs missing message localizations
