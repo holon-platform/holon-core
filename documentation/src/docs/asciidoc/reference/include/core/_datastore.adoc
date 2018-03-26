@@ -260,7 +260,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=agg
 
 *Aggregation functions:*
 
-A set of basic results aggregation _functions_ are provided by the default `Datastore`. An aggregation function is related to a <<Path>> and allows to aggregate the query results related to such path with a specific aggregation semantic.
+A set of basic results aggregation _functions_ are provided by the default `Datastore`. An aggregation function is related to a `Path` and allows to aggregate the query results related to such path with a specific aggregation semantic.
 
 A Datastore *function* is represented by the {apidir}/com/holonplatform/core/query/QueryFunction.html[QueryFunction^] interface and the following builtin aggregation functions are provided:
 

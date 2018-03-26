@@ -54,9 +54,20 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+[[WhatsNew51x]]
 == What's new in version 5.1.x
 
-* The `PropertySet` interface now supports _identifier_ properties declaration, which can be used to provide a virtual primary key to distinguish a `PropertyBox` instance from another (using the _identifier_ property values), both at Java objects level (`equals` and `hashCode`) and at persistence architecture level.
+=== Property model
+
+* The `Property` instance identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. See <<PropertyIdentity>>.
+
+* The `PathProperty` interface now provides a set of sub types, to consistently handle property _expressions_ which are type specific, for the main Java types (*String*, *Numbers*, *Temporal types* and *Boolean*). See <<PathPropertySubTypes>>.
+
+* The `PropertySet` interface now supports a generic *configuration* container, likewise the `Property` interface. See <<PropertySetConfiguration>>.
+
+* The `PropertySet` interface now supports _identifier_ properties declaration, which can be used to provide a virtual primary key to distinguish a `PropertyBox` instance from another (using the _identifier_ property values), both at Java objects level (`equals` and `hashCode`) and at persistence architecture level. See <<IdentifierProperties>>.
+
+* Just like the `Property` instances, the `PropertyBox` instances identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. Furthermore, if the `PropertyBox` property set declares one or more _identifier_ property, their values will be used by default to implement the `PropertyBox` instance identification strategy. See <<PropertyBoxIdentification>>.
 
 == Core API, services and components
 
