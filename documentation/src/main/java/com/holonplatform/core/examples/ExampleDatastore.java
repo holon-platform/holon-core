@@ -32,9 +32,13 @@ import com.holonplatform.core.property.PropertySet;
 @SuppressWarnings("unused")
 public class ExampleDatastore {
 
+	private static final class MyType {
+	}
+
 	public void datatarget() {
 		// tag::datatarget[]
-		DataTarget<String> target = DataTarget.named("test");
+		DataTarget<String> target1 = DataTarget.named("test1"); // <1>
+		DataTarget<MyType> target2 = DataTarget.of("test2", MyType.class); // <2>
 		// end::datatarget[]
 	}
 
@@ -43,7 +47,8 @@ public class ExampleDatastore {
 		// tag::resolver[]
 		ExpressionResolver resolver = DataTargetResolver.create(DataTarget.class,
 				(target, context) -> "test".equals(target.getName())
-						? Optional.of(DataTarget.named("wellKnownTargetName")) : Optional.empty()); // <1>
+						? Optional.of(DataTarget.named("wellKnownTargetName"))
+						: Optional.empty()); // <1>
 
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
 		datastore.addExpressionResolver(resolver); // <2>
