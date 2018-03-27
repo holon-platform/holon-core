@@ -69,6 +69,10 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * Just like the `Property` instances, the `PropertyBox` instances identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. Furthermore, if the `PropertyBox` property set declares one or more _identifier_ property, their values will be used by default to implement the `PropertyBox` instance identification strategy. See <<PropertyBoxIdentification>>.
 
+* The new <<BeanPropertySetPostProcessor>> interface can be used to extend the <<BeanIntrospector>> Bean introspection strategy at Bean property set level, allowing for example to customize the Bean property set configuration.
+
+* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different form the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition.
+
 == Core API, services and components
 
 === Introduction

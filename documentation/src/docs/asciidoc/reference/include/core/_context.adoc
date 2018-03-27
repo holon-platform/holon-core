@@ -72,7 +72,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=r
 
 The Holon platform provides two default context _scopes_, automatically registered and made available to the  `Context` API:
 
-. A *ClassLoader*-bound scope, which handles resources as _singleton_ instances whithin the reference `ClassLoader`, that is, at most one resource instance for a given resource key is present in the scope for a specific `ClassLoader`. This scope is registered with a low precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#CLASSLOADER_SCOPE_NAME[CLASSLOADER_SCOPE_NAME^];
+. A *ClassLoader*-bound scope, which handles resources as _singleton_ instances within the reference `ClassLoader`, that is, at most one resource instance for a given resource key is present in the scope for a specific `ClassLoader`. This scope is registered with a low precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#CLASSLOADER_SCOPE_NAME[CLASSLOADER_SCOPE_NAME^];
 . A *Thread*-bound scope, which binds resources to the current `Thread` using `ThreadLocal` variables. This scope is registered with a high precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#THREAD_SCOPE_NAME[THREAD_SCOPE_NAME^].
 
 The `Context` API provides methods to directly obtain the default scopes:

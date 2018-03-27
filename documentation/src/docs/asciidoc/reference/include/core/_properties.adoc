@@ -110,6 +110,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 <5> `Enum` by name converter
 <6> Set a _numeric boolean_ builtin converter a `Property` build time, to map an `Integer` model value to a `Boolean` property type.
 
+[[PropertyLocalization]]
 ==== Localization
 
 The `Property` interface extends link:{apidir}/com/holonplatform/core/i18n/Localizable.html[Localizable^] to allow property _caption_ localization. The property _caption_ is a kind of property description, which can be used also in UI application layers to provide the property description to the user.
@@ -235,7 +236,7 @@ The property value provision is delegated to the  link:{apidir}/com/holonplatfor
 
 The `PropertyValueProvider` is configured at `VirtualProperty` definition time, and it is immutable during the property lifecycle.
 
-When a `VirtualProperty` is used whithin objects and structures which explicitly support it, the current data model context can be used to provide the virtual property value. The current data context is represented through a `PropertyBox` and it is provided to the `PropertyValueProvider` value providing method. This way, the value of other properties can be used to calculate the virtual property value.
+When a `VirtualProperty` is used within objects and structures which explicitly support it, the current data model context can be used to provide the virtual property value. The current data context is represented through a `PropertyBox` and it is provided to the `PropertyValueProvider` value providing method. This way, the value of other properties can be used to calculate the virtual property value.
 
 TIP: See <<PropertyBox>> for further information.
 
@@ -299,7 +300,7 @@ The identifier properties are declared at `PropertySet` definition time and can 
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=propertyset2,indent=0]
 ----
-<1> Create a `PropertySet` whith the `ID` and `NAME` properties, declaring `ID` as the identifier property
+<1> Create a `PropertySet` with the `ID` and `NAME` properties, declaring `ID` as the identifier property
 <2> The same operation using the convenience `builderOf` method
 <3> Get the identifier properties as a `Set`
 <4> Get the first identifier property, if available
@@ -365,9 +366,9 @@ In a typical data model mapping scenario, a `PropertyBox` is used to represent a
 
 As a standard Java object, a `PropertyBox` instance is identified by its memory address. This makes each `PropertyBox` instance "different" form one another, in the Java objects sense, regardless of the property set and the property values contained in the `PropertyBox`.
 
-This may not always be the desired behavior. In many situations is it appropriate to implement a `PropertyBox` identification strategy relying on its property set and the corresponding property values. According to this vision, two `PropertyBox` whith the same property set and the same property values should be considered _equal_.
+This may not always be the desired behavior. In many situations is it appropriate to implement a `PropertyBox` identification strategy relying on its property set and the corresponding property values. According to this vision, two `PropertyBox` with the same property set and the same property values should be considered _equal_.
 
-When dealing with a data model, a more consistent `PropertyBox` identification strategy should consider only the _identifier_ property values, to check `PropertyBox` equality whithin the same data model _entity_.
+When dealing with a data model, a more consistent `PropertyBox` identification strategy should consider only the _identifier_ property values, to check `PropertyBox` equality within the same data model _entity_.
 
 For this reason, the `PropertySet` _identifier_ properties are used by default to implement the `PropertyBox` identification strategy: this means that the standard *equals* and *hashCode* methods of the `PropertyBox` instance are implemented accordingly to the  _identifier_ property values, if available from the property set.
 
