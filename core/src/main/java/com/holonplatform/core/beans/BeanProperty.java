@@ -25,7 +25,10 @@ import com.holonplatform.core.property.PathProperty;
 
 /**
  * Represents a Java Bean property as a {@link PathProperty}, providing additional configuration informations and
- * methods.
+ * read/write methods.
+ * <p>
+ * This class is mainly intended for internal use.
+ * </p>
  * 
  * @param <T> Property type
  * 
