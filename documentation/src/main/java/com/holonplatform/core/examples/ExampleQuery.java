@@ -59,7 +59,7 @@ import com.holonplatform.core.query.TemporalFunction.Hour;
 import com.holonplatform.core.query.TemporalFunction.Month;
 import com.holonplatform.core.query.TemporalFunction.Year;
 
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings("unused")
 public class ExampleQuery {
 
 	public void filter1() {
@@ -138,52 +138,6 @@ public class ExampleQuery {
 		// end::filter2[]
 	}
 
-	// tag::custom[]
-	class MyFilter implements QueryFilter { // <1>
-
-		final StringProperty property;
-		final String value;
-
-		public MyFilter(StringProperty property, String value) {
-			this.property = property;
-			this.value = value;
-		}
-
-		@Override
-		public void validate() throws InvalidExpressionException {
-			if (value == null)
-				throw new InvalidExpressionException("Value must be not null");
-		}
-
-	}
-
-	class MyFilterResolver implements QueryFilterResolver<MyFilter> { // <2>
-
-		@Override
-		public Class<? extends MyFilter> getExpressionType() {
-			return MyFilter.class;
-		}
-
-		@Override
-		public Optional<QueryFilter> resolve(MyFilter expression, ResolutionContext context)
-				throws InvalidExpressionException {
-			return Optional
-					.of(expression.property.isNotNull().and(expression.property.contains(expression.value, true))); // <3>
-		}
-
-	}
-
-	final static StringProperty PROPERTY = StringProperty.create("testProperty");
-
-	public void customFilter() {
-		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
-		datastore.addExpressionResolver(new MyFilterResolver()); // <4>
-
-		Stream<String> results = datastore.query().target(DataTarget.named("test"))
-				.filter(PROPERTY.isNotNull().and(new MyFilter(PROPERTY, "testValue"))).stream(PROPERTY); // <5>
-	}
-	// end::custom[]
-
 	public void sort1() {
 		// tag::sort1[]
 		final PathProperty<String> PROPERTY = PathProperty.create("test", String.class);
@@ -214,41 +168,6 @@ public class ExampleQuery {
 														// ANOTHER_PROPERTY
 		// end::sort2[]
 	}
-
-	// tag::customsort[]
-	class MySort implements QuerySort { // <1>
-
-		@Override
-		public void validate() throws InvalidExpressionException {
-		}
-
-	}
-
-	class MySortResolver implements QuerySortResolver<MySort> { // <2>
-
-		final PathProperty<String> P1 = PathProperty.create("testProperty1", String.class);
-		final PathProperty<Integer> P2 = PathProperty.create("testProperty2", Integer.class);
-
-		@Override
-		public Class<? extends MySort> getExpressionType() {
-			return MySort.class;
-		}
-
-		@Override
-		public Optional<QuerySort> resolve(MySort expression, ResolutionContext context)
-				throws InvalidExpressionException {
-			return Optional.of(P1.asc().and(P2.desc())); // <3>
-		}
-
-	}
-
-	public void customSort() {
-		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
-		datastore.addExpressionResolver(new MySortResolver()); // <4>
-
-		Stream<String> results = datastore.query().target(DataTarget.named("test")).sort(new MySort()).stream(PROPERTY); // <5>
-	}
-	// end::customsort[]
 
 	public void aggregationFunctions() {
 		// tag::aggfun[]
