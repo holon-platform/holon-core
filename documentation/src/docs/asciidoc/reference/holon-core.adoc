@@ -69,9 +69,15 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * Just like the `Property` instances, the `PropertyBox` instances identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. Furthermore, if the `PropertyBox` property set declares one or more _identifier_ property, their values will be used by default to implement the `PropertyBox` instance identification strategy. See <<PropertyBoxIdentification>>.
 
-* The new <<BeanPropertySetPostProcessor>> interface can be used to extend the <<BeanIntrospector>> Bean introspection strategy at Bean property set level, allowing for example to customize the Bean property set configuration.
+* The new <<BeanPropertySetPostProcessor>> interface can be used to extend the <<BeanIntrospector>> Bean introspection strategy at Bean property set level, allowing for example to customize the Bean property set configuration. See <<BeanPropertySetPostProcessor>>.
 
-* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different form the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition.
+* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different form the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition. See <<BeanDataPath>>.
+
+=== Datastore
+
+* A deep revision of the `Expression` based architecture, which is the foundation, above all, of the `Datastore` API and the abstract `Query` engine. This lead to a more consistent and extensible architecture, along with considerable performance improvements. See the <<Query>> and <<DatastoreExtension>> sections of the `Datastore` documentation.
+
+* New standard `QueryFunction` implementations was made available for the core `Datastore` API. Besides <<StringRelatedFunctions,String related functions>>, a set of *temporal* data types related functions is now available to obtain current date/time (with `java.time.*` types support) and to extract a temporal part (_year_, _month_, _day_, _hour_). See <<TemporalFunctions>>.
 
 == Core API, services and components
 

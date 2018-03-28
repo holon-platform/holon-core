@@ -15,11 +15,13 @@
  */
 package com.holonplatform.core.examples;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Expression.InvalidExpressionException;
+import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.relational.Join.JoinType;
@@ -28,50 +30,74 @@ import com.holonplatform.core.datastore.relational.SubQuery;
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.query.BeanProjection;
+import com.holonplatform.core.query.ConstantExpressionProjection;
+import com.holonplatform.core.query.Query;
 import com.holonplatform.core.query.QueryAggregation;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QueryFilter.QueryFilterResolver;
+import com.holonplatform.core.query.QueryFunction;
+import com.holonplatform.core.query.QueryFunction.Avg;
+import com.holonplatform.core.query.QueryFunction.Count;
+import com.holonplatform.core.query.QueryFunction.Max;
+import com.holonplatform.core.query.QueryFunction.Min;
+import com.holonplatform.core.query.QueryFunction.Sum;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.QuerySortResolver;
 import com.holonplatform.core.query.QuerySort.SortDirection;
+import com.holonplatform.core.query.StringFunction.Lower;
+import com.holonplatform.core.query.StringFunction.Upper;
+import com.holonplatform.core.query.TemporalFunction.CurrentDate;
+import com.holonplatform.core.query.TemporalFunction.CurrentLocalDate;
+import com.holonplatform.core.query.TemporalFunction.CurrentLocalDateTime;
+import com.holonplatform.core.query.TemporalFunction.CurrentTimestamp;
+import com.holonplatform.core.query.TemporalFunction.Day;
+import com.holonplatform.core.query.TemporalFunction.Hour;
+import com.holonplatform.core.query.TemporalFunction.Month;
+import com.holonplatform.core.query.TemporalFunction.Year;
 
 @SuppressWarnings({ "unused", "serial" })
 public class ExampleQuery {
 
 	public void filter1() {
 		// tag::filter1[]
-		final PathProperty<String> PROPERTY = PathProperty.create("test", String.class);
-		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
+		final PathProperty<Integer> PROPERTY1 = PathProperty.create("test1", Integer.class);
+		final PathProperty<Integer> PROPERTY2 = PathProperty.create("test2", Integer.class);
+		final StringProperty STRING_PROPERTY = StringProperty.create("test3");
 
-		QueryFilter restriction = QueryFilter.isNotNull(PROPERTY); // is not null
-		restriction = QueryFilter.isNull(PROPERTY); // is null
-		restriction = QueryFilter.eq(PROPERTY, "value"); // equal to a value
-		restriction = QueryFilter.eq(PROPERTY, ANOTHER_PROPERTY); // equal to a property
-		restriction = QueryFilter.neq(PROPERTY, "value"); // not equal
-		restriction = QueryFilter.lt(PROPERTY, "value"); // less than
-		restriction = QueryFilter.loe(PROPERTY, "value"); // less than or equal
-		restriction = QueryFilter.gt(PROPERTY, "value"); // greater than
-		restriction = QueryFilter.goe(PROPERTY, "value"); // greater than or equal
-		restriction = QueryFilter.between(PROPERTY, "value1", "value2"); // between
-		restriction = QueryFilter.in(PROPERTY, "value1", "value2", "value3"); // in
-		restriction = QueryFilter.nin(PROPERTY, "value1", "value2", "value3"); // not in
-		restriction = QueryFilter.startsWith(PROPERTY, "V", false); // starts with 'v'
-		restriction = QueryFilter.startsWith(PROPERTY, "v", true); // starts with 'v', ignoring case
-		restriction = QueryFilter.endsWith(PROPERTY, "v", false); // ends with 'v'
-		restriction = QueryFilter.contains(PROPERTY, "v", false); // contains 'v'
-		QueryFilter restriction2 = QueryFilter.contains(PROPERTY, "v", true); // contains 'v', ignoring case
+		// <1>
+		QueryFilter restriction = QueryFilter.isNotNull(PROPERTY1); // is not null
+		restriction = QueryFilter.isNull(PROPERTY1); // is null
+		restriction = QueryFilter.eq(PROPERTY1, 7); // equal to a value
+		restriction = QueryFilter.eq(PROPERTY1, PROPERTY2); // equal to another property expression
+		restriction = QueryFilter.neq(PROPERTY1, 7); // not equal
+		restriction = QueryFilter.lt(PROPERTY1, 7); // less than
+		restriction = QueryFilter.loe(PROPERTY1, 7); // less than or equal
+		restriction = QueryFilter.gt(PROPERTY1, 7); // greater than
+		restriction = QueryFilter.goe(PROPERTY1, 7); // greater than or equal
+		restriction = QueryFilter.between(PROPERTY1, 1, 7); // between
+		restriction = QueryFilter.in(PROPERTY1, 1, 2, 3); // in
+		restriction = QueryFilter.nin(PROPERTY1, 1, 2, 3); // not in
 
-		// negation
-		QueryFilter negation = QueryFilter.not(restriction);
-		negation = restriction.not();
+		// <2>
+		restriction = QueryFilter.startsWith(STRING_PROPERTY, "V", false); // starts with 'v'
+		restriction = QueryFilter.startsWith(STRING_PROPERTY, "v", true); // starts with 'v', ignoring case
+		restriction = QueryFilter.endsWith(STRING_PROPERTY, "v", false); // ends with 'v'
+		restriction = QueryFilter.contains(STRING_PROPERTY, "v", false); // contains 'v'
+		QueryFilter restriction2 = QueryFilter.contains(STRING_PROPERTY, "v", true); // contains 'v', ignoring case
 
-		// conjuction
+		// negation // <3>
+		QueryFilter negation = restriction.not();
+		negation = QueryFilter.not(restriction);
+
+		// conjuction // <4>
 		QueryFilter conjuction = restriction.and(restriction2);
 		conjuction = QueryFilter.allOf(restriction, restriction2).orElse(null);
 
-		// disjunction
+		// disjunction // <5>
 		QueryFilter disjunction = restriction.or(restriction2);
 		disjunction = QueryFilter.anyOf(restriction, restriction2).orElse(null);
 		// end::filter1[]
@@ -79,36 +105,36 @@ public class ExampleQuery {
 
 	public void filter2() {
 		// tag::filter2[]
-		final StringProperty PROPERTY = StringProperty.create("test");
-		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
+		final PathProperty<Integer> PROPERTY1 = PathProperty.create("test1", Integer.class);
+		final PathProperty<Integer> PROPERTY2 = PathProperty.create("test2", Integer.class);
+		final StringProperty STRING_PROPERTY = StringProperty.create("test3");
 
-		QueryFilter restriction = PROPERTY.isNotNull(); // is not null
-		restriction = PROPERTY.isNull(); // is null
-		restriction = PROPERTY.eq("value"); // equal to a value
-		restriction = PROPERTY.eq(ANOTHER_PROPERTY); // equal to a property
-		restriction = PROPERTY.neq("value"); // not equal
-		restriction = PROPERTY.lt("value"); // less than
-		restriction = PROPERTY.loe("value"); // less than or equal
-		restriction = PROPERTY.gt("value"); // greater than
-		restriction = PROPERTY.goe("value"); // greater than or equal
-		restriction = PROPERTY.between("value1", "value2"); // between
-		restriction = PROPERTY.in("value1", "value2", "value3"); // in
-		restriction = PROPERTY.nin("value1", "value2", "value3"); // not in
-		restriction = PROPERTY.startsWith("v"); // starts with
-		restriction = PROPERTY.startsWithIgnoreCase("v"); // starts with ignoring case
-		restriction = PROPERTY.endsWith("v"); // ends with
-		restriction = PROPERTY.endsWithIgnoreCase("v"); // ends with ignoring case
-		restriction = PROPERTY.contains("v"); // contains
-		QueryFilter restriction2 = PROPERTY.containsIgnoreCase("v"); // contains ignoring case
+		// <1>
+		QueryFilter restriction = PROPERTY1.isNotNull(); // is not null
+		restriction = PROPERTY1.isNull(); // is null
+		restriction = PROPERTY1.eq(7); // equal to a value
+		restriction = PROPERTY1.eq(PROPERTY2); // equal to another property
+		restriction = PROPERTY1.neq(7); // not equal
+		restriction = PROPERTY1.lt(7); // less than
+		restriction = PROPERTY1.loe(7); // less than or equal
+		restriction = PROPERTY1.gt(7); // greater than
+		restriction = PROPERTY1.goe(7); // greater than or equal
+		restriction = PROPERTY1.between(1, 7); // between
+		restriction = PROPERTY1.in(1, 2, 3); // in
+		restriction = PROPERTY1.nin(1, 2, 3); // not in
 
-		// negation
-		QueryFilter negation = PROPERTY.eq("value").not();
+		// <2>
+		restriction = STRING_PROPERTY.startsWith("v"); // starts with
+		restriction = STRING_PROPERTY.startsWithIgnoreCase("v"); // starts with ignoring case
+		restriction = STRING_PROPERTY.endsWith("v"); // ends with
+		restriction = STRING_PROPERTY.endsWithIgnoreCase("v"); // ends with ignoring case
+		restriction = STRING_PROPERTY.contains("v"); // contains
+		QueryFilter restriction2 = STRING_PROPERTY.containsIgnoreCase("v"); // contains ignoring case
 
-		// conjuction
-		QueryFilter conjuction = PROPERTY.isNotNull().and(PROPERTY.eq("value"));
-
-		// disjunction
-		QueryFilter disjunction = PROPERTY.isNull().or(PROPERTY.eq("value"));
+		// <3>
+		QueryFilter negation = PROPERTY1.eq(7).not(); // negation
+		QueryFilter conjuction = PROPERTY1.isNotNull().and(PROPERTY2.eq(3)); // conjuction
+		QueryFilter disjunction = PROPERTY1.isNull().or(PROPERTY2.eq(3)); // disjunction
 		// end::filter2[]
 	}
 
@@ -163,12 +189,13 @@ public class ExampleQuery {
 		final PathProperty<String> PROPERTY = PathProperty.create("test", String.class);
 		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
 
-		QuerySort sort = QuerySort.asc(PROPERTY); // sort ASCENDING on given property
-		sort = QuerySort.desc(PROPERTY); // sort DESCENDING on given property
+		// <1>
+		QuerySort sort = QuerySort.of(PROPERTY, SortDirection.ASCENDING); // sort ASCENDING on given property path
+		sort = QuerySort.of(PROPERTY, true); // sort ASCENDING on given property path
+		sort = QuerySort.asc(PROPERTY); // sort ASCENDING on given property path
+		QuerySort sort2 = QuerySort.desc(ANOTHER_PROPERTY); // sort DESCENDING on given property path
 
-		QuerySort sort2 = QuerySort.of(ANOTHER_PROPERTY, SortDirection.ASCENDING); // sort ASCENDING on given property
-		sort2 = QuerySort.of(ANOTHER_PROPERTY, true); // sort ASCENDING on given property
-
+		// <2>
 		QuerySort.of(sort, sort2); // sort using 'sort' and 'sort2' declarations, in the given order
 		// end::sort1[]
 	}
@@ -178,9 +205,11 @@ public class ExampleQuery {
 		final PathProperty<String> PROPERTY = PathProperty.create("test", String.class);
 		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
 
-		QuerySort sort = PROPERTY.asc(); // sort ASCENDING on given property
-		sort = PROPERTY.desc(); // sort DESCENDING on given property
+		// <1>
+		QuerySort sortAsc = PROPERTY.asc(); // sort ASCENDING on given property
+		QuerySort sortDesc = PROPERTY.desc(); // sort DESCENDING on given property
 
+		// <2>
 		PROPERTY.asc().and(ANOTHER_PROPERTY.desc()); // sort ASCENDING on PROPERTY, than sort DESCENDING on
 														// ANOTHER_PROPERTY
 		// end::sort2[]
@@ -223,16 +252,87 @@ public class ExampleQuery {
 
 	public void aggregationFunctions() {
 		// tag::aggfun[]
-		final PathProperty<Integer> PROPERTY = PathProperty.create("test1", Integer.class);
-		final NumericProperty<Integer> PROPERTY2 = NumericProperty.integerType("test2");
+		final NumericProperty<Integer> PROPERTY = NumericProperty.integerType("test");
 
-		PROPERTY.count();
-		PROPERTY.min();
-		PROPERTY.max();
+		// <1>
+		Count count = QueryFunction.count(PROPERTY);
+		Min<Integer> min = QueryFunction.min(PROPERTY);
+		Max<Integer> max = QueryFunction.max(PROPERTY);
+		Avg avg = QueryFunction.avg(PROPERTY);
+		Sum<Integer> sum = QueryFunction.sum(PROPERTY);
 
-		PROPERTY2.avg();
-		PROPERTY2.sum();
+		// <2>
+		count = Count.create(PROPERTY);
+		min = Min.create(PROPERTY);
+		max = Max.create(PROPERTY);
+		avg = Avg.create(PROPERTY);
+		sum = Sum.create(PROPERTY);
+
+		// <3>
+		count = PROPERTY.count();
+		min = PROPERTY.min();
+		max = PROPERTY.max();
+		avg = PROPERTY.avg();
+		sum = PROPERTY.sum();
 		// end::aggfun[]
+	}
+
+	public void stringFunctions() {
+		// tag::strfun[]
+		final StringProperty PROPERTY = StringProperty.create("test");
+
+		// <1>
+		Lower lower = QueryFunction.lower(PROPERTY);
+		Upper upper = QueryFunction.upper(PROPERTY);
+
+		// <2>
+		lower = Lower.create(PROPERTY);
+		upper = Upper.create(PROPERTY);
+
+		// <3>
+		lower = PROPERTY.lower();
+		upper = PROPERTY.upper();
+		// end::strfun[]
+	}
+
+	public void currentTimeFunctions() {
+		// tag::cdtfun[]
+		// <1>
+		CurrentDate currentDate = QueryFunction.currentDate();
+		CurrentLocalDate currentLocalDate = QueryFunction.currentLocalDate();
+		CurrentTimestamp currentTimestamp = QueryFunction.currentTimestamp();
+		CurrentLocalDateTime currentLocalDateTime = QueryFunction.currentLocalDateTime();
+
+		// <2>
+		currentDate = CurrentDate.create();
+		currentLocalDate = CurrentLocalDate.create();
+		currentTimestamp = CurrentTimestamp.create();
+		currentLocalDateTime = CurrentLocalDateTime.create();
+		// end::cdtfun[]
+	}
+
+	public void temporalFunctions() {
+		// tag::tmpfun[]
+		final TemporalProperty<LocalDateTime> PROPERTY = TemporalProperty.localDateTime("test");
+
+		// <1>
+		Year year = QueryFunction.year(PROPERTY);
+		Month month = QueryFunction.month(PROPERTY);
+		Day day = QueryFunction.day(PROPERTY);
+		Hour hour = QueryFunction.hour(PROPERTY);
+
+		// <2>
+		year = Year.create(PROPERTY);
+		month = Month.create(PROPERTY);
+		day = Day.create(PROPERTY);
+		hour = Hour.create(PROPERTY);
+
+		// <3>
+		year = PROPERTY.year();
+		month = PROPERTY.month();
+		day = PROPERTY.day();
+		hour = PROPERTY.hour();
+		// end::tmpfun[]
 	}
 
 	public void aggregation() {
@@ -240,46 +340,81 @@ public class ExampleQuery {
 		final PathProperty<Integer> PROPERTY = PathProperty.create("test", Integer.class);
 		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
 
-		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
-
-		Stream<PropertyBox> results = datastore.query().target(DataTarget.named("testTarget")).aggregate(PROPERTY)
-				.stream(PROPERTY, ANOTHER_PROPERTY.max()); // <1>
-
-		results = datastore.query().target(DataTarget.named("testTarget"))
-				.aggregate(QueryAggregation.builder().path(PROPERTY).filter(PROPERTY.isNotNull()).build())
-				.stream(PROPERTY, ANOTHER_PROPERTY.max()); // <2>
+		QueryAggregation aggregation = QueryAggregation.builder() // <1>
+				.path(PROPERTY) // <2>
+				.path(ANOTHER_PROPERTY) // <3>
+				.filter(PROPERTY.isNotNull()) // <4>
+				.build();
 		// end::aggregation[]
 	}
 
-	public void pagination() {
-		// tag::pagination[]
+	public void queryDefinition() {
+		// tag::querydefinition[]
 		final PathProperty<Integer> PROPERTY = PathProperty.create("test", Integer.class);
 
-		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
+		Datastore datastore = getDatastore(); // build or obtain a Datastore
 
-		Stream<Integer> values = datastore.query().target(DataTarget.named("testTarget")).limit(100).offset(0)
-				.stream(PROPERTY); // <1>
-		values = datastore.query().target(DataTarget.named("testTarget")).limit(100).offset(100).stream(PROPERTY); // <2>
-		// end::pagination[]
+		Query query = datastore.query() // <1>
+				.target(DataTarget.named("testTarget")) // <2>
+				.filter(PROPERTY.gt(10)) // <3>
+				.sort(PROPERTY.asc()) // <4>
+				.aggregate(PROPERTY) // <5>
+				.limit(100) // <6>
+				.offset(200); // <7>
+
+		query = datastore.query(DataTarget.named("testTarget")) // <8>
+				.aggregate(QueryAggregation.builder().path(PROPERTY).filter(PROPERTY.gt(10)).build()) // <9>
+				.restrict(100, 200); // <10>
+		// end::querydefinition[]
 	}
 
-	public void projection() {
-		// tag::projection[]
-		final NumericProperty<Integer> PROPERTY = NumericProperty.integerType("test");
-		final PathProperty<String> ANOTHER_PROPERTY = PathProperty.create("another", String.class);
+	public void queryResults() {
+		// tag::queryresults[]
+		final NumericProperty<Integer> PROPERTY1 = NumericProperty.integerType("test1");
+		final StringProperty PROPERTY2 = StringProperty.create("test2");
+
+		final PropertySet<?> PROPERTIES = PropertySet.of(PROPERTY1, PROPERTY2);
+
+		final DataTarget<?> TARGET = DataTarget.named("testTarget");
 
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
 
-		Stream<Integer> values = datastore.query().target(DataTarget.named("testTarget")).stream(PROPERTY); // <1>
-		Optional<Integer> value = datastore.query().target(DataTarget.named("testTarget")).findOne(PROPERTY); // <2>
-		Stream<PropertyBox> boxes = datastore.query().target(DataTarget.named("testTarget")).stream(PROPERTY,
-				ANOTHER_PROPERTY); // <3>
-		List<PropertyBox> list = datastore.query().target(DataTarget.named("testTarget")).list(PROPERTY,
-				ANOTHER_PROPERTY); // <4>
-		Optional<PropertyBox> box = datastore.query().target(DataTarget.named("testTarget")).findOne(PROPERTY,
-				ANOTHER_PROPERTY); // <5>
-		Optional<Integer> sum = datastore.query().target(DataTarget.named("testTarget")).findOne(PROPERTY.sum()); // <6>
-		// end::projection[]
+		long count = datastore.query().target(TARGET).count(); // <1>
+
+		Stream<Integer> values = datastore.query(TARGET).stream(PROPERTY1); // <2>
+		Optional<Integer> value = datastore.query(TARGET).findOne(PROPERTY1); // <3>
+
+		Stream<PropertyBox> results = datastore.query(TARGET).stream(PROPERTY1, PROPERTY2); // <4>
+		results = datastore.query(TARGET).stream(PROPERTIES); // <5>
+		List<PropertyBox> list = datastore.query(TARGET).list(PROPERTY1, PROPERTY2); // <6>
+
+		Optional<PropertyBox> result = datastore.query(TARGET).findOne(PROPERTY1, PROPERTY2); // <7>
+		// end::queryresults[]
+	}
+
+	public void projection2() {
+		// tag::projection2[]
+		final NumericProperty<Integer> PROPERTY1 = NumericProperty.integerType("test");
+		final StringProperty PROPERTY2 = StringProperty.create("test2");
+
+		final DataTarget<?> TARGET = DataTarget.named("testTarget");
+
+		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
+
+		Optional<Integer> sum = datastore.query(TARGET).findOne(PROPERTY1.sum()); // <1>
+
+		Stream<String> results = datastore.query(TARGET).stream(PROPERTY2.upper()); // <2>
+		// end::projection2[]
+	}
+
+	public void projection3() {
+		// tag::projection3[]
+		final DataTarget<?> TARGET = DataTarget.named("testTarget");
+
+		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
+
+		Optional<String> result = datastore.query(TARGET).findOne(ConstantExpressionProjection.create("TEST")); // <1>
+		// end::projection3[]
 	}
 
 	// tag::beanprojection[]
@@ -307,18 +442,16 @@ public class ExampleQuery {
 	}
 
 	public void beanProjection() {
+		final DataTarget<?> TARGET = DataTarget.named("testTarget");
+
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
 
-		Stream<MyBean> results = datastore.query().target(DataTarget.named("testTarget"))
-				.stream(BeanProjection.of(MyBean.class)); // <1>
-		Optional<MyBean> result = datastore.query().target(DataTarget.named("testTarget"))
-				.findOne(BeanProjection.of(MyBean.class)); // <2>
+		Stream<MyBean> results = datastore.query(TARGET).stream(BeanProjection.of(MyBean.class)); // <1>
+		Optional<MyBean> result = datastore.query(TARGET).findOne(BeanProjection.of(MyBean.class)); // <2>
 
-		final PathProperty<Integer> CODE = PathProperty.create("code", Integer.class);
-		final PathProperty<String> TEXT = PathProperty.create("text", String.class);
+		final BeanPropertySet<MyBean> PROPERTIES = BeanPropertySet.create(MyBean.class);
 
-		results = datastore.query().target(DataTarget.named("testTarget"))
-				.stream(BeanProjection.of(MyBean.class, CODE, TEXT)); // <3>
+		results = datastore.query(TARGET).stream(BeanProjection.of(MyBean.class, PROPERTIES.property("code"))); // <3>
 	}
 	// end::beanprojection[]
 
@@ -333,8 +466,7 @@ public class ExampleQuery {
 		final DataTarget TARGET2 = DataTarget.named("testTarget2");
 		final PathProperty<Integer> PROPERTY2 = TARGET2.property("test", Integer.class);
 
-		SubQuery<Integer> subQuery = SubQuery.create().target(TARGET2).filter(PROPERTY1.goe(1))
-				.select(PROPERTY1); // <1>
+		SubQuery<Integer> subQuery = SubQuery.create().target(TARGET2).filter(PROPERTY1.goe(1)).select(PROPERTY1); // <1>
 
 		Stream<Integer> results = datastore.query().target(TARGET1).filter(PROPERTY2.in(subQuery)).stream(PROPERTY2); // <2>
 		// end::subquery1[]
@@ -352,8 +484,7 @@ public class ExampleQuery {
 		final PathProperty<Integer> PROPERTY2 = TARGET2.property("test", Integer.class);
 
 		Stream<Integer> results = datastore.query().target(TARGET1)
-				.filter(SubQuery.create().target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).exists())
-				.stream(PROPERTY2); // <1>
+				.filter(SubQuery.create().target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).exists()).stream(PROPERTY2); // <1>
 
 		results = datastore.query().target(TARGET1)
 				.filter(SubQuery.create().target(TARGET2).filter(PROPERTY2.eq(PROPERTY1)).notExists())

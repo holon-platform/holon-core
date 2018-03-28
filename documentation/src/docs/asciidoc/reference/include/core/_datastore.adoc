@@ -167,203 +167,306 @@ The `Query` API supports the following clauses and configuration attributes:
 * The query results *paging*, to configure the query result set _limit_ and _offset_.
 * A set of generic query configuration *parameters*.
 
-The query clauses which involve the reference to data model attributes (filtering, sorting, aggregation) are expressed using the <<Property>> abstraction.
+Below are described the standard query link:{apidir}/com/holonplatform/core/Expression.html[Expression^]s made available by the Holon platform for the defintion of a query.
+
+[[QueryFilter]]
+==== QueryFilter
+
+The link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface represents a query results restriction `Expression`.
+
+A `QueryFilter` acts on other _expressions_ which represent the restriction subject and conditions. Such expressions are typically a link:{apidir}/com/holonplatform/core/TypedExpression.html[TypedExpression^], i.e an `Expression` with explicitly declared type.
+
+The most common restriction predicates representations are provided by the core platform classes. The following predicates are available:
+
+* *Is null / is not null:* An expression is _null_ / not _null_.
+* *equal / not equal:* An expression is equal / not equal to another expression.
+* *less than / less than or equal:* An expression is less than / less than or equal to another expression.
+* *greater than / greater than or equal:* An expression is greater than / greater than or equal to another expression.
+* *between:* The value of an expression is included between a minimum and a maximum value.
+* *in / not in:* The value of an expression is included / not included in a set of values.
+
+For `String` type expressions:
+
+* *contains:* The value of a `String` type expression contains a specified text (ignoring case or not).
+* *startsWirth:* The value of a `String` type expression contains starts with a specified text (ignoring case or not).
+* *endsWith:* The value of a `String` type expression contains ends with a specified text (ignoring case or not).
+
+Furthermore, the `QueryFilter` predicates can be composed using logical operations:
+
+* *not:* Negation of a `QueryFilter` predicate.
+* *and:* Conjunction of `QueryFilter` predicates.
+* *or:* Disjunction of `QueryFilter` predicates.
+
+The `QueryFilter` predicates can be obtained in two ways:
+
+*1.* Using the static builder methods provided by the link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter1,indent=0]
+----
+<1> Common restriction predicates using a `PathProperty` as expression
+<2> `String` type expression restriction predicates
+<3> Negation using either the `not()` `QueryFilter` method or the `not(QueryFilter filter)` builder method
+<4> Conjunction (*AND*) using either the `and()` `QueryFilter` method or the `allOf(QueryFilter... filters)` builder method
+<5> Disjunction (*OR*)  using either the `or()` `QueryFilter` method or the `anyOf(QueryFilter filter)` builder method
+
+*2.* Using the convenience methods provided by the link:{apidir}/com/holonplatform/core/query/QueryExpression.html[QueryExpression^] interface. The `QueryExpression` API is implemented, for example, by the `PathProperty` interface.
+
+The `QueryExpression` API makes available a set of methods to create a `QueryFilter` using the expression itself as the subject of the restriction predicate.
+
+For restrictions which refers to a specific data type, specialized `QueryExpression` extensions should be used. For example, link:{apidir}/com/holonplatform/core/query/StringQueryExpression.html[StringQueryExpression^] interface makes available methods to obtain String type restrictions, such a _contains_, _startsWith_, _endsWith_.
+The type specific query expression APIs are implemented by each <<PathPropertySubTypes,PathProperty sub type>>: the `StringQueryExpression` API is implemented by the `StringProperty` type and so on.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter2,indent=0]
+----
+<1> Common restriction predicates using the `QueryExpression` API implemented by `PathProperty`
+<2> `String` type restriction predicates using the `StringQueryExpression` API implemented by `StringProperty`
+<3> Logical operations 
+
+[[QuerySort]]
+==== QuerySort
+
+The link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface represents a query results sorting directive.
+
+A `QuerySort` acts on a generic `Path` expression to declare the sorting subject and uses the `SortDirection` enumeration to declare the sort direction (ascending or descending). Query sorts can be composed to declare an ordered list of sort declarations.
+
+A `QuerySort` declaration can be obtained in two ways:
+
+*1.*   Using the static builder methods provided by the link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface.
+
+The `PathExpression` API makes available convenience methods to create a `QuerySort` using the expression itself (i.e. the `Path` represented by the expression) as the subject of the sort declaration.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort1,indent=0]
+----
+<1> Sort declarations specifying the sort direction
+<2> Query sorts composition
+
+*2.* Using the convenience methods provided by the link:{apidir}/com/holonplatform/core/query/PathExpression.html[PathExpression^] interface. The `PathExpression` API is implemented, for example, by the `PathProperty` interface.
+
+The `PathExpression` API makes available convenience methods to create a `QuerySort` using the expression itself (i.e. the `Path` represented by the expression) as the subject of the sort declaration.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort2,indent=0]
+----
+<1> Use the `asc()` and `desc()` `PathExpression` methods to create ascending and descending sorts
+<2> The `and(QuerySort sort)` method of the `QuerySort` interface can be used to compose a list of sorts
+
+[[QueryFunction]]
+==== QueryFunction
+
+The link:{apidir}/com/holonplatform/core/query/QueryFunction.html[QueryFunction^] interface represents a *function* expression.
+
+A `QueryFunction` may accept a list of _arguments_, expressed as expressions themself. The `TypedExpression` type is used as query function arguments type, since a function could only be applicable to a specific argument type.
+
+A set of common query functions is provided by the Holon platform, each represented by a specific `QueryFunction` sub type.
+
+Common query functions can be obtained either using the `QueryFunction` static builder methods or using the convenience methods provided by APIs like link:{apidir}/com/holonplatform/core/query/QueryExpression.html[QueryExpression^]. In this second case, the expression itself is used as the query function argument.
+
+===== Aggregation functions
+
+* *Count*: Aggregation function to _count_ the number of available elements (for example the number of query results). Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Count.html[Count^] interface. Always returns a `Long` type result.
+* *Min*: Aggregation function to obtain the _smallest value_ within a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Min.html[Min^] interface.
+* *Max*: Aggregation function to obtain the _largest value_ within a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Max.html[Max^] interface.
+* *Avg*: Aggregation function to obtain the _average value_ within a set of numeric elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Avg.html[Avg^] interface. Always returns a `Double` type result.
+* *Sum*: Aggregation function to sum the values of a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Sum.html[Sum^] interface.
+
+For agrregation functions which refers to a specific data type, specialized `QueryExpression` extensions should be used. For example, the link:{apidir}/com/holonplatform/core/query/NumericQueryExpression.html[NumericQueryExpression^] interface makes available methods to obtain *numeric* type restrictions, such a _avg_ and _sum_.
+The type specific query expression APIs are implemented by each <<PathPropertySubTypes,PathProperty sub type>>: the `NumericQueryExpression` API is implemented by the `NumericProperty` type and so on.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggfun,indent=0]
+----
+<1> Aggregation functions created using the `QueryFunction` builder methods
+<2> Aggregation functions created using each function interface creation method
+<3> Aggregation functions obtained using the `QueryExpression` convenience methods
+
+[[StringRelatedFunctions]]
+===== String related functions
+
+For `String` type expressions, two standard query functions are made available by the Holon platform:
+
+* *Lower*: Function to convert a string to _lowercase_. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Lower.html[Lower^] interface.
+* *Upper*: Function to convert a string to _uppercase_. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Upper.html[Upper^] interface.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=strfun,indent=0]
+----
+<1> Lower/upper functions created using the `QueryFunction` builder methods
+<2> Aggregation functions created using each function interface creation method
+<3> Lower/upper functions obtained using the `StringQueryExpression` convenience methods
+
+[[TemporalFunctions]]
+===== Temporal functions
+
+For temporal data types, a set of common functions are made available by the Holon platform.
+
+Functions to obtain the *current date or timestamp*:
+
+* *CurrentDate*: function to obtain the current date. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentDate.html[CurrentDate^] interface.
+* *CurrentLocalDate*: function to obtain the current date as a `LocalDate`. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentLocalDate.html[CurrentLocalDate^] interface.
+* *CurrentTimestamp*: function to obtain the current timestamp. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentTimestamp.html[CurrentTimestamp^] interface.
+* *CurrentLocalDateTime*: function to obtain the current timestamp as a `LocalDateTime`. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentLocalDateTime.html[CurrentLocalDateTime^] interface.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=cdtfun,indent=0]
+----
+<1> Current date/time functions created using the `QueryFunction` builder methods
+<2> Current date/time functions created using each function interface creation method
+
+Functions to *extract a temporal part*. All the listed functions returns an `Integer` type result:
+
+* *Year*: function extract the _year_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Year.html[Year^] interface.
+* *Month*: function extract the _month_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Month.html[Month^] interface. The month range index is between 1 and 12.
+* *Day*: function extract the _day_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Day.html[Day^] interface. The day is intended as the day of month and the day range index is between 1 and 31.
+* *Hour*: function extract the _hour_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Hour.html[Hour^] interface. The 24-hour clock is used and the hour range index is between 0 and 23.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=tmpfun,indent=0]
+----
+<1> Temporal part extraction functions created using the `QueryFunction` builder methods
+<2> Temporal part extraction functions functions created using each function interface creation method
+<3> Temporal part extraction functions obtained using the `TemporalQueryExpression` convenience methods
+
+[[QueryAggregation]]
+==== QueryAggregation
+
+The link:{apidir}/com/holonplatform/core/query/QueryAggregation.html[QueryAggregation^] interface represents a query results _aggregation_ expression.
+
+The `QueryAggregation` API allows to specify:
+
+* The *paths* (using the `Path` type) to be used to aggregate the query results, i.e. to group the results by the values of the specified paths.
+* The *optional restrictions* to apply on the aggregation path values, expressed by using <<QueryFilter>> predicates.
+
+WARNING: Query results aggregation semantics can be slightly different from one `Datastore` implementation to another. Each `Datastore` implementation should ensure a consistent query execution behaviour, but in some situations it may not be possible to perform the aggregation operation for some query configurations. For example, many RDBMS engines do not allow to project a query result which is not part of the query aggregation clause unless an aggregation function is used.
+
+The `QueryAggregation` API provides a buider to create and configure a query aggregation expression.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggregation,indent=0]
+----
+<1> Obtain a `QueryAggregation` builder
+<2> Declare an aggregation path using the `PROPERTY` PathProperty
+<2> Add another aggregation path using the `ANOTHER_PROPERTY` PathProperty
+<3> Configure an aggregation restrinction filter
 
 [[QueryDefinition]]
 ==== Query definition
 
-A `Query` instance is obtained using the the Datastore `query()` method.
+A `Query` can be defined and configured using the link:{apidir}/com/holonplatform/core/query/QueryBuilder.html[QueryBuilder^] interface.
 
-The `Query` interface provides methods to configure and define the query configuration and clauses, using a fluent builder pattern. The query configuration setting and clauses definitions are described below.
+The `QueryBuilder` provides methods to configure the query using the query *expressions* listed above. Furthermore, it provides methods to declare:
 
-[[QueryFilter]]
-===== QueryFilter
+* The query *target*, which represents the data model _entity_ to be queried and is expressed through a <<DataTarget>>.
+* The optional query results *pagination* declaration, which can be declared using:
+** *limit:*: the query results limit, i.e. the max number of results to obtain.
+** *offset:*: the 0-based offset from which to fetch the query results within the total results set.
+* Optional query *parameters*, mainly used to for extension purposes.
 
-The link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface represents a query results restriction.
-
-Most common restriction predicates representations are provided by the core platform classes. The following predicates are available:
-
-* *Is null / is not null:* The value of a property is _null_ / not _null_
-* *equal / not equal:* The value of a property is equal / not equal to a given value
-* *less than / less than or equal:* The value of a property is less than / less than or equal to a given value
-* *greater than / greater than or equal:* The value of a property is greater than / greater than or equal to a given value
-* *between:* The value of a property is included between a minimum and a maximum value
-* *in / not in:* The value of a property is present / not present in a set of values
-* *contains:* The value of a `String` property contains given text, ignoring case or not
-* *startsWirth:* The value of a `String` property contains starts with text, ignoring case or not
-* *endsWith:* The value of a `String` property contains ends with text, ignoring case or not
-
-Negation, conjunction and disjunction of predicates:
-
-* *not:* Negation of a predicate
-* *and:* Conjunction of predicates (represents the `AND` logical operation)
-* *or:* Disjunction of predicates (represents the `OR` logical operation)
-
-The `QueryFilter` predicates can be obtained in two ways:
-
-*1.* Using the static methods provided by the `QueryFilter` interface, specifying the <<Property>> the predicate refers to when required.
+The link:{apidir}/com/holonplatform/core/query/Query.html[Query^] API extends `QueryBuilder`, and can be obtained from a `Datastore` using the `query()` method.
 
 [source, java]
-.Examples using QueryFilter
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter1,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=querydefinition,indent=0]
 ----
+<1> Obtain a query builder
+<2> Set the query target using `DataTarget`
+<3> Add a query restriction filter using `QueryFilter`
+<4> Add a query sort declaration using `QuerySort`
+<5> Declare a query result aggregation path
+<6> Set the query results limit to `100`
+<7> Set the query results offset to `200`
+<8> Obtain a query builder and simultaneously set the query target
+<9> Declare a query results aggregation clause using the `QueryAggregation` builder
+<10> Set the the query pagination using the convenience `restrict` method, which accepts the query results limit and offset
 
-*2.* For <<Property>> related predicates, using directly the static methods provided by the `Property` interface.
+[[QueryProjection]]
+==== Query projection and execution
 
-TIP: `QueryFilter` s can be added to a `Query` using the `filter(QueryFilter filter)` query builder method, which adds a filter predicate to the query. If a `QueryFilter` has already been associated to the query, the new filter is added to the query in conjunction with the existing predicates, i.e. using a `AND` logical operation.
+To obtain the `Query` results, a query results _projection_ must be declared. A projection is represented by the link:{apidir}/com/holonplatform/core/query/QueryProjection.html[QueryProjection^] interface and is used to declare which data model attribute values are to be returned and which type has to used to represent the query results.
+
+The query results projection is provided at query execution time, using the link:{apidir}/com/holonplatform/core/query/QueryResults.html[QueryResults^] API, which is implemented by the `Query` interface.
+
+The main `QueryResults` API method to obtain the query results is `stream(QueryProjection<R> projection)`, which can be used to provide a `QueryProjection` and get the query execution result, which will be of the same type of the query projection type.
+
+In addition to the default _stream_ method, a set of other convenience methods are provided by the `QueryResults` API for query execution and results retrieval:
+
+* `list(QueryProjection<R> projection)`: To obtain the query results stream as a `List`.
+* `findOne(QueryProjection<R> projection)`: To obtain a result which is expected to be *unique*, if it is available. The query result is provided as an `Optional` and if more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown.
+* `count()`: To count all the query results, returing the number of results as a `long`.
+
+Furthermore, a set of convenience methods are provided to use the Holon platform <<Property,properties>> abstration as query projection and to obtain the query results using the <<PropertyBox,PropertyBox>> type:
+
+* `stream(Iterable<P> properties)` and `stream(Property... properties)`: Allows to provide one or more `Property` as query projection and obtain the query results as a stream of `PropertyBox`. The _list_ version is also available to obtain the query results as a `List` instead of a `Stream`.
+* `findOne(Iterable<P> properties)` and `findOne(Property... properties)`: Allows to provide one or more `Property` as query projection and obtain a query result which is expected to be *unique* as a `PropertyBox`.  The query result is provided as an `Optional` and if more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown.
 
 [source, java]
-.Examples using Property
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter2,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=queryresults,indent=0]
 ----
+<1> Count the query results
+<2> Use the `PROPERTY1` as query projection and obtain the query results as a `Stream` of values of the property value type (`Integer`)
+<3> Use the `PROPERTY1` as query projection expecting a unique result, obtaining the query result as an `Optional` value of the property value type (`Integer`)
+<4> When more than one `Property` is provided as query projection, the query results are obtained as a `Stream` of `PropertyBox` instances
+<5> A `PropertySet` can be used to provide a multiple `Property` query projection
+<6> The same operation can be performed with the `list` method, obtaining the query results as a `List`
+<7> `PROPERTY1` and `PROPERTY2` are provided as query projection and a unique result is expected: the query result is obtained as an `Optional` `PropertyBox` instance
 
-[[QuerySort]]
-===== QuerySort
+[[BuiltinQueryProjections]]
+===== Builtin query projections
 
-The link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface represents a query results sorting directive, referred to a <<Property>>.
+The Holon platform core module provides some builtin `QueryProjection` types which can be used for query execution.
 
-The `SortDirection` enumeration is used to declare the sort direction (ascending or descending).
+As seen in the previous section, a `PathProperty` is a `QueryProjection` itself, and can be directly used as query projection. When the query projection must include more than one property, the link:{apidir}/com/holonplatform/core/query/PropertySetProjection.html[PropertySetProjection^] type can be used. Anyway, is easier to use the appropriate `QueryResults` API methods to directly provide a set of properties or a `PropertySet` as query projection.
 
-A list of `QuerySort` can be composed to create a sort declaration which involves more than one `Property`, for each declaring the sort direction.
+The other builtin query projections are:
 
-The `QuerySort` directives can be obtained in two ways:
+*1. QueryFunction:* 
 
-*1.* Using the static methods provided by the `QuerySort` interface, specifying the <<Property>> to which the sort refers.
+A <<QueryFunction>> can be directly used as query projection. The projection result type will be the same as the `QueryFunction` result type.
 
 [source, java]
-.Examples using QuerySort
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort1,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection2,indent=0]
 ----
+<1> Use the `Sum` function on `PROPERTY1` as query projection
+<2> Use the `Upper` function  on `PROPERTY2` to obtain a stream of `String` values applying the uppercase transformation
 
-*2.* Using directly the static methods provided by the `Property` interface.
+*2. Constant expression:* 
+
+The link:{apidir}/com/holonplatform/core/query/ConstantExpressionProjection.html[ConstantExpressionProjection^] type can be used to declare a *costant expression value* as query projection.
 
 [source, java]
-.Examples using Property
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort2,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection2,indent=0]
 ----
+<1> Use the constant `TEST` value as query projection
 
-TIP: `QuerySort` can be added to a `Query` using the `sort(QuerySort sort)` query builder method, which adds a sort declaration to the query. If one or more `QuerySort` has already been associated to the query, the new sort is added at the end of the query sorts list.
+*3. Bean projection:*
 
-[[QueryAggregation]]
-===== Aggregations
+The link:{apidir}/com/holonplatform/core/query/BeanProjection.html[BeanProjection^] interface can be used to obtain the query results as Java Bean class instances, providing the *bean class* to be used. 
 
-*Aggregation clause:*
-
-A `Query` supports a results aggregation clause, represented by the link:{apidir}/com/holonplatform/core/query/QueryAggregation.html[QueryAggregation^] interface. This interface provides a fluent builder to create aggregation clauses.
-
-The aggregation clause can be used to specify:
-
-* Which `Path`s must be used to aggregate the query results, i.e. *grouping the results* by the values of the specified paths;
-* The *optional restrictions* to apply on the aggregation path values, expressed by using standard `QueryFilter` predicates.
-
-WARNING: Query results aggregation semantics can be slightly different from one Datastore implementation to another. Each Datastore implementation should ensure a consistent query execution behaviour, but in some situations it may not be possible to perform the aggregation operation for some query configurations. For example, many RDBMS engines do not allow to project a query result which is not part of the query aggregation clause unless an aggregation function is used.
+Optionally, the projection `Path` names can be specified to control the bean property set which as to be obtained as query result. If not specified, all the bean definition class properties will be used as query projection paths.
 
 [source, java]
-.Examples of aggregation
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggregation,indent=0]
-----
-<1> Aggregate the results grouping by `PROPERTY`
-<2> Aggregate the results grouping by `PROPERTY` and restrict the aggregation property values to not _null_ values
-
-*Aggregation functions:*
-
-A set of basic results aggregation _functions_ are provided by the default `Datastore`. An aggregation function is related to a `Path` and allows to aggregate the query results related to such path with a specific aggregation semantic.
-
-A Datastore *function* is represented by the {apidir}/com/holonplatform/core/query/QueryFunction.html[QueryFunction^] interface and the following builtin aggregation functions are provided:
-
-* {apidir}/com/holonplatform/core/query/QueryFunction.Count.html[Count^] : counts the results
-* {apidir}/com/holonplatform/core/query/QueryFunction.Min.html[Min^] : return the smallest value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Max.html[Max^] : return the larger value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Avg.html[Avg^] : return the average value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Sum.html[Sum^] : return the sum of the values
-
-An aggregation function can be used as a query projection or expression, and can be created in two ways:
-
-*1.* Using the static methods provided by the `FunctionExpression` interface, by specifying the `Path` to apply the function to.
-*2.* Using directly the static methods provided by the `PathProperty` interface.
-
-[source, java]
-.Examples of aggregation functions
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggfun,indent=0]
-----
-
-===== Paging results
-
-`Query` supports results *pagination*, allowing to set:
-
-* *limit:*: results limit, i.e. the max number of results to provide
-* *offset:*: 0-based offset from which to fetch the query results within the total results set
-
-[source, java]
-.Pagination example
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=pagination,indent=0]
-----
-<1> Limit the query results to `100` and fetch the results starting from `0` (i.e. fetch the first page where a page is a window of 100 results)
-<2> Limit the query results to `100` and fetch the results starting from `100` (i.e. fetch the second page where a page is a window of 100 results)
-
-===== Query results projection
-
-`Query` results are obtained using a _projection_, represented by the link:{apidir}/com/holonplatform/core/query/QueryProjection.html[QueryProjection^] interface.
-
-The `Query` interface extends the link:{apidir}/com/holonplatform/core/query/QueryResults.html[QueryResults^] interface, which provides methods to execute the query and obtain the query results.
-
-Two main methods are provided to obtain the query results:
-
-* `stream(QueryProjection<R> projection)`: Obtain the query results as a `Stream`, using given projection to define the type of the objects contained in the stream
-* `count()`: Count the results of the query
-
-Two additional convenience methods are made available by the `QueryResults` interface:
-
-* `findOne(QueryProjection<R> projection)`: Get a single expected result from the query, which type matches the projection type. If more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown
-* `list(QueryProjection<R> projection)`: Convenience method to obtain query results `Stream` as a `List`
-
-*Builtin projections:*
-
-The platform provides the following query projections:
-
-* `PathProperty` and `AggregationProperty` are query projections, mapping the result type into the property type
-* `PropertySetProjection` uses a set of `Property` to map the query results into `PropertyBox` objects containing the values of the properties of the set returned by the query execution.
-
-The `QueryResults` interface provides convenience methods helpful to use the `PropertySetProjection` query projection:
-
-* `stream(Iterable<P> properties)` and `stream(Property... properties)`: accept a set of <<Property>> and return the query results as a stream of `PropertyBox`, each containing the values of the properties of the set obtained from query execution
-* `list(Iterable<P> properties)`: Same as above, but returning the results as a `List` instead of a `Stream`
-* `findOne(Iterable<P> properties)` and `findOne(Property... properties)`: accept a set of <<Property>> and return the unique query result as an Optional `PropertyBox` containing the values of the properties of the set obtained from query execution
-
-NOTE: Any concrete <<Datastore>> implementation could provide additional projections related to the specific Datastore persistence model.
-
-[source, java]
-.Query projection examples
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection,indent=0]
-----
-<1> Stream of values using `PROPERTY` as projection. The Stream type is the same of the property type (Integer)
-<2> Optional unique value using `PROPERTY` as projection. The value type is the same of the property type (Integer)
-<3> Stream of `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<4> List of `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<5> Optional unique `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<6> Unique value of the `sum` aggregation function applied to `PROPERTY`
-
-*Bean projection:*
-
-The link:{apidir}/com/holonplatform/core/query/BeanProjection.html[BeanProjection^] interface can be used to obtain the query results as *Java Bean* instances, providing the mapping bean class to be used. The query results are mapped to the bean class properties by matching the query selection `Path` names with the bean property names.
-
-[source, java]
-.Bean projection examples
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=beanprojection,indent=0]
 ----
-<1> Stream of values using `MyBean` as projection, using all the bean property names as query selection
-<2> Optional unique value using `MyBean` as projection, using all the bean property names as query selection
-<3> Stream of values using `MyBean` as projection, using provided `CODE` and `TEXT` properties as query selection
+<1> Use `MyBean` class as query projection and obtain a `Stream` of `MyBean` instances as query results
+<2> The same operation but expecting a unique result, which will be returned as an `Optional` `MyBean` instance
+<3> Use `MyBean` class as query projection and specify the query projection paths. In this example, only the `code` bean property is declared as projection paths, so only the `code` property values will be retrieved from query execution and setted in the `MyBean` result instances
 
+[[DatastoreConfiguration]]
 ==== Configuration
 
 The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface represents and provides the available configuration properties which can be used to configure a generic `Datastore`.
