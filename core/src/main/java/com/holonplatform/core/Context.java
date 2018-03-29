@@ -164,7 +164,7 @@ public interface Context {
 	}
 
 	/**
-	 * Shortcut method to obtain the thread-bound context scope, i.e. the default {@link ContextScope} named
+	 * Shortcut method to obtain the ClassLoader-bound context scope, i.e. the default {@link ContextScope} named
 	 * {@link #CLASSLOADER_SCOPE_NAME}, using the default {@link ClassLoader}.
 	 * @return The ClassLoader-bound context scope, or an empty Optional if scope is not registered
 	 */
