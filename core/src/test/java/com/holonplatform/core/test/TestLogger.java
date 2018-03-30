@@ -33,7 +33,7 @@ public class TestLogger {
 		
 		Logger logger3 = Logger.create("com.acme.core.test.boh");
 		assertNotNull(logger3);
-		logger3.info("test logger3");
+		logger3.info("test logger3_");
 
 	}
 
