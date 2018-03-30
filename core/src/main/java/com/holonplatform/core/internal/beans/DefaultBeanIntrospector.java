@@ -54,6 +54,7 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.property.PropertyBox;
 
 /**
  * Default {@link BeanIntrospector} implementation.
@@ -332,6 +333,42 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 */
 	@SuppressWarnings("rawtypes")
 	private final Map<Class<?>, BeanPropertySet> cache = new WeakHashMap<>(16, 0.9f);
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#read(com.holonplatform.core.property.PropertyBox,
+	 * java.lang.Object, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> PropertyBox read(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		return getPropertySet((Class<T>) instance.getClass()).read(propertyBox, instance, ignoreMissing);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#read(java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> PropertyBox read(T instance) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		BeanPropertySet<T> propertySet = getPropertySet((Class<T>) instance.getClass());
+		return propertySet.read(PropertyBox.builder(propertySet).invalidAllowed(true).build(), instance);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#write(com.holonplatform.core.property.PropertyBox,
+	 * java.lang.Object, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T write(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		return getPropertySet((Class<T>) instance.getClass()).write(propertyBox, instance, ignoreMissing);
+	}
 
 	/*
 	 * (non-Javadoc)

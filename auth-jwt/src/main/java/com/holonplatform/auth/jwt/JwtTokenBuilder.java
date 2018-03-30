@@ -25,7 +25,6 @@ import java.util.Date;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.jwt.JwtConfiguration.InvalidJwtConfigurationException;
-import com.holonplatform.auth.jwt.internal.JwtUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 import io.jsonwebtoken.JwtBuilder;
@@ -88,30 +87,31 @@ public final class JwtTokenBuilder implements Serializable {
 
 		Long expire = (configuration.getExpireTime() > 0) ? configuration.getExpireTime() : null;
 
-		SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.NONE;
-		if (configuration.getSignatureAlgorithm() != null) {
-			signatureAlgorithm = SignatureAlgorithm.forName(configuration.getSignatureAlgorithm());
-		}
-
-		if (signatureAlgorithm == SignatureAlgorithm.NONE) {
+		if (configuration.getSignatureAlgorithm() == JwtSignatureAlgorithm.NONE) {
 			// no signature
-			return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer(), expire, parts);
+			return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire,
+					parts);
 		} else {
-			boolean symmetric = JwtUtils.isSymmetric(signatureAlgorithm);
-			if (symmetric) {
-				byte[] key = configuration.getSharedKey();
-				if (key == null) {
-					throw new InvalidJwtConfigurationException("Missing shared signing key");
-				}
-				return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer(), expire,
-						signatureAlgorithm, key, parts);
+
+			final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm
+					.forName(configuration.getSignatureAlgorithm().getValue());
+
+			if (configuration.getSignatureAlgorithm().isSymmetric()) {
+				byte[] key = configuration.getSharedKey()
+						.orElseThrow(() -> new InvalidJwtConfigurationException(
+								"Missing shared key for symmetric JWT signature algorithm ["
+										+ signatureAlgorithm.getDescription() + "] - JWT configuration: ["
+										+ configuration + "]"));
+				return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null),
+						expire, signatureAlgorithm, key, parts);
 			} else {
-				Key privateKey = configuration.getPrivateKey();
-				if (privateKey == null) {
-					throw new InvalidJwtConfigurationException("Missing private signing key");
-				}
-				return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer(), expire,
-						signatureAlgorithm, privateKey, parts);
+				Key privateKey = configuration.getPrivateKey()
+						.orElseThrow(() -> new InvalidJwtConfigurationException(
+								"Missing JWT private signing key for asymmetric JWT signature algorithm ["
+										+ signatureAlgorithm.getDescription() + "] - JWT configuration: ["
+										+ configuration + "]"));
+				return JwtTokenBuilder.buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null),
+						expire, signatureAlgorithm, privateKey, parts);
 			}
 		}
 

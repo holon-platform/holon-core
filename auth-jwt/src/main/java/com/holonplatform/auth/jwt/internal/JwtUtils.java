@@ -17,15 +17,22 @@ package com.holonplatform.auth.jwt.internal;
 
 import java.io.Serializable;
 import java.security.Key;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Base64;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 import com.holonplatform.auth.exceptions.ExpiredCredentialsException;
-import com.holonplatform.auth.internal.KeysReader;
 import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtConfiguration.InvalidJwtConfigurationException;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
+import com.holonplatform.auth.keys.KeyEncoding;
+import com.holonplatform.auth.keys.KeyFormat;
+import com.holonplatform.auth.keys.KeyReader;
+import com.holonplatform.auth.keys.KeySource;
 import com.holonplatform.core.config.ConfigPropertyProvider;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -119,16 +126,6 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Check if given <code>signatureAlgorithm</code> requires a symmetric (shared) key
-	 * @param signatureAlgorithm SignatureAlgorithm
-	 * @return <code>true</code> if given algorithm requires a symmetric (shared) key
-	 */
-	public static boolean isSymmetric(SignatureAlgorithm signatureAlgorithm) {
-		return SignatureAlgorithm.HS256 == signatureAlgorithm || SignatureAlgorithm.HS384 == signatureAlgorithm
-				|| SignatureAlgorithm.HS512 == signatureAlgorithm;
-	}
-
-	/**
 	 * Build a {@link JwtConfiguration} instance form given {@link ConfigPropertyProvider} using configuration property
 	 * keys listed in {@link JwtConfiguration}.
 	 * @param config ConfigPropertyProvider
@@ -195,23 +192,18 @@ public final class JwtUtils implements Serializable {
 
 			// signing algorithm
 
-			SignatureAlgorithm signatureAlgorithm = null;
+			final JwtSignatureAlgorithm jwtSignatureAlgorithm = config
+					.getConfigPropertyValue(JwtConfigProperties.SIGNATURE_ALGORITHM).orElse(JwtSignatureAlgorithm.NONE);
+			cfg.setSignatureAlgorithm(jwtSignatureAlgorithm);
 
-			String algoName = config.getConfigPropertyValue(JwtConfigProperties.SIGNATURE_ALGORITHM, null);
-			if (algoName != null) {
-				signatureAlgorithm = SignatureAlgorithm.forName(algoName);
-				cfg.setSignatureAlgorithm(algoName);
-			} else {
-				signatureAlgorithm = SignatureAlgorithm.HS256;
-				cfg.setSignatureAlgorithm(JwtConfigProperties.DEFAULT_SIGNATURE_ALGORITHM);
-			}
+			final SignatureAlgorithm signatureAlgorithm = (jwtSignatureAlgorithm != JwtSignatureAlgorithm.NONE)
+					? SignatureAlgorithm.forName(jwtSignatureAlgorithm.getValue())
+					: SignatureAlgorithm.NONE;
 
 			// keys
-			if (signatureAlgorithm != SignatureAlgorithm.NONE) {
+			if (jwtSignatureAlgorithm != JwtSignatureAlgorithm.NONE) {
 
-				boolean symmetric = JwtUtils.isSymmetric(signatureAlgorithm);
-
-				if (symmetric) {
+				if (jwtSignatureAlgorithm.isSymmetric()) {
 					String sharedKey = config.getConfigPropertyValue(JwtConfigProperties.SHARED_KEY, null);
 					if (sharedKey == null) {
 						throw new InvalidJwtConfigurationException("A shared (symmetric) key is "
@@ -219,35 +211,13 @@ public final class JwtUtils implements Serializable {
 					}
 					cfg.setSharedKey(Base64.getDecoder().decode(sharedKey));
 				} else {
-					String publicKey = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY, null);
-					String publicKeyFile = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_FILE, null);
-					String privateKey = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY, null);
-					String privateKeyFile = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_FILE, null);
 
-					Key prvKey = null;
-					Key pubKey = null;
+					String keyAlgorithm = getAsymmetricKeyAlgorithm(signatureAlgorithm)
+							.orElseThrow(() -> new InvalidJwtConfigurationException(
+									"Unsupported JWT signature algorithm: " + signatureAlgorithm.getValue()));
 
-					String keyAlgorithm = getAsymmetricKeyAlgorithm(signatureAlgorithm);
-
-					// public key
-					if (!StringUtils.isEmpty(publicKey) || !StringUtils.isEmpty(publicKeyFile)) {
-						if (StringUtils.isEmpty(publicKeyFile)) {
-							pubKey = KeysReader.readPublicKey(keyAlgorithm, publicKey);
-						} else {
-							pubKey = KeysReader.readPublicKeyFromFile(keyAlgorithm, publicKeyFile);
-						}
-					}
-					// private key
-					if (!StringUtils.isEmpty(privateKey) || !StringUtils.isEmpty(privateKeyFile)) {
-						if (StringUtils.isEmpty(privateKeyFile)) {
-							prvKey = KeysReader.readPrivateKey(keyAlgorithm, privateKey);
-						} else {
-							prvKey = KeysReader.readPrivateKeyFromFile(keyAlgorithm, privateKeyFile);
-						}
-					}
-
-					cfg.setPrivateKey(prvKey);
-					cfg.setPublicKey(pubKey);
+					loadPrivateKey(keyAlgorithm, config).ifPresent(key -> cfg.setPrivateKey(key));
+					loadPublicKey(keyAlgorithm, config).ifPresent(key -> cfg.setPublicKey(key));
 
 				}
 
@@ -265,30 +235,137 @@ public final class JwtUtils implements Serializable {
 	 * KeyFactory algorithm name for given SignatureAlgorithm
 	 */
 	@SuppressWarnings("incomplete-switch")
-	private static String getAsymmetricKeyAlgorithm(SignatureAlgorithm sa) {
+	private static Optional<String> getAsymmetricKeyAlgorithm(SignatureAlgorithm sa) {
 		switch (sa) {
 		case ES256:
-			return "EC";
+			return Optional.of("EC");
 		case ES384:
-			return "EC";
+			return Optional.of("EC");
 		case ES512:
-			return "EC";
+			return Optional.of("EC");
 		case PS256:
-			return "RSA";
+			return Optional.of("RSA");
 		case PS384:
-			return "RSA";
+			return Optional.of("RSA");
 		case PS512:
-			return "RSA";
+			return Optional.of("RSA");
 		case RS256:
-			return "RSA";
+			return Optional.of("RSA");
 		case RS384:
-			return "RSA";
+			return Optional.of("RSA");
 		case RS512:
-			return "RSA";
+			return Optional.of("RSA");
 		default:
 			break;
 		}
-		return null;
+		return Optional.empty();
+	}
+
+	/**
+	 * Load a private key for given signing algorithm and using given JWT configuration properties.
+	 * @param algorithm Signing algorithm
+	 * @param config JWT configuration properties
+	 * @return The private key, if available
+	 */
+	private static Optional<PrivateKey> loadPrivateKey(String algorithm, JwtConfigProperties config)
+			throws InvalidJwtConfigurationException {
+		return buildKeySource(true, config).map(source -> {
+			final KeyFormat format = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_FORMAT,
+					KeyFormat.PKCS8);
+			final KeyEncoding encoding = config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_ENCODING,
+					KeyEncoding.BASE64);
+
+			final Map<String, String> parameters = new HashMap<>(4);
+			config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_PASSWORD).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_PASSWORD, v);
+			});
+			config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_ALIAS).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_ALIAS, v);
+			});
+			config.getConfigPropertyValue(JwtConfigProperties.PRIVATE_KEY_STORE_ALIAS_PASSWORD).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_PASSWORD, v);
+			});
+
+			return KeyReader.getDefault().privateKey(source, algorithm, format, encoding, parameters);
+
+		});
+	}
+
+	/**
+	 * Load a public key for given signing algorithm and using given JWT configuration properties.
+	 * @param algorithm Signing algorithm
+	 * @param config JWT configuration properties
+	 * @return The public key, if available
+	 */
+	private static Optional<PublicKey> loadPublicKey(String algorithm, JwtConfigProperties config) {
+		return buildKeySource(false, config).map(source -> {
+			final KeyFormat format = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_FORMAT,
+					KeyFormat.X509);
+			final KeyEncoding encoding = config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_ENCODING,
+					KeyEncoding.BASE64);
+
+			final Map<String, String> parameters = new HashMap<>(4);
+			config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_PASSWORD).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_PASSWORD, v);
+			});
+			config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_ALIAS).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_ALIAS, v);
+			});
+			config.getConfigPropertyValue(JwtConfigProperties.PUBLIC_KEY_STORE_ALIAS_PASSWORD).ifPresent(v -> {
+				parameters.put(KeyReader.PARAMETER_KEYSTORE_KEY_PASSWORD, v);
+			});
+
+			return KeyReader.getDefault().publicKey(source, algorithm, format, encoding, parameters);
+
+		});
+	}
+
+	/**
+	 * Build a {@link KeySource} using given JWT configuration properties.
+	 * @param privateKey Whether to build a key source for a private key
+	 * @param config JWT configuration propertie
+	 * @return Optional key source
+	 */
+	@SuppressWarnings("deprecation")
+	private static Optional<KeySource> buildKeySource(boolean privateKey, JwtConfigProperties config) {
+
+		String source = config.getConfigPropertyValue(
+				privateKey ? JwtConfigProperties.PRIVATE_KEY_SOURCE : JwtConfigProperties.PUBLIC_KEY_SOURCE, null);
+
+		if (source == null || source.trim().length() == 0) {
+			// check compatibility
+			source = config.getConfigPropertyValue(
+					privateKey ? JwtConfigProperties.PRIVATE_KEY : JwtConfigProperties.PUBLIC_KEY, null);
+			if (source == null || source.trim().length() == 0) {
+				String sourceFile = config.getConfigPropertyValue(
+						privateKey ? JwtConfigProperties.PRIVATE_KEY_FILE : JwtConfigProperties.PUBLIC_KEY_FILE, null);
+				if (sourceFile != null && sourceFile.trim().length() > 0) {
+					source = JwtConfigProperties.KEY_SOURCE_FILE_PREFIX + sourceFile;
+				}
+			}
+		}
+
+		if (source == null || source.trim().length() == 0) {
+			return Optional.empty();
+		}
+
+		if (source.startsWith(JwtConfigProperties.KEY_SOURCE_FILE_PREFIX)) {
+			if (source.length() == JwtConfigProperties.KEY_SOURCE_FILE_PREFIX.length()) {
+				throw new InvalidJwtConfigurationException("Invalid JWT signing key source file name: " + source);
+			}
+			return Optional.of(KeySource.file(source.substring(JwtConfigProperties.KEY_SOURCE_FILE_PREFIX.length())));
+		}
+
+		if (source.startsWith(JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX)) {
+			if (source.length() == JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX.length()) {
+				throw new InvalidJwtConfigurationException(
+						"Invalid JWT signing key source classpath resource name: " + source);
+			}
+			return Optional
+					.of(KeySource.resource(source.substring(JwtConfigProperties.KEY_SOURCE_CLASSPATH_PREFIX.length())));
+		}
+
+		return Optional.of(KeySource.string(source));
 	}
 
 }

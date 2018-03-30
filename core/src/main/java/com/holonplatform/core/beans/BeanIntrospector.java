@@ -21,7 +21,6 @@ import com.holonplatform.core.Path.FinalPath;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
-import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
 import com.holonplatform.core.property.PropertyBox;
@@ -94,11 +93,7 @@ public interface BeanIntrospector {
 	 * @throws ValidationException If not {@link PropertyBox#isInvalidAllowed()} for given property box and one of the
 	 *         property values validation failed
 	 */
-	@SuppressWarnings("unchecked")
-	default <T> PropertyBox read(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
-		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
-		return getPropertySet((Class<T>) instance.getClass()).read(propertyBox, instance);
-	}
+	<T> PropertyBox read(PropertyBox propertyBox, T instance, boolean ignoreMissing);
 
 	/**
 	 * Read the property values from given bean instance into the given {@link PropertyBox}, using given
@@ -113,7 +108,7 @@ public interface BeanIntrospector {
 	 * </p>
 	 * @param <T> Bean type
 	 * @param propertyBox PropertyBox into which to write the property values (not null)
-	 * @param instance Bean instance from which read the property values (not null)
+	 * @param instance Bean instance from which to read the property values (not null)
 	 * @return The updated PropertyBox
 	 * @throws PropertyNotFoundException If a property of the PropertyBox property set does not match with any of the
 	 *         bean properties
@@ -125,6 +120,22 @@ public interface BeanIntrospector {
 	default <T> PropertyBox read(PropertyBox propertyBox, T instance) {
 		return read(propertyBox, instance, false);
 	}
+
+	/**
+	 * Read the property values from given bean instance into a {@link PropertyBox}, using the Bean property set as the
+	 * <code>propertyBox</code> property set.
+	 * <p>
+	 * By default, no property value validation is performed. Use {@link PropertyBox#validate()} to validate the
+	 * property values or use the {@link #read(PropertyBox, Object)} for finer control on the {@link PropertyBox}
+	 * instance to use.
+	 * </p>
+	 * @param <T> Bean type
+	 * @param instance Bean instance from which to read the property values (not null)
+	 * @return A {@link PropertyBox} with the Bean class property set and with the property values read from the Bean
+	 *         instance
+	 * @throws PropertyAccessException Error accessing bean properties
+	 */
+	<T> PropertyBox read(T instance);
 
 	/**
 	 * Write the property values contained into given {@link PropertyBox} into given bean instance.
@@ -148,11 +159,7 @@ public interface BeanIntrospector {
 	 * @throws PropertyAccessException Error accessing bean properties
 	 * @throws TypeMismatchException If the bean property type and the PropertyBox property type mismatch for a property
 	 */
-	@SuppressWarnings("unchecked")
-	default <T> T write(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
-		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
-		return getPropertySet((Class<T>) instance.getClass()).write(propertyBox, instance);
-	}
+	<T> T write(PropertyBox propertyBox, T instance, boolean ignoreMissing);
 
 	/**
 	 * Write the property values contained into given {@link PropertyBox} into given bean instance.

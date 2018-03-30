@@ -3,7 +3,7 @@
 
 The entry point of the context API is the link:{apidir}/com/holonplatform/core/Context.html[Context^] interface.
 
-The `Context` behaves as a generic resources registry and provider. A _resource_ can be any Java class instance, and it's identified by a String *key*. The `Context` allows resource registration and retrieving in a static way, using a classloader-scoped default _singleton_ instance of the registry, which can be obtained using the `get()` method:
+The `Context` behaves as a generic resources registry and provider. A _resource_ can be any Java class instance, and it's identified by a String *key*. The `Context` interface allows resource registration and retrieving in a static way, using a classloader-scoped default _singleton_ instance of the registry, which can be obtained using the `get()` method:
 
 [source, java]
 ----
@@ -11,66 +11,10 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=g
 ----
 <1> Get the current Context instance
 
-==== Scopes
-
-The `Context` is organized in _scopes_, represented by the link:{apidir}/com/holonplatform/core/ContextScope.html[ContextScope^] interface. 
-Each _scope_ act as a sub-registry of resources, with it's own namespace. A scope is identified by a *name* and has an assigned priority level. The priority level is an integer number, following standard priority conventions, where the highest priority corresponds to the lowest value, and vice-versa.
-
-When a resource is requested from `Context`, the lookup process is the following:
-
-* Each registered _scope_ is queried to obtain the resource, starting from the scope with the highest priority
-* The returned resource instance is the one obtained from the first _scope_ which provides a resource instance bound to the requested key, if any.
-
-A registered _scope_ can be obtained from Context using:
-
-[source, java]
-.Get a registered ContextScope
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=getscope,indent=0]
-----
-<1> Get a scope by name using the default ClassLoader 
-<2> Get a scope by name using a specific ClassLoader 
-
-The link:{apidir}/com/holonplatform/core/ContextScope.html[ContextScope^] interface can be used to obtain, register and remove a scoped resource. Resource registration and removal are optional operations, so the concrete scope implementation could not support them, throwing a `UnsupportedOperationException`.
-
-===== Default Scopes
-The platform provides two default _scopes_, automatically registered and made available to current `Context`:
-
-. A *ClassLoader*-bound scope, which handles resources as _singleton_ instances for the reference `ClassLoader`, that is at most one resource instance for a given key is present in the scope for a specific `ClassLoader`. This scope is registered with a low precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#CLASSLOADER_SCOPE_NAME[CLASSLOADER_SCOPE_NAME^];
-. A *Thread*-bound scope, which binds resources to current `Thread` using `ThreadLocal` variables. This scope is registered with a high precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#THREAD_SCOPE_NAME[THREAD_SCOPE_NAME^].
-
-The `Context` interface provides some useful methods to access the special *Thread*-bound scope, since it could be highly mutable during an application lifecycle:
-
-[source, java]
-.Using the current Thread scope
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=threadscope,indent=0]
-----
-<1> Get the Thread scope using the default ClassLoader 
-<2> Get the Thread scope using a specific ClassLoader 
-<3> Execute a _Runnable_ operation, binding the resource instance with given _resourceKey_ to current Thread before execution and removing the binding after operation execution
-<4> Execute a _Callable_ operation, binding the resource instance with given _resourceKey_ to current Thread before execution and removing the binding after operation execution
-
-===== Context extension: adding Scopes
-
-Additional `ContextScope` implementations can be added to the default platform `Context` by using standard Java service extensions.
-
-*1.* Create a class which implements the `ContextScope` interface:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=myscope,indent=0]
-----
-<1> The scope name: must be unique among all registered context scopes
-<2> The scope ordering number: the lower is the value, the higher is the scope priority in resources lookup
-<3> Implement a meaningful logic to provide the resource identified by given `resourceKey` and of the given `resourceType` type, if available in scope
-<4> If the scope allows direct resource registration, implement the resource management methods
-
-*2.* Create a file named _com.holonplatform.core.ContextScope_ containing the fully qualified class name(s) of the scope implementation and put it under the `META-INF/services` folder of your project to register the scope in the default Context.
-
 ==== Obtaining Context resources
 
-Most of the times the `Context` is used to request a resource using a _key_, obtaining the most suitable resource instance according to registered _scopes_ and current application environment configuration.
+The `Context` API can be used to statically obtain a resource, using a resource _key_ to identify the requested resource type. 
+
 To obtain a resource, the `resource(...)` methods are provided:
 
 [source, java]
@@ -84,9 +28,92 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=g
 
 TIP: The platform standard interfaces which are candidates to be `Context` resources, provides a convenience `getCurrent()` static method to obtain the current implementation available from `Context`, if present.
 
-==== Default ClassLoader
-When referring to the _default_ ClassLoader, it means the ClassLoader obtained by using the following lookup strategy:
+To organize and provide the resource references in the most versatile and extensible way, the `Context` API is organized in _scopes_. A context _scope_ represents a resources registry, available to the `Context` API in order to perform the context resources lookup and provide a consistent resource reference.
 
-* The current Thread context ClassLoader, if available
-* The ClassLoader with which the platform core classes are loaded, if available
-* The System ClassLoader if no other available
+Furthermore, the context _scopes_ are the entry points for context resources registration.
+
+See <<ContextScopes,the next section>> for details.
+
+[[ContextScopes]]
+==== Scopes
+
+The `Context` API is organized in _scopes_, represented by the link:{apidir}/com/holonplatform/core/ContextScope.html[ContextScope^] interface. 
+
+Each _scope_ acts as a sub-registry of resources, with it's own namespace. A scope is identified by a *name* and has an assigned priority level. The priority level is an integer number, following standard priority conventions, where the highest priority corresponds to the lowest priority number.
+
+When a resource is requested from the `Context`, the lookup process is the following:
+
+* Each registered _scope_ is queried to obtain the resource instance through a specified resource key, starting from the scope with the highest priority.
+* The actually returned resource instance is the one obtained from the first _scope_ which provides a resource instance bound to the requested resource key, if any.
+
+A reference to a registered _scope_ can be obtained from the `Context` using:
+
+[source, java]
+.Get a registered ContextScope
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=getscope,indent=0]
+----
+<1> Get a scope by name using the default ClassLoader 
+<2> Get a scope by name using a specific ClassLoader 
+
+The link:{apidir}/com/holonplatform/core/ContextScope.html[ContextScope^] interface can be used to obtain, register and remove a scoped resource. Resource registration and removal are optional operations, so the concrete scope implementation could not support them, throwing a `UnsupportedOperationException`.
+
+Example of resource registration:
+
+[source, java]
+.Context resource registration
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=register,indent=0]
+----
+<1> Get the scope named `myscope`, if available
+<2> Register a new resource instance using `myResourceKey` as resource key
+
+==== Default Scopes
+
+The Holon platform provides two default context _scopes_, automatically registered and made available to the  `Context` API:
+
+. A *ClassLoader*-bound scope, which handles resources as _singleton_ instances within the reference `ClassLoader`, that is, at most one resource instance for a given resource key is present in the scope for a specific `ClassLoader`. This scope is registered with a low precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#CLASSLOADER_SCOPE_NAME[CLASSLOADER_SCOPE_NAME^];
+. A *Thread*-bound scope, which binds resources to the current `Thread` using `ThreadLocal` variables. This scope is registered with a high precedence order. The scope name is provided by the constant link:{apidir}/com/holonplatform/core/Context.html#THREAD_SCOPE_NAME[THREAD_SCOPE_NAME^].
+
+The `Context` API provides methods to directly obtain the default scopes:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=dftscopes,indent=0]
+----
+<1> Get the default ClassLoader scope using the default ClassLoader 
+<2> Get the default ClassLoader scope using a specific ClassLoader 
+<3> Get the default Thread scope using the default ClassLoader 
+<4> Get the default Thread scope using a specific ClassLoader 
+
+The `Context` interface provides some other useful methods to access the special *Thread*-bound scope, to perform an operation ensuring that a context resource is bound to the Thread scope before the operation begins and removed from the Thread scope just after the operation ends:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=threadscope,indent=0]
+----
+<1> Execute a _Runnable_ operation, binding the resource instance with given _resourceKey_ to the current Thread before execution and removing the binding after the operation execution
+<2> Execute a _Callable_ operation, binding the resource instance with given _resourceKey_ to the current Thread before execution and removing the binding after the operation execution
+
+==== Context extension: adding Scopes
+
+Additional `ContextScope` implementations can be added to the platform `Context` API by using standard Java service extensions.
+
+To create and register a new context scope, the following steps are required:
+
+*1.* Create a class which implements the `ContextScope` interface:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=myscope,indent=0]
+----
+<1> The scope name: must be unique among all registered context scopes
+<2> The scope ordering number: the lower is the value, the higher is the scope priority in resources lookup
+<3> Implement a meaningful logic to provide the resource identified by given `resourceKey` and of the required `resourceType` type, if the resource is currently available from the scope
+<4> If the scope allows direct resource registration, implement the resource management methods
+
+*2.* Create a file named _com.holonplatform.core.ContextScope_ containing the fully qualified class name(s) of the scope implementation and put it under the `META-INF/services` folder of your project to register the scope in the default Context. When a jar with a valid _com.holonplatform.core.ContextScope_ file is available from classpath, the context scope is automatically registered and made available from the `Context` API.
+
+NOTE: Some Holon platform modules provides specific context scope implementations, which are automatically registered when the module is available form classpath. See each module reference documentation to learn about the available additional platform context scopes. 
+
+TIP: The *core* module itself provides a _Spring bean factory_ based context scope, which uses the _Spring framework_ bean registry to provide bean references as context resources. See the <<SpringIntegration>> section for further information and the <<SpringContextScope, Spring context scope>> section for details.

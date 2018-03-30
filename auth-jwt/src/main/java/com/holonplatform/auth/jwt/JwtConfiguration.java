@@ -38,50 +38,51 @@ public interface JwtConfiguration extends Serializable {
 	public static final String CONTEXT_KEY = JwtConfiguration.class.getName();
 
 	/**
-	 * JWT token issuer (iss)
-	 * @return Issuer
+	 * Get the JWT token issuer (iss)
+	 * @return Optional issuer
 	 */
-	String getIssuer();
+	Optional<String> getIssuer();
 
 	/**
-	 * JWT token signature algorithm
-	 * @return Signature algorithm name
+	 * Get the JWT token signature algorithm.
+	 * @return The signature algorithm, or {@link JwtSignatureAlgorithm#NONE} if the JWT token is not signed
 	 */
-	String getSignatureAlgorithm();
+	JwtSignatureAlgorithm getSignatureAlgorithm();
 
 	/**
-	 * JWT signing shared key for signature algorithms such as HMAC
-	 * @return JWT signing shared key
+	 * Get the shared key to be used with symmetric JWT signature algorithms.
+	 * @return Optional JWT signing shared key
 	 */
-	byte[] getSharedKey();
+	Optional<byte[]> getSharedKey();
 
 	/**
-	 * JWT signing public key for signature algorithms such as RSA
-	 * @return JWT signing public key
+	 * Get the private key to be used with asymmetric JWT signature algorithms.
+	 * @return Optional private key
 	 */
-	Key getPublicKey();
+	Optional<Key> getPrivateKey();
 
 	/**
-	 * JWT signing private key for signature algorithms such as RSA
-	 * @return JWT signing private key
+	 * Get the public key to be used with asymmetric JWT signature algorithms.
+	 * @return Optional public key
 	 */
-	Key getPrivateKey();
+	Optional<Key> getPublicKey();
 
 	/**
-	 * JWT token expire time
-	 * @return Expire time in milliseconds. <code>&lt;=0</code> means token never expires
+	 * Get JWT token expire time.
+	 * @return The expire time in milliseconds. <code>&lt;=0</code> means token never expires
 	 */
 	long getExpireTime();
 
 	/**
-	 * Whether to include {@link Authentication} details in JWT token at generation time
-	 * @return <code>true</code> to include {@link Authentication} details in JWT token
+	 * Get whether to include {@link Authentication} details in JWT token at token generation time.
+	 * @return <code>true</code> to include {@link Authentication} details in JWT token, <code>false</code> otherwise
 	 */
 	boolean isIncludeDetails();
 
 	/**
-	 * Whether to include {@link Authentication} permissions in JWT token at generation time
-	 * @return <code>true</code> to include {@link Authentication} permissions in JWT token
+	 * Get whether to include {@link Authentication} permissions in JWT token at token generation time.
+	 * @return <code>true</code> to include {@link Authentication} permissions in JWT token, <code>false</code>
+	 *         otherwise
 	 */
 	boolean isIncludePermissions();
 
@@ -132,11 +133,11 @@ public interface JwtConfiguration extends Serializable {
 		Builder issuer(String issuer);
 
 		/**
-		 * Set JWT token signature algorithm name
-		 * @param signatureAlgorithm Signature algorithm name
+		 * Set JWT token signature algorithm
+		 * @param signatureAlgorithm Signature algorithm
 		 * @return this
 		 */
-		Builder signatureAlgorithm(String signatureAlgorithm);
+		Builder signatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm);
 
 		/**
 		 * Set JWT signing shared key to use with symmetric signing algorithms (such as HMAC)

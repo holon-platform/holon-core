@@ -1,9 +1,9 @@
 [[StringValuePresenter]]
 === StringValuePresenter
 
-A link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] deals with `String` representation of a generic Object, according to object type and using the current context for example for messages localization.
+The link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] API deals with `String` representation of a generic Object.
 
-Presentation parameters can be used to tune the presentation strategy.
+Presentation _parameters_ can be used to tune the `String` presentation strategy.
 
 ==== Default StringValuePresenter
 
@@ -24,7 +24,9 @@ See <<i18n>> for further information on internationalization and `LocalizationCo
 * *Any other type*: the value `toString()` representation is used
 * *Arrays and collections*: Each element of the array/collection is presented using the rules described above, then the values are joined together in a single String using a separator character.
 
-NOTE: The default separator character for array/collection presentation is `;`. Use `holon.value-presenter.values-separator` parameter to change the separator character to use.
+NOTE: The default separator character for array/collection presentation is `;`. The `holon.value-presenter.values-separator` parameter can be used to change the separator character to use.
+
+TIP: See the <<i18n>> section for information about messages localization. 
 
 *Presentation parameters:*
 

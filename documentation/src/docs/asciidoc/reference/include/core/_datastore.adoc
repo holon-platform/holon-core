@@ -1,362 +1,477 @@
 [[Datastore]]
 === Datastore
 
-The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] interface is the main entry point to manage data persistence in a technology/platform/vendor independent way.
+The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] API is the main entry point to manage data access and persistence in a technology/platform/vendor independent way.
 
-The `Datastore` data management strategy relies on the Holon platform <<Property>> architecture to express data model attributes in a generic and implementation-independent way, using <<PropertyBox>> as carrier for data model attributes and entity values.
+The `Datastore` data management strategy relies on the Holon platform <<Property, property model>> architecture to represent and manage data model attributes in a generic and implementation-independent way, using the  <<PropertyBox>> structure as data interchange carrier between the `Datastore` API and the concrete data model.
 
-A concrete `Datastore` implementation could provide a more specialized interface providing functionalities expressly related to the persistence technology/model to which the Datastore refers.
+A concrete `Datastore` implementation could provide a more specialized API, with functionalities expressly related to the specific persistence technology/model.
 
-The `Datastore` interface provides the following operations:
+We'll refer to an _entity_ in this documentation as a generic persistence model data container. An _entity_ may be for example a _table_ in a RDBMS context, a _JPA entity class_ in a JPA environment or a _document_ in a document based data store.
 
-* *Refresh:* Refresh the data of a data model _entity_
-* *Insert:* Insert a data model _entity_ into the persistence store
-* *Update:* Update a data model _entity_
-* *Save:* Insert or update a data model _entity_, depending on the exitence of the _entity_
-* *Bulk* operations on data model (`bulkInsert`, `bulkUpdate` and `bulkDelete`) to execute batch persistence operations
-* *Query execution* using the `Query` interface for query definition and execution.
+The `Datastore` API provides the following operations:
 
-Each operation which involves a possible persistence store data modification returns an `OperationResult` object, which provides information about the operation outcome, like the number of the elements affected by the execution of the operation or the _auto-generated_ key values, if the concrete persistence store supports this feature.
+* *Refresh:* Refresh the data of a data model _entity_, retrieving the most updated version.
+* *Insert:* Insert a new data model _entity_ into the persistence store.
+* *Update:* Update a data model _entity_ already present in the persistence store.
+* *Save:* Insert or update a data model _entity_, depending on the existence of the _entity_ itself in the persistence store.
+* *Bulk* operations definition and execution (`bulkInsert`, `bulkUpdate` and `bulkDelete`): to execute batch operations in the persistence store.
+* *Query definition and execution*: to configure and execute _queries_ against the persistence store, allowing to declare query results restrictions, aggregations and sorting and to obtain the query results using different _projections_.
+
+Each operation which involves a possible persistence store data modification returns an `OperationResult` type object, which provides information about the operation outcome, such as the number of the elements affected by the execution of the operation or the _auto-generated_ key values, if the concrete persistence store supports this feature.
 
 [[ExpressionResolver]]
 ==== Expressions and resolvers
 
-Main `Datastore` operations relies on the core `Expression` type to configure and model data access and manipulation statements, which will be converted into concrete commands and requests to the underlying persistence store engine in its specific language.
+The `Datastore` API architecture is designed on top of the Holon platform link:{apidir}/com/holonplatform/core/Expression.html[Expression^] based architecture.
 
-To take part in the `Datastore` data access and manipulation statement definition processes, the link:{apidir}/com/holonplatform/core/ExpressionResolver.html[ExpressionResolver^] interface can be used. This interface is designed to _resolve_, i.e. translate in a more convenient or suitable form, an `Expression` type into another `Expression` type.
+An `Expression` is a very abstract and generic representation of an element of a language. The `Datastore` API uses _expressions_ to "translate" a meta-language into the actual language which can be understood by the concrete persistense context engine to which the `Datastore` is bound. 
 
-An `ExpressionResolver` declares the expression type which is able to process, and the expression type which provides as resolution result. An `ExpressionResolver` can return an empty optional if it is not able to resolve given specific expression: this way, the resultion process must proceed to the next available resolver for given expression and resolution type.
+The link:{apidir}/com/holonplatform/core/ExpressionResolver.html[ExpressionResolver^] interface is the key element to perform the language manipulation and translation, since it is used to _resolve_ an `Expression` type into another `Expression` type.
 
-When an `Expression` must be resolved, the `Datastore` detects all registered resolvers which declare to resolve the given expression type and provide a consistent resolution type. The resolvers are invoked sequentially, and the first valid resolved expression is taken (if any), interrupting the resolution process.
+An `ExpressionResolver` declares the expression type which is able to process, and the expression type which provides as resolution result. An `ExpressionResolver` can return an empty `Optional` if it is not able to resolve given expression: this way, the resultion process must proceed to the next available resolver for given expression and resolution type.
 
-To provide a *resolution sequence*, i.e. a resolver invokation sequence, an `ExpressionResolver` class can be annotated with the standard `javax.annotation.Priority` annotation, where lower values corresponds to higher priority.
+A generic `ResolutionContext` object is provided to the `ExpressionResolver` resolution method, to provide information about the current resolution context.
 
-During the resolution process, a `ResolutionContext` object is provided to each `ExpressionResolver`. The resolution context provides a `resolve` method which allows to trigger a nested expression expression resolution operation. Each concrete `Datastore` implementation could also provide a more specialized `ResolutionContext` interface.
+A set of `ExpressionResolver` can be handled using an link:{apidir}/com/holonplatform/core/ExpressionResolverRegistry.html[ExpressionResolverRegistry^]. When an `Expression` must be resolved, all the available resolvers which declare to resolve the given expression type and provide a consistent resolution type will be taken into account. These resolvers are invoked sequentially, 
+returning the first valid resolved expression, if any.
 
-Tipically, an `ExpressionResolver` can be used to:
+To order the expression resolvers with the same expression types, the `javax.annotation.Priority` annotation can be used on the `ExpressionResolver` implementation class to assign a priority order, where lower values corresponds to higher priority.
 
-* Translate a custom expression into a well-known `Datastore` expression (for example, a custom query filter class into a standard `QueryFilter` object);
-* Translate an expression attribute into one which can be correctly interpreted by a specific `Datastore` (for example, a symbolic data target name into a concrete persistence model structure name, such as a table name in a RDBMS);
-* Implement specific expressions for a concrete `Datastore` implementation.
+The `Datastore` API , extending the `ExpressionResolverSupport` interface, supports the registration of new `ExpressionResolver` instances. This is the recommended way to implement `Datastore` *extensions* and persistence operations *customization*.
 
-To *register or unregister* an `ExpressionResolver`, the `addExpressionResolver(...)` and `removeExpressionResolver(...)` Datastore methods can be used.
+Since a `Datastore` implementation can be bound to very different data models and persistence context, each expression resolution strategy is highly dependent from the concrete `Datastore` implementation, including a possibly specialized version of the `ResolutionContext`. See each concrete `Datastore` implementation documentation to learn about the `ExpressionResolver` support and the available expression types which can be used for extensibility purposes.
 
-See below for more informations about `ExpressionResolver` usage.
+Anyway, the core meta-language expressions set is common to any `Datastore` implementation. For this reason, it is possible to provide `Datastore` API extensions in a general and implementation independent way using the `ExpressionResolver` based strategy when the expression resolution is bound to the standard meta-language expressions.
 
-==== Property configuration and converters
+Most of the standard `Datastore` operations (for example the <<Query>> operation) support `ExpressionResolver` registration, to provide expression resolution manipulation only for a specific operation execution. 
 
-The `Datastore` operations fully support property values conversions using the standard <<PropertyValueConverter>>. If a property declares a value converter, it will be used to perform conversions from the property type to the data model attribute type and back. 
+See the <<DatastoreExtension>> section for details.
 
-A converter can be used to adapt specific data types, use custom types or to face common conversion needs, such as _enumeration_ property types mapped to integer or text data model types.
+==== Property data types
 
-The <<PropertyConfiguration>> structure can be used by a `Datastore` to detect the `TemporalType` associated to a `java.util.Date` or `java.util.Calendar` property type (through the `getTemporalType()` method), and ensure the consistency of the data manipulation and access operations which involve such kind of property.
+The `Datastore` API fully supports *property values conversions* using the standard <<PropertyValueConverter,property value converter>> API. If a `Property` declares a value converter, it will be used to perform conversions from the property type to the data model attribute type and back. 
 
-TIP: The Holon platform `Datastore` fully supports the new *Java 8 Date and Time API*, which represents a big step forward compared to the previous date and time support classes, to address the shortcomings of the older `java.util.Date` and `java.util.Calendar` types. It is strongly recommended to use the new `java.time.*` types for date and time properties, such as `LocalDate`, `LocalTime`, `LocalDateTime` and so on. This way, in addition to achieving a more robust and consistent code, there no need to use the `TemporalType` property configuration attribute to ensure consistency in property value handling.
+A converter can be used to adapt specific data types, to use custom types or to face common value conversion needs, such as _enumeration_ property types mapped to integer or text data model types.
+
+The Holon platform `Datastore` fully supports the new *Java 8 Date and Time API*, which represents a big step forward compared to the previous date and time support classes, to address the shortcomings of the older `java.util.Date` and `java.util.Calendar` types. It is strongly recommended to use the new `java.time.*` types for date and time properties, such as `LocalDate`, `LocalTime`, and `LocalDateTime`.
+
+When a `java.util.Date` or `java.util.Calendar` property type is used with `Datastore` API operations, it is recommended to configure the actual *temporal type* which is expected for the property, to ensure data consistency. This can be done through the <<PropertyConfiguration,property configuration>>.
 
 [[DataTarget]]
 ==== DataTarget
 
-The link:{apidir}/com/holonplatform/core/datastore/DataTarget.html[DataTarget^] interface is used by `Datastore` and <<Query>> to refer to an _entity_ of the persistence model in an abstract and independent way from the concrete persistence layer. From the `DataTarget` point of view, and _entity_ has the meaning of a _collection of data model attributes_, and it is represented by a `Path`, i.e. by a symbolic *name*.
+The link:{apidir}/com/holonplatform/core/datastore/DataTarget.html[DataTarget^] interface is used by the `Datastore` API and the <<Query,Query definition API>> to refer to an _entity_ of the persistence model in an abstract and independent way from the concrete persistence layer. 
+
+From the `DataTarget` point of view, an _entity_ has the meaning of a _collection of data model attributes_, and it is represented by a link:{apidir}/com/holonplatform/core/Path.html[Path^], i.e. by a symbolic *name*.
 
 Examples of `DataTarget` representations are:
 
-* The name of a _table_ in a RDBMS
-* The class of a JPA `Entity`
-* The document _collection_ name in a document-oriented database
+* The name of a _table_ in a RDBMS.
+* The class of a JPA _entity_.
+* The document _collection_ name in a document-oriented database.
 
-Concrete `Datastore` implementations could provide more specific `DataTarget` object types to identify an _entity_ by using specific target types for the concrete persistence model which represent.
+Concrete `Datastore` implementations could provide more specialized `DataTarget` object types to identify a data model _entity_ which is specific of the persistence model to which the `Datastore` is bound.
 
-The `DataTarget` interface provides static methods to create data targets using the default name representation:
+The `DataTarget` interface provides static methods to create data targets using the default *name*  representation, optionally providing the `DataTarget` (`Path`) type:
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=datatarget,indent=0]
 ----
+<1> Create a default `String` type `DataTarget` named `test1`
+<2> Create a `MyType` type `DataTarget` named `test2`
 
-All the `Datastore` operations involving persistent _entity_ structures use a `DataTarget` to identify the target persistent structure and <<PropertyBox>> to provide and obtain the data model attribute values.
+All the `Datastore` operations definition APIs involving persistent _entity_ structures use a `DataTarget` to identify the data model _entity_ to which the operation refers.
 
-==== Data manipulation
+[[DataManipulationOperations]]
+==== Data manipulation operations
 
-The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] interface provides the most common data manipulation operations, listed in the table below.
+The link:{apidir}/com/holonplatform/core/datastore/Datastore.html[Datastore^] API provides the most common data manipulation operations, listed in the table below.
 
-TIP: Each operation throws a link:{apidir}/com/holonplatform/core/exceptions/DataAccessException.html[DataAccessException^] if an error occurs during operation execution.
+Each operation throws a link:{apidir}/com/holonplatform/core/exceptions/DataAccessException.html[DataAccessException^] if an error occurs during the operation execution.
 
-Each operation supports configurable write *options*, represented by the WriteOption marker interface. Tipically, write options are specific of the underlying persistence model and each concrete `Datastore` implementation provides a set of suitable write options. See the specific datastores documentation for further information.
+Each operation (except for _refresh_) support configurable write *options*, represented by the `WriteOption` marker interface. Tipically, write options are specific of the underlying persistence model and each concrete `Datastore` implementation provides a set of suitable write options. See each specific `Datastore`  documentation for further information.
 
-The link:{apidir}/com/holonplatform/core/datastore/DefaultWriteOption.html[DefaultWriteOption^] enumeration provides the write options available for any datastore. By now, a single default write option is defined:
+The link:{apidir}/com/holonplatform/core/datastore/DefaultWriteOption.html[DefaultWriteOption^] enumeration provides write options which can be available for any `Datastore` API. By now, a single default write option is defined:
 
-*BRING_BACK_GENERATED_IDS*: Bring back any auto-generated id value into the `PropertyBox` which was subject of a data manipulation operation, if a corresponding `Property` (using the property name) is available in the box property set. 
+*BRING_BACK_GENERATED_IDS*: Bring back any auto-generated id value into the `PropertyBox` which was subject of a data manipulation operation, if a corresponding `Property` (using the property name) is available in the `PropertyBox` property set. 
 
-NOTE: This option is only meaningful for datastores bound to a persistence engine which provides _id_ auto-generation.
+NOTE: Check specific `Datastore` implementations documentation to learn if this option is actually supported.
 
 |===
 |Operation |Purpose |Return
 
 |`*refresh*(DataTarget target, PropertyBox propertyBox)`
-|Refresh the values of the properties of given `PropertyBox`, reloading them from the persistence store
+|*Refresh* the values of the properties of given `PropertyBox`, reloading them from the persistence store, using given *data target* to identify the persistence model _entity_.
 |The refreshed `PropertyBox`
 
 |`*insert*(DataTarget target, PropertyBox propertyBox, WriteOption... options)`
-|Insert a new data _entity_, identified by given *target* and represented by given `PropertyBox`, into the persistence store
+|*Insert* a new data model _entity_, identified by given *data target* and represented by given `PropertyBox`, into the persistence store.
 |The `OperationResult`. If one or more data model attribute was auto-generated by the concrete persistence store, such values are returned by the `getInsertedKeys` method.
 
 |`*update*(DataTarget target, PropertyBox propertyBox, WriteOption... options)`
-|Update an existing data _entity_, identified by given *target* and represented by given `PropertyBox`, into the persistence store
+|*Update* an existing data model _entity_, identified by given *data target* and represented by given `PropertyBox`, in the persistence store.
 |The `OperationResult`. 
 
 |`*save*(DataTarget target, PropertyBox propertyBox, WriteOption... options)`
-|Insert a new data _entity_ (identified by given *target* and represented by given `PropertyBox`) into the persistence store if the _entity_ does not exists, or update it if the _entity_ is present in the persistence store.
+|Insert a new data model _entity_ (identified by given *data target* and represented by given `PropertyBox`) into the persistence store if the _entity_ does not exists, or update it if the _entity_ is already present in the persistence store.
 |The `OperationResult`. 
 
 |`*delete*(DataTarget target, PropertyBox propertyBox, WriteOption... options)`
-|Remove a data _entity_, identified by given *target* and represented by given `PropertyBox`, from the persistence store
+|*Remove* a data model _entity_, identified by given *data target* and represented by given `PropertyBox`, from the persistence store.
 |The `OperationResult`. 
 
 |`bulkInsert(DataTarget target, PropertySet<?> propertySet, WriteOption... options)`
-|Obtain an interface which can be used to perform a _bulk_ insert of data _entities_ identified by given *target*, represented by `PropertyBox` instances. Only the properties contained in given `propertySet` will be taken into account to perform insert operations.
-|The `BulkInsert` interface to provide the `PropertyBox` instances to insert and execute the bulk operation. 
+|Configure and perform a _bulk_ *insert* of data model _entities_ identified by given *data target* and represented by `PropertyBox` instances. Only the properties contained in the given `PropertySet` will be taken into account to perform the insert operations.
+|The `BulkInsert` API to configure and perform the bulk operation. 
 
 |`bulkUpdate(DataTarget target, WriteOption... options)`
-|Obtain an interface which can be used to perform a _bulk_ update of data _entities_ identified by given *target*, to change a set of property values according to a set of restriction predicates to identify the set of data _entities_ to update
-|The `BulkUpdate` interface to provide the properties and the value to update, the restriction predicates, and execute the bulk operation. 
+|Configure and perform a _bulk_ *update* of data model _entities_ identified by given *data target*, to change a set of property values according to a set of restriction predicates to identify the set of data model _entities_ to update.
+|The `BulkUpdate` API to configure and perform the bulk operation.
 
 |`bulkDelete(DataTarget target, WriteOption... options)`
-|Obtain an interface which can be used to perform a _bulk_ delete of data _entities_ identified by given *target*, providing a set of restriction predicates to identify the set of data _entities_ to remove
-|The `BulkDelete` interface to provide the `PropertyBox` instances, configure the restriction predicates and execute the bulk operation. 
+|Configure and perform a _bulk_ *delete* of data model _entities_ identified by given *data target*, providing a set of restriction predicates to identify the set of data model _entities_ to remove.
+|The `BulkDelete` API to configure and perform the bulk operation.
 |===
 
 [source, java]
-.Datastore operations examples
+.Data manipulation operations examples
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=datastore,indent=0]
 ----
-<1> Save the `PropertyBox` containing given property value using the defined DataTarget (insert a new _entity_ if not present in the persistence store or update it if exists, using the specific persistence model strategy to identify entities)
-<2> Insert the given `PropertyBox` data into the persistence store using the defined DataTarget
-<3> Update the given `PropertyBox` data into the persistence store using the defined DataTarget
-<4> Refresh the `PropertyBox` using the defined DataTarget, reloading data attribute values
-<5> Remove the _entity_ which corresponds to given `PropertyBox` (using the specific persistence model strategy to identify entities)
-<6> Execute a _bulk_ insert operation using the defined DataTarget, inserting given `PropertyBox` elements
-<7> Execute a _bulk_ update operation using the defined DataTarget, setting the property value to `updated` when that property value is null
-<8> Execute a _bulk_ delete operation using the defined DataTarget, removing entities for which the given property value is null
+<1> Save the `PropertyBox` containing given property value using the specified `DataTarget` (insert a new _entity_ if not present in the persistence store or update it if exists)
+<2> Insert the given `PropertyBox` data into the persistence store using the specified `DataTarget`
+<3> Update the given `PropertyBox` data into the persistence store using the specified `DataTarget`
+<4> Refresh the `PropertyBox` property values using the specified `DataTarget`
+<5> Remove the _entity_ which corresponds to given `PropertyBox`
+<6> Execute a _bulk_ insert operation using the specified `DataTarget`, inserting given `PropertyBox` elements
+<7> Execute a _bulk_ update operation using the specified `DataTarget`, setting the property value to `updated` when the property value is `null`
+<8> Execute a _bulk_ delete operation using the specified `DataTarget`, removing entities for which the given property value is `null`
 
 [[Query]]
 === Query
 
-The link:{apidir}/com/holonplatform/core/query/Query.html[Query^] interface can be used to execute queries on the persistence data structures, using <<Property>>s to refer to the data model attributes and <<PropertyBox>>s to represent and obtain the query results.
+The link:{apidir}/com/holonplatform/core/query/Query.html[Query^] API can be used to configure and execute _queries_ against the persistence data store.
 
-Using the `Query` abstraction, a query can be performed on the data model in a generic and implementation-independent way.
+Just like any other `Datastore` API operation, the `Query` API relies on the Holon platform <<Property,property model>> to represent the data model attributes and to obtain the query results, using a <<PropertyBox,PropertyBox>> to provide a set of property values.
 
-A `Query` supports the following clauses and configuration attributes:
+This allows the query to be declared and executed in an abstract and implementation-independent way.
 
-* The <<DataTarget>> on which the query has to be performed
-* The query *restrictions*, expressed as <<QueryFilter>> clauses
-* The query results *sorting*, expressed as <<QuerySort>> clauses
-* The query results *aggregation*, expressed as <<QueryAggregation>> clauses
-* The query results *paging*, providing a result set _limit_ and _offset_
-* Generic query configuration *parameters*
-* Support for <<DataTargetResolver>> and <<QueryClauseResolver>> registration
+The `Query` API supports the following clauses and configuration attributes:
 
-The query clauses which involve the reference to data model attributes (filtering, sorting, aggregation) are expressed using the <<Property>> abstraction.
+* The <<DataTarget>> on which the query has to be performed.
+* A set of query *restrictions*, expressed as <<QueryFilter>> clauses.
+* The query results *sorting* declarations, expressed as <<QuerySort>> clauses.
+* The query results *aggregation*, expressed as <<QueryAggregation>> clauses.
+* The query results *paging*, to configure the query result set _limit_ and _offset_.
+* A set of generic query configuration *parameters*.
 
-==== Query definition
-
-A `Query` instance is obtained using the the Datastore `query()` method.
-
-The `Query` interface provides methods to configure and define the query configuration and clauses, using a fluent builder pattern. The query configuration setting and clauses definitions are described below.
+Below are described the standard query link:{apidir}/com/holonplatform/core/Expression.html[Expression^]s made available by the Holon platform for the defintion of a query.
 
 [[QueryFilter]]
-===== QueryFilter
+==== QueryFilter
 
-The link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface represents a query results restriction.
+The link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface represents a query results restriction `Expression`.
 
-Most common restriction predicates representations are provided by the core platform classes. The following predicates are available:
+A `QueryFilter` acts on other _expressions_ which represent the restriction subject and conditions. Such expressions are typically a link:{apidir}/com/holonplatform/core/TypedExpression.html[TypedExpression^], i.e an `Expression` with explicitly declared type.
 
-* *Is null / is not null:* The value of a property is _null_ / not _null_
-* *equal / not equal:* The value of a property is equal / not equal to a given value
-* *less than / less than or equal:* The value of a property is less than / less than or equal to a given value
-* *greater than / greater than or equal:* The value of a property is greater than / greater than or equal to a given value
-* *between:* The value of a property is included between a minimum and a maximum value
-* *in / not in:* The value of a property is present / not present in a set of values
-* *contains:* The value of a `String` property contains given text, ignoring case or not
-* *startsWirth:* The value of a `String` property contains starts with text, ignoring case or not
-* *endsWith:* The value of a `String` property contains ends with text, ignoring case or not
+The most common restriction predicates representations are provided by the core platform classes. The following predicates are available:
 
-Negation, conjunction and disjunction of predicates:
+* *Is null / is not null:* An expression is _null_ / not _null_.
+* *equal / not equal:* An expression is equal / not equal to another expression.
+* *less than / less than or equal:* An expression is less than / less than or equal to another expression.
+* *greater than / greater than or equal:* An expression is greater than / greater than or equal to another expression.
+* *between:* The value of an expression is included between a minimum and a maximum value.
+* *in / not in:* The value of an expression is included / not included in a set of values.
 
-* *not:* Negation of a predicate
-* *and:* Conjunction of predicates (represents the `AND` logical operation)
-* *or:* Disjunction of predicates (represents the `OR` logical operation)
+For `String` type expressions:
+
+* *contains:* The value of a `String` type expression contains a specified text (ignoring case or not).
+* *startsWirth:* The value of a `String` type expression contains starts with a specified text (ignoring case or not).
+* *endsWith:* The value of a `String` type expression contains ends with a specified text (ignoring case or not).
+
+Furthermore, the `QueryFilter` predicates can be composed using logical operations:
+
+* *not:* Negation of a `QueryFilter` predicate.
+* *and:* Conjunction of `QueryFilter` predicates.
+* *or:* Disjunction of `QueryFilter` predicates.
 
 The `QueryFilter` predicates can be obtained in two ways:
 
-*1.* Using the static methods provided by the `QueryFilter` interface, specifying the <<Property>> the predicate refers to when required.
+*1.* Using the static builder methods provided by the link:{apidir}/com/holonplatform/core/query/QueryFilter.html[QueryFilter^] interface.
 
 [source, java]
-.Examples using QueryFilter
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter1,indent=0]
 ----
+<1> Common restriction predicates using a `PathProperty` as expression
+<2> `String` type expression restriction predicates
+<3> Negation using either the `not()` `QueryFilter` method or the `not(QueryFilter filter)` builder method
+<4> Conjunction (*AND*) using either the `and()` `QueryFilter` method or the `allOf(QueryFilter... filters)` builder method
+<5> Disjunction (*OR*)  using either the `or()` `QueryFilter` method or the `anyOf(QueryFilter filter)` builder method
 
-*2.* For <<Property>> related predicates, using directly the static methods provided by the `Property` interface.
+*2.* Using the convenience methods provided by the link:{apidir}/com/holonplatform/core/query/QueryExpression.html[QueryExpression^] interface. The `QueryExpression` API is implemented, for example, by the `PathProperty` interface.
 
-TIP: `QueryFilter` s can be added to a `Query` using the `filter(QueryFilter filter)` query builder method, which adds a filter predicate to the query. If a `QueryFilter` has already been associated to the query, the new filter is added to the query in conjunction with the existing predicates, i.e. using a `AND` logical operation.
+The `QueryExpression` API makes available a set of methods to create a `QueryFilter` using the expression itself as the subject of the restriction predicate.
+
+For restrictions which refers to a specific data type, specialized `QueryExpression` extensions should be used. For example, link:{apidir}/com/holonplatform/core/query/StringQueryExpression.html[StringQueryExpression^] interface makes available methods to obtain String type restrictions, such a _contains_, _startsWith_, _endsWith_.
+The type specific query expression APIs are implemented by each <<PathPropertySubTypes,PathProperty sub type>>: the `StringQueryExpression` API is implemented by the `StringProperty` type and so on.
 
 [source, java]
-.Examples using Property
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=filter2,indent=0]
 ----
+<1> Common restriction predicates using the `QueryExpression` API implemented by `PathProperty`
+<2> `String` type restriction predicates using the `StringQueryExpression` API implemented by `StringProperty`
+<3> Logical operations 
 
 [[QuerySort]]
-===== QuerySort
+==== QuerySort
 
-The link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface represents a query results sorting directive, referred to a <<Property>>.
+The link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface represents a query results sorting directive.
 
-The `SortDirection` enumeration is used to declare the sort direction (ascending or descending).
+A `QuerySort` acts on a generic `Path` expression to declare the sorting subject and uses the `SortDirection` enumeration to declare the sort direction (ascending or descending). Query sorts can be composed to declare an ordered list of sort declarations.
 
-A list of `QuerySort` can be composed to create a sort declaration which involves more than one `Property`, for each declaring the sort direction.
+A `QuerySort` declaration can be obtained in two ways:
 
-The `QuerySort` directives can be obtained in two ways:
+*1.*   Using the static builder methods provided by the link:{apidir}/com/holonplatform/core/query/QuerySort.html[QuerySort^] interface.
 
-*1.* Using the static methods provided by the `QuerySort` interface, specifying the <<Property>> to which the sort refers.
+The `PathExpression` API makes available convenience methods to create a `QuerySort` using the expression itself (i.e. the `Path` represented by the expression) as the subject of the sort declaration.
 
 [source, java]
-.Examples using QuerySort
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort1,indent=0]
 ----
+<1> Sort declarations specifying the sort direction
+<2> Query sorts composition
 
-*2.* Using directly the static methods provided by the `Property` interface.
+*2.* Using the convenience methods provided by the link:{apidir}/com/holonplatform/core/query/PathExpression.html[PathExpression^] interface. The `PathExpression` API is implemented, for example, by the `PathProperty` interface.
+
+The `PathExpression` API makes available convenience methods to create a `QuerySort` using the expression itself (i.e. the `Path` represented by the expression) as the subject of the sort declaration.
 
 [source, java]
-.Examples using Property
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sort2,indent=0]
 ----
+<1> Use the `asc()` and `desc()` `PathExpression` methods to create ascending and descending sorts
+<2> The `and(QuerySort sort)` method of the `QuerySort` interface can be used to compose a list of sorts
 
-TIP: `QuerySort` can be added to a `Query` using the `sort(QuerySort sort)` query builder method, which adds a sort declaration to the query. If one or more `QuerySort` has already been associated to the query, the new sort is added at the end of the query sorts list.
+[[QueryFunction]]
+==== QueryFunction
 
-[[QueryAggregation]]
-===== Aggregations
+The link:{apidir}/com/holonplatform/core/query/QueryFunction.html[QueryFunction^] interface represents a *function* expression.
 
-*Aggregation clause:*
+A `QueryFunction` may accept a list of _arguments_, expressed as expressions themself. The `TypedExpression` type is used as query function arguments type, since a function could only be applicable to a specific argument type.
 
-A `Query` supports a results aggregation clause, represented by the link:{apidir}/com/holonplatform/core/query/QueryAggregation.html[QueryAggregation^] interface. This interface provides a fluent builder to create aggregation clauses.
+A set of common query functions is provided by the Holon platform, each represented by a specific `QueryFunction` sub type.
 
-The aggregation clause can be used to specify:
+Common query functions can be obtained either using the `QueryFunction` static builder methods or using the convenience methods provided by APIs like link:{apidir}/com/holonplatform/core/query/QueryExpression.html[QueryExpression^]. In this second case, the expression itself is used as the query function argument.
 
-* Which `Path`s must be used to aggregate the query results, i.e. *grouping the results* by the values of the specified paths;
-* The *optional restrictions* to apply on the aggregation path values, expressed by using standard `QueryFilter` predicates.
+===== Aggregation functions
 
-WARNING: Query results aggregation semantics can be slightly different from one Datastore implementation to another. Each Datastore implementation should ensure a consistent query execution behaviour, but in some situations it may not be possible to perform the aggregation operation for some query configurations. For example, many RDBMS engines do not allow to project a query result which is not part of the query aggregation clause unless an aggregation function is used.
+* *Count*: Aggregation function to _count_ the number of available elements (for example the number of query results). Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Count.html[Count^] interface. Always returns a `Long` type result.
+* *Min*: Aggregation function to obtain the _smallest value_ within a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Min.html[Min^] interface.
+* *Max*: Aggregation function to obtain the _largest value_ within a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Max.html[Max^] interface.
+* *Avg*: Aggregation function to obtain the _average value_ within a set of numeric elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Avg.html[Avg^] interface. Always returns a `Double` type result.
+* *Sum*: Aggregation function to sum the values of a set of available elements. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Sum.html[Sum^] interface.
 
-[source, java]
-.Examples of aggregation
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggregation,indent=0]
-----
-<1> Aggregate the results grouping by `PROPERTY`
-<2> Aggregate the results grouping by `PROPERTY` and restrict the aggregation property values to not _null_ values
-
-*Aggregation functions:*
-
-A set of basic results aggregation _functions_ are provided by the default `Datastore`. An aggregation function is related to a <<Path>> and allows to aggregate the query results related to such path with a specific aggregation semantic.
-
-A Datastore *function* is represented by the {apidir}/com/holonplatform/core/query/QueryFunction.html[QueryFunction^] interface and the following builtin aggregation functions are provided:
-
-* {apidir}/com/holonplatform/core/query/QueryFunction.Count.html[Count^] : counts the results
-* {apidir}/com/holonplatform/core/query/QueryFunction.Min.html[Min^] : return the smallest value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Max.html[Max^] : return the larger value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Avg.html[Avg^] : return the average value
-* {apidir}/com/holonplatform/core/query/QueryFunction.Sum.html[Sum^] : return the sum of the values
-
-An aggregation function can be used as a query projection or expression, and can be created in two ways:
-
-*1.* Using the static methods provided by the `FunctionExpression` interface, by specifying the `Path` to apply the function to.
-*2.* Using directly the static methods provided by the `PathProperty` interface.
+For agrregation functions which refers to a specific data type, specialized `QueryExpression` extensions should be used. For example, the link:{apidir}/com/holonplatform/core/query/NumericQueryExpression.html[NumericQueryExpression^] interface makes available methods to obtain *numeric* type restrictions, such a _avg_ and _sum_.
+The type specific query expression APIs are implemented by each <<PathPropertySubTypes,PathProperty sub type>>: the `NumericQueryExpression` API is implemented by the `NumericProperty` type and so on.
 
 [source, java]
-.Examples of aggregation functions
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggfun,indent=0]
 ----
+<1> Aggregation functions created using the `QueryFunction` builder methods
+<2> Aggregation functions created using each function interface creation method
+<3> Aggregation functions obtained using the `QueryExpression` convenience methods
 
-===== Paging results
+[[StringRelatedFunctions]]
+===== String related functions
 
-`Query` supports results *pagination*, allowing to set:
+For `String` type expressions, two standard query functions are made available by the Holon platform:
 
-* *limit:*: results limit, i.e. the max number of results to provide
-* *offset:*: 0-based offset from which to fetch the query results within the total results set
-
-[source, java]
-.Pagination example
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=pagination,indent=0]
-----
-<1> Limit the query results to `100` and fetch the results starting from `0` (i.e. fetch the first page where a page is a window of 100 results)
-<2> Limit the query results to `100` and fetch the results starting from `100` (i.e. fetch the second page where a page is a window of 100 results)
-
-===== Query results projection
-
-`Query` results are obtained using a _projection_, represented by the link:{apidir}/com/holonplatform/core/query/QueryProjection.html[QueryProjection^] interface.
-
-The `Query` interface extends the link:{apidir}/com/holonplatform/core/query/QueryResults.html[QueryResults^] interface, which provides methods to execute the query and obtain the query results.
-
-Two main methods are provided to obtain the query results:
-
-* `stream(QueryProjection<R> projection)`: Obtain the query results as a `Stream`, using given projection to define the type of the objects contained in the stream
-* `count()`: Count the results of the query
-
-Two additional convenience methods are made available by the `QueryResults` interface:
-
-* `findOne(QueryProjection<R> projection)`: Get a single expected result from the query, which type matches the projection type. If more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown
-* `list(QueryProjection<R> projection)`: Convenience method to obtain query results `Stream` as a `List`
-
-*Builtin projections:*
-
-The platform provides the following query projections:
-
-* `PathProperty` and `AggregationProperty` are query projections, mapping the result type into the property type
-* `PropertySetProjection` uses a set of `Property` to map the query results into `PropertyBox` objects containing the values of the properties of the set returned by the query execution.
-
-The `QueryResults` interface provides convenience methods helpful to use the `PropertySetProjection` query projection:
-
-* `stream(Iterable<P> properties)` and `stream(Property... properties)`: accept a set of <<Property>> and return the query results as a stream of `PropertyBox`, each containing the values of the properties of the set obtained from query execution
-* `list(Iterable<P> properties)`: Same as above, but returning the results as a `List` instead of a `Stream`
-* `findOne(Iterable<P> properties)` and `findOne(Property... properties)`: accept a set of <<Property>> and return the unique query result as an Optional `PropertyBox` containing the values of the properties of the set obtained from query execution
-
-NOTE: Any concrete <<Datastore>> implementation could provide additional projections related to the specific Datastore persistence model.
+* *Lower*: Function to convert a string to _lowercase_. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Lower.html[Lower^] interface.
+* *Upper*: Function to convert a string to _uppercase_. Represented by the link:{apidir}/com/holonplatform/core/query/QueryFunction.Upper.html[Upper^] interface.
 
 [source, java]
-.Query projection examples
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=strfun,indent=0]
 ----
-<1> Stream of values using `PROPERTY` as projection. The Stream type is the same of the property type (Integer)
-<2> Optional unique value using `PROPERTY` as projection. The value type is the same of the property type (Integer)
-<3> Stream of `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<4> List of `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<5> Optional unique `PropertyBox` containing the values of the set of properties composed by `PROPERTY` and `ANOTHER_PROPERTY`
-<6> Unique value of the `sum` aggregation function applied to `PROPERTY`
+<1> Lower/upper functions created using the `QueryFunction` builder methods
+<2> Aggregation functions created using each function interface creation method
+<3> Lower/upper functions obtained using the `StringQueryExpression` convenience methods
 
-*Bean projection:*
+[[TemporalFunctions]]
+===== Temporal functions
 
-The link:{apidir}/com/holonplatform/core/query/BeanProjection.html[BeanProjection^] interface can be used to obtain the query results as *Java Bean* instances, providing the mapping bean class to be used. The query results are mapped to the bean class properties by matching the query selection `Path` names with the bean property names.
+For temporal data types, a set of common functions are made available by the Holon platform.
+
+Functions to obtain the *current date or timestamp*:
+
+* *CurrentDate*: function to obtain the current date. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentDate.html[CurrentDate^] interface.
+* *CurrentLocalDate*: function to obtain the current date as a `LocalDate`. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentLocalDate.html[CurrentLocalDate^] interface.
+* *CurrentTimestamp*: function to obtain the current timestamp. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentTimestamp.html[CurrentTimestamp^] interface.
+* *CurrentLocalDateTime*: function to obtain the current timestamp as a `LocalDateTime`. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.CurrentLocalDateTime.html[CurrentLocalDateTime^] interface.
 
 [source, java]
-.Bean projection examples
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=cdtfun,indent=0]
+----
+<1> Current date/time functions created using the `QueryFunction` builder methods
+<2> Current date/time functions created using each function interface creation method
+
+Functions to *extract a temporal part*. All the listed functions returns an `Integer` type result:
+
+* *Year*: function extract the _year_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Year.html[Year^] interface.
+* *Month*: function extract the _month_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Month.html[Month^] interface. The month range index is between 1 and 12.
+* *Day*: function extract the _day_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Day.html[Day^] interface. The day is intended as the day of month and the day range index is between 1 and 31.
+* *Hour*: function extract the _hour_ part of a temporal data type. Represented by the link:{apidir}/com/holonplatform/core/query/TemporalFunction.Hour.html[Hour^] interface. The 24-hour clock is used and the hour range index is between 0 and 23.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=tmpfun,indent=0]
+----
+<1> Temporal part extraction functions created using the `QueryFunction` builder methods
+<2> Temporal part extraction functions functions created using each function interface creation method
+<3> Temporal part extraction functions obtained using the `TemporalQueryExpression` convenience methods
+
+[[QueryAggregation]]
+==== QueryAggregation
+
+The link:{apidir}/com/holonplatform/core/query/QueryAggregation.html[QueryAggregation^] interface represents a query results _aggregation_ expression.
+
+The `QueryAggregation` API allows to specify:
+
+* The *paths* (using the `Path` type) to be used to aggregate the query results, i.e. to group the results by the values of the specified paths.
+* The *optional restrictions* to apply on the aggregation path values, expressed by using <<QueryFilter>> predicates.
+
+WARNING: Query results aggregation semantics can be slightly different from one `Datastore` implementation to another. Each `Datastore` implementation should ensure a consistent query execution behaviour, but in some situations it may not be possible to perform the aggregation operation for some query configurations. For example, many RDBMS engines do not allow to project a query result which is not part of the query aggregation clause unless an aggregation function is used.
+
+The `QueryAggregation` API provides a buider to create and configure a query aggregation expression.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=aggregation,indent=0]
+----
+<1> Obtain a `QueryAggregation` builder
+<2> Declare an aggregation path using the `PROPERTY` PathProperty
+<3> Add another aggregation path using the `ANOTHER_PROPERTY` PathProperty
+<4> Configure an aggregation restrinction filter
+
+[[QueryDefinition]]
+==== Query definition
+
+A `Query` can be defined and configured using the link:{apidir}/com/holonplatform/core/query/QueryBuilder.html[QueryBuilder^] interface.
+
+The `QueryBuilder` provides methods to configure the query using the query *expressions* listed above. Furthermore, it provides methods to declare:
+
+* The query *target*, which represents the data model _entity_ to be queried and is expressed through a <<DataTarget>>.
+* The optional query results *pagination* declaration, which can be declared using:
+** *limit:*: the query results limit, i.e. the max number of results to obtain.
+** *offset:*: the 0-based offset from which to fetch the query results within the total results set.
+* Optional query *parameters*, mainly used to for extension purposes.
+
+The link:{apidir}/com/holonplatform/core/query/Query.html[Query^] API extends `QueryBuilder`, and can be obtained from a `Datastore` using the `query()` method.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=querydefinition,indent=0]
+----
+<1> Obtain a query builder
+<2> Set the query target using `DataTarget`
+<3> Add a query restriction filter using `QueryFilter`
+<4> Add a query sort declaration using `QuerySort`
+<5> Declare a query result aggregation path
+<6> Set the query results limit to `100`
+<7> Set the query results offset to `200`
+<8> Obtain a query builder and simultaneously set the query target
+<9> Declare a query results aggregation clause using the `QueryAggregation` builder
+<10> Set the the query pagination using the convenience `restrict` method, which accepts the query results limit and offset
+
+[[QueryProjection]]
+==== Query projection and execution
+
+To obtain the `Query` results, a query results _projection_ must be declared. A projection is represented by the link:{apidir}/com/holonplatform/core/query/QueryProjection.html[QueryProjection^] interface and is used to declare which data model attribute values are to be returned and which type has to used to represent the query results.
+
+The query results projection is provided at query execution time, using the link:{apidir}/com/holonplatform/core/query/QueryResults.html[QueryResults^] API, which is implemented by the `Query` interface.
+
+The main `QueryResults` API method to obtain the query results is `stream(QueryProjection<R> projection)`, which can be used to provide a `QueryProjection` and get the query execution result, which will be of the same type of the query projection type.
+
+In addition to the default _stream_ method, a set of other convenience methods are provided by the `QueryResults` API for query execution and results retrieval:
+
+* `list(QueryProjection<R> projection)`: To obtain the query results stream as a `List`.
+* `findOne(QueryProjection<R> projection)`: To obtain a result which is expected to be *unique*, if it is available. The query result is provided as an `Optional` and if more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown.
+* `count()`: To count all the query results, returing the number of results as a `long`.
+
+Furthermore, a set of convenience methods are provided to use the Holon platform <<Property,properties>> abstration as query projection and to obtain the query results using the <<PropertyBox,PropertyBox>> type:
+
+* `stream(Iterable<P> properties)` and `stream(Property... properties)`: Allows to provide one or more `Property` as query projection and obtain the query results as a stream of `PropertyBox`. The _list_ version is also available to obtain the query results as a `List` instead of a `Stream`.
+* `findOne(Iterable<P> properties)` and `findOne(Property... properties)`: Allows to provide one or more `Property` as query projection and obtain a query result which is expected to be *unique* as a `PropertyBox`.  The query result is provided as an `Optional` and if more than one result is obtained from query execution, a `QueryNonUniqueResultException` is thrown.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=queryresults,indent=0]
+----
+<1> Count the query results
+<2> Use the `PROPERTY1` as query projection and obtain the query results as a `Stream` of values of the property value type (`Integer`)
+<3> Use the `PROPERTY1` as query projection expecting a unique result, obtaining the query result as an `Optional` value of the property value type (`Integer`)
+<4> When more than one `Property` is provided as query projection, the query results are obtained as a `Stream` of `PropertyBox` instances
+<5> A `PropertySet` can be used to provide a multiple `Property` query projection
+<6> The same operation can be performed with the `list` method, obtaining the query results as a `List`
+<7> `PROPERTY1` and `PROPERTY2` are provided as query projection and a unique result is expected: the query result is obtained as an `Optional` `PropertyBox` instance
+
+[[BuiltinQueryProjections]]
+===== Builtin query projections
+
+The Holon platform core module provides some builtin `QueryProjection` types which can be used for query execution.
+
+As seen in the previous section, a `PathProperty` is a `QueryProjection` itself, and can be directly used as query projection. When the query projection must include more than one property, the link:{apidir}/com/holonplatform/core/query/PropertySetProjection.html[PropertySetProjection^] type can be used. Anyway, is easier to use the appropriate `QueryResults` API methods to directly provide a set of properties or a `PropertySet` as query projection.
+
+The other builtin query projections are:
+
+*1. QueryFunction:* 
+
+A <<QueryFunction>> can be directly used as query projection. The projection result type will be the same as the `QueryFunction` result type.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection2,indent=0]
+----
+<1> Use the `Sum` function on `PROPERTY1` as query projection
+<2> Use the `Upper` function  on `PROPERTY2` to obtain a stream of `String` values applying the uppercase transformation
+
+*2. Constant expression:* 
+
+The link:{apidir}/com/holonplatform/core/query/ConstantExpressionProjection.html[ConstantExpressionProjection^] type can be used to declare a *costant expression value* as query projection.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=projection2,indent=0]
+----
+<1> Use the constant `TEST` value as query projection
+
+*3. Bean projection:*
+
+The link:{apidir}/com/holonplatform/core/query/BeanProjection.html[BeanProjection^] interface can be used to obtain the query results as Java Bean class instances, providing the *bean class* to be used. 
+
+Optionally, the projection `Path` names can be specified to control the bean property set which as to be obtained as query result. If not specified, all the bean definition class properties will be used as query projection paths.
+
+[source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=beanprojection,indent=0]
 ----
-<1> Stream of values using `MyBean` as projection, using all the bean property names as query selection
-<2> Optional unique value using `MyBean` as projection, using all the bean property names as query selection
-<3> Stream of values using `MyBean` as projection, using provided `CODE` and `TEXT` properties as query selection
+<1> Use `MyBean` class as query projection and obtain a `Stream` of `MyBean` instances as query results
+<2> The same operation but expecting a unique result, which will be returned as an `Optional` `MyBean` instance
+<3> Use `MyBean` class as query projection and specify the query projection paths. In this example, only the `code` bean property is declared as projection paths, so only the `code` property values will be retrieved from query execution and setted in the `MyBean` result instances
 
+[[DatastoreConfiguration]]
 ==== Configuration
 
-The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface represents and provides the available configuration properties which can be used to configure a generic `Datastore`.
+The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface represents and provides the available configuration properties which can be used to configure a generic `Datastore` instance.
 
-The interface extends a default `ConfigPropertySet` bound to the property name prefix *holon.datastore*.
+The interface extends the default `ConfigPropertySet` API, bound to the property name prefix *holon.datastore*.
 
 The available configuration properties are listed below:
 
@@ -366,7 +481,10 @@ The available configuration properties are listed below:
 
 |_holon.datastore._ *trace*
 |Boolean (`true` / `false`)
-|Enable/disable Datastore operations tracing in log (for example, the concrete query definitions)
+|Enable/disable `Datastore` operations tracing in log
+|_holon.datastore._ *dialect*
+|String
+|The fully qualified class name of the _dialect_ to be used by the `Datastore`. The _dialect_ semantics and the available implementations are specific for each `Datastore` implementation. See each specific `Datastore` implementation documentation for information.
 |===
 
 The `DatastoreConfigProperties` can be loaded from a number of sources using the default `ConfigPropertySet` builder interface:
@@ -380,9 +498,9 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag
 <3> Read the configuration properties from a `Properties` instance
 <4> Read the configuration properties from the `datastore.properties` file
 
-===== Multiple Datastore configuration
+===== Multiple Datastores configuration
 
-When multiple `Datastore` configuration is required and properties are read from the same source, a _data context id_ can be used to discern one `Datastore` configuration property set form another.
+When multiple `Datastore` configuration is required and properties are read from the same source, a _data context id_ can be used to discern one `Datastore` configuration property set from another.
 
 From the property source point of view, the _data context id_ is used as a *suffix* after the configuration property set name (`holon.datastore`) and before the specific property name.
 
@@ -402,32 +520,21 @@ In order to provide the configuration for two `Datastore` instances, one bound t
 include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=config2,indent=0]
 ----
 
-==== Common Datastore configuration properties
-
-The link:{apidir}/com/holonplatform/core/datastore/DatastoreConfigProperties.html[DatastoreConfigProperties^] interface is a  `ConfigPropertySet` bound to the property name prefix *holon.datastore*, which provides common `Datastore` configuration properties:
-
-|===
-|Name |Type |Meaning
-
-|_holon.datastore._ *trace*
-|Boolean (true/false)
-|Enable or disable Datastore operations tracing (for example, logging the concrete query/operations executed in native persistence store language).
-
-|_holon.datastore._ *dialect*
-|String
-|The fully qualified class name of the _dialect_ to be used, if the concrete Datastore supports dialects.
-|===
-
+[[RelationalDatastores]]
 ==== Relational Datastores
 
-Regarding the _relational_ `Datastore` implementations, i.e. Datastores bound to a *RDBMS*, some additional components are provided to express typical _relational_ concepts concerning query definition and execution.
+When a `Datastore` implementation refers to a *relational* persistence data model, some additional expressions  are provided to use typical _relational_ concepts concerning query definition and execution.
 
 [[subquery]]
 ===== Sub-query
 
 The link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html[SubQuery^] interface can be used to represent a _sub-query_,  which can be used in a query definition to express query restrictions (filters) that involve a sub-query as filter operand.
 
-To create a `SubQuery`, the `create(...)` static method of the link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html[SubQuery^] interface can be used. The `SubQuery` definition process (target, restrictions, ordering and so on) is the same of a normal `Query` definition process, sharing the same query builder interface. In addition, a `SubQuery` must provide a `QueryProjection` to define the sub query selection type.
+To create a `SubQuery`, the `create(...)` static methods of the link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html[SubQuery^] interface can be used. 
+
+Since `SubQuery` extends link:{apidir}/com/holonplatform/core/query/QueryBuilder.html[QueryBuilder^], a sub query cna be configured (setting the query target, restrictions, sorting and so on) the same way as a standard `Query`. 
+
+The `SubQuery` projection is provided to the `create(...)` builder methods at sub query definition time.
 
 A `SubQuery` is a `QueryExpression`, allowing to use it as a `QueryFilter` operand.
 
@@ -440,7 +547,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sub
 <1> Create a `SubQuery`
 <2> Use the `SubQuery` as the right operand of a `IN` query filter
 
-Two convenience methods are provided by the `SubQuery` interface to create *EXISTS* and *NOT EXISTS* filter predicates. In this case, the sub-query selection projection is not required, and by default a `1` literal value will be used as selection.
+Two convenience methods are provided by the `SubQuery` interface to create *EXISTS* and *NOT EXISTS* filter predicates. In this case, the sub-query selection projection is not required, since the `1` literal value is used by default as projection.
 
 [source, java]
 ----
@@ -452,7 +559,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=sub
 [[joins]]
 ===== Alias and Joins
 
-The link:{apidir}/com/holonplatform/core/datastore/relational/RelationalTarget.html[RelationalTarget^] interface can be used to express *alias* and *joins* for a `DataTarget`.
+The link:{apidir}/com/holonplatform/core/datastore/relational/RelationalTarget.html[RelationalTarget^] interface can be used to declare and *alias* and to configure *joins* for a `DataTarget`.
 
 A `RelationalTarget` is a `DataTarget` itself, and provides methods to assign an *alias* name to the query target and to create *joins* with other targets.
 
@@ -469,11 +576,9 @@ The following join types are supported:
 * *LEFT JOIN*: returns all rows from the left table (represented by the source `DataTarget`), and the matched rows from the right table (represented by the joined `DataTarget`);
 * *RIGHT JOIN*: returns all rows from the right table (represented by the joined `DataTarget`), and the matched rows from the left table (represented by the source `DataTarget`);
 
-IMPORTANT: Only one level of joins is supported, i.e. only the source `DataTarget` represented by the `RelationalTarget` can be joined with other targets, and no _sub_ join is supported.
-
 The link:{apidir}/com/holonplatform/core/datastore/relational/Join.html[Join^] interface represents the join expression, supporting an *alias* name definition and a *ON* clause definition, to express any join restriction/filter predicate.
 
-A `RelationalTarget` is created form a conventional `DataTarget` using the `of(DataTarget target)` static method.
+A `RelationalTarget` is created from a conventional `DataTarget` using the `of(DataTarget target)` static method.
 
 IMPORTANT: When joins are used in a query, to avoid property/column names ambiguity, it is strongly recommended to provide a *parent* `DataTarget` for the query properties. The parent `DataTarget` of a `Property` can be setted using the `parent(...)` method of the property builder or directly using the `property(...)` methods provided by the link:{apidir}/com/holonplatform/core/datastore/DataTarget.html[DataTarget^] interface to create a `Property` with the given `DataTarget` as parent.
 
@@ -488,57 +593,122 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=joi
 <5> Join (using a *RIGHT* join type) the `TARGET1` with the `TARGET2`, using a *ON* clause to express the join condition
 <6> Use the created `RelationalTarget` as a query target
 
-==== Datastore extension
+[[TransactionalDatastores]]
+==== Transactional Datastores
+
+If a `Datastore` implementation supports *transactions*, the link:{apidir}/com/holonplatform/core/datastore/transaction/Transactional.html[Transactional^] API can be used to manage the transactions at a higher level, in an abstract and implementation-independent way.
+
+The `Transactional` API makes available method to execute a `Datastore` operation within a transaction, taking care of the transaction lifecycle.
+
+The link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionalOperation.html[TransactionalOperation^] functional interface has to used to perform actual operation execution and to handle the current transaction, represented by a link:{apidir}/com/holonplatform/core/datastore/transaction/Transaction.html[Transaction^] reference, for example to perform transaction *commit* or *rollback*.
+
+The `Datastore` API provides a `isTransactional()` method which can be used to check if the concrete `Datastore` implementation supports transaction and to obtain it as a `Transactional` API reference. The `requireTransactional()` method has the same meaning, but throws an exception if the concrete `Datastore` implementation does not support transactions.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional1,indent=0]
+----
+<1> Check if `Datastore` is transactional: if so, obtain the `Transactional` API reference
+<2> Execute on operation within a transaction and return a `OperationResult` type result
+<3> Execute the actual operation
+<4> Commit the transaction
+
+When a return value is not needed, the `TransactionalInvocation` interface can be used instead of the standard `TransactionalOperation` one.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional2,indent=0]
+----
+<1> Require the `Datastore` to be transactional and obtain the `Transactional` API reference
+<2> Execute on operation within a transaction which do not returns any result
+<3> Execute the actual operation
+<4> Commit the transaction
+
+The link:{apidir}/com/holonplatform/core/datastore/transaction/Transaction.html[Transaction^] interface allows also to set the transaction as *rollback only*, so that the only possible outcome of the transaction is for the transaction to be rolled back.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional3,indent=0]
+----
+<1> Set the transaction as rollback only
+
+The link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionConfiguration.html[TransactionConfiguration^] API can be used to *configure the transaction*.
+
+The transaction configuration options are:
+
+* Set the *auto-commit* mode: whether the transaction must be committed when a transactional operation ends and no error occurred. Default is `false`.
+* Set the *rollback on error* mode: whether the transaction must be rolled back when an exception is thrown during a transactional operation execution. Default is `true`.
+* Configure the *transaction isolation* level, if supported by the concrete `Datastore` implementation
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional4,indent=0]
+----
+<1> Configure the transaction enabling the auto-commit mode
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional5,indent=0]
+----
+<1> Configure the transaction disabling the _rollback on error_ behaviour and the auto-commit mode
+
+[[DatastoreExtension]]
+==== Datastore API extensions
 
 Datastores provides two main entry points for extension purposes:
 
-* `Datastore` components and operations extension through link:{apidir}/com/holonplatform/core/ExpressionResolver.html[ExpressionResolver^], which can be used to add custom expressions in order to extend or modify the data manipulation operations and query definition and execution strategies.
+* Use the `Expression` based architecture, through the link:{apidir}/com/holonplatform/core/ExpressionResolver.html[ExpressionResolver^] interface, to provide custom expressions and the expression resolution logic which is required to _resolve_ such expressions in a form that the `Datastore` is able to understand.
 
-* Additional `Datastore` operations and functionalities relying on the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] concept, through the registration of a link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodityFactory.html[DatastoreCommodityFactory^].
+* Provide additional `Datastore` operations and functionalities relying on the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] concept, through the registration of a link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodityFactory.html[DatastoreCommodityFactory^].
 
-===== Common `ExpressionResolver` s
+===== Extend the Datastore API using `ExpressionResolver`
 
-For the most common query use cases, a set of builtin `ExpressionResolver` are made available to extend the main query clauses, providing custom clause representations to be translated into a standard query clause which the `Datastore` can handle.
+The `Datastore` API supports `ExpressionResolver` registration, to add new expression resolution strategies and to handle new `Expression` types.
 
-An `ExpressionResolver` can be registered or unregistered in a `Datastore` implementation using the `addExpressionResolver(...)` and `removeExpressionResolver(...)` methods.
+In a general sense, any new expression type should be resolved in an expression type that the `Datastore` is able to understand.
 
-TIP: See concrete `Datastore` implementations documentation for additional information about any other `ExpressionResolver` based extension capabilities and resolvers registration options.
+Each concrete `Datastore` implementation could provide additional expression types and specific expression resolution capabilities. See each `Datastore` implementation documentation to learn about any additional extension capability which could be provide by a specific `Datastore` implementation.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=resolver,indent=0]
+----
+<1> Create a custom `QuerySort` expression class
+<2> Create an `ExpressionResolver` to resolve the `MyExpression` type into a standard `QuerySort` type
+<3> Register the `ExpressionResolver` in the `Datastore`
+<4> Use the `MyExpression` type as any other `QuerySort` expression
+
+For the most common query expressions, convenience `ExpressionResolver` types are provided to easily create expression resolution extensions. See below for the available core `ExpressionResolver` extensions.
 
 [[DataTargetResolver]]
 ===== DataTargetResolver
 
-A link:{apidir}/com/holonplatform/core/datastore/DataTarget.DataTargetResolver.html[DataTargetResolver^] can be defined and registered in `Datastore` to _resolve_ a `DataTarget` unknown to the concrete Datastore implementation, by translating it into one which the Datastore can recognize and handle.
+The link:{apidir}/com/holonplatform/core/datastore/DataTarget.DataTargetResolver.html[DataTargetResolver^] is a convenience `ExpressionResolver` extension to resolve <<DataTarget>> type expressions.
 
 Tipically, a `DataTargetResolver` can be defined to resolve a `DataTarget` with a symbolic name into a specific Datastore data target.
 
 [source, java]
-.DataTargetResolver example
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=resolver,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=datatargetresolver,indent=0]
 ----
-<1> Create a resolver which translates the symbolic `test` name in another named target with the `wellKnownTargetName` name
-<2> Register the resolver in the Datastore
+<1> Create a resolver which translates the symbolic `test` data target name into another named target with the `wellKnownTargetName` name
 
-===== Custom QueryFilters
+[[QueryFilterResolver]]
+===== QueryFilterResolver
 
-You can define and register custom `QueryFilter` implementations, to provide new predicates as a combination of simple standard predicates, possibly relying on parameters or application specific conditions, or to express specific filtering conditions related to a concrete persistence model to which a Datastore is bound.
+The link:{apidir}/com/holonplatform/core/query/QueryFilter.QueryFilterResolver.html[QueryFilterResolver^] interface is a convenience `ExpressionResolver` extension to resolve <<QueryFilter>> type expressions.
 
-A custom QueryFilter can be registered in a `Datastore` using standard <<ExpressionResolver>> interface.
-
-A convenience link:{apidir}/com/holonplatform/core/query/QueryFilter.QueryFilterResolver.html[QueryFilterResolver^] interface is provided to facilitate the creation of a QueryFilter resolver.
-
-A typical custom `QueryFilter` definition process takes place with the following steps:
+A typical custom `QueryFilter` expression definition process takes place with the following steps:
 
 . First af all, you have to define your custom filter representation, providing a class which implements the `QueryFilter` interface (and, optionally, an interface which extends `QueryFilter` and represents your custom filter API);
-. Then create a class which implements `QueryFilterResolver`, generalized on your custom filter class/interface, whose purpose is to resolve the custom filter, transforming it into a `QueryFilter` that can be handled by the concrete `Datastore`. Two examples are: one of the builtin `QueryFilter` as described above, or a persistence model specific filter type recognized by a specific `Datastore` implementation.
+. Then create a class which implements `QueryFilterResolver`, generalized on your custom filter class/interface, whose purpose is to resolve the custom filter, transforming it into a `QueryFilter` that can be handled by the concrete `Datastore`.
 . Finally, register the `QueryFilterResolver` in the `Datastore` instance, using the `addExpressionResolver(...)` method.
 
-When the custom filter is defined and registered, it can be used anywhere in the _query_ or _bulk_ operations clauses obtained from the `Datastore` in which the resolver is registered.
+When the resolver is registered, the custom filter can be used as any another `QueryFilter` implementation.
 
 [source, java]
-.Custom QueryFilter example
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=custom,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=customfilter,indent=0]
 ----
 <1> Custom filter definition, implementing `QueryFilter`
 <2> Custom filter resolver class
@@ -546,24 +716,22 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=cus
 <4> The resolver is registered in the `Datastore`, enabling the use of the `MyFilter` type filter in query and bulk operations clauses
 <5> Use of a `MyFilter` in a query execution 
 
-===== Custom QuerySorts
+[[QuerySortResolver]]
+===== QuerySortResolver
 
-A custom `QuerySort` can be registered in a `Datastore` using standard <<ExpressionResolver>> interface.
+The link:{apidir}/com/holonplatform/core/query/QuerySort.QuerySortResolver.html[QuerySortResolver^] interface is a convenience `ExpressionResolver` extension to resolve <<QuerySort>> type expressions.
 
-A convenience link:{apidir}/com/holonplatform/core/query/QuerySort.QuerySortResolver.html[QuerySortResolver^] interface is provided to facilitate the creation of a QuerySort resolver.
-
-A typical custom `QuerySort` definition process takes place with the following steps:
+A typical custom `QuerySort` expression definition process takes place with the following steps:
 
 . First af all, you have to define your custom sort representation, providing a class wich implements the `QuerySort` interface (and, optionally, an interface which extends `QuerySort` and represents your custom filter API);
-. Then create a class which implements `QuerySortResolver`, generalized on your custom sort class/interface, whose purpose is to resolve the custom sort, transforming it into a `QuerySort` declaration which the concrete `Datastore` can handle. For example, one of the builtin `QuerySort` as described above, or a persistence model specific sort type recognized by a specific `Datastore` implementation.
+. Then create a class which implements `QuerySortResolver`, generalized on your custom sort class/interface, whose purpose is to resolve the custom sort, transforming it into a `QuerySort` declaration which the concrete `Datastore` can handle. 
 . Finally, register the `QuerySortResolver` in the `Datastore` instance, using the `addExpressionResolver(...)` method.
 
-When the custom sort is defined and registered, it can be used anywhere in the _query_ clauses obtained from the `Datastore` in which the resolver is registered.
+When the resolver is registered, the custom sort can be used as any another `QuerySort` implementation.
 
 [source, java]
-.Custom QuerySort example
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=customsort,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=customsort,indent=0]
 ----
 <1> Custom sort definition, implementing `QuerySort`
 <2> Custom sort resolver class
@@ -571,19 +739,22 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=cus
 <4> The resolver is registered in the `Datastore`, enabling the use of the `MySort` type sort in query clauses
 <5> Use of a `MySort` in a query execution
 
+[[DatastoreCommodities]]
 ===== Datastore _commodities_ definition and registration
 
 Using the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] representation, a `Datastore` can be extended by adding new operations and functionalities, represented by a class which implements the `DatastoreCommodity` interface.
 
 A `DatastoreCommodity` must be provided using a link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodityFactory.html[DatastoreCommodityFactory^] implementation, which has to be registered in the target `Datastore` through the `registerCommodity(DatastoreCommodityFactory<X, C> commodityFactory)` method.
 
-Each commodity factory is bound to a specific `DatastoreCommodity` type, provided by the `getCommodityType()` factory method, and can use a `DatastoreCommodityContext` to create and configure the commodity instance when requested. Typically, each concrete Datastore implementation provides a specific `DatastoreCommodityContext` extension, to provide useful `Datastore` context and  configuration references.
+NOTE: Concrete `Datastore` implementations may provide other methods to register a commodity. See each specific `Datastore` implementation documentation for details.
 
-A `DatastoreCommodity` can be obtained from `Datastore` using the `create(Class<C> commodityType)` method. A `DatastoreCommodityFactory` bound to the requested commodity type must be available, i.e. previuosly registered in `Datastore`, in order to obtain the commodity instance.
+Each commodity factory is bound to a specific `DatastoreCommodity` type, provided by the `getCommodityType()` factory method, and can use a `DatastoreCommodityContext` to create and configure the commodity instance when requested. 
 
-The `Query` object itself is a `DatastoreCommodity`, obtained by the convenience Datastore `query()` method. Each concrete Datastore implementation register a default factory to provide such commodity.
+NOTE: Concrete `Datastore` implementations may offer specific `DatastoreCommodityContext` extensions to provide specific `Datastore` context references and configuration attributes.
 
-TIP: See concrete `Datastore` implementations documentation for additional information about any specific available _commodity_ types and registration options.
+A `DatastoreCommodity` can be obtained from a `Datastore` using the `create(Class<C> commodityType)` method. A `DatastoreCommodityFactory` bound to the requested commodity type must be available, i.e. previuosly registered in `Datastore`, in order to obtain the commodity instance.
+
+See each concrete `Datastore` implementations documentation for further details and examples.
 
 ==== Available Datastores
 

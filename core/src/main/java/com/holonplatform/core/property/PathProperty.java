@@ -25,8 +25,6 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.PathExpression;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryProjection;
-import com.holonplatform.core.query.QuerySort;
-import com.holonplatform.core.query.QuerySort.SortDirection;
 import com.holonplatform.core.temporal.TemporalType;
 
 /**
@@ -92,24 +90,6 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 	@Override
 	default Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
 		return getConverter().map(converter -> ExpressionValueConverter.fromProperty(this, converter));
-	}
-
-	// QuerySort builders
-
-	/**
-	 * Build a {@link SortDirection#ASCENDING} sort using this property.
-	 * @return Ascending {@link QuerySort}
-	 */
-	default QuerySort asc() {
-		return QuerySort.asc(this);
-	}
-
-	/**
-	 * Build a {@link SortDirection#DESCENDING} sort using this property.
-	 * @return Descending {@link QuerySort}
-	 */
-	default QuerySort desc() {
-		return QuerySort.desc(this);
 	}
 
 	// Builders

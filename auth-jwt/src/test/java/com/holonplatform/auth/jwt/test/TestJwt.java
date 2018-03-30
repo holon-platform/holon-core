@@ -49,6 +49,7 @@ import com.holonplatform.auth.jwt.AuthenticationClaims;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.auth.jwt.JwtTokenBuilder.AuthPart;
 import com.holonplatform.auth.jwt.internal.AuthenticationClaimsImpl;
@@ -241,7 +242,7 @@ public class TestJwt {
 
 		SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
 
-		JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+		JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(key.getEncoded()).build();
 
 		Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
@@ -289,7 +290,7 @@ public class TestJwt {
 		jwt = JwtTokenBuilder.buildJWT(authc, "TestId", "TestUnit", 20000L, null, (String) null);
 		assertNotNull(jwt);
 
-		cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+		cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKeyBase64(Base64.getEncoder().encodeToString(key.getEncoded())).build();
 
 		realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
@@ -335,7 +336,7 @@ public class TestJwt {
 		PrivateKey privateKey = keyPair.getPrivate();
 		PublicKey publicKey = keyPair.getPublic();
 
-		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.RS256.getValue())
+		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.RS256)
 				.privateKey(privateKey).publicKey(publicKey).build();
 
 		final Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build())
@@ -360,7 +361,7 @@ public class TestJwt {
 
 		byte[] sharedKey = generateKey();
 
-		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(SignatureAlgorithm.HS256.getValue())
+		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(sharedKey).build();
 
 		final Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build())
