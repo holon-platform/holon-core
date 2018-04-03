@@ -22,13 +22,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
-import com.holonplatform.core.Context;
 import com.holonplatform.core.beans.BeanConfigProperties;
 import com.holonplatform.core.config.ConfigPropertyProvider;
 import com.holonplatform.core.internal.config.DefaultConfig;
@@ -36,12 +34,11 @@ import com.holonplatform.core.internal.config.PrefixedConfigPropertyProvider;
 import com.holonplatform.core.internal.config.PropertiesConfigProvider;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.TestUtils;
-import com.holonplatform.core.tenancy.TenantResolver;
 
-public class TestCore {
+public class TestConfig {
 
 	@Test
-	public void testCore() {
+	public void testUtils() {
 		TestUtils.checkUtilityClass(DefaultConfig.class);
 	}
 
@@ -133,25 +130,14 @@ public class TestCore {
 	}
 
 	@Test
-	public void testTenant() {
+	public void testConfigPropertyNames() {
 
-		TenantResolver tr = TenantResolver.staticTenantResolver("test");
+		BeanConfigProperties ps = BeanConfigProperties.builder().withDefaultPropertySources().build();
 
-		assertTrue(tr.getTenantId().isPresent());
-		assertEquals("test", tr.getTenantId().orElse(null));
+		String name = ps.getConfigPropertyName(BeanConfigProperties.BEAN_INTROSPECTOR_CACHE_ENABLED);
 
-		Optional<TenantResolver> resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
-		assertFalse(resolver.isPresent());
-
-		Context.get().threadScope().map((s) -> s.put(TenantResolver.CONTEXT_KEY, tr));
-
-		resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
-		assertTrue(resolver.isPresent());
-		assertEquals("test", resolver.get().getTenantId().orElse(null));
-
-		Context.get().threadScope().ifPresent(s -> s.remove(TenantResolver.CONTEXT_KEY));
-		resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
-		assertFalse(resolver.isPresent());
+		assertNotNull(name);
+		assertEquals(ps.getName() + "." + BeanConfigProperties.BEAN_INTROSPECTOR_CACHE_ENABLED.getKey(), name);
 
 	}
 

@@ -53,6 +53,7 @@ import com.holonplatform.core.temporal.TemporalType;
  * @see NumericProperty
  * @see TemporalProperty
  * @see BooleanProperty
+ * @see PropertyBoxProperty
  */
 public interface PathProperty<T> extends Property<T>, PathExpression<T>, ConverterExpression<T> {
 

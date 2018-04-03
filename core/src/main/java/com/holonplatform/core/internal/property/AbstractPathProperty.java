@@ -157,7 +157,7 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public String toString() {
-		return "AbstractPathProperty [name=" + name + ", getType()=" + getType() + "]";
+		return "PathProperty [name=" + name + ", getType()=" + getType() + "]";
 	}
 
 }

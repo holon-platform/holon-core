@@ -81,6 +81,17 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyName(com.holonplatform.core.config.
+	 * ConfigProperty)
+	 */
+	@Override
+	public <T> String getConfigPropertyName(ConfigProperty<T> property) {
+		ObjectUtils.argumentNotNull(property, "Configuration property must be not null");
+		return getName() + "." + property.getKey();
+	}
+
 	/**
 	 * Add a {@link ConfigPropertyProvider} for configuration properties resolution.
 	 * @param propertyProvider The property provider to add

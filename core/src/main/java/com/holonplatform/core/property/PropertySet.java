@@ -45,6 +45,13 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	public static final String CONTEXT_KEY = PropertySet.class.getName();
 
 	/**
+	 * The {@link PropertyConfiguration} attribute to use to declare the PropertySet for a PropertyBox type
+	 * {@link Property}.
+	 */
+	public static final ConfigProperty<PropertySet> PROPERTY_CONFIGURATION_ATTRIBUTE = ConfigProperty
+			.create(CONTEXT_KEY, PropertySet.class);
+
+	/**
 	 * Returns the number of properties in this set. If this set contains more than <tt>Integer.MAX_VALUE</tt> elements,
 	 * returns <tt>Integer.MAX_VALUE</tt>.
 	 * @return the number of properties in this set

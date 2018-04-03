@@ -511,9 +511,10 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 			annotations = propertyField.getAnnotations();
 		}
 
-		BeanProperty.Builder<?> property = getPropertyBuilder(propertyDescriptor).parent(parent)
-				.readMethod(propertyDescriptor.getReadMethod()).writeMethod(propertyDescriptor.getWriteMethod())
-				.field(propertyField).annotations(annotations);
+		BeanProperty.Builder<?> property = getPropertyBuilder(propertyDescriptor,
+				(annotations != null) ? annotations : new Annotation[0]).parent(parent)
+						.readMethod(propertyDescriptor.getReadMethod()).writeMethod(propertyDescriptor.getWriteMethod())
+						.field(propertyField).annotations(annotations);
 
 		if (parent == null && parentPath != null) {
 			property.parent(parentPath);
@@ -542,10 +543,12 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	/**
 	 * Get a suitable {@link BeanProperty} builder according to property type.
 	 * @param propertyDescriptor Property descriptor
+	 * @param annotations The annotations bound to the bean property
 	 * @return {@link BeanProperty} builder
 	 */
 	@SuppressWarnings("unchecked")
-	private static BeanProperty.Builder<?> getPropertyBuilder(PropertyDescriptor propertyDescriptor) {
+	private static BeanProperty.Builder<?> getPropertyBuilder(PropertyDescriptor propertyDescriptor,
+			Annotation[] annotations) {
 		// check type
 		if (TypeUtils.isString(propertyDescriptor.getPropertyType())) {
 			return StringBeanProperty.builder(propertyDescriptor.getName());

@@ -74,6 +74,27 @@ public final class AnnotationUtils implements Serializable {
 	}
 
 	/**
+	 * Get the first {@link Annotation} of given <code>annotationClass</code> from given <code>annotations</code> set,
+	 * if available.
+	 * @param <A> Annotation type
+	 * @param annotations Annotations set
+	 * @param annotationClass Annotation type (not null)
+	 * @return Optional annotation instance of given annotation class
+	 */
+	@SuppressWarnings("unchecked")
+	public static <A extends Annotation> Optional<A> getAnnotation(Annotation[] annotations, Class<A> annotationClass) {
+		ObjectUtils.argumentNotNull(annotationClass, "Annotation class must be not null");
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation != null && annotationClass.isAssignableFrom(annotation.annotationType())) {
+					return Optional.ofNullable((A) annotation);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Get the class which is annotated with given <code>annotation</code>, checking any superclass and implemented
 	 * interface.
 	 * @param cls Class to inspect (not null)

@@ -47,4 +47,27 @@ public class TestTenantResolver {
 
 	}
 
+	@Test
+	public void testTenantResolver() {
+
+		TenantResolver tr = TenantResolver.staticTenantResolver("test");
+
+		assertTrue(tr.getTenantId().isPresent());
+		assertEquals("test", tr.getTenantId().orElse(null));
+
+		Optional<TenantResolver> resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
+		assertFalse(resolver.isPresent());
+
+		Context.get().threadScope().map((s) -> s.put(TenantResolver.CONTEXT_KEY, tr));
+
+		resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
+		assertTrue(resolver.isPresent());
+		assertEquals("test", resolver.get().getTenantId().orElse(null));
+
+		Context.get().threadScope().ifPresent(s -> s.remove(TenantResolver.CONTEXT_KEY));
+		resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
+		assertFalse(resolver.isPresent());
+
+	}
+
 }

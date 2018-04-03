@@ -211,8 +211,9 @@ Four `PathProperty` sub types are provided out-of-the-box by the Holon platform:
 * link:{apidir}/com/holonplatform/core/property/NumericProperty.html[NumericProperty^]: Represents a `Number` type `PathProperty` and extends link:{apidir}/com/holonplatform/core/query/NumericQueryExpression.html[NumericQueryExpression^], providing numbers related expression builder methods.
 * link:{apidir}/com/holonplatform/core/property/TemporalProperty.html[TemporalProperty^]: Represents a _temporal_  type `PathProperty` and extends link:{apidir}/com/holonplatform/core/query/TemporalQueryExpression.html[TemporalQueryExpression^], providing temporal related expression builder methods.
 * link:{apidir}/com/holonplatform/core/property/BooleanProperty.html[BooleanProperty^]: Represents a _boolean_  type `PathProperty`.
+* link:{apidir}/com/holonplatform/core/property/PropertyBoxProperty.html[PropertyBoxProperty^]: Represents a `PropertyBox` type `PathProperty`, i.e. a property which value is a set of properties with its values. The property set definition must be provided at construction time. See <<PropertySet,PropertySet>> and <<PropertyBox,PropertyBox>> for details.
 
-NOTE: See the <<Query>> section for information about query definition and usage.
+Each `PathProperty` sub type interface provide static builder methods to create property instances using each specific type.
 
 [source, java]
 ----

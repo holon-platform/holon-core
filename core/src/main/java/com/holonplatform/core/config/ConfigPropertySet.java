@@ -46,6 +46,15 @@ public interface ConfigPropertySet {
 	String getName();
 
 	/**
+	 * Get the complete name of given configuration property, i.e. the property key prefixed by the
+	 * {@link ConfigPropertySet} name.
+	 * @param <T> Property type
+	 * @param property The configuration property for which to obtain the complete name (not null)
+	 * @return the complete configuration property name
+	 */
+	<T> String getConfigPropertyName(ConfigProperty<T> property);
+
+	/**
 	 * Checks whether this property set contains a not <code>null</code> value associated to given
 	 * <code>property</code>.
 	 * @param <T> Property type
@@ -96,7 +105,7 @@ public interface ConfigPropertySet {
 	 */
 	Map<String, String> getSubPropertiesUsingPrefix(String prefix);
 
-	// Builder
+	// ------- Builder
 
 	/**
 	 * Builder to create {@link ConfigPropertySet}s bound to property data sources.

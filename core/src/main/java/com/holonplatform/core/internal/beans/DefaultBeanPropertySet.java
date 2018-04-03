@@ -447,7 +447,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 						+ "] from instance [" + instance + "] using method [" + property.getReadMethod() + "]");
 
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				throw new PropertyReadException(property, e);
+				throw new PropertyReadException(property, "Failed to read bean property [" + property
+						+ "] from instance [" + instance + "] using method [" + property.getReadMethod() + "]", e);
 			}
 		} else {
 			Field field = property.getField()
@@ -461,7 +462,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 						+ "] from instance [" + instance + "] using field [" + field + "]");
 
 			} catch (IllegalAccessException e) {
-				throw new PropertyReadException(property, e);
+				throw new PropertyReadException(property, "Failed to read bean property [" + property
+						+ "] from instance [" + instance + "] using field [" + field + "]", e);
 			}
 
 		}
