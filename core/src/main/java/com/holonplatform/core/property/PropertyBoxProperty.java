@@ -35,16 +35,6 @@ public interface PropertyBoxProperty extends PathProperty<PropertyBox> {
 	PropertySet<?> getPropertySet();
 
 	/**
-	 * Create a new {@link PropertyBoxProperty} with given <code>name</code> and bound to given {@link PropertySet}.
-	 * @param name Property name (not null)
-	 * @param propertySet Property set (not null)
-	 * @return {@link PropertyBoxProperty} builder
-	 */
-	static PropertyBoxPropertyBuilder create(String name, PropertySet<?> propertySet) {
-		return new DefaultPropertyBoxProperty(name, propertySet);
-	}
-
-	/**
 	 * Create a new {@link PropertyBoxProperty} with given <code>name</code> and bound to given <code>properties</code>
 	 * property set.
 	 * @param <P> Property set property type
