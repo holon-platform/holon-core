@@ -56,7 +56,8 @@ public interface PropertyBoxProperty extends PathProperty<PropertyBox> {
 	 * @param properties Property set (not null)
 	 * @return {@link PropertyBoxProperty} builder
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings("rawtypes")
+	@SafeVarargs
 	static <P extends Property> PropertyBoxPropertyBuilder create(String name, P... properties) {
 		return new DefaultPropertyBoxProperty(name, PropertySet.of(properties));
 	}
