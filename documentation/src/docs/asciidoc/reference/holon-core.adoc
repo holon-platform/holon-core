@@ -1,4 +1,4 @@
-= Holon Platform Core - Reference manual
+= Holon Platform Core Module - Reference manual
 :description: Holon platform Core module reference documentation. \
 The Core section covers all the platform foundation architecture arguments, including Context resources, the Property data model, the Datastore API, multi-tenancy support, authentication and authorization, JWT support, Spring framework and Spring Boot integration.
 :revnumber: {project-version}
