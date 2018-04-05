@@ -21,6 +21,7 @@ The client is represented by the link:{apidir}/com/holonplatform/http/rest/RestC
 * Perform the request invocation with a specific HTTP _method_ providing a request message entity
 * Convenience methods to perform most common invocations using one of the `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`, `TRACE` or `HEAD` methods
 
+[[RestClientFactory]]
 ==== Obtain a `RestClient` instance
 
 Concrete `RestClient` implementations are obtained from a link:{apidir}/com/holonplatform/http/rest/RestClientFactory.html[RestClientFactory^], registered using Java service extensions through a `com.holonplatform.http.rest.RestClientFactory` file under the `META-INF/services` folder.
