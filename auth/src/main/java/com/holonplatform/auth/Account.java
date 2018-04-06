@@ -122,6 +122,26 @@ public interface Account extends CredentialsContainer, Serializable {
 	}
 
 	/**
+	 * Create a new {@link AccountCredentialsToken} with given account id and secret.
+	 * @param accountId Account id
+	 * @param secret Secret
+	 * @return A new {@link AuthenticationToken} with given credentials
+	 */
+	static AuthenticationToken accountCredentialsToken(String accountId, String secret) {
+		return new AccountCredentialsToken(accountId, secret);
+	}
+
+	/**
+	 * Create a new {@link AccountCredentialsToken} with given account id and secret.
+	 * @param accountId Account id
+	 * @param secret Secret
+	 * @return A new {@link AuthenticationToken} with given credentials
+	 */
+	static AuthenticationToken accountCredentialsToken(String accountId, byte[] secret) {
+		return new AccountCredentialsToken(accountId, secret);
+	}
+
+	/**
 	 * Builder to create {@link Account} instances.
 	 */
 	public interface Builder {
