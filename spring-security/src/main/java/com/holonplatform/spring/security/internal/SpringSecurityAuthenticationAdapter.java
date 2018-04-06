@@ -34,7 +34,7 @@ public class SpringSecurityAuthenticationAdapter implements Authentication {
 	private static final long serialVersionUID = 915059383615990660L;
 
 	private final com.holonplatform.auth.Authentication authentication;
-	
+
 	private boolean authenticated;
 
 	/**
@@ -110,6 +110,15 @@ public class SpringSecurityAuthenticationAdapter implements Authentication {
 	@Override
 	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
 		this.authenticated = isAuthenticated;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "SpringSecurityAuthenticationAdapter [getName()=" + getName() + "]";
 	}
 
 }

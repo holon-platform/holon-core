@@ -68,6 +68,7 @@ If an authentication operation is not successful, an `AuthenticationException` t
 |Generic authentication process failure
 |===
 
+[[AuthenticationToken]]
 ===== AuthenticationToken
 
 The link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface represents an authentication request, and provides the following methods:
@@ -195,6 +196,7 @@ The link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] interface 
 
 An `Authorizer` uses the <<Authentication>> representation to obtain the *permissions* granted to an authenticated _principal_, and provides several `isPermitted...` methods to perform permission control.
 
+[[Permission]]
 ===== Permission
 
 A *permission* is the representation of the access to a resource and can be expressed int two ways:

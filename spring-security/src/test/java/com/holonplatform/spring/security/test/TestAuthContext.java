@@ -18,9 +18,11 @@ package com.holonplatform.spring.security.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,8 +40,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.holonplatform.auth.Account;
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
+import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.spring.security.SpringSecurity;
 
@@ -66,7 +70,7 @@ public class TestAuthContext {
 	@Test
 	public void testAuthContext() {
 
-		final AuthContext ac = SpringSecurity.authContext(Realm.builder().withDefaultAuthorizer().build());
+		final AuthContext ac = SpringSecurity.authContext();
 
 		UsernamePasswordAuthenticationToken tkn = new UsernamePasswordAuthenticationToken("user", "pwd",
 				Arrays.asList(new GrantedAuthority[] { new SimpleGrantedAuthority("role1") }));
@@ -82,10 +86,52 @@ public class TestAuthContext {
 		assertEquals("user", a.getName());
 		assertEquals(1, a.getPermissions().size());
 		assertEquals("role1", a.getPermissions().iterator().next().getPermission().orElse(null));
+		
+		assertTrue(ac.isPermitted("role1"));
 
 		SecurityContextHolder.getContext().setAuthentication(null);
 
 		assertFalse(ac.isAuthenticated());
+
+	}
+
+	@Test
+	public void testAuthContextRealm() {
+		
+		// reset context
+		SecurityContextHolder.getContext().setAuthentication(null);
+
+		final Realm realm = Realm.builder().withDefaultAuthorizer().authenticator(Account.authenticator(id -> {
+			if ("usr".equals(id)) {
+				return Optional.of(Account.builder(id).credentials(Credentials.builder().secret("pwd").build())
+						.permission("role1").build());
+			}
+			return Optional.empty();
+		})).build();
+		
+		final AuthContext ac = SpringSecurity.authContext(realm);
+		
+		assertNull(SecurityContextHolder.getContext().getAuthentication());
+		assertFalse(ac.isAuthenticated());
+		
+		// authenticate using realm
+		ac.authenticate(Account.accountCredentialsToken("usr", "pwd"));
+		
+		assertTrue(ac.isAuthenticated());
+		assertNotNull(SecurityContextHolder.getContext().getAuthentication());
+		
+		org.springframework.security.core.Authentication authc = SecurityContextHolder.getContext().getAuthentication();
+		
+		assertEquals("usr", authc.getName());
+		assertTrue(authc.getAuthorities().size() == 1);
+		
+		GrantedAuthority ga = null;
+		for (GrantedAuthority g : authc.getAuthorities()) {
+			if ("role1".equals(g.getAuthority())) {
+				ga = g;
+			}
+		}
+		assertNotNull(ga);
 
 	}
 

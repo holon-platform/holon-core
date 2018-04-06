@@ -53,7 +53,7 @@ public class DefaultSpringSecurityAuthentication extends DefaultParameterSet imp
 		super();
 		ObjectUtils.argumentNotNull(authentication, "Authentication must be not null");
 		this.authentication = authentication;
-		
+
 		// details
 		addParameter(AUTHENTICATION_DETAILS_KEY, authentication.getDetails());
 	}
@@ -192,6 +192,16 @@ public class DefaultSpringSecurityAuthentication extends DefaultParameterSet imp
 		} else if (!authentication.equals(other.authentication))
 			return false;
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "DefaultSpringSecurityAuthentication [authentication=" + authentication + ", getName()=" + getName()
+				+ "]";
 	}
 
 }
