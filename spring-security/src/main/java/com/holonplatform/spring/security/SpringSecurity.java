@@ -28,6 +28,7 @@ import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.Authenticator;
+import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.token.AccountCredentialsToken;
@@ -49,6 +50,21 @@ import com.holonplatform.spring.security.internal.SpringSecurityPermission;
  * @since 5.1.0
  */
 public interface SpringSecurity {
+
+	/**
+	 * Create an {@link AuthContext} which uses the Spring Security {@link SecurityContext} as authentication holder.
+	 * The default {@link SecurityContextHolder#getContext()} method is used to obtain the Spring Security
+	 * {@link SecurityContext} reference.
+	 * <p>
+	 * The {@link AuthContext} is bound to a default {@link Realm} instance, configured with the default
+	 * {@link Authorizer}.
+	 * </p>
+	 * @return A new {@link AuthContext} using the Spring Security {@link SecurityContext} as authentication holder
+	 * @see #authContext(Realm)
+	 */
+	static AuthContext authContext() {
+		return authContext(Realm.builder().withDefaultAuthorizer().build());
+	}
 
 	/**
 	 * Create an {@link AuthContext} which uses the Spring Security {@link SecurityContext} as authentication holder.
