@@ -1,50 +1,174 @@
 [[Realm]]
 === Realm
 
-The link:{apidir}/com/holonplatform/auth/Realm.html[Realm^] interface represents a security abstraction providing operations for the _principals_ *authentication* and *authorization* (permission check against _principal_ grants stored in the realm).
+The link:{apidir}/com/holonplatform/auth/Realm.html[Realm^] API represents a security abstraction providing operations for _principals_ *authentication* and *authorization*.
 
-A Realm may be identified by *name*, which should be unique within the same application.
+The `Realm` API is the main entry point to deal with the Holon Platform authentication and authorization architecture: it holds the configuration of the authentication and authorization context and provides operations to perform _principals_ authentication and authorization controls.
 
-The `Realm` interface is a composition of more specific interfaces, each dealing with a security concern and/or providing hooks to interact with the authentication and authorization process:
+The `Realm` *authentication strategy* is defined using a set of _authenticators_, represented by the link:{apidir}/com/holonplatform/auth/Authenticator.html[Authenticator^] interface, each bound to a specific link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^], which represents the principal's credentials.
 
-* `Authenticator`: It performs the _principal_ authentication, relying on an `AuthenticationToken` to obtain the necessary information to validate the authentication request, it checks the provided credentials and applies a consistent strategy to perform actual authentication
-* `MessageAuthenticator`: It performs the _principal_ authentication using a generic `Message` (for example, an HTTP request message) from which the authentication informations can be obtained
-* `Authorizer`: It performs _permission_ check against available _principal_ grants
-* `AuthenticationNotifier`: It allows `AuthenticationListener` registration to be notified when a successfull authentication happens
+In a mirrored way, the `Realm` *authorization strategy* is defined using a set of _authorizers_, represented by the link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] interface, each bound to a specific link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] type, and used by the `Realm` API to perform authorization controls against the principal's granted permissions.
 
-TIP: The `Realm` interface provides a convenience `getCurrent()` static method to obtain the current `Realm` instance made available as `Context`resource, using default ClassLoader. See link:core.html#Context[Context] section for further information about context resources.
+The _authenticators_ and _authorizers_ bound to a specific `Realm` instance define the authentication and authorization strategy of such `Realm`, so they are registered at `Realm` configuration time.
+
+The `Realm` API provides a _fluent_ builder to build and configure a `Realm` instance, with _authenticators_ and _authorizers_ registration methods.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=builder,indent=0]
+----
+<1> Obtain a `Realm` builder
+<2> Register an `Authenticator`
+<3> Register another `Authenticator`
+<4> Register an `Authorizer`
+<5> Register another `Authorizer`
+
+The <<Authenticator>> and <<Authorizer>> sections describe these API definitions in detail.
+
+==== Realm name
+
+A `Realm` instance can be identified by a *name*, which can be used to identify a specific `Realm` instance when more than one is available.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=name,indent=0]
+----
+<1> Set the `Realm` name using the default builder
+<2> Get the `Realm` name, if available
+
+[[RealmAuthentication]]
+==== Ream authentication
+
+To perform an _authentication_, the `Realm` API provides the `authenticate(AuthenticationToken authenticationToken)` method.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator1,indent=0]
+----
+<1> Perform an authentication request using the `MyAuthenticationToken` authentication token type
+
+The `Realm` API itself does not implement any authentication model or strategy, but delegates the specific authentication strategy to one or more concrete <<Authenticator>>, relying on the `AuthenticationToken` type in order to discern which `Authenticator` has to be used to handle the authentication process.
+
+The authentication flow is structured as follows:
+
+. A concrete `AuthenticationToken`, which represents the authentication request (for example, the  _principal_'s credentials), is provided to the `authenticate` method;
+. The Realm checks if a suitable `Authenticator` is registered, i.e. an `Authenticator` which can handle the given `AuthenticationToken` type. If not, an `UnsupportedTokenException` is thrown;
+. The `authenticate(AuthenticationToken authenticationToken)` method is called on the specific `Authenticator` API, performing the concrete authentication operation.
+. If the authentication operation is successful, the authenticated principal is returned using `Authentication` representation.
+. Otherwise, an `AuthenticationException` type is thrown. The concrete type of the exception gives more detailed informations on what went wrong.
+
+Each `Authenticator` declares the <<AuthenticationToken>> type to which is bound through the `getTokenType()` method. When a new `Authenticator` is registered, the `Realm` instance will support the `AuthenticationToken` type which is bound to the registered `Authenticator`, and such `Authenticator` will be used to perform the authentication operation when a matching `AuthenticationToken` type is provided.
+
+TIP: See the <<Authenticator>> section to learn how an `Authenticator` can be registered in a `Realm` instance.
+
+To check if a `Realm` instance supports a specific `AuthenticationToken` type, the `supportsToken` API method can be used.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator2,indent=0]
+----
+<1> Checks whether given `Realm` supports the `MyAuthenticationToken` authentication token type
+
+See the next section for details about authenticators, authentication tokens and the authenticated principal representation.
+
+[[AuthenticationToken]]
+==== AuthenticationToken
+
+The link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface represents an authentication request, and provides the following methods:
+
+* `getPrincipal()`: the *principal* this authentication token refers to, i.e. the account identity submitted during the authentication process. The return type is a generic `Object`, since each authentication model could provide the _principal_ information in a different way.
+* `getCredentials()`: the *credentials* submitted during the authentication process that verifies the submitted _principal_ account identity. The return type is a generic `Object`, since each authentication model could represent the _principal_ credentials in a different way.
+
+Each `AuthenticationToken` sub-type is bound to an <<Authenticator>>, which is able to interpret the _principal_ and _credentials_ representations and to perform the actual authentication process using the information provided through the `AuthenticationToken` instance.
+
+Some builtin `AuthenticationToken` representations are provided by the core Holon Platform module:
+
+[[AccountCredentialsToken]]
+===== Account credentials authentication token
+
+The _account credentials_ token represents generic account authentication information, where an _account_ is identified by a String type *id* (similar to a _username_) and a String type *secret* (similar to a _password_).
+
+This token returns the account *id* from the `getPrincipal()` method, and the account *secret* from the `getCredentials()` method.
+
+An account credentials token can be created by using the static `accountCredentials(...)` method of the `AuthenticationToken` interface:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=accounttoken,indent=0]
+----
+<1> Create an _account credentials_ authentication token type using `username` as account id (the principal's name) and `password` as account secret (the account credentials)
+
+[[BearerAuthenticationToken]]
+===== Bearer authentication token
+
+The _bearer_ token represents a String type information which identifies (or it is bound to) a _principal_ and can be used to perform the authentication or grant the access to a resource, checking the token validity. This kind of token is used, for example, in _OAuth_ or _JWT_ authentication and authorization models.
+
+This token returns `null` from the `getPrincipal()` method, and the *bearer token* from the `getCredentials()` method.
+
+A bearer token can be created using the static `bearer(...)` method of the `AuthenticationToken` interface:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=bearertoken,indent=0]
+----
+<1> Create a _bearer_ authentication token type, providing the token value
 
 [[Authenticator]]
 ==== Authenticator
 
-The `Realm` itself does not implement any authentication model or strategy, but delegates the specific authentication strategy to one or more concrete `Authenticator` registered in the Realm, relying on the `AuthenticationToken` type in order to discern which concrete `Authenticator` has to be used to handle the authentication process.
+As stated in the <<RealmAuthentication>> flow description, the `Realm` API relies on the registered `Authenticator` instances to perform the actual authentication process, according to the provided `AuthenticationToken` type.
 
-For this reason, at `Realm` configuration time or during the application lifecycle, the available Authenticators must be registered in Realm to provide the authentication capabilities, using the `addAuthenticator(Authenticator<T> authenticator)` method.
+The link:{apidir}/com/holonplatform/auth/Authenticator.html[Authenticator^] API represents a concrete authentication strategy, using a specific `AuthenticationToken` type to represent the authentication request. The `AuthenticationToken` type to which an `Authenticator` is bound is provided by the `getTokenType()` method.
 
-Each `Authenticator` declares the `AuthenticationToken` type it is bound to through the `getTokenType()` method.
+The `authenticate(AuthenticationToken authenticationToken)` method of the link:{apidir}/com/holonplatform/auth/Authenticator.html[Authenticator^] API is used to perform the actual authentication operation, checking the principal's credentials provided through the `AuthenticationToken` instance and returning an <<Authentication>> representation of the authenticated principal if the process was successful.
 
-To check if an `AuthenticationToken` type is supported by a `Realm` (i.e. an `Authenticator` bound to the token type is registered in Realm), the `supportsToken(Class<? extends AuthenticationToken> authenticationTokenType)` method can be used.
+When an authentication request is not successful, an `AuthenticationException` type is thrown. The concrete type of the exception gives more detailed informations on what went wrong. See <<AuthenticationExceptions>> for a list of the authentication exceptions available by default.
 
-The `Realm` authentication process is structured as follows:
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator3,indent=0]
+----
+<1> Create an `Authenticator` bound to the `MyAuthenticationToken` authentication token type
+<2> Perform an authentication request on the `Authenticator`, obtaining the authenticated principal representation if successful.
+<3> If the authentication request is not successful, an `AuthenticationException` type is thrown
 
-. The caller invokes the Realm `authenticate(AuthenticationToken authenticationToken)` method, providing a concrete authentication token;
-. The Realm checks if a suitable `Authenticator`, which can handle given `AuthenticationToken` type, is registered. If not, an `UnsupportedTokenException` is thrown;
-. The `authenticate(AuthenticationToken authenticationToken)` method is called on the specific `Authenticator`, performing the concrete authentication operation.
+TIP: See the <<Authentication>> section for information about the authenticated principal representation
 
-If an authentication operation is not successful, an `AuthenticationException` type is thrown. The concrete type of the exception gives more detailed informations on what went wrong.
+===== `Authenticator` registration
 
-.Available AuthenticationExceptions
+An `Authenticator` can be registered in a `Realm` instance in two ways:
+
+* Using the `Realm` API _builder_.
+* Using the `addAuthenticator` method of the `Realm` API.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=builder2,indent=0]
+----
+<1> Add a Realm `Authenticator` using the _builder_ API
+<2> Add a Realm `Authenticator` using the `Realm` API method
+
+===== Builtin authenticators
+
+* See the <<Account>> section to learn about the builtin _account credentials_ type authenticator.
+* See the <<JWT>> section learn about the builtin _JSON Web Token_ type authenticator.
+
+[[AuthenticationExceptions]]
+==== Authentication exceptions
+
+Below a list of the default authentication exceptions.
+
 |===
 |Class |Meaning
 
 |`InvalidCredentialsException`
-|Provided credentials are not valid or does not match the stored credentials
+|Provided credentials are not valid or do not match the stored credentials
 
 |`ExpiredCredentialsException`
 |Provided credentials are expired
 
 |`UnexpectedCredentialsException`
-|An unexpected internal error occurs during credentials match
+|An unexpected internal error occurred during credentials match
 
 |`DisabledAccountException`
 |Account is disabled
@@ -55,8 +179,8 @@ If an authentication operation is not successful, an `AuthenticationException` t
 |`UnknownAccountException`
 |Unknown account
 
-|`InvalidCredentialsException`
-|Provided credentials are not valid or does not match the stored credentials
+|`InvalidTokenException`
+|The authentication token is not valid
 
 |`UnsupportedTokenException`
 |Unsupported authentication token type
@@ -68,83 +192,52 @@ If an authentication operation is not successful, an `AuthenticationException` t
 |Generic authentication process failure
 |===
 
-[[AuthenticationToken]]
-===== AuthenticationToken
-
-The link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface represents an authentication request, and provides the following methods:
-
-* `getPrincipal()`: the *principal* this authentication token refers to, i.e. the account identity submitted during the authentication process. The return type is a generic `Object`, since each authentication model could provide the _principal_ information in a different way;
-* `getCredentials()`: the *credentials* submitted during the authentication process that verifies the submitted _principal_ account identity;
-
-Each `AuthenticationToken` type provides specific values as *principal* and *credentials* information, which the `Authenticator` can interpred and handle to perform the actual authentication.
-
-===== Builtin AuthenticationTokens
-
-[[AccountCredentialsToken]]
-*1. Account credentials token:* The _account credentials_ token represents generic account authentication information, where an _account_ is identified by a String type *id* (similar to a _username_) and a String type *secret* (similar to a _password_).
-
-This token returns the account *id* from the `getPrincipal()` method, and the account *secret* from the `getCredentials()` method.
-
-An account credentials token can be created by using the static `accountCredentials(...)` method of the `AuthenticationToken` interface:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=accounttoken,indent=0]
-----
-
-[[BearerAuthenticationToken]]
-*2. Bearer token:* The _bearer_ token represents a String type information which identifies (or it is bound to) a _principal_ and can be used to perform the authentication or grant the access to a resource, checking the token validity. This kind of token is used, for example, in _OAuth_ or _JWT_ authentication and authorization models.
-
-This token returns _null_ from the `getPrincipal()` method, and the *bearer token* from the `getCredentials()` method.
-
-A bearer token can be created using the static `bearer(...)` method of the `AuthenticationToken` interface:
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=bearertoken,indent=0]
-----
-
-===== Custom authentication tokens
-
-You can use any custom `AuthenticationToken` to provide authentication request informations. To handle a custom `AuthenticationToken` in a `Realm`, the corresponding `Authenticator` implementation must be provided and registered.
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator,indent=0]
-----
-<1> Custom `AuthenticationToken` implementation
-<2> Custom `Authenticator` bound to the `MyAuthenticationToken` token type
-<3> The token type which the authenticator declares to support
-<4> Actual authentication: if something goes wrong, an exception which extends `AuthenticationException` must be thrown. Otherwise, return the `Authentication` object which represents the authenticated principal
-<5> Build a `Realm` and register the custom authenticator
-<6> Perform the authentication using a `MyAuthenticationToken` instance
-
 [[Authentication]]
 ===== Authentication
 
-The result of the authentication operation performed using the `authenticate(AuthenticationToken authenticationToken)` method of an `Authenticator` is represented by the link:{apidir}/com/holonplatform/auth/Authentication.html[Authentication^] interface.
+The result of an `Authenticator` successful authentication request is represented by the link:{apidir}/com/holonplatform/auth/Authentication.html[Authentication^] API.
 
 An `Authentication` object represents the authenticated _principal_, and extends the default `java.security.Principal` interface, inheriting the `getName()` method to obtain the name which identifies the _principal_.
 
 In addition, the `Authentication` interface holds and provides the following informations:
 
-* The, optional, set of <<Permission>> granted to the authenticated principal
-* A `isRoot()` flag, to mark the authenticated _principal_ as _root_ principal, i.e. for which the permission checking is always skipped, assuming that any permission is granted to this _principal_
-* The optional _scheme_ information the _principal_ was authenticated with
-* It extends link:{apidir}/com/holonplatform/core/ParameterSet.html[ParameterSet^], representing a set of custom name-value parameters which can be used to provide additional, custom information related to the authenticated _principal_
+* An optional set of <<Permission>> granted to the authenticated principal.
+* A `isRoot()` flag, to mark the authenticated _principal_ as a _root_ principal, i.e. for which the permission checking is always skipped, assuming that any permission is granted to this _principal_.
+* The optional _scheme_ information, to identify the authentication scheme with which the _principal_ was authenticated. See <<MessageAuthenticator>> for details about authentication schemes.
+* It extends the Holon Platform link:{apidir}/com/holonplatform/core/ParameterSet.html[ParameterSet^] API, which represents a set of custom name-value attributes and can be used to provide additional, custom information related to the authenticated _principal_.
 
 An `Authentication` can be extended to provide more application-specific informations about the authenticated _principal_, if the parameter set support is not enough or too much generic.
 
+The `Authentication` API provides a _builder_ to create new `Authentication` instances.
+
 [source, java]
-.Authentication build example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authentication,indent=0]
 ----
+<1> Obtain an `Authentication` _builder_ and set `userId` as principal name
+<2> Add a `VIEW` String type granted permission (using the _role_ name convention)
+<3> Add a custom `MyPermission` type granted permission
+<4> Add `name` named parameter
+<5> Add `surname` named parameter
+<6> Set `myscheme` as authentication scheme
+
+[[AuthenticationListeners]]
+==== Authentication listeners
+
+The link:{apidir}/com/holonplatform/auth/Authentication.AuthenticationListener.html[AuthenticationListener^] interface can be used to be notified when a successfull authentication is performed. The authenticated principal, represented as an <<Authentication>> instance, is provided to the listener method.
+
+The link:{apidir}/com/holonplatform/auth/Authentication.AuthenticationNotifier.html[AuthenticationNotifier^] API allows to add and remove an `AuthenticationListener`. The `AuthenticationNotifier` is implemented by the `Realm` API, so an `AuthenticationListener` can be registered in a `Realm` instance to be notified when a successfull authentication request is performed.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=listener,indent=0]
+----
+<1> Add an `AuthenticationListener` to given `Realm` instance
 
 [[MessageAuthenticator]]
 ==== MessageAuthenticator
 
-The link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] interface represents an intermediate _authenticator_, specialized for `Message` based authentication.
+The link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] interface represents an intermediate _authenticator_ API, specialized for `Message` based authentication.
 
 The authentication request is provided using a `Message`, for example a HTTP request message. Such message is translated into an `AuthenticationToken` using an link:{apidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] registered in the `MessageAuthenticator`. From now on, the authentication process proceed as usual, using the obtained `AuthenticationToken` and a suitable <<Authenticator>> to accomplish the actual authentication operation in `Realm`.
 
@@ -223,9 +316,3 @@ The default `Authorizer` supports the `Authentication.isRoot()` state, always gr
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=permissions,indent=0]
 ----
-
-==== AuthenticationListener support
-
-The `Realm` interface allows the registration of listeners to be notified when a successfull authentication happens, using the `addAuthenticationListener(AuthenticationListener authenticationListener)` method.
-
-The link:{apidir}/com/holonplatform/auth/Authentication.AuthenticationListener.html[AuthenticationListener^] method `onAuthentication(Authentication authentication)` is invoked when a principal is successfully authenticated, providing the `Authentication` representation object.

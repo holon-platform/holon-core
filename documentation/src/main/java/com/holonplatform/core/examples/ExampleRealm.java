@@ -16,6 +16,7 @@
 package com.holonplatform.core.examples;
 
 import java.util.Date;
+import java.util.Optional;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
@@ -26,21 +27,54 @@ import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
+import com.holonplatform.auth.exceptions.InvalidCredentialsException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.http.HttpRequest;
 
 @SuppressWarnings({ "unused", "serial" })
 public class ExampleRealm {
 
+	private static final Authenticator<AuthenticationToken> AUTHENTICATOR1 = null;
+	private static final Authenticator<AuthenticationToken> AUTHENTICATOR2 = null;
+	private static final Authorizer<Permission> AUTHORIZER1 = null;
+	private static final Authorizer<Permission> AUTHORIZER2 = null;
+
+	public void name() {
+		// tag::name[]
+		Realm realm = Realm.builder().name("nyname").build(); // <1>
+
+		Optional<String> name = realm.getName(); // <2>
+		// end::name[]
+	}
+
+	public void builder() {
+		// tag::builder[]
+		Realm realm = Realm.builder() // <1>
+				.authenticator(AUTHENTICATOR1) // <2>
+				.authenticator(AUTHENTICATOR2) // <3>
+				.authorizer(AUTHORIZER1) // <4>
+				.authorizer(AUTHORIZER2) // <5>
+				.build();
+		// end::builder[]
+	}
+
+	public void builder2() {
+		// tag::builder2[]
+		Realm realm = Realm.builder().authenticator(AUTHENTICATOR1).build(); // <1>
+
+		realm.addAuthenticator(AUTHENTICATOR2); // <2>
+		// end::builder2[]
+	}
+
 	public void token1() {
 		// tag::accounttoken[]
-		AuthenticationToken token = AuthenticationToken.accountCredentials("username", "password");
+		AuthenticationToken token = AuthenticationToken.accountCredentials("username", "password"); // <1>
 		// end::accounttoken[]
 	}
 
 	public void token2() {
 		// tag::bearertoken[]
-		AuthenticationToken token = AuthenticationToken.bearer("Agr564FYda78dsff8Trf7");
+		AuthenticationToken token = AuthenticationToken.bearer("Agr564FYda78dsff8Trf7"); // <1>
 		// end::bearertoken[]
 	}
 
@@ -94,10 +128,79 @@ public class ExampleRealm {
 	}
 	// end::authenticator[]
 
+	public void authenticator1() {
+		// tag::authenticator1[]
+		Realm realm = getRealm();
+
+		try {
+			Authentication authc = realm.authenticate(new MyAuthenticationToken("test")); // <1>
+		} catch (AuthenticationException e) {
+			// handle failed authentication
+		}
+		// end::authenticator1[]
+	}
+
+	public void authenticator2() {
+		// tag::authenticator2[]
+		Realm realm = getRealm();
+
+		boolean supported = realm.supportsToken(MyAuthenticationToken.class); // <1>
+		// end::authenticator2[]
+	}
+
+	public void authenticator3() {
+		// tag::authenticator3[]
+		Authenticator<MyAuthenticationToken> authenticator = Authenticator.create(MyAuthenticationToken.class, // <1>
+				token -> {
+					// check authentication token information
+					token.getPrincipal();
+					token.getCredentials();
+					boolean valid = true; // ...
+					// if not valid, throw an exception
+					if (!valid) {
+						throw new InvalidCredentialsException();
+					}
+					// otherwise, return the authenticated principal representation
+					return Authentication.builder("thePrincipalName").build();
+				});
+
+		try {
+			Authentication authc = authenticator.authenticate(new MyAuthenticationToken("test")); // <2>
+		} catch (AuthenticationException e) {
+			// <3>
+		}
+		// end::authenticator3[]
+	}
+
+	public void authenticationListener() {
+		// tag::listener[]
+		Realm realm = getRealm();
+
+		realm.addAuthenticationListener(authentication -> { // <1>
+			// do something ...
+			authentication.getName();
+		});
+		// end::listener[]
+	}
+
+	private static class MyPermission implements Permission {
+
+		@Override
+		public Optional<String> getPermission() {
+			return Optional.empty();
+		}
+
+	}
+
 	public void authentication() {
 		// tag::authentication[]
-		Authentication authc = Authentication.builder("userId").permission("VIEW").permission("MANAGE")
-				.parameter("name", "John").parameter("surname", "Doe").build();
+		Authentication authc = Authentication.builder("userId") // <1>
+				.permission("VIEW") // <2>
+				.permission(new MyPermission()) // <3>
+				.parameter("name", "John") // <4>
+				.parameter("surname", "Doe") // <5>
+				.scheme("myscheme") // <6>
+				.build();
 		// end::authentication[]
 	}
 
@@ -170,6 +273,10 @@ public class ExampleRealm {
 		permitted = realm.isPermittedAny(authc, p1, p2);
 		permitted = realm.isPermittedAny(authc, "p1", "p2");
 		// end::permissions[]
+	}
+
+	private static Realm getRealm() {
+		return null;
 	}
 
 }
