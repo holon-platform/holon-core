@@ -305,9 +305,9 @@ public interface HttpHeaders extends MessageHeaders<List<String>> {
 	String SCHEME_DIGEST = "Digest";
 
 	/**
-	 * Get a HTTP header as a single string value
+	 * Get a HTTP header as a single string value.
 	 * @param name The header name (not null)
-	 * @return The HTTP header value. If the HTTP header is present more than once then the values of joined together
+	 * @return The HTTP header value. If the HTTP header is present more than once then the values are joined together
 	 *         and separated by a ',' character.
 	 */
 	default Optional<String> getHeaderValue(String name) {
@@ -340,19 +340,19 @@ public interface HttpHeaders extends MessageHeaders<List<String>> {
 	}
 
 	/**
-	 * Try to get a list of {@link Locale} using {@link #ACCEPT_LANGUAGE} header, if present. If more than one language
-	 * is specified in Accept-Language header, returned Locales will be ordered relying on <i>quality</i> parameter, if
-	 * specified.
-	 * @return List of Locale for the languages of the Accept-Language header, if any. If header is not present, an
-	 *         empty list is returned.
+	 * Try to get a list of {@link Locale} using the {@link #ACCEPT_LANGUAGE} header, if present. If more than one
+	 * language is specified in the <code>Accept-Language</code> header, returned Locales will be ordered relying on
+	 * <i>quality</i> parameter, if specified.
+	 * @return List of Locale for the languages of the <code>Accept-Language</code> header, if any. If header is not
+	 *         present, an empty list is returned.
 	 */
 	default List<Locale> getLocales() {
 		return HttpUtils.getAcceptLanguageLocales(getHeaderValue(ACCEPT_LANGUAGE).orElse(null));
 	}
 
 	/**
-	 * Get the first (most qualified) {@link Locale} using {@link #ACCEPT_LANGUAGE} header, if present.
-	 * @return Request locale
+	 * Get the first (most qualified) {@link Locale} using the {@link #ACCEPT_LANGUAGE} header, if present.
+	 * @return The first (most qualified) {@link Locale} using the {@link #ACCEPT_LANGUAGE} header, if available
 	 */
 	default Optional<Locale> getLocale() {
 		final List<Locale> locales = getLocales();
@@ -360,8 +360,8 @@ public interface HttpHeaders extends MessageHeaders<List<String>> {
 	}
 
 	/**
-	 * Return the authorization bearer token from {@link #AUTHORIZATION} header, if present and of scheme type
-	 * {@link #SCHEME_BEARER}.
+	 * Return the authorization <em>bearer</em> token from the {@link #AUTHORIZATION} header, if present and of scheme
+	 * type {@link #SCHEME_BEARER}.
 	 * @return Authorization bearer token, if available
 	 */
 	default Optional<String> getAuthorizationBearer() {
@@ -369,9 +369,13 @@ public interface HttpHeaders extends MessageHeaders<List<String>> {
 	}
 
 	/**
-	 * Return the authorization bearer token from {@link #AUTHORIZATION} header, if present and of scheme type
-	 * {@link #SCHEME_BASIC}.
-	 * @return Authorization credentials, if available
+	 * Return the <em>basic</em> authorization credential values from the {@link #AUTHORIZATION} header, if present and
+	 * of scheme type {@link #SCHEME_BASIC}.
+	 * <p>
+	 * The authorization credentials are decoded from Base64 before returning them to caller.
+	 * </p>
+	 * @return Basic authorization credentials as an array which contains the <em>username</em> at index 0 and the
+	 *         <em>password</em> at index 1, if available
 	 */
 	default Optional<String[]> getAuthorizationBasicCredentials() {
 		return getHeaderValue(AUTHORIZATION).map(v -> HttpUtils.extractAuthorizationBasicCredentials(v));
