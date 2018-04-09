@@ -5,3 +5,5 @@ The link:{apidir}/com/holonplatform/auth/annotations/Authenticate.html[Authentic
 The support for this annotation must be documented and it is available for other modules of the Holon platform.
 
 The annotation supports optional *schemes* specification to provide the allowed authentication schemes to be used to perform principal authentication, and an optional *redirectURI* which can be used to redirect user interaction when the authentication succeeds or fails (the semantic and behaviour associated to the redirect URI is specific for every authentication delegate).
+
+See for example the link:holon-jaxrs.html[Holon Platform JAX-RS module^] or the link:holon-vaadin.html[Holon Platform Vaadin module^] documentation to learn about some `@Authenticate` annotation use cases.

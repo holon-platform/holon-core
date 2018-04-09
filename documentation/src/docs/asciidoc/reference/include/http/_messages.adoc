@@ -1,35 +1,95 @@
+[[HTTPMessages]]
 === HTTP messages
 
 The Holon platform provides an implementation-independent representation of the *Hypertext Transfer Protocol* request and response messages, used by other platform modules to deal with HTTP-based operations.
 
-The HTTP request and response message representations are based on the link:{apidir}/com/holonplatform/core/messaging/Message.html[Message^] interface, which represent a generic _message_ consisting of a map of message *headers* (identified by a textual header name) and a *payload* which represents the content delivered in the message.
+The HTTP request and response message representations are based on the core link:{apidir}/com/holonplatform/core/messaging/Message.html[Message^] interface, which represent a generic _message_ consisting of a map of message *headers* (identified by a textual header name) and a *payload* which represents the content delivered in the message.
 
-NOTE: For an HTTP message, the message header values are represented as a `List` of Strings, since HTTP supports multiple values for each header. The message _payload_ is represented as a `String`.
+The link:{apidir}/com/holonplatform/http/HttpMessage.html[HttpMessage^] API is the base HTTP message representation.
+
+==== Headers
+
+For a HTTP message, the header values are represented as a `List` of Strings, since HTTP supports multiple values for each header. 
+
+The `HttpMessage` API, through the link:{apidir}/com/holonplatform/http/HttpHeaders.html[HttpHeaders^] interface, provides a set of methods to inspect the HTTP message headers and obtain header values in a more useful and convenient way.
+
+For example, frequently used header values can be obtained using a suitable Java type, if the value is available in the HTTP message headers.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleMessage.java[tag=httpheaders,indent=0]
+----
+<1> Get the value of given header name, if present. If the HTTP header is present more than once then the values are joined together and separated by a `,` character.
+<2> Get the value of the HTTP `Date` header, if available, as a Java `Date` instance
+<3> Get the value of the HTTP `Location` header, if available, as a Java `URI` instance
+<4> Get the value of the HTTP `Content-Length` header, if available, as a Java `Long`
+<5> Get the first (most _qualified_) `Locale` using the `Accept-Language` header, if present.
+<6> Get a list of `Locale` languages using the `Accept-Language` header, if present. If more than one language is specified in the `Accept-Language` header, returned Locales will be ordered relying on _quality_  parameter.
+<7> Get the _basic_ authorization credentials from a `Basic` type HTTP `Authorization` header, if available. The credentials are decoded from Base64 and returned as a username/password array.
+<8> Get the _bearer_ authorization token from a `Bearer` type HTTP `Authorization` header, if available. 
 
 [[HttpRequest]]
 ==== HttpRequest
 
-The link:{apidir}/com/holonplatform/http/HttpRequest.html[HttpRequest^] interface represents a HTTP *request* message and provides the following informations and operations:
+The link:{apidir}/com/holonplatform/http/HttpRequest.html[HttpRequest^] API represents a HTTP *request* message.
 
-* The HTTP *method* describing the desired action to be performed
-* The fully qualified name of the client host or the last proxy that sent the request
-* The request message _path_
-* The request URI query parameters, if any
-* The request _cookies_, if any
-* An `InputStream` of the request message body (payload)
+Besides the operations made available from the link:{apidir}/com/holonplatform/http/HttpMessage.html[HttpMessage^] API, it provides the following informations and operations:
+
+* The HTTP *method* describing the desired action to be performed.
+* The fully qualified name of the client host or the last proxy that sent the request.
+* The request message _path_.
+* The request URI query parameters, if any.
+* The request _cookies_, if any.
+* The request message body (payload) as an `InputStream`.
+
+The `HttpRequest` message type is bound to a `String` type message payload.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleMessage.java[tag=httprequest,indent=0]
+----
+<1> Get the HTTP request _method_ as `HttpMethod` enumeration value
+<2> Get the path of the HTTP request, relative to the base URI 
+<3> Get a request URI parameter value, if available. If the parameter is multi-value, the values are joined together and separated by a `,` character
+<4> Get the values of a multi-value request URI parameter, if available
+<5> Get a request `Cookie` value, if available
+<6> Get the message body as a `String`
+<7> Get the message body as an `InputStream`
 
 [[HttpResponse]]
 ==== HttpResponse
 
-The link:{apidir}/com/holonplatform/http/HttpResponse.html[HttpResponse^] interface represents a HTTP *response* message and provides the following informations and operations:
+The link:{apidir}/com/holonplatform/http/HttpResponse.html[HttpResponse^] interface represents a HTTP *response* message.
 
-* The HTTP _status code_ of the response, also represented with the convenience link:{apidir}/com/holonplatform/http/HttpStatus.html[HttpStatus^] enumeration
-* A _builder_ to create default HttpResponse instances
+Besides the operations made available from the link:{apidir}/com/holonplatform/http/HttpMessage.html[HttpMessage^] API, it provides the following informations and operations:
 
-==== Servlets integration
+* The HTTP _status code_ of the response, also represented with the convenience link:{apidir}/com/holonplatform/http/HttpStatus.html[HttpStatus^] enumeration.
+* A _builder_ to create default `HttpResponse` instances.
 
-The link:{apidir}/com/holonplatform/http/servlet/ServletHttpRequest.html[ServletHttpRequest^] represents a `HttpRequest` backed by a `javax.servlet.http.HttpServletRequest` instance, and can be used as an adapter to use servlet request messages as an `HttpRequest`.
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleMessage.java[tag=httpresponse,indent=0]
+----
+<1> Get the HTTP response status code
+<2> Get the HTTP response status using the `HttpStatus` enumeration
 
-To create a `HttpRequest` from a servlet `HttpServletRequest` the `ServletHttpRequest create(HttpServletRequest request)` can be used.
+[[ServletHttpMessage]]
+==== Servlet API integration
 
-This way, a servlet request can be used for example with a Holon `MessageAuthenticator`, to perform authentication operation directly using the request message. See link:core.html#MessageAuthenticator[MessageAuthenticator] section for further information. 
+The link:{apidir}/com/holonplatform/http/servlet/ServletHttpRequest.html[ServletHttpRequest^] API represents a `HttpRequest` backed by a `javax.servlet.http.HttpServletRequest` instance, and can be used as an adapter to deal with servlet request messages using the Holon Platform `HttpRequest` API.
+
+The `ServletHttpRequest` API provides additional methods to obtain servlet related message information:
+
+* The request _context_ path.
+* The request _URI_.
+* The HTTP _session_ id.
+
+To obtain a `HttpRequest` API from a servlet `HttpServletRequest` instance, the `ServletHttpRequest`   `create(HttpServletRequest request)` method can be used.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleMessage.java[tag=servletrequest,indent=0]
+----
+<1> Create a `HttpRequest` API from a `HttpServletRequest` instance
+
+TIP: This way, a servlet request can be used for example with a Holon `MessageAuthenticator` to perform authentication operations directly using the request message. See the <<MessageAuthenticator>> section for further information. 
