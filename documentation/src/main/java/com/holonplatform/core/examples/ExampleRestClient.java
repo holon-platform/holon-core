@@ -205,6 +205,11 @@ public class ExampleRestClient {
 		// tag::methods7[]
 		Optional<URI> locationHeaderURI = client.request().postForLocation(RequestEntity.json(new TestData()));
 		// end::methods7[]
+
+		// tag::methodsx[]
+		RestClient restClient = RestClient.forTarget("http://api.example"); // Obtain a RestClient
+		restClient.request(); // Request definition
+		// end::methodsx[]
 	}
 
 	@SuppressWarnings("unchecked")

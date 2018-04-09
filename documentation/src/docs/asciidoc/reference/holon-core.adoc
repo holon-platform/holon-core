@@ -185,6 +185,8 @@ include::include/spring/_restclient.adoc[]
 
 include::include/spring/_boot.adoc[]
 
+include::include/spring/_security.adoc[]
+
 == Loggers
 
 By default, the Holon platform uses the https://www.slf4j.org[SLF4J^] API for logging. The use of SLF4J is optional: it is enabled when the presence of SLF4J is detected in the classpath. Otherwise, logging will fall back to JUL (`java.util.logging`).

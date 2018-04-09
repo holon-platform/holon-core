@@ -324,7 +324,196 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[ta
 
 ==== `RestClient` API invocation methods reference
 
-.
+Below a reference list of the `RestClient` `Invocation` API, available from the request definition API:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRestClient.java[tag=methodsx,indent=0]
+----
+
+*Generic invocations:*
+
+|===
+|Operation |Description |Parameters |Returns |Response status handling
+
+|`invoke`
+|Invoke the request and receive a response back.
+a|
+. HTTP method
+. Optional `RequestEntity`
+. Expected response entity type (`Void` for none)
+|A `ResponseEntity` instance with expected response entity payload type
+|_None_
+
+|`invokeForSuccess`
+|Invoke the request and receive a response back only if the response has a _success_ (`2xx`) status code.
+a|
+. HTTP method
+. Optional `RequestEntity`
+. Expected response entity type (`Void` for none)
+|The `ResponseEntity` with the provided response type payload type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+
+|`invokeForEntity`
+|Invoke the request and receive back the response content entity, already deserialized in the expected response type.
+a|
+. HTTP method
+. Optional `RequestEntity`
+. Expected response entity type
+|*Optional* response _entity_ value, already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*By method invocations:*
+
+*1. `GET`:*
+
+|===
+|Operation |Parameters |Returns |Response status handling
+
+|`*get*`
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type
+|_None_
+
+|`*getForEntity*`
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+
+|`*getForStream*`
+|_None_
+|The response payload stream as an `InputStream`, or an empty stream for empty responses
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+
+|`*getAsList*`
+|Expected response entity type (`Class<T>`) 
+|A `List` of the deserialized response entities using the provided response entity type, or an empty list for empty responses 
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*2. `POST`:*
+
+|===
+|Operation |First parameter |Second parameter |Returns |Response status handling
+
+|`*post*`
+|The request _entity_ represented as `RequestEntity` instance
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*postForEntity*`
+|The request _entity_ represented as `RequestEntity` instance
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+
+|`*postForLocation*`
+|The request _entity_ represented as `RequestEntity` instance
+|_None_
+|*Optional* `Location` response header value
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*3. `PUT`:*
+
+|===
+|Operation |First parameter |Second parameter |Returns |Response status handling
+
+|`*put*`
+|The request _entity_ represented as `RequestEntity` instance
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*putForEntity*`
+|The request _entity_ represented as `RequestEntity` instance
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*4. `PATCH`:*
+
+|===
+|Operation |First parameter |Second parameter |Returns |Response status handling
+
+|`*patch*`
+|The request _entity_ represented as `RequestEntity` instance
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*patchForEntity*`
+|The request _entity_ represented as `RequestEntity` instance
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*5. `DELETE`:*
+
+|===
+|Operation |Parameter |Returns |Response status handling
+
+|`*delete*`
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*deleteOrFail*`
+|_None_
+|_Nothing_
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+
+|`*deleteForEntity*`
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*6. `OPTIONS`:*
+
+|===
+|Operation |Parameter |Returns |Response status handling
+
+|`*options*`
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*optionsForEntity*`
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*7. `TRACE`:*
+
+|===
+|Operation |Parameter |Returns |Response status handling
+
+|`*trace*`
+|_Optional_ expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|A `ResponseEntity<T>` instance, with expected response entity payload type. If the second parameter is not specified, a `Void` type `ResponseEntity` is returned
+|_None_
+
+|`*traceForEntity*`
+|Expected response entity type, either using a `Class<T>` or a `ResponseType<T>` to handle generic types
+|*Optional* response _entity_ value (`T`), already deserialized in the expected response entity type
+|If the response status code is not `2xx`, an `UnsuccessfulResponseException` is thrown
+|===
+
+*8. `HEAD`:*
+
+|===
+|Operation |Returns |Response status handling
+
+|`*head*`
+|A `Void` type `ResponseEntity`
+|_None_
+|===
 
 [[RestClientPropertyModel]]
 ==== `Property` and `PropertyBox` support

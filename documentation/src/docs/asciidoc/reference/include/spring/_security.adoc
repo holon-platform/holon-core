@@ -1,5 +1,5 @@
 [[SpringSecurity]]
-=== Spring Security integration
+=== *Spring Security* integration
 
 _Maven coordinates_:
 [source, xml, subs="attributes+"]
@@ -152,3 +152,17 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.jav
 ----
 <1> Create a `Permission` from a `GrantedAuthority`
 <2> Create a `GrantedAuthority` from a `Permission`
+
+==== Spring Security _starter_
+
+The following https://projects.spring.io/spring-boot[Spring Boot^] _starter_ artifact is available to provide a quick project configuration setup using Maven dependency system:
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-starter-security</artifactId>
+<version>{revnumber}</version>
+----
+
+This _starter_ includes the base Holon Platform starter (see the <<SpringBoot>> section), the standard Spring Security starter (`spring-boot-starter-security`) and the `holon-spring-security` dependency, to provide the Holon Platform Spring Security integration components and APIs.
