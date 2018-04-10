@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +34,6 @@ import org.junit.Test;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
-import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Authenticator;
 import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
@@ -43,13 +41,11 @@ import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
-import com.holonplatform.auth.exceptions.UnsupportedMessageException;
 import com.holonplatform.auth.exceptions.UnsupportedTokenException;
 import com.holonplatform.auth.internal.DefaultPermission;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.TestUtils;
-import com.holonplatform.core.messaging.Message;
 
 public class TestRealm {
 
@@ -208,78 +204,6 @@ public class TestRealm {
 	}
 
 	@Test
-	public void testMessageAuthentication() {
-
-		final Realm realmx = Realm.builder().build();
-
-		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realmx.authenticate(new TestMessage("myself"));
-			}
-		});
-
-		final AtomicInteger counter = new AtomicInteger(0);
-
-		final Realm realm = Realm.builder().resolver(new AuthenticationTokenResolver<TestMessage>() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public Class<? extends Message> getMessageType() {
-				return TestMessage.class;
-			}
-
-			@Override
-			public Optional<String> getScheme() {
-				return Optional.of("myscheme");
-			}
-
-			@Override
-			public Optional<AuthenticationToken> getAuthenticationToken(TestMessage request)
-					throws AuthenticationException {
-				return Optional.of(AccountCredentialsToken.create(request.getPayload().orElse(null), ""));
-			}
-
-		}).authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
-			if ("myself".equals(token.getPrincipal())) {
-				return Authentication.builder("myself").build();
-			}
-			throw new UnknownAccountException("" + token.getPrincipal());
-		})).listener(authc -> counter.incrementAndGet()).build();
-
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void run() {
-				realm.authenticate((Message) null);
-			}
-		});
-
-		assertTrue(realm.supportsMessage(TestMessage.class));
-
-		Authentication authc = realm.authenticate(new TestMessage("myself"));
-
-		assertNotNull(authc);
-		assertEquals(1, counter.get());
-
-		authc = realm.authenticate(new TestMessage("myself"), "myscheme");
-
-		assertNotNull(authc);
-		assertEquals(2, counter.get());
-
-		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realm.authenticate(new TestMessage("myself"), "xxx");
-			}
-		});
-
-	}
-
-	@Test
 	public void testAuthorization() {
 
 		Authorizer<TestPermission> atz = new Authorizer<TestRealm.TestPermission>() {
@@ -391,37 +315,6 @@ public class TestRealm {
 
 		private TestRealm getOuterType() {
 			return TestRealm.this;
-		}
-
-	}
-
-	private class TestMessage implements Message<String, String> {
-
-		private final String payload;
-
-		public TestMessage(String payload) {
-			super();
-			this.payload = payload;
-		}
-
-		@Override
-		public Map<String, String> getHeaders() {
-			return Collections.emptyMap();
-		}
-
-		@Override
-		public Optional<String> getProtocol() {
-			return Optional.empty();
-		}
-
-		@Override
-		public Optional<String> getPayload() throws UnsupportedOperationException {
-			return Optional.ofNullable(payload);
-		}
-
-		@Override
-		public Class<? extends String> getPayloadType() throws UnsupportedOperationException {
-			return String.class;
 		}
 
 	}
