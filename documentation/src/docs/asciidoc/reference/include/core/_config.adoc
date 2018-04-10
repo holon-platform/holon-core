@@ -40,6 +40,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleConfig.java[tag=pr
 <3> Provider which uses a _properties_ File as property values source
 <4> Provider which uses Java `System` properties as property values source
 
+[[ConfigPropertySet]]
 ==== Configuration property set
 
 The link:{apidir}/com/holonplatform/core/config/ConfigPropertySet.html[ConfigPropertySet^] interface represents a configuration property set bound to one or more `ConfigPropertyProvider` property source.

@@ -363,7 +363,7 @@ This resolver can be used, for example, to implement a _JWT_ (_JSON Web Token_) 
 
 Authorization controls operations are provided by the link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] API, which is implemented by the `Realm` API itself.
 
-The `Authorizer` API provides a set of `isPermitted(...)` methods to perform authorization controls, using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] representation to validate a set of permissions against the <<Authorization>> (which represents an authenticated principal) granted authorities.
+The `Authorizer` API provides a set of `isPermitted(...)` methods to perform authorization controls, using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] representation to validate a set of permissions against an <<Authentication>> (which represents an authenticated principal) granted authorities.
 
 A `Permission` represents a granted authority and its actual meaning and validation strategy depends on the concrete `Authorizer` implementation, which can use specific `Permission` sub types to represent any kind of granted authority.
 
@@ -397,12 +397,12 @@ The permissions check methods provided by the `Authorizer` API can be categorize
 |===
 |Operation |Parameters type |Returns |Description
 
-a|`*isPermitted*(Authentication authentication, Collection permissions)`
+a|`*isPermitted*(Authentication authentication, Set of permissions)`
 |`Permission`
 |`true` or `false`
 |Check if the given authentication has all the specified permissions.
 
-a|`*isPermittedAny*(Authentication authentication, Collection permissions)`
+a|`*isPermittedAny*(Authentication authentication, Set of permissions)`
 |`Permission`
 |`true` or `false`
 |Check if the given authentication has any of the specified permission.
@@ -498,3 +498,16 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=per
 <7> Verify the `p1` or the `p2` permission is permitted
 <8> Verify the `role1` or `role2` role name is permitted
 <9> The `other_role` role name is not permitted
+
+==== `Realm` as a Context resource
+
+When a `Realm` is managed using the Holon Platform <<Context>> architecture, and the default name, i.e. the `Realm` class name, is used as context resource key, the `getCurrent()` and `require()` methods can be used to obtain the current `Realm` instance from context.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=context,indent=0]
+----
+<1> Register a `Realm` instance in context using the _classLoader_ default scope 
+<2> Obtain the `Realm` context resource
+<3> Require the `Realm` context resource, throwing an exception if not available
+

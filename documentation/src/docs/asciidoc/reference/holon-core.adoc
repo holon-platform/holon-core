@@ -140,7 +140,7 @@ include::include/http/_restclient.adoc[]
 [[Auth]]
 == Authentication and Authorization
 
-The `holon-auth` artifact provides a complete and highly configurable *Authentication* and *Authorization* architecture, integrated with all platform modules. *HTTP* messages authentication is supported, and several APIs are provided to manage _accounts_ and their credentials, perform authentication in a *Realm* and check for *permissions*.
+The `holon-auth` artifact provides a complete and highly configurable *authentication* and *authorization* architecture, integrated with all the platform modules. 
 
 _Maven coordinates_:
 [source, xml, subs="attributes+"]
@@ -165,7 +165,7 @@ include::include/auth/_jwt.adoc[]
 [[SpringIntegration]]
 == Spring framework integration
 
-The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^] for the Holon platform core module.
+The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^].
 
 _Maven coordinates_:
 [source, xml, subs="attributes+"]

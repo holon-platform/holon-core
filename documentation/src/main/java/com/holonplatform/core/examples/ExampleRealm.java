@@ -15,7 +15,6 @@
  */
 package com.holonplatform.core.examples;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,12 +26,12 @@ import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
 import com.holonplatform.auth.Authenticator;
 import com.holonplatform.auth.Authorizer;
-import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.Permission;
 import com.holonplatform.auth.Realm;
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.InvalidCredentialsException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
+import com.holonplatform.core.Context;
 import com.holonplatform.core.messaging.Message;
 import com.holonplatform.http.HttpRequest;
 
@@ -330,34 +329,6 @@ public class ExampleRealm {
 		return null;
 	}
 
-	public void credentials() {
-		// tag::credentials[]
-		Credentials credentials = Credentials.builder().secret("test").build(); // <1>
-
-		credentials = Credentials.builder().secret("test").hashAlgorithm(Credentials.Encoder.HASH_MD5).build(); // <2>
-
-		credentials = Credentials.builder().secret("test").hashAlgorithm(Credentials.Encoder.HASH_MD5).hashIterations(7)
-				.salt(new byte[] { 1, 2, 3 }).build(); // <3>
-
-		credentials = Credentials.builder().secret("test").hashAlgorithm(Credentials.Encoder.HASH_MD5).base64Encoded()
-				.build(); // <4>
-
-		credentials = Credentials.builder().secret("test").expireDate(new Date()).build(); // <5>
-		// end::credentials[]
-	}
-
-	public void encoder() {
-		// tag::encoder[]
-		String encoded = Credentials.encoder().secret("test").buildAndEncodeBase64(); // <1>
-
-		byte[] bytes = Credentials.encoder().secret("test").hashSHA256().build(); // <2>
-
-		encoded = Credentials.encoder().secret("test").hashSHA256().salt(new byte[] { 1, 2, 3 }).buildAndEncodeBase64(); // <3>
-
-		encoded = Credentials.encoder().secret("test").hashSHA512().charset("UTF-8").buildAndEncodeBase64(); // <4>
-		// end::encoder[]
-	}
-
 	public void defaultPermission() {
 		// tag::dftpermission[]
 		Permission permission = Permission.create("myrole"); // <1>
@@ -421,6 +392,17 @@ public class ExampleRealm {
 
 	private static Authentication getAuthentication() {
 		return null;
+	}
+
+	public void context() {
+		// tag::context[]
+		final Realm realm = Realm.builder().build();
+
+		Context.get().classLoaderScope().map(scope -> scope.put(Realm.CONTEXT_KEY, realm)); // <1>
+
+		Optional<Realm> currentRealm = Realm.getCurrent(); // <2>
+		Realm requiredRealm = Realm.require(); // <3>
+		// end::context[]
 	}
 
 }

@@ -1,42 +1,110 @@
 [[Account]]
 === Account
 
-The platform provides an abstraction of an _Account_ structure, which represents information about a _principal_.
+The Holon Platform provides an abstraction of an _Account_ structure, which represents information about a _principal_.
 
-The link:{apidir}/com/holonplatform/auth/Account.html[Account^] interface is used to represent a generic _account_, providing the following information:
+The link:{apidir}/com/holonplatform/auth/Account.html[Account^] API is used to represent a generic _account_, providing the following information:
 
-* The account *id* (as a String)
-* The account *credentials* (as a generic Object)
-* Whether the account is a *root* account, i.e. has any permission
-* Optional map of generic account *details*, identified by a String id
-* Optional set of *permissions* granted to the account
-* Whether the account is *enabled*
-* Whether the account is *locked*
-* Whether the account is *expired*
+* The account *id* (as a `String`).
+* The account *credentials* (as a generic `Object`).
+* Whether the account is a *root* account, i.e. has any permission.
+* An optional map of generic account *details*, using a `Map` of `String` type detail key and generic `Object` type value.
+* An optional set of *permissions* granted to the account, using the <<Permission>> representation.
+* Whether the account is *enabled*.
+* Whether the account is *locked*.
+* Whether the account is *expired*.
 
-A _builder_ is available to create `Account` instances:
+A _builder_ is available to create an `Account` instances:
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=builder,indent=0]
 ----
+<1> Create an `Account` with `accountId` as account id
+<2> Set the account as enabled
+<3> Set the account as not locked
+<4> Set the account as not expired
+<5> Set the account credentials using the `Credentials` API builder: set `pwd` as secret, hashed with `SHA-256` and encoded using `Base64`
+<6> The account is not a _root_ account
+<7> Add a permission using a custom `MyPermission` type
+<8> Add a role type default permission, using `role1` as role name
+<9> Set two account details 
 
+[[AccountProvider]]
 ==== AccountProvider
 
-The link:{apidir}/com/holonplatform/auth/Account.AccountProvider.html[AccountProvider^] interface can be used to provide <<Account>> instances using the *account id*, for example from a data store, by implementing the `loadAccountById(String id)` method.
+The link:{apidir}/com/holonplatform/auth/Account.AccountProvider.html[AccountProvider^] API can be used to provide <<Account>> instances using the *account id*, for example from a data store.
 
-The loading method returns an `Optional`, if empty means that an account with given id is not available.
+The `AccountProvider` method to obtain an `Account` by id is:
 
-==== Authenticator
+[source, java]
+----
+Optional<Account> loadAccountById(String id);
+----
 
-A default <<Authenticator>> is provided to perform the account authentication by using an `AccountProvider` to load account data. The account authenticator is obtained by using the `authenticator(...)` static method of the `Account` interface, choosing to use a custom credentials matcher or the default one.
+The method returns an `Optional` value: when empty means that an `Account` with given _id_ is not available from the account provider.
 
-The supported `AuthenticationToken` is the _account credentials_ authentication token, obtained using the static `accountCredentials(...)` method of the `AuthenticationToken` interface. 
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=provider,indent=0]
+----
+<1> An `AccountProvider` which provides only the `Account` bound to the `test` account id
+
+[[AccountAuthenticator]]
+==== Account Authenticator
+
+A default <<Authenticator>> is provided to perform `Account` based authentication, using an <<AccountProvider>> to access accounts data and the `AccountCredentialsToken` type to represent the authentication request.
+
+The account authenticator strategy is defined as follows:
+
+. Obtain the authentication request _credentials_ using the <<AccountCredentialsToken>> type.
+. Check if an `Account` with the *account id* obtained from the token `getPrincipal()` method is available, using the <<AccountProvider>> provided at authenticator creation time.
+. If so, checks if the account _credentials_ obtained from the token `getCredentials()` method matches with the credentials provided by the loaded `Account` instance.
+
+The account authenticator can be obtained by using the `authenticator(AccountProvider accountProvider)` static method of the `Account` interface.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=authenticator,indent=0]
+----
+<1> Obtain an account authenticator using given `AccountProvider`
+
+The authenticator builder method shown above uses the default <<CredentialsMatcher>> to perform account credentials checks.
+
+To provide a custom `CredentialsMatcher`, the following creation method can be used:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=authenticator2,indent=0]
+----
+<1> Set a custom `MyCredentialsMatcher` as authenticator `CredentialsMatcher`
+
+===== AccountCredentialsToken
+
+The default account authenticator uses the link:{apidir}/com/holonplatform/auth/token/AccountCredentialsToken.html[AccountCredentialsToken^] type to represent account authentication requests.
+
+This token type returns:
+
+* The *account id* (i.e. the _principal_ name) as a `String` from the `getPrincipal()` method.
+* The account *secret* as `byte[]` from the `getCredentials()` method.
+
+The `Account` interface provides `AccountCredentialsToken` creation methods:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=token,indent=0]
+----
+<1> Create an account `AuthenticationToken` providing account id and secret
+<2> Create an account `AuthenticationToken` providing account id and secret as an array of bytes
+
+===== Account authenticator example
+
+Below an example on how to use an account authenticator with a `Realm`.
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleAccount.java[tag=auth,indent=0]
 ----
-<1> Create an `AccountProvider` to provide the `Account` instances according to the _account id_
-<2> Create a `Realm` with default authorizer and register an account `Authenticator` which uses the previously defined `AccountProvider`
-<3> Perform authentication using an _account credentials_ authentication token
+<1> Create an `AccountProvider` to provide the `Account` instances: this provider always provide an  `Account` instance, setting `pwd` as credentials secret
+<2> Register an account `Authenticator` which uses the previously defined `AccountProvider` in the `Realm` instance
+<3> Perform authentication using an _account credentials_ authentication token type

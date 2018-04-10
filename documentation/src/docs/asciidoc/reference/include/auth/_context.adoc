@@ -1,40 +1,96 @@
 [[AuthContext]]
 === AuthContext
 
-The link:{apidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] interface can be used to represent the current authentication/authorization context, i.e. acts as a holder of the current `Authentication`, if available, and provides methods to perform the actual authentication operations, relying on a specific `Realm` istance.
+The link:{apidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] API can be used to represent the *current authentication and authorization context*.
 
-For its nature, an `AuthContext` is tipically bound to an application _session_ or to the current request context for a backend services layer.
+The `AuthContext` API:
 
-It provides methods to:
+* Acts as a *holder of the current* `Authentication`, providing methods to check if an `Authentication` is available and obtain it.
+* Provides a method to remove the current context `Authentication`.
+* Provides methods to *perform authentication operations*.
+* Provides methods for *authorization controls using the current `Authentication`*.
+* As an `AuthenticationNotifier`, *supports* link:{apidir}/com/holonplatform/auth/Authentication.AuthenticationListener.html[AuthenticationListener^] *registration* to be notified when a successfull authentication is performed or when an `Authentication` is not available anymore.
 
-* *Check* if a _principal_ is currently authenticated in context and if so *obtain* the corresponding `Authentication`
-* Perform *authentication* on the reference `Realm`, either using an `AuthenticationToken` or a `Message`
-* *De-authenticate* the context, removing current `Authentication`
-* Perform *authorization* control on current `Authentication`, using the reference `Realm` authorizers
+The default `AuthContext` implementation relies on a `Realm` instance to perform concrete authentication and authorization operations, which must be provided at `AuthContext` creation time.
 
-See the <<Realm>> section for detailed information about authenticators and authorizers.
+TIP: See the <<Realm>> section for detailed information about `Realm` operations and configuration.
+
+==== Authentication
+
+The link:{apidir}/com/holonplatform/auth/AuthContext.html[AuthContext^] API provides two methods to perform authentication requests:
+
+* `authenticate(AuthenticationToken authenticationToken)` to perform an authentication using an `AuthenticationToken` as authentication request representation.
+
+* `authenticate(Message<?, ?> message, String... schemes)` to perform an authentication a `Message` and optional authentication scheme names.
+
+The authentication process is completely delegated to the backing Realm instance: See the <<RealmAuthentication>> section and the <<MessageAuthenticator>> section for details about the two authentication strategies, respectively.
+
+[[AuthenticationInspector]]
+==== Current Authentication
+
+When an authentication request made using the `AuthContext` API is successful, the current `Authentication` reference is made available from the `AuthContext` instance and can be inspected and obtained using the methods of the link:{apidir}/com/holonplatform/auth/AuthenticationInspector.html[AuthenticationInspector^] API, extended by the `AuthContext` API.
+
+|===
+|Operation |Returns |Description
+
+|`isAuthenticated()`
+|`true` or `false`
+|Checks whether an `Authentication` is currently available
+
+|`getAuthentication()`
+|`Optional<Authentication>`
+|Get the current `Authentication`, if available
+
+|`requireAuthentication()`
+|`Authentication`
+|Get the current `Authentication`, throwing an `IllegalStateException` if not available
+|===
+
+To remove the current `Authentication`, the `unauthenticate()` method can be used. After this method is called, a new successful authentication request has to be made to make available a new context `Authentication`.
+
+Below 
 
 [source, java]
-.Authorization example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[tag=authctx,indent=0]
 ----
 <1> Create an `AccountProvider` to provide the `Account` instances according to the _account id_
 <2> Create a `Realm` with default authorizer and register an account `Authenticator` which uses the previously defined `AccountProvider`
-<3> Create an `AuthContext` backed by the created realm
-<4> Add an `AuthenticationListener` to the context
-<5> Perform authentication by using an _account credentials_ authentication token
-<6> Get the current context `Authentication`
-<7> Check if the current context `Authentication` has the permission named `role1`
-<8> Unauthenticate the context, i.e. remove the current `Authentication`
+<3> Create an `AuthContext` backed by the `Realm` instance
+<4> An `Authentication` is not available from the `AuthContext` since no authentication operation was performed yet
+<5> Trigger an authentication request by using an _account credentials_ authentication token
+<6> If the authentication request is successful, the current `Authentication` is available from the `AuthContext`
+<7> Unauthenticate the context, i.e. remove the current `Authentication`
 
-TIP: The `AuthContext` interface provides a convenience `getCurrent()` static method allowing to obtain the current `AuthContext` instance which is made available as `Context`resource, using the default ClassLoader. The `require()` convenience method can be used to obtain the current `AuthContext` or throwing an exception if it's not available as context resource.
-See link:core.html#Context[Context] section for further information about context resources.
+==== Custom Authentication holder
 
-==== AuthenticationListener support
+A custom _authentication holder_ can be used at `AuthContext` creation time, to customize the current `Authentication` handling.
 
-The `AuthContext` interface allows the registration of listeners to be notified when a successfull authentication happens, using the `addAuthenticationListener(AuthenticationListener authenticationListener)` method.
+To provide a custom current `Authentication` handling logic, the link:{apidir}/com/holonplatform/auth/AuthContext.AuthenticationHolder.html[AuthenticationHolder^] interface can be implemented and provided at `AuthContext` creation time.
 
-Furthermore, the registered `AuthenticationListener` are notified when the `AuthContext` is _unauthenticated_ using the `unauthenticate()` method, i.e. when the current `Authentication` is removed from the `AuthContext`. In this case a `null` `Authentication` is provided to the registered authentication listeners.
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[tag=holder,indent=0]
+----
+<1> Create an `AuthenticationHolder` that uses a `ThreadLocal` variable to handle the current `Authentication` reference
+<2> Set the `ThreadLocalAuthenticationHolder` as `AuthContext` authentication holder
+
+==== Authentication listeners
+
+The `AuthContext` API, through the `AuthenticationNotifier` API, supports link:{apidir}/com/holonplatform/auth/Authentication.AuthenticationListener.html[AuthenticationListener^] registration to be notified when a successfull authentication is performed or when an `Authentication` is not available anymore.
+
+When the `AuthContext` is _unauthenticated_ using the `unauthenticate()` method, i.e. when the current `Authentication` is removed from the `AuthContext`, a `null` `Authentication` value is provided to the registered authentication listeners.
 
 NOTE: The `Realm` and `AuthContext` authentication listeners are considered as separate sets, but since the `AuthContext` uses its configured `Realm` to perform authentications, when the authentication is performed from the `AuthContext`, also the `Realm` authentication listeners will be triggered. Vice-versa, when the authentication is performed from the `Realm`, the `AuthContext` authentication listeners will not be triggered.
+
+==== `AuthContext` as a Context resource
+
+When an `AuthContext` is managed using the Holon Platform <<Context>> architecture, and the default name, i.e. the `AuthContext` class name, is used as context resource key, the `getCurrent()` and `require()` methods can be used to obtain the current `AuthContext` instance from context.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleAuthContext.java[tag=context,indent=0]
+----
+<1> Register an `AuthContext` instance in context using the _classLoader_ default scope 
+<2> Obtain the `AuthContext` context resource
+<3> Require the `AuthContext` context resource, throwing an exception if not available
