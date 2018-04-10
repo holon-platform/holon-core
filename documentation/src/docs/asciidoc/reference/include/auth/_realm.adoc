@@ -37,15 +37,18 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=nam
 <2> Get the `Realm` name, if available
 
 [[RealmAuthentication]]
-==== Ream authentication
+==== Realm authentication
 
-To perform an _authentication_, the `Realm` API provides the `authenticate(AuthenticationToken authenticationToken)` method.
+Authentication requests are made available through the link:{apidir}/com/holonplatform/auth/Authenticator.html[Authenticator^] API, which is implemented by the `Realm` API.
+
+The `Authenticator` API provides the following method to perform authentication requests:
 
 [source, java]
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator1,indent=0]
+Authentication authenticate(AuthenticationToken authenticationToken) throws AuthenticationException;
 ----
-<1> Perform an authentication request using the `MyAuthenticationToken` authentication token type
+
+The authentication request is represented by an <<AuthenticationToken>> and the authenticated principal, if the authentication request is successful, is returned as an <<Authentication>> representation. 
 
 The `Realm` API itself does not implement any authentication model or strategy, but delegates the specific authentication strategy to one or more concrete <<Authenticator>>, relying on the `AuthenticationToken` type in order to discern which `Authenticator` has to be used to handle the authentication process.
 
@@ -59,7 +62,17 @@ The authentication flow is structured as follows:
 
 Each `Authenticator` declares the <<AuthenticationToken>> type to which is bound through the `getTokenType()` method. When a new `Authenticator` is registered, the `Realm` instance will support the `AuthenticationToken` type which is bound to the registered `Authenticator`, and such `Authenticator` will be used to perform the authentication operation when a matching `AuthenticationToken` type is provided.
 
-TIP: See the <<Authenticator>> section to learn how an `Authenticator` can be registered in a `Realm` instance.
+A concrete `Authenticator` can be registered in a `Realm` instance in two ways:
+
+* Using the `Realm` API _builder_.
+* Using the `addAuthenticator` method of the `Realm` API.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=builder2,indent=0]
+----
+<1> Add a Realm `Authenticator` using the _builder_ API
+<2> Add a Realm `Authenticator` using the `Realm` API method
 
 To check if a `Realm` instance supports a specific `AuthenticationToken` type, the `supportsToken` API method can be used.
 
@@ -69,7 +82,15 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=aut
 ----
 <1> Checks whether given `Realm` supports the `MyAuthenticationToken` authentication token type
 
-See the next section for details about authenticators, authentication tokens and the authenticated principal representation.
+So the `Realm` API is itself an `Authenticator`, bound to a generic `AuthenticationToken` type. The `authenticate` method is the entry point to perform any authentication request, providing a suitable `AuthenticationToken` type implementation.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator1,indent=0]
+----
+<1> Perform an authentication request using the `MyAuthenticationToken` authentication token type
+
+See the next sections for details about authenticators, authentication tokens and the authenticated principal representation.
 
 [[AuthenticationToken]]
 ==== AuthenticationToken
@@ -132,26 +153,26 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=aut
 <2> Perform an authentication request on the `Authenticator`, obtaining the authenticated principal representation if successful.
 <3> If the authentication request is not successful, an `AuthenticationException` type is thrown
 
-TIP: See the <<Authentication>> section for information about the authenticated principal representation
-
-===== `Authenticator` registration
-
-An `Authenticator` can be registered in a `Realm` instance in two ways:
-
-* Using the `Realm` API _builder_.
-* Using the `addAuthenticator` method of the `Realm` API.
-
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=builder2,indent=0]
-----
-<1> Add a Realm `Authenticator` using the _builder_ API
-<2> Add a Realm `Authenticator` using the `Realm` API method
+TIP: See the <<Authentication>> section for information about the authenticated principal representation.
 
 ===== Builtin authenticators
 
 * See the <<Account>> section to learn about the builtin _account credentials_ type authenticator.
 * See the <<JWT>> section learn about the builtin _JSON Web Token_ type authenticator.
+
+===== Authenticator example
+
+Below is provided a simple example on how to create a custom `Authenticator`, bound to a specific `AuthenticationToken`, register it into a `Realm` and use it to handle authentication requests. 
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authenticator,indent=0]
+----
+<1> Create an `AuthenticationToken` implementation, which returns the principal name as a String from the `getPrincipal()` method
+<2> Create a custom `Authenticator` bound to the `MyAuthenticationToken` type
+<3> This authenticator only accepts `test` named principals, building a simple `Authentication` instance with the provided principal name. Otherwise, an `UnknownAccountException` is thrown. 
+<4> Create a `Realm` and register the custom authenticator
+<5> Perform an authentication request using a `MyAuthenticationToken` istance
 
 [[AuthenticationExceptions]]
 ==== Authentication exceptions
@@ -193,7 +214,7 @@ Below a list of the default authentication exceptions.
 |===
 
 [[Authentication]]
-===== Authentication
+==== Authentication
 
 The result of an `Authenticator` successful authentication request is represented by the link:{apidir}/com/holonplatform/auth/Authentication.html[Authentication^] API.
 
@@ -239,80 +260,241 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=lis
 
 The link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] interface represents an intermediate _authenticator_ API, specialized for `Message` based authentication.
 
-The authentication request is provided using a `Message`, for example a HTTP request message. Such message is translated into an `AuthenticationToken` using an link:{apidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] registered in the `MessageAuthenticator`. From now on, the authentication process proceed as usual, using the obtained `AuthenticationToken` and a suitable <<Authenticator>> to accomplish the actual authentication operation in `Realm`.
+The `MessageAuthenticator` API relies on the Holon Platform link:{apidir}/com/holonplatform/core/messaging/Message.html[Message^] API as a generic _message_ representation.
 
-Unlike the standard `Authenticator`, the `MessageAuthenticator` provides a specialized method which accepts a `Message` as authentication request representation:
+TIP: See the <<HTTPMessages>> section to lean about the HTTP implementations of the `Message` API.
+
+The `MessageAuthenticator` API allows to perform authentication requests *directly using a message* to provide the authentication request information.
+
+The aim of a `MessageAuthenticator` is to _translate_ a _message_ representation into a standard <<AuthenticationToken>> representation, through the link:{apidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] interface, and then use the token in order to perform a conventional authentication flow.
+
+An `AuthenticationTokenResolver` is bound to a specific `Message` type and provides an additional message partitioning level, the authentication *scheme*. This way, for the same type of `Message`, different resolvers can be provided for different authentication _schemes_.
+
+For example, taken two resolvers bound to the same `HttpMessage` type, one could deal with _basic_ authentication scheme and the other with _bearer_ authentication scheme.
+
+For example, supposing to use:
+
+* A custom link:{apidir}/com/holonplatform/core/messaging/Message.html[Message^] implementation class, that we'll call `MyMessage`.
+* A custom `AuthenticationToken` type, called `MyMessageAuthenticationToken`.
+
+We want to create an `AuthenticationTokenResolver` that processes a `MyMessage` instance, looks for a `MY_HEADER` message header value and, if available, resolves the message in a `MyMessageAuthenticationToken` instance setting the `MY_HEADER` header value as token _principal_ id:
 
 [source, java]
 ----
-authenticate(Message<?, ?> message, String... schemes)
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=tokenresolver,indent=0]
+----
+<1> Create an `AuthenticationTokenResolver` bound to the `MyMessage` message type
+<2> If the `MY_HEADER` message header value is present, return a `MyMessageAuthenticationToken` token type, setting the header value as principal
+
+The `MessageAuthenticator` API supports more than one _message_ type, through a set of registered `AuthenticationTokenResolver`. The `supportsMessage` and `getResolversForMessageType` methods of the `MessageAuthenticator` API allow to check if a message type is supported (i.e. one or more `AuthenticationTokenResolver` is available for given message type) and to obtain the resolvers for a specific message type, respectively.
+
+The `MessageAuthenticator` API makes available a specialized method which accepts a `Message` as authentication request representation:
+
+[source, java]
+----
+Authentication authenticate(Message<?, ?> message, String... schemes)
 ----
 
-===== AuthenticationTokenResolver
+This method can be used to *perform an authentication request directly using a Message* representation. 
 
-The link:{apidir}/com/holonplatform/auth/AuthenticationToken.AuthenticationTokenResolver.html[AuthenticationTokenResolver^] is responsible for the authentication `Message` handling, and must provide a standard `AuthenticationToken` which represents the authentication message to be used to perform actual authentication in `Realm`.
+===== Use `Realm` as a `MessageAuthenticator`
 
-An `AuthenticationTokenResolver` can optionally declare the authentication _scheme_ it is bound to, in order to discern different messages authentication information within a set of messages of the same type, and select the most suitable `AuthenticationTokenResolver` relying on the authentication scheme name.
+The <<Realm>> API extends the link:{apidir}/com/holonplatform/auth/Authenticator.MessageAuthenticator.html[MessageAuthenticator^] API, so a `Realm` instance can be used to process authentication requests using messages.
 
-For example, within the set of the HTTP request messages type, different authentication schemes, such as _Basic_ or _Bearer_, can be bound to a different `AuthenticationTokenResolver`, producing different `AuthenticationToken` s.
+The default `Realm` builder provides methods to register one ore more `AuthenticationTokenResolver`.
 
-For link:http.html#HttpRequest[HttpRequest] message types, two builtin `AuthenticationTokenResolver` are provided:
+The message based authentication flow is structured as follows:
 
-* For the *Basic* HTTP authentication scheme, using the `Authorization` header, producing a <<AccountCredentialsToken>>:
+. Lookup for suitable `AuthenticationTokenResolver` to obtain an `AuthenticationToken` from the request message, i.e. a resolver bound to given message type;
+. If one or more authentication *scheme* is specified, only the `AuthenticationTokenResolver` bound to the provided scheme names will be taken into account.
+. If a not empty set of `AuthenticationTokenResolver` is obtained using the strategy described above, all the suitable resolvers are invoked to obtain an `AuthenticationToken`: the `AuthenticationToken` to be used will be the one obtained from the first `AuthenticationTokenResolver` which provides a not null token (or better, the first resolver which returns a not empty Optional, according to the `AuthenticationTokenResolver` API). The resolvers are invoked in the order they were registered and according to provided authentication _schemes_ order, if any.
+. If an `AuthenticationToken` was successfully obtained, it will be used to trigger a conventional authentication request, as described in the <<RealmAuthentication>> section.
+. Otherwise, an `UnsupportedMessageException` is thrown.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=realmmsg,indent=0]
+----
+<1> Build an configure a Realm registering an `AuthenticationTokenResolver`
+<2> Add an `Authenticator` to handle actual `AuthenticationToken` based authentication requests
+<3> Perform the authentication request using a `MyMessage` message instance
+
+[[HTTPAuthenticationTokenResolver]]
+===== Builtin HTTP message resolvers
+
+For the link:http.html#HttpRequest[HttpRequest] message type, two builtin `AuthenticationTokenResolver` are provided: one to deal with the HTTP `Basic` scheme and the other to handle the `Bearer` scheme.
+
+*_Basic_ HTTP message resolver:*
+
+This `AuthenticationTokenResolver` can be otained using the `httpBasicResolver()` method of the  link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface:
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=basic,indent=0]
 ----
 
-* For the *Bearer* HTTP authentication scheme, using the `Authorization` header, producing a <<BearerAuthenticationToken>>:
+The resolver inspect the message `Authorization` header, if available, checking if it is declared using the `Basic` authorization scheme. If so, extracts and decodes the basic credentials (username and password) and uses them to create an <<AccountCredentialsToken>> authentication token type.
+
+This resolver can be used, for example, to implement a message based account authentication strategy. See <<Account>> section to learn how to use the Holon Platform APIs for this purpose.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=basicresolver,indent=0]
+----
+<1> Register a _Basic_ authorization HTTP message resolver
+<2> Register an `Authenticator` to handle account credentials based authentication
+<3> Perform the authentication request using the HTTP request message 
+
+*_Bearer_ HTTP message resolver:*
+
+This `AuthenticationTokenResolver` can be otained using the `httpBearerResolver()` method of the  link:{apidir}/com/holonplatform/auth/AuthenticationToken.html[AuthenticationToken^] interface:
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=bearer,indent=0]
 ----
 
-An `AuthenticationTokenResolver` must be registered in `Realm` using the `addAuthenticationTokenResolver(...)` method.
+The resolver inspect the message `Authorization` header, if available, checking if it is declared using the `Bearer` authorization scheme. If so, extracts the bearer _token_ value and uses it to create an <<BearerAuthenticationToken>> authentication token type.
+
+This resolver can be used, for example, to implement a _JWT_ (_JSON Web Token_) message based authentication. See <<JWT>> section to learn how to use the Holon Platform APIs for this purpose.
+
+[[RealmAuthorization]]
+==== Realm authorization
+
+Authorization controls operations are provided by the link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] API, which is implemented by the `Realm` API itself.
+
+The `Authorizer` API provides a set of `isPermitted(...)` methods to perform authorization controls, using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] representation to validate a set of permissions against the <<Authorization>> (which represents an authenticated principal) granted authorities.
+
+A `Permission` represents a granted authority and its actual meaning and validation strategy depends on the concrete `Authorizer` implementation, which can use specific `Permission` sub types to represent any kind of granted authority.
+
+The `Realm` API itself does not implement any concrete authorization control strategy, but delegates the specific authorization control strategy to one or more concrete <<Authorizer>>, relying on the `Permission` type in order to discern which `Authorizer` has to be used to handle a specific permission type.
+
+A concrete `Authorizer` can be registered in a `Realm` instance in two ways:
+
+* Using the `Realm` API _builder_.
+* Using the `addAuthorizer` method of the `Realm` API.
 
 [source, java]
-.AuthenticationTokenResolver registration and use
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=resolver,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=builder3,indent=0]
 ----
-<1> Register a HTTP *Basic* message resolver in Realm
-<2> Perform authentication using a `HTTPRequest` mesage
+<1> Add a Realm `Authorizer` using the _builder_ API
+<2> Add a Realm `Authorizer` using the `Realm` API method
+
+Each `Authorizer` declares the <<Permission>> type to which is bound through the `getPermissionType()` method. 
+To check if a `Realm` instance supports a specific `Permission` type, the `supportsPermission` API method can be used.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authorizer2,indent=0]
+----
+<1> Checks whether given `Realm` supports the `MyPermission` permission type
+
+So the `Realm` API is itself an `Authorizer`, bound to a generic `Permission` type. The `Authorizer` API provides a set of `isPermitted(...)` methods, which accept an <<Authentication>> instance and a set of permissions to be validated according to an authenticated principal's granted authorities, obtained through the `getPermissions()` method of the `Authentication` API.
+
+The permissions check methods provided by the `Authorizer` API can be categorized as follows:
+
+|===
+|Operation |Parameters type |Returns |Description
+
+a|`*isPermitted*(Authentication authentication, Collection permissions)`
+|`Permission`
+|`true` or `false`
+|Check if the given authentication has all the specified permissions.
+
+a|`*isPermittedAny*(Authentication authentication, Collection permissions)`
+|`Permission`
+|`true` or `false`
+|Check if the given authentication has any of the specified permission.
+
+a|`*isPermitted*(Authentication authentication, String permission representations)`
+|`String`
+|`true` or `false`
+|Check if the given authentication has all the specified permissions, using the `String` permission representation, which can be obtained using the `Permission.getPermission()` method.
+
+a|`*isPermittedAny*(Authentication authentication, String permission representations)`
+|`String`
+|`true` or `false`
+|Check if the given authentication has any of the specified permission, using the `String` permission representation, which can be obtained using the `Permission.getPermission()` method.
+|===
+
+For standard *role based* authorization controls, the `Authorizer` API provides a set of methods which accept the *String representation* of a permission, which can be obtained using the `Permission.getPermission()` method.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authorizer3,indent=0]
+----
+<1> Checks if the `MyPermission` instance is granted to given principal
+<2> Checks if any of `MyPermission` or `AnotherPermission` is granted to given principal
+<3> Checks if the `role1` role name (i.e. the String permission representation) is granted to given principal
+<4> Checks if the `role1` or the `role2` role name (i.e. the String permission representation) are granted to given principal
+
+See the next sections for details about authorizers and permission representations.
 
 [[Authorizer]]
 ==== Authorizer
 
-The link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] interface is responsible for authorization control, checking if one or more _permissions_ are granted to a _principal_.
+As stated in the <<RealmAuthorization>> strategy description, the `Realm` API relies on the registered `Authorizer` instances to perform the actual authorization controls, according to a specific `Permission` type.
 
-An `Authorizer` uses the <<Authentication>> representation to obtain the *permissions* granted to an authenticated _principal_, and provides several `isPermitted...` methods to perform permission control.
+The link:{apidir}/com/holonplatform/auth/Authorizer.html[Authorizer^] API represents a concrete authorizations control strategy, using a specific `Permission` type to represent a granted authority. The `Permission` type to which an `Authorizer` is bound is provided by the `getPermissionType()` method.
 
-[[Permission]]
-===== Permission
+===== Default Authorizer
 
-A *permission* is the representation of the access to a resource and can be expressed int two ways:
-
-* As a `String`: this can be compared to a *Role* name.
-* Using the link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] interface. This interface can be extended and implemented in different ways to represent more complex permissions than a simple role name. The default `Authorizer` relies on the `equals()` and `hashCode()` implementation to perform `Permission` comparison.
-
-To handle a custom `Permission` type, when the `equals()`/`hashCode()` comparison logic is not suitable or applicable, a custom `Authorizer` can be registered to the `Realm`, providing the right permission checking strategy for the custom `Permission` type. See below for further details.
-
-TIP: A `Permission` object which uses a simple String name can be created using the `Permission.create(String permission)` static method.
-
-===== Authorization checking
-
-Each `Authorizer` can be bound to a specific `Permission` type, to create specialized authorizers which handle a specific permission type.
-
-To enable *authorization checking* for a `Realm`, the available authorizers must be registered in realm using the `addAuthorizer(...)` method.
-
-The platform provides a *default* `Authorizer` which can be obtained using the `Authorizer.create()` static method. The default authorizer is bound to a generic `Permission` type and permission checking is performed by comparing  the`Authentication` granted permissions with the permissions to be checked, using the `Permission.equals(...)` method to compare a single permission to another.
-
-The default `Authorizer` supports the `Authentication.isRoot()` state, always granting permissions to *root* authentications.
+A default `Authorizer` implementation is provided and can be obtained using the `Authorizer.create()` static method. Alternatively, the default `Authorizer` can be created and registered in a `Realm` instance at the same time using the `withDefaultAuthorizer()` Realm builder method.
 
 [source, java]
-.Authorization example
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=authorizer4,indent=0]
+----
+<1> Create the default `Authorizer` implementation
+<2> Create a default `Authorizer` an register it in the `Realm` instance
+
+The default `Authorizer`, since it is bound to the generic `Permission` type, is able to handle any kind of permission and uses the following authorization control strategy:
+
+. Checks if the `Authentication.isRoot()` method returns `true`: if so, the authorization control is skipped and `true` is always returned from the `isPermitted(...)` methods.
+. Get the `Authentication` granted permissions using the `getPermissions()` method.
+. Compares the `Authentication` granted permissions (if any) with the provided permissions to check, using the standard `equals(...)` method to compare a single permission to another.
+
+CAUTION: To use a custom `Permission` type consistently with the default `Authorizer`, the `equals()`/`hashCode()` comparison logic of the concrete permission type must be provided accordingly.
+
+TIP: See <<Authentication>> for more inormation about the authenticated principal's granted permissions.
+
+[[Permission]]
+==== Permission
+
+The link:{apidir}/com/holonplatform/auth/Permission.html[Permission^] API is the representation of a granted authority.
+
+The actual meaning of a specific `Permission` type is implementation dependent and it is bound to the concrete `Authorizer` which implements the authorization control strategy.
+
+The `Permission` API makes available a `getPermission()` method, which returns the _Optional_ String representation of the permission, if the permission type can be represented as a String retaining a sufficient precision to be relied upon for authorization control decisions.
+
+===== Default Permission
+
+A default `Permission` implementation is available and can be obtained through the `Permission.create(String permission)` static method.
+
+The default `Permission` implementation can be used as a *role* name representation. The role name is returned from the `getPermission()` method and it is used as permission _identity_ in the `equals()`/`hashCode()` based comparison logic.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=dftpermission,indent=0]
+----
+<1> Create a default `Permission` using the `myrole` role name
+<2> The `getPermission()` will return the `myrole` String
+
+===== Authorization control example
+
+Below is provide a simple example on how to use the default `Authorizer` and the default `Permission` implementation to perform authorization controls:
+
+[source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleRealm.java[tag=permissions,indent=0]
 ----
+<1> Create a default `Permission` using the `role1` role name
+<2> Create a default `Permission` using the `role2` role name
+<3> Build an `Authentication` and grant the two previously defined permission to it
+<4> Create a `Realm` and register the default `Authorizer`
+<5> Verify the `p1` permission is permitted
+<6> Verify the `role1` role name is permitted
+<7> Verify the `p1` or the `p2` permission is permitted
+<8> Verify the `role1` or `role2` role name is permitted
+<9> The `other_role` role name is not permitted
