@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationContextException;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.spring.EnableTenantScope;
+import com.holonplatform.spring.TenantScopeManager;
 import com.holonplatform.spring.internal.BeanRegistryUtils;
 import com.holonplatform.spring.internal.SpringLogger;
 
@@ -43,25 +44,23 @@ public class TenantScopePostProcessor implements BeanFactoryPostProcessor {
 	/**
 	 * {@link TenantResolver} bean name to use to obtain the current tenant id.
 	 */
-	private String tenantResolver;
+	private final String tenantResolver;
 
 	/**
-	 * Get the {@link TenantResolver} bean name to use to obtain the current tenant id.
-	 * @return the tenantResolver bean name
+	 * Whether to enable
 	 */
-	public String getTenantResolver() {
-		return tenantResolver;
-	}
+	private final boolean enableTenantScopeManager;
 
 	/**
-	 * Set the {@link TenantResolver} bean name to use to obtain the current tenant id.
-	 * @param tenantResolver the tenantResolver bean name to set
+	 * The tenant scope
 	 */
-	public void setTenantResolver(String tenantResolver) {
-		this.tenantResolver = tenantResolver;
-	}
-
 	private TenantScope tenantScope;
+
+	public TenantScopePostProcessor(String tenantResolver, boolean enableTenantScopeManager) {
+		super();
+		this.tenantResolver = tenantResolver;
+		this.enableTenantScopeManager = enableTenantScopeManager;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -72,9 +71,9 @@ public class TenantScopePostProcessor implements BeanFactoryPostProcessor {
 	@Override
 	public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
 
-		String tenantResolverBeanName = getTenantResolver();
+		String tenantResolverBeanName = tenantResolver;
 
-		if (tenantResolverBeanName == null) {
+		if (tenantResolverBeanName == null || tenantResolverBeanName.trim().length() == 0) {
 			// try to detect a unique TenantResolver bean type
 			List<String> names = BeanRegistryUtils.getBeanNames(beanFactory, TenantResolver.class);
 			if (names.isEmpty()) {
@@ -102,6 +101,11 @@ public class TenantScopePostProcessor implements BeanFactoryPostProcessor {
 		LOGGER.info("Registered scope [" + TenantScope.SCOPE_NAME + "] using TenantResolver bean name ["
 				+ tenantResolverBeanName + "]");
 
+		// Tenant scope manager registration
+		if (enableTenantScopeManager) {
+			beanFactory.registerSingleton(TenantScopeManager.class.getName(),
+					new DefaultTenantScopeManager(tenantScope));
+		}
 	}
 
 	/**
@@ -110,6 +114,7 @@ public class TenantScopePostProcessor implements BeanFactoryPostProcessor {
 	public void unregister() {
 		if (tenantScope != null) {
 			tenantScope.destroy();
+			tenantScope = null;
 			LOGGER.info("Tenant scope successfully destroyed");
 		}
 	}

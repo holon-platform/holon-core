@@ -58,9 +58,14 @@ public class TenantScopeRegistrar implements ImportBeanDefinitionRegistrar, Envi
 				tenantResolver = null;
 			}
 
+			// tenant scope manager
+			boolean enableTenantScopeManager = BeanRegistryUtils.getAnnotationValue(attributes,
+					"enableTenantScopeManager", true);
+
 			final BeanDefinitionBuilder postProcessorBuilder = BeanDefinitionBuilder
 					.genericBeanDefinition(TenantScopePostProcessor.class).setDestroyMethodName("unregister")
-					.addPropertyValue("tenantResolver", tenantResolver).setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+					.addConstructorArgValue(tenantResolver).addConstructorArgValue(enableTenantScopeManager)
+					.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
 			registry.registerBeanDefinition(TENANT_SCOPE_POST_PROCESSOR_NAME, postProcessorBuilder.getBeanDefinition());
 
 		}

@@ -13,10 +13,19 @@ import com.holonplatform.spring.internal.tenant.TenantScope;
 import com.holonplatform.spring.internal.tenant.TenantScopeRegistrar;
 
 /**
- * Setup and register a tenant scope with name {@link TenantScope#SCOPE_NAME}.
- * 
+ * Setup and register a tenant scope with the name {@link TenantScope#SCOPE_NAME}.
  * <p>
- * A {@link TenantResolver} bean must be available in context to use the tenant scope.
+ * A {@link TenantResolver} bean must be available in context to use the tenant scope. The {@link TenantResolver} bean
+ * definition name can be configured using the {@link #tenantResolver()} attribute or the
+ * {@link #TENANT_RESOLVER_PROPERTY_NAME} configuration property when more than one {@link TenantResolver} type bean is
+ * available in context.
+ * </p>
+ * <p>
+ * The convenience {@link ScopeTenant} annotation can be used to declare tenant scoped beans.
+ * <p>
+ * <p>
+ * If the {@link #enableTenantScopeManager()} attribute is <code>true</code>, a {@link TenantScopeManager} bean is
+ * registered and made available in Spring context to manage the tenant scoped beans lifecycle.
  * </p>
  *
  * @see ScopeTenant
@@ -44,5 +53,20 @@ public @interface EnableTenantScope {
 	 * @return The optional name of the {@link TenantResolver} type bean definition
 	 */
 	String tenantResolver() default "";
+
+	/**
+	 * Whether to enable and register a {@link TenantScopeManager} type bean definition, which can be obtained as any
+	 * other Spring bean, for example through dependency injection.
+	 * <p>
+	 * The {@link TenantScopeManager} API allows to manage the tenant scoped beans lifecycle, for example discarding
+	 * scoped bean instances for a specific tenant id, invoking any destruction callback accordingly.
+	 * </p>
+	 * <p>
+	 * The attribute value is <code>true</code> by default.
+	 * </p>
+	 * @return Whether to enable and register a {@link TenantScopeManager} bean
+	 * @see TenantScopeManager
+	 */
+	boolean enableTenantScopeManager() default true;
 
 }

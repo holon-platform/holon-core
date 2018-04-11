@@ -88,6 +88,16 @@ public class TenantScope implements Scope {
 	}
 
 	/**
+	 * Destroy the bean store bound to given <code>tenantId</code>, i.e. removes all the scoped bean instances which
+	 * refer to given tenant id, triggering any associated destruction callback.
+	 * @param tenantId The tenant id which identifies the bean store (not null)
+	 */
+	public void destroy(String tenantId) {
+		ObjectUtils.argumentNotNull(tenantId, "Tenant id must be not null");
+		this.storesManager.destroy(tenantId);
+	}
+
+	/**
 	 * Get the {@link TenantBeanStore} for current tenant id
 	 * @return TenantBeanStore
 	 */
@@ -166,6 +176,17 @@ public class TenantScope implements Scope {
 		void removeBeanStore(final String tenantId) {
 			final TenantBeanStore removed = stores.remove(tenantId);
 			LOGGER.debug(() -> "Removed [" + removed + "] from: " + this);
+		}
+
+		void destroy(String tenantId) {
+
+			LOGGER.debug(() -> "Destroying bean store for tenant id [" + tenantId + "]");
+
+			TenantBeanStore beanStore = stores.get(tenantId);
+			if (beanStore != null) {
+				beanStore.destroy();
+			}
+
 		}
 
 		void destroy() {
