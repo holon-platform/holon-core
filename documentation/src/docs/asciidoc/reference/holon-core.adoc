@@ -17,7 +17,18 @@ _Copies of this document may be made for your own use and for distribution to ot
 
 The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
-== Obtaining the artifacts
+=== Sources and contributions
+
+The Holon Platform *Core* module source code is available from the GitHub repository link:https://github.com/holon-platform/holon-core[https://github.com/holon-platform/holon-core^].
+
+See the repository `README` file for information about:
+
+* The source code structure.
+* How to build the module artifacts from sources.
+* Where to find the code examples.
+* How to contribute to the module development.
+
+== *Obtaining the artifacts*
 
 The Holon Platform uses https://maven.apache.org[Maven^] for projects build and configuration. All the platform artifacts are published in the *Maven Central Repository*, so there is no need to explicitly declare additional repositories in your project `pom` file.
 
@@ -57,7 +68,7 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
 [[WhatsNew51x]]
-== What's new in version 5.1.x
+== *What's new in version 5.1.x*
 
 === Property model
 
@@ -89,7 +100,7 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * The new `holon-spring-security` artifact provides integration between the Holon Platform authentication and authorization architecture and the *Spring Security* one. Furthermore, a `holon-starter-security` Spring Boot starter is now available for quick project setup. See <<SpringSecurity>>.
 
-== Core API, services and components
+== *Core API*, services and components
 
 === Introduction
 
@@ -123,7 +134,7 @@ include::include/core/_tenancy.adoc[]
 
 include::include/core/_utils.adoc[]
 
-== HTTP and REST
+== *HTTP messages* and *RESTful Java client*
 
 The `holon-http` artifact provides base *HTTP* protocol support to the Holon platform, dealing with HTTP _messages_ and providing support for _RESTful_ web services invocation through a _client_ API.
 
@@ -140,7 +151,7 @@ include::include/http/_messages.adoc[]
 include::include/http/_restclient.adoc[]
 
 [[Auth]]
-== Authentication and Authorization
+== *Authentication* and *Authorization*
 
 The `holon-auth` artifact provides a complete and highly configurable *authentication* and *authorization* architecture, integrated with all the platform modules. 
 
@@ -165,7 +176,7 @@ include::include/auth/_annotation.adoc[]
 include::include/auth/_jwt.adoc[]
 
 [[SpringIntegration]]
-== Spring framework integration
+== *Spring ecosystem integration*
 
 The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^].
 
@@ -189,7 +200,7 @@ include::include/spring/_boot.adoc[]
 
 include::include/spring/_security.adoc[]
 
-== Loggers
+== *Loggers*
 
 By default, the Holon platform uses the https://www.slf4j.org[SLF4J^] API for logging. The use of SLF4J is optional: it is enabled when the presence of SLF4J is detected in the classpath. Otherwise, logging will fall back to JUL (`java.util.logging`).
 
@@ -206,7 +217,7 @@ The following logger names are available:
 * `com.holonplatform.http`: for logs related to *HTTP* support classes, such as `RestClient`
 * `com.holonplatform.spring`: for logs related to https://spring.io[Spring^] integration
 
-== System requirements
+== *System requirements*
 
 === Java
 
