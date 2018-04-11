@@ -13,11 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.spring.internal;
+package com.holonplatform.spring;
 
 /**
- * Enumerates the bean registration <code>primary</code> setting modalities to be used in automatic beans registration
- * classes.
+ * Enumerates the bean registration <code>primary</code> modes to be used in automatic beans registration classes.
  *
  * @since 5.0.0
  */
