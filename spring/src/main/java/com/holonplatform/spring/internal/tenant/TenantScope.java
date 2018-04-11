@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.Scope;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.Logger.Level;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.spring.internal.SpringLogger;
 
@@ -26,6 +27,11 @@ public class TenantScope implements Scope {
 	public static final String SCOPE_NAME = "tenant";
 
 	/**
+	 * Tenant resolver bean name
+	 */
+	private final String tenantResolverBeanName;
+
+	/**
 	 * Bean factory
 	 */
 	private final WeakReference<BeanFactory> beanFactory;
@@ -37,10 +43,14 @@ public class TenantScope implements Scope {
 
 	/**
 	 * Construct a new TenantScope
+	 * @param tenantResolverBeanName TenantResolver bean name
 	 * @param beanFactory BeanFactory
 	 */
-	public TenantScope(BeanFactory beanFactory) {
+	public TenantScope(String tenantResolverBeanName, BeanFactory beanFactory) {
 		super();
+		ObjectUtils.argumentNotNull(tenantResolverBeanName, "Tenant resolver bean name must be not null");
+		ObjectUtils.argumentNotNull(beanFactory, "BeanFactory must be not null");
+		this.tenantResolverBeanName = tenantResolverBeanName;
 		this.beanFactory = new WeakReference<>(beanFactory);
 		this.storesManager = new TenantBeanStoresManager();
 	}
@@ -83,19 +93,24 @@ public class TenantScope implements Scope {
 	 */
 	private synchronized TenantBeanStore getBeanStore() {
 		return storesManager.getBeanStore(getTenantResolver().getTenantId()
-				.orElseThrow(() -> new IllegalStateException("No tenant id available from TenantResolver")));
+				.orElseThrow(() -> new IllegalStateException("No tenant id available from the TenantResolver ["
+						+ getTenantResolver() + "] - Tenant resolver bean name: [" + tenantResolverBeanName + "]")));
 	}
 
 	/**
-	 * Get the {@link TenantResolver} to use from context
-	 * @return TenantResolver
+	 * Get the {@link TenantResolver} to use from the BeanFactory.
+	 * @return The TenantResolver bean instance
 	 */
-	private TenantResolver getTenantResolver() {
-		BeanFactory factory = beanFactory.get();
+	private TenantResolver getTenantResolver() throws IllegalStateException {
+		final BeanFactory factory = beanFactory.get();
 		if (factory == null) {
-			throw new IllegalStateException("A beanFactory is not available");
+			throw new IllegalStateException("A BeanFactory is not available");
 		}
-		return factory.getBean(TenantResolver.class);
+		try {
+			return factory.getBean(tenantResolverBeanName, TenantResolver.class);
+		} catch (Exception e) {
+			throw new IllegalStateException("Tenant scope: failed to obtain a valid TenantResolver", e);
+		}
 	}
 
 	// Stores manager
