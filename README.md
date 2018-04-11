@@ -12,9 +12,9 @@ The module highlights are:
 * Java Beans support
 * RESTful Java client
 * Authentication and authorization
-* JSON Web Tokens (`JWT`) support
-* __Spring__, __Spring Security__ and __Spring Boot__ integration
-* Spring __tenant__ scope 
+* [JSON Web Tokens](https://jwt.io) (`JWT`) support
+* [Spring](https://spring.io), [Spring Security](https://projects.spring.io/spring-security) and [Spring Boot](https://projects.spring.io/spring-boot/) integration
+* Spring _tenant_ scope 
 
 See the module [documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for details.
 
