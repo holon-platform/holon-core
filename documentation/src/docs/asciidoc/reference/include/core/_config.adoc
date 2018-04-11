@@ -9,7 +9,7 @@ Configuration properties definition, provision and management is supported by th
 * `ConfigPropertySet`: a configuration property set definition, bound to one or more providers to provide the property values.
 
 [[ConfigProperty]]
-==== Configuration property
+==== Configuration properties
 
 A configuration property is represented by the link:{apidir}/com/holonplatform/core/config/ConfigProperty.html[ConfigProperty^] interface. A configuration property is identified by a String *key* and is bound to a predefined *type*.
 

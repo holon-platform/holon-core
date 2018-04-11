@@ -1,13 +1,28 @@
 [[RestTemplateClient]]
-=== `RestClient` implementation using Spring RestTemplate
+=== `RestClient` implementation using Spring `RestTemplate`
 
-The Spring integration module provides a link:http.html#RestClient[RestClient] implementation using Spring `RestTemplate`.
+The Spring integration module provides a <<RestClient>> implementation using the Spring `RestTemplate` API.
 
-The Spring `RestClient` is represented by the link:{apidir}/com/holonplatform/spring/SpringRestClient.html[SpringRestClient^] interface, which provides a `create(RestTemplate restTemplate)` method to create a `RestClient` instance using provided Spring `RestTemplate`.
+TIP: See the <<RestClient>> documentation for information about the `RestClient` API.
 
-When a `RestTemplate` instance is available in platform `Context` (for example if is available as Spring bean and the Spring application context support as a context scope is enabled - see <<SpringContextScope>>), a `RestClientFactory` is automatically registered to provide a `SpringRestClient` implementation using the `RestTemplate`.
+The Spring `RestClient` implementation is represented by the link:{apidir}/com/holonplatform/spring/SpringRestClient.html[SpringRestClient^] interface, which provides a `create(RestTemplate restTemplate)` method to create a `RestClient` instance using a provided Spring `RestTemplate` implementation.
 
 [source, java]
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=restclient,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=restclient1,indent=0]
 ----
+<1> Create or obtain a `RestTemplate` implementation
+<2> Create a `RestClient` using the `RestTemplate` implementation
+
+When a `RestTemplate` instance is available as a Holon Platform <<Context>> resource, a `RestClientFactory` is automatically registered to provide a `SpringRestClient` implementation using that `RestTemplate` implementation. This way, the default `RestClient.create(...)` static methods can be used to obtain a `RestClient` implementation.
+
+TIP: If the <<<<SpringContextScope,Spring context scope>> is enabled with the default beans lookup strategy, it is sufficient that a `RestTemplate` bean type is registered in the Spring application context to obtain it as a _context resource_.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=restclient2,indent=0]
+----
+<1> Use the `@EnableBeanContext` to enable Spring beans context
+<2> Provide a `RestTemplate` bean definition
+<3> The `RestClient.create()` method can be used to obtain a `RestClient` implementation backed by the defined `RestTemplate` bean definition
+<4> If more than one `RestClientFactory` is available, the `SpringRestClient` class name can be specified to ensure that a `SpringRestClient` type is obtained as a `RestClient` implementation

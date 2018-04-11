@@ -1,26 +1,42 @@
 [[SpringTenantScope]]
 === Spring _tenant_ scope
 
-The Holon platform provides a Spring *tenant scope* which provides different bean instances depending on the current _tenant id_. 
+The Holon platform provides a Spring *tenant scope*, which provides different bean instances depending on the current _tenant id_. 
 
-This scope relies on the default link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] interface to obtain the current tenant id.
+This scope relies on the default link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] API to obtain the current tenant id.
 
-A bean of `TenantResolver` type must be configured and available in the current `BeanFactory` (i.e. in the current `ApplicationContext`) to use the scope. That bean will be used to obtain the current *tenant id*, using the `getTenantId()` method.
+In order for the scope to be active and available, a bean of `TenantResolver` type must be configured and available in the current `BeanFactory` (i.e. in the current Spring `ApplicationContext`).
 
-To enable the tenant scope, use the `@EnableTenantScope` annotation on Spring configuration classes.
+That link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] type bean will be used to obtain the *current tenant id*, if available, using the `getTenantId()` method.
 
-The scope name is `tenant`, so Spring beans can be registered with this scope using either:
+To enable the tenant scope, the link:{apidir}/com/holonplatform/spring/EnableTenantScope.html[EnableTenantScope^] annotation can be used on Spring configuration classes.
 
-* The default Spring `@Scope("tenant")` annotation
-* The convenience `@ScopeTenant` annotation
+The scope name is `tenant`, and Spring beans can be registered with this scope using either:
+
+* The default Spring `@Scope("tenant")` annotation.
+* Or the convenience link:{apidir}/com/holonplatform/core/tenancy/ScopeTenant.html[ScopeTenant^] annotation.
 
 [source, java]
 .Spring tenant scope example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=tenant,indent=0]
 ----
+<1> Use the `@EnableTenantScope` annotation on a Spring Configuration class to enable the _tenant_ scope
+<2> A `TenantResolver` type bean must be provided for current tenant id resolution
+<3> The convenience `@ScopeTenant` annotation can be used to declare a Spring bean as _tenant scoped_
 
-==== ScopedProxyMode
+==== `TenantResolver` lookup strategy
+
+By default, the _tenant_ scope tries to detect a link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] bean type in current application context, to be used as current tenant id provider.
+
+If a `TenantResolver` bean type is not available, or more than one `TenantResolver` type bean definition is present, the tenant scope setup will fail, throwing an `ApplicationContextException` at Spring application context startup time.
+
+When more than one `TenantResolver` bean type is present, the `TenantResolver` bean definition to be used with the tenant scope can be configured providing the `TenantResolver` bean *name*. This can be done in two ways:
+
+* Using the `tenantResolver` attribute of the `@EnableTenantScope` annotation.
+* Using a Spring `Environment` configuration property named `holon.tenant-scope.tenant-resolver`. This configuration method has precedence on the annotation attribute value.
+
+==== Tenant scope _ScopedProxyMode_
 
 The default `ScopedProxyMode` of the `@ScopeTenant` annotation is `INTERFACES`.
 
@@ -28,6 +44,23 @@ This proxy mode allows to configure a _proxy_ for the tenant-scoped Spring compo
 
 The `INTERFACES` mode create a JDK dynamic proxy implementing all *interfaces* exposed by the class of the target object.
 
-The `proxyMode()` attribute of the `@ScopeTenant` annotation can be used to change the scoped proxy mode.
+The `proxyMode()` attribute of the link:{apidir}/com/holonplatform/core/tenancy/ScopeTenant.html[ScopeTenant^] annotation can be used to change the scoped proxy mode.
 
+[[TenantScopeManager]]
+==== Tenant scoped beans lifecycle
 
+A _tenant scoped_ bean instance is created the first time the bean is requested with a specific tenant id.
+
+From now on, the bean instance will survive for the whole Spring application context lifecycle, likewise a _singleton_ scoped bean. This because the tenant scope handler it has no way of knowing if a tenant id is no more available and when this will happen, since it is highly dependent from the concrete application architecture and tenant resolution strategy.
+
+To avoid memory wastage and to ensure Spring context cleanliness, the link:{apidir}/com/holonplatform/spring/TenantScopeManager.html[TenantScopeManager^] API can be used to manage tenant scoped beans lifecycle.
+
+When a _tenant id_ is not valid or available anymore, the `discardTenantBeanStore(String tenantId)` API method can be invoked to destroy the bean store bound to given _tenant id_, i.e. to remove all the tenant scoped bean instances which refer to the _tenant id_, triggering any associated bean destruction callback.
+
+If the `enableTenantScopeManager` attribute of the `@EnableTenantScope` annotation is set to `true` (the default value), a `TenantScopeManager` bean type is automatically created an registered in the SPring application context. This way, it can be simply obtained, for example, using dependency injection.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=scopemanager,indent=0]
+----
+<1> Discard the tenant scoped bean instances for the `a_tenant_id` tenant id using the `TenantScopeManager` API

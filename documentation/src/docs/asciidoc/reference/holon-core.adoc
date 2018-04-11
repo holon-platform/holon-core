@@ -83,9 +83,11 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * A new `Transactional` API which can be used when a `Datastore` implementation supports *transactions*, which can be managed at a higher level, in an abstract and implementation-independent way. The `Transactional` API allows to execute `Datastore` operations whithin a transaction, taking care of the transaction lifecycle and providing transaction reference to perform _commit_ and _rollback_ operations. See <<TransactionalDatastores>>.
 
-=== Spring Security
+=== Spring ecosystem integration
 
-* The new `holon-spring-security` artifact provides integration between the Holon Platform authentication architecture and the Spring Security `SecurityContext`. Furthermore, a `holon-starter-security` Spring Boot starter is now available for quick project setup. See <<SpringSecurity>>.
+* The `TenantScopeManager` API is now available to manage the _tenant_ scoped beans lifecycle. See <<TenantScopeManager>>.
+
+* The new `holon-spring-security` artifact provides integration between the Holon Platform authentication and authorization architecture and the *Spring Security* one. Furthermore, a `holon-starter-security` Spring Boot starter is now available for quick project setup. See <<SpringSecurity>>.
 
 == Core API, services and components
 

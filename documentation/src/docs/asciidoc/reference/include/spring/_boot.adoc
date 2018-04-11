@@ -1,9 +1,9 @@
 [[SpringBoot]]
 === *Spring Boot* auto-configuration
 
-The Holon platform provides https://projects.spring.io/spring-boot[Spring Boot^] *auto-configuration* features for the most of the platform modules, including the core module.
+The Holon platform provides https://projects.spring.io/spring-boot[Spring Boot^] *auto-configuration* features for the most of the platform modules, including the _core_ module.
 
-To enable Spring Boot auto-configuration the following artifact must be included in your project dependencies:
+To enable the core Spring Boot auto-configuration capabilities, the following artifact must be included in your project dependencies:
 
 [source, xml, subs="attributes+"]
 ----
@@ -12,26 +12,41 @@ To enable Spring Boot auto-configuration the following artifact must be included
 <version>{revnumber}</version>
 ----
 
-Two auto-configuration features are provided:
+See below for the available auto-configuration features.
 
-*1.* <<SpringContextScope>> is enabled, registering the corresponding `Context` scope. This has the same effect as using the `@EnableBeanContext` annotation on Spring configuration classes, with the `lookupByType()` attribute set as true by default.
+==== Spring context scope auto-configuration
 
-To disable this auto-configuration feature the `EnableBeanContextAutoConfiguration` class can be excluded:
+The <<SpringContextScope,Spring context scope>> is automatically enabled.
+
+This has the same effect as using the `@EnableBeanContext` annotation on Spring configuration classes, with the `lookupByType()` attribute set as true by default.
+
+The `holon.context.bean-lookup-by-type` configuration property name can be used to configure the _resource lookup strategy_, enabling or not the _lookup by type_ mode.
+
+TIP: See the <<SpringContextScope>> documentation section for details.
+
+To disable this auto-configuration feature, the link:{apidir}/com/holonplatform/spring/boot/EnableBeanContextAutoConfiguration.html[EnableBeanContextAutoConfiguration^] class can be excluded from the Spring Boot auto-configuration classes:
 
 [source, java]
 ----
 @EnableAutoConfiguration(exclude={EnableBeanContextAutoConfiguration.class})
 ----
 
-*2.* If a `TenantResolver` bean is registered in Spring `ApplicationContext`, the <<SpringTenantScope>> is automatically registered. This has the same effect as using the `@EnableTenantScope` annotation on Spring configuration classes.
+==== Spring _tenant_ scope auto-configuration
 
-To disable this auto-configuration feature the `TenantScopeAutoConfiguration` class can be excluded:
+If a link:{apidir}/com/holonplatform/core/tenancy/TenantResolver.html[TenantResolver^] type bean is available in Spring application context and a _single candidate_ can be determined, the <<SpringTenantScope>> is automatically registered and enabled.
+
+This has the same effect as using the `@EnableTenantScope` annotation on Spring configuration classes.
+
+TIP: See the <<SpringTenantScope>> documentation section for details about the _tenant_ scope.
+
+To disable this auto-configuration feature, the link:{apidir}/com/holonplatform/spring/boot/TenantScopeAutoConfiguration.html[TenantScopeAutoConfiguration^] class  can be excluded from the Spring Boot auto-configuration classes:
 
 [source, java]
 ----
 @EnableAutoConfiguration(exclude={TenantScopeAutoConfiguration.class})
 ----
 
+[[Starters]]
 ==== Spring Boot starters
 
 The following Spring Boot _starter_ artifact is available to provide a quick project configuration setup using Maven dependency system:
@@ -44,4 +59,6 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
-The starter provides the dependency to the `holon-spring-boot` artifact in addition to the one to the base Spring Boot starter (`spring-boot-starter`).
+The starter provides the dependency to the `holon-spring-boot` artifact, enabling the auto-configuration features listed above, in addition to the default *core* Spring Boot starter (`spring-boot-starter`), which provides auto-configuration support, logging and YAML support.
+
+See the link:https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#using-boot-starter[Spring Boot starters documentation^] for details about the Spring Boot _starters_ topic and the core Spring Boot starter features.
