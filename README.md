@@ -2,6 +2,20 @@
 
 This is the __core__ module of the [Holon Platform](https://holon-platform.com) and represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
+The module highlights are:
+
+* `Context` resources
+* Configuration APIs
+* Data _validation_ APIs
+* Localization and internationalization support
+* The `Property` model and the `Datastore` API
+* Java Beans support
+* RESTful Java client
+* Authentication and authorization
+* JSON Web Tokens (`JWT`) support
+* __Spring__, __Spring Security__ and __Spring Boot__ integration
+* Spring __tenant__ scope 
+
 See the module [documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for details.
 
 Just like any other platform module, this artifact is part of the [Holon Platform](https://holon-platform.com) ecosystem, but can be also used as a _stand-alone_ library.
