@@ -115,6 +115,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=confi
 ----
 <1> Load the JWT configuration property set from a properties file named `jwt.properties`
 
+[[JWTFromAuthentication]]
 ==== Building a JWT from an `Authentication`
 
 The link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html[JwtTokenBuilder^] API can be used to create JSON Web Tokens using an <<Authentication>> as source and a `JwtConfiguration` instance to provide the token configuration attributes.
@@ -201,3 +202,16 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=authe
 <6> Perform an authentication request using a `BearerAuthenticationToken` with the JWT value
 <7> Build a `Realm` with a `JwtAuthenticator` and a _Bearer_ HTTP message resolver
 <8> Perform an authentication request using a `HttpRequest` message: the message must provide a _Bearer_ `Authorization` type message header with the JWT value
+
+===== JWT to `Authentication`
+
+The `JwtAuthenticator` API parses the JWT to obtain `Authentication` instance from it, if the token is valid and well formed.
+
+The `Authentication` obtained from the JSON Web Token is created with the following rules:
+
+* The _principal_ *name* is obtained from the JWT _subject_ (`sub`) claim and it is required: if not available, an `UnknownAccountException` is thrown.
+* The authentication scheme is set to `Bearer`.
+* If the default *permissions* claim is found (i.e. a claim named `ATH$prms`, see the `CLAIM_NAME_PERMISSIONS` constant of the  ink:{apidir}/com/holonplatform/auth/jwt/AuthenticationClaims.html[AuthenticationClaims^] interface), it is expected to be a String array of _role names_. For each role name, a default <<Permission>> is created with given name and granted to the `Authentication`.
+* Any other JWT claim is setted as an `Authentication` *parameter*.
+
+See <<Authentication>> for more information about the `Authentication` API.
