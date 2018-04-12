@@ -49,6 +49,14 @@ public interface BeanPropertyInspector {
 	Stream<PathProperty<?>> stream();
 
 	/**
+	 * Gets whether a property with given <code>propertyName</code> is available in this property set.
+	 * @param propertyName The property name (not null)
+	 * @return <code>true</code> if a property with given <code>propertyName</code> is available in this property set,
+	 *         <code>false</code> otherwise
+	 */
+	boolean contains(String propertyName);
+
+	/**
 	 * Get the bean property with given <code>propertyName</code>, if available. For nested properties, the default
 	 * property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
 	 * @param <T> Property type

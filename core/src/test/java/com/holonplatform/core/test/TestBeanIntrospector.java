@@ -61,6 +61,9 @@ public class TestBeanIntrospector {
 		assertTrue(set.getProperty("intval").isPresent());
 		assertTrue(set.getProperty("legacyDate").isPresent());
 
+		assertTrue(set.contains("name"));
+		assertFalse(set.contains("xyz"));
+
 		assertFalse(set.getProperty("ignore").isPresent());
 
 		assertEquals("TheName", set.getProperty("name").get().getMessage());

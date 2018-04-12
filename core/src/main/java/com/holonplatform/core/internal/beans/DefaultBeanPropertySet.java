@@ -99,6 +99,16 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#contains(java.lang.String)
+	 */
+	@Override
+	public boolean contains(String propertyName) {
+		ObjectUtils.argumentNotNull(propertyName, "Property name must be not null");
+		return stream().filter(p -> propertyName.equals(p.relativeName())).findAny().isPresent();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.beans.BeanPropertySet#getProperty(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
