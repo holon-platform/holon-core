@@ -135,6 +135,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=pos
 
 TIP: The `javax.annotation.Priority` annotation can be used on a `BeanPropertySetPostProcessor` implementation class to assign a priority order within the registered processors list, where lower values corresponds to higher priority.
 
+[[BuiltinBeanPostProcessors]]
 ==== Builtin Bean post processors
 
 The Holon platform makes available a set of builtin Bean post processors, automatically registered in the default `BeanIntrospector` implementation.
