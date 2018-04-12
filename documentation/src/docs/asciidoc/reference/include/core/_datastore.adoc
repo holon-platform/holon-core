@@ -498,6 +498,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag
 <3> Read the configuration properties from a `Properties` instance
 <4> Read the configuration properties from the `datastore.properties` file
 
+[[DatastoreDataContextId]]
 ===== Multiple Datastores configuration
 
 When multiple `Datastore` configuration is required and properties are read from the same source, a _data context id_ can be used to discern one `Datastore` configuration property set from another.
