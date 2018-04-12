@@ -20,13 +20,13 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DataTarget.DataTargetResolver;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
-import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.DatastoreConfigProperties;
 import com.holonplatform.core.datastore.transaction.TransactionConfiguration;
 import com.holonplatform.core.property.PathProperty;
@@ -281,5 +281,27 @@ public class ExampleDatastore {
 		Stream<String> results = datastore.query().target(DataTarget.named("test")).sort(new MySort()).stream(PROPERTY); // <5>
 	}
 	// end::customsort[]
+
+	public void dataMappable1() {
+		// tag::datamappable1[]
+		PathProperty<Integer> property = PathProperty.create("name", Integer.class) //
+				.dataPath("mapping-name"); // <1>
+
+		Optional<String> mapping = property.getDataPath(); // <2>
+		// end::datamappable1[]
+	}
+
+	public void dataMappable2() {
+		final StringProperty P1 = StringProperty.create("p1");
+		final StringProperty P2 = StringProperty.create("p2");
+
+		// tag::datamappable2[]
+		PropertySet<?> PROPERTIES = PropertySet.builderOf(P1, P2) //
+				.configuration(DataMappable.PATH, "mapping-name") // <1>
+				.build();
+
+		Optional<String> mapping = PROPERTIES.getConfiguration().getParameter(DataMappable.PATH); // <2>
+		// end::datamappable2[]
+	}
 
 }

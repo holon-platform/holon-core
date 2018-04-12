@@ -94,6 +94,8 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * A new `Transactional` API which can be used when a `Datastore` implementation supports *transactions*, which can be managed at a higher level, in an abstract and implementation-independent way. The `Transactional` API allows to execute `Datastore` operations whithin a transaction, taking care of the transaction lifecycle and providing transaction reference to perform _commit_ and _rollback_ operations. See <<TransactionalDatastores>>.
 
+* New `DataMappable` API to represent data model _mappings_. See <<DataMappable>>.
+
 === Spring ecosystem integration
 
 * The `TenantScopeManager` API is now available to manage the _tenant_ scoped beans lifecycle. See <<TenantScopeManager>>.
@@ -129,6 +131,8 @@ include::include/core/_properties.adoc[]
 include::include/core/_beans.adoc[]
 
 include::include/core/_datastore.adoc[]
+
+include::include/core/_datamappable.adoc[]
 
 include::include/core/_tenancy.adoc[]
 
