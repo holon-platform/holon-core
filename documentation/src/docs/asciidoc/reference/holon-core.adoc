@@ -118,6 +118,19 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 * *JwtConfigProperties API*: link:{apidir}/com/holonplatform/auth/jwt/JwtConfigProperties.html[private and public key source configuration properties^]. The private and public key sources can now be specified using the `publickey.source` property and using the `file:` and `classpath:` prefixes to declare the source type.
 * *JwtTokenBuilder API*: link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html#buildJwtToken-com.holonplatform.auth.jwt.JwtConfiguration-com.holonplatform.auth.Authentication-java.lang.String-[static token creation method]. The `JwtTokenBuilder` is now an interface. The default implementation can be obtained using the `get()` static method.
 
+==== Property model
+
+With the introduction of the <<PathPropertySubTypes,PathProperty sub types>>, a `PathProperty` declaration should be made using the most suitable sub type, if available.
+
+This is also necessary to use the convenience `QueryFilter` and `QueryFunction` static builder methods to create an expression using the property itself. The expression builder methods are now *organized by sub type*, so, for example, the `contains` method is only available for `String` type properties and the `StringProperty` sub type should by used in this case.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=subtypes1,indent=0]
+----
+<1> Create a `StringProperty` path property type with the `name` path name
+<2> The `StringProperty` type makes available convenience expression builder methods according to the `String` property type, for example `contains`
+
 == *Core API*, services and components
 
 === Introduction

@@ -41,6 +41,7 @@ import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.property.VirtualProperty;
+import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.temporal.TemporalType;
 
 @SuppressWarnings("unused")
@@ -380,5 +381,13 @@ public class ExampleProperty {
 		MyRenderingType rendered = ID.render(MyRenderingType.class); // <4>
 	}
 	// end::renderer[]
+
+	public void subTypes() {
+		// tag::subtypes1[]
+		final StringProperty STR = StringProperty.create("name"); // <1>
+
+		QueryFilter filter = STR.contains("value"); // <2>
+		// end::subtypes1[]
+	}
 
 }
