@@ -96,11 +96,27 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 
 * New `DataMappable` API to represent data model _mappings_. See <<DataMappable>>.
 
+=== JWT authentication
+
+* The JWT configuration now supports a wider range of key sources, formats (such as the `PKCS#12` key store format) and encodings (such as the `PEM` encoding) for private and public key declarations when an asymmetric signing algorithm is used. See <<JwtConfiguration,JWT configuration>>.
+
 === Spring ecosystem integration
 
 * The `TenantScopeManager` API is now available to manage the _tenant_ scoped beans lifecycle. See <<TenantScopeManager>>.
 
 * The new `holon-spring-security` artifact provides integration between the Holon Platform authentication and authorization architecture and the *Spring Security* one. Furthermore, a `holon-starter-security` Spring Boot starter is now available for quick project setup. See <<SpringSecurity>>.
+
+[[MigratingFrom50x]]
+=== Migrating from version 5.0.x
+
+==== Deprecations
+
+* *PropertySet API*: link:{apidir}/com/holonplatform/core/property/PropertySet.html#join-com.holonplatform.core.property.PropertySet...-[join^]. Using this method causes the loss of any property set configuration and/or identifier property declaration. Use the default <<PropertySet,PropertySet>> builder instead.
+* *BeanPropertySet API*: link:{apidir}/com/holonplatform/core/beans/BeanPropertySet.html#create-java.lang.Class-com.holonplatform.core.Path-[create providing a parent path^]. The bean properties _parent path_ will always be the `FinalPath` which represents the Bean class, with the bean fully qualified class name as path name. Use the default `create(Class<? extends T> beanClass)` method instead. The same considerations are valid for the `getPropertySet` method of the <<BeanIntrospector,BeanIntrospector>> API.
+* *BeanPropertySet/BeanPropertyInspector API*: link:{apidir}/com/holonplatform/core/beans/BeanPropertyInspector.html#requireProperty-java.lang.String-[requireProperty^] methods. The methods name are changed in `property` for consistency with the naming conventions of the new `BeanPropertyInspector` API.
+* *SubQuery API*: link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html#create-com.holonplatform.core.datastore.Datastore-java.lang.Class-[creation methods providing a Datastore^]. The `Datastore` parameter is no longer required. Use the new `create(...)` method versions which does not require the `Datastore` parameter.
+* *JwtConfigProperties API*: link:{apidir}/com/holonplatform/auth/jwt/JwtConfigProperties.html[private and public key source configuration properties^]. The private and public key sources can now be specified using the `publickey.source` property and using the `file:` and `classpath:` prefixes to declare the source type.
+* *JwtTokenBuilder API*: link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html#buildJwtToken-com.holonplatform.auth.jwt.JwtConfiguration-com.holonplatform.auth.Authentication-java.lang.String-[static token creation method]. The `JwtTokenBuilder` is now an interface. The default implementation can be obtained using the `get()` static method.
 
 == *Core API*, services and components
 

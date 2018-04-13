@@ -40,7 +40,7 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	public static final long DEFAULT_EXPIRE_TIME = 86400000L; // 1 day
 
 	/**
-	 * Required JWT issuer
+	 * JWT issuer
 	 */
 	public static final ConfigProperty<String> ISSUER = ConfigProperty.create("issuer", String.class);
 
