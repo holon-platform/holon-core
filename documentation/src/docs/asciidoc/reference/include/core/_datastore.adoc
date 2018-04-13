@@ -662,6 +662,7 @@ Datastores provides two main entry points for extension purposes:
 
 * Provide additional `Datastore` operations and functionalities relying on the link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodity.html[DatastoreCommodity^] concept, through the registration of a link:{apidir}/com/holonplatform/core/datastore/DatastoreCommodityFactory.html[DatastoreCommodityFactory^].
 
+[[DatastoreExpressionResolverExtension]]
 ===== Extend the Datastore API using `ExpressionResolver`
 
 The `Datastore` API supports `ExpressionResolver` registration, to add new expression resolution strategies and to handle new `Expression` types.
