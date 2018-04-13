@@ -46,6 +46,67 @@ To disable this auto-configuration feature, the link:{apidir}/com/holonplatform/
 @EnableAutoConfiguration(exclude={TenantScopeAutoConfiguration.class})
 ----
 
+[[JwtConfigurationAutoConfiguration]]
+==== `JwtConfiguration` auto-configuration
+
+When at least one property of the `holon.jwt.*` property set is available in Spring environment, and a link:{apidir}/com/holonplatform/auth/jwt/JwtConfiguration.html[JwtConfiguration^] type bean is not already present in the Spring application context, a `JwtConfiguration` bean is automatically created and setted up according to the `holon.jwt.*` configuration property values.
+
+See the <<JwtConfiguration,JWT configuration>> section for details about the available JWT configuration properties.
+
+For example, to setup a `JwtConfiguration` bean using a symmetric signing algorithm, the following configuration properties can be provided using the YAML format:
+
+[source, yaml]
+----
+holon:
+  jwt:
+    issuer: example-issuer
+    signature-algorithm: HS512
+    sharedkey-base64: "eWGZLlCrUjtBZwxgzcLPnA"
+    expire-hours: 1
+----
+
+Or when an asymmetric signing algorithm is used:
+
+[source, yaml]
+----
+holon:
+  jwt:
+    issuer: example-issuer
+    expire-hours: 1
+    signature-algorithm: RS256
+    privatekey:
+      encoding: PEM
+      source: > 
+        -----BEGIN RSA PRIVATE KEY-----
+        MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBALv07pB1uFK4fQ3QlHcRSCofMWovYpYp
+        hO2Jh31h2hIivC3TbFzWn07pL14d8ec8LIoIYWZAn4L9ZUpEzCPr3nbHpdoPaEcrpqXlgpjO/Jgf8Ysa
+        QPWq7ArjWr/ifiORA3vRg2OVhEGD309BccYh9peh/IOpt9EfmWioYlidO+S/AgMBAAECgYB1zoY8y1w1
+        lObk4sg7fPyDUjvRt1OOlQV5MQtYPh3F4jmaa3rvEaKWfjevQQufCKtN9QS/Z1/TZWm4TDi7hxpOu6YZ
+        gVL9JYHwOvb8opX9Yle9FyLRv4pPdhUkHs7ahzmhPPAf0kSjwKAYlqBmTUzZY5HTRZy/ffpVftPwcl50
+        mQJBAOJAromanqe6PDpxnL4IGcPPyn0dWQ3VyTV+i1XkZ8d60nBoLUriG8Ok+ehj4eiEYeK4Ca7GPciM
+        EqkZc54XrjsCQQDUq0TRB3V+1mVjJtMixN4I1nb5lo2MVASDjvl/3LCv7LxCZErWLpCjPivMrii+OOAr
+        k1VenXV7uTLD/Si9HKdNAkEAlUbn4ZJKq4+MvWLIb/kYRsGKcBI095PeNZVQiVMxxcObpN6XQ5j7iJII
+        8PM10hvGGbgja1UQ3ojMpxVL2zr0kQJBANQt1Ejgsj9L1HfqQnjMBeK3Zph5ttus75v6R79kBfxfqyxq
+        N6gdaT0VSEm78PZodG/FXUU6v/4ith2INN8I+XkCQQCq77unFpv3OESzhNRa0hjJgAAiwvAqwrWRxLHT
+        DijzpQ4PNDfR32bTV/pB9i0nJAPce+9cB7ahx+vpLX2jFuLu
+        -----END RSA PRIVATE KEY-----
+    publickey:
+      encoding: PEM
+      source: > 
+        -----BEGIN RSA PUBLIC KEY-----
+        MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC79O6QdbhSuH0N0JR3EUgqHzFqL2KWKYTtiYd9YdoS
+        Irwt02xc1p9O6S9eHfHnPCyKCGFmQJ+C/WVKRMwj6952x6XaD2hHK6al5YKYzvyYH/GLGkD1quwK41q/
+        4n4jkQN70YNjlYRBg99PQXHGIfaXofyDqbfRH5loqGJYnTvkvwIDAQAB
+        -----END RSA PUBLIC KEY-----   
+----
+
+To disable this auto-configuration feature, the link:{apidir}/com/holonplatform/spring/boot/JwtAutoConfiguration.html[JwtAutoConfiguration^] class can be excluded from the Spring Boot auto-configuration classes:
+
+[source, java]
+----
+@EnableAutoConfiguration(exclude={JwtAutoConfiguration.class})
+----
+
 [[Starters]]
 ==== Spring Boot starters
 

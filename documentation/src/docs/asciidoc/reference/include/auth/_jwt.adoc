@@ -188,9 +188,13 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=confi
 ----
 <1> Load the JWT configuration property set from a properties file named `jwt.properties`
 
+TIP: See <<JwtConfigurationAutoConfiguration>> to learn how to rely on the Spring Boot auto-configuration features to automatically create a `JwtConfiguration` bean using JWT configuration properties.
+
 ==== Supported JWT signing algorithms
 
 The link:{apidir}/com/holonplatform/auth/jwt/JwtSignatureAlgorithm.html[JwtSignatureAlgorithm^] enumeration provides a list of the support JWT signing algorithms.
+
+NOTE: When a signing shared key is provided in JWT configuration and a signature algorithm is not specified, the `HMAC using SHA-256` default signature algorithm is used.
 
 For asymmetric signing algorithms such `RSA`, the key pair to use can be loaded using the JWT configuration properties from different sources and using different key formats (`X.509`, `PKCS#8`, `PKCS#11`, `PKCS#12`) and encodings (`Base64`, `PEM`).
 
