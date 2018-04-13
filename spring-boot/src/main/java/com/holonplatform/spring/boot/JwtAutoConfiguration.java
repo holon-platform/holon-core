@@ -32,6 +32,7 @@ import com.holonplatform.spring.boot.internal.ConditionalOnPropertyPrefix;
 public class JwtAutoConfiguration {
 
 	@Configuration
+	@ConditionalOnMissingBean(JwtConfiguration.class)
 	@ConditionalOnPropertyPrefix("holon.jwt")
 	public static class JwtConfigurationConfiguration {
 
