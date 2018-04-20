@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.10</version>
+		<version>1.0.11</version>
 	</parent>
 
 	<groupId>com.holon-platform.core</groupId>
@@ -72,13 +72,13 @@
 		<bean.validation.version>1.1.0.Final</bean.validation.version>
 
 		<!-- Spring -->
-		<spring.version>4.3.14.RELEASE</spring.version>
+		<spring.version>4.3.16.RELEASE</spring.version>
 
 		<!-- Spring Security -->
 		<spring.security.version>4.2.4.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>1.5.10.RELEASE</spring.boot.version>
+		<spring.boot.version>1.5.12.RELEASE</spring.boot.version>
 
 	</properties>
 
