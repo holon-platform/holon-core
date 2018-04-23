@@ -49,7 +49,7 @@ public @interface EnableTenantScope {
 	 * If not provided, the scope registrar will lookup for an unique {@link TenantResolver} type bean definition in the
 	 * Spring application context. If not found, or more than one {@link TenantResolver} type bean definition is found,
 	 * a scope configuration error is thrown.
-	 * <p>
+	 * </p>
 	 * @return The optional name of the {@link TenantResolver} type bean definition
 	 */
 	String tenantResolver() default "";
