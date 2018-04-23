@@ -299,7 +299,7 @@ The identifier properties are declared at `PropertySet` definition time and can 
 
 [source, java]
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=propertyset2,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=propertyset3,indent=0]
 ----
 <1> Create a `PropertySet` with the `ID` and `NAME` properties, declaring `ID` as the identifier property
 <2> The same operation using the convenience `builderOf` method
