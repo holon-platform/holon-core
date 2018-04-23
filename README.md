@@ -1,5 +1,7 @@
 # Holon platform Core module
 
+> Latest release: [5.1.0](#obtain-the-artifacts)
+
 This is the __core__ module of the [Holon Platform](https://holon-platform.com) and represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
 The module highlights are:
