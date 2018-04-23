@@ -5,3 +5,5 @@ com.holonplatform.core.internal.beans.BeanPropertyValidationPostProcessor
 com.holonplatform.core.internal.beans.BeanPropertyBeanValidationPostProcessor
 com.holonplatform.core.internal.beans.BeanPropertyConfigPostProcessor
 com.holonplatform.core.internal.beans.BeanPropertyTemporalPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyIdentifierPostProcessor
+com.holonplatform.core.internal.beans.BeanPropertyPathPostProcessor

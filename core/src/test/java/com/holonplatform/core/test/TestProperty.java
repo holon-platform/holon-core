@@ -18,6 +18,7 @@ package com.holonplatform.core.test;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
@@ -34,9 +35,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -44,12 +47,17 @@ import org.junit.Test;
 import com.holonplatform.core.Context;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
 import com.holonplatform.core.internal.property.NumericBooleanConverter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.presentation.StringValuePresenter;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
@@ -62,17 +70,18 @@ import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
 import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
+import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.VirtualProperty;
-import com.holonplatform.core.property.VirtualProperty.Builder;
+import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
 import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QueryFilter.FilterOperator;
-import com.holonplatform.core.query.QueryFilter.OperationQueryFilter;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.PathQuerySort;
 import com.holonplatform.core.query.QuerySort.SortDirection;
 import com.holonplatform.core.temporal.TemporalType;
 import com.holonplatform.core.test.data.TestBean;
 import com.holonplatform.core.test.data.TestBean2;
+import com.holonplatform.core.test.data.TestBean3;
+import com.holonplatform.core.test.data.TestIdentifiablePropertySet;
 import com.holonplatform.core.test.data.TestNested;
 import com.holonplatform.core.test.data.TestPropertySet;
 
@@ -99,12 +108,12 @@ public class TestProperty {
 	}
 
 	@Test
-	public void testBase() {
+	public void testVirtualProperty() {
 
 		Property<String> gp = VirtualProperty.create(String.class);
 		assertEquals(String.class, gp.getType());
 
-		Builder<String, ?> vp = VirtualProperty.create(String.class).message("Test caption")
+		VirtualPropertyBuilder<String> vp = VirtualProperty.create(String.class).message("Test caption")
 				.messageCode("test.message");
 		assertEquals(String.class, vp.getType());
 		assertEquals("Test caption", ((Localizable) vp).getMessage());
@@ -120,6 +129,39 @@ public class TestProperty {
 
 		assertEquals("Test caption", vp2.getMessage());
 		assertEquals("test.message", vp2.getMessageCode());
+
+		VirtualProperty vp3 = VirtualProperty.create(String.class).valueProvider(pb -> "TEST").name("virtualName");
+		assertEquals("virtualName", vp3.getName());
+	}
+	
+	@Test
+	public void testPropertyEqualsHashCode() {
+		
+		PathProperty<String> p1 = PathProperty.create("p1", String.class);
+		PathProperty<String> p2 = PathProperty.create("p1", String.class);
+		
+		assertFalse(p1.equals(p2));
+		assertNotEquals(p1.hashCode(), p2.hashCode());
+		
+		EqualsHandler<PathProperty<?>> eh = (p,o) -> {
+			if (p != null && o != null) {
+				if (o instanceof PathProperty) {
+					return p.getName().equals(((PathProperty<?>)o).getName());
+				}
+			}
+			return false;
+		};
+		
+		HashCodeProvider<PathProperty<?>> hcp = p -> {
+			return Optional.of(p.getName().hashCode());
+		};
+		
+		p1 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
+		p2 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
+		
+		assertTrue(p1.equals(p2));
+		assertEquals(p1.hashCode(), p2.hashCode());
+		
 	}
 
 	@Test
@@ -700,7 +742,7 @@ public class TestProperty {
 		Date date = new Date();
 
 		TestBean2 testMock = mock(TestBean2.class);
-		when(testMock.getSomeDecimal()).thenReturn(new BigDecimal(2.7));
+		when(testMock.getSomeDecimal()).thenReturn(BigDecimal.valueOf(2.7));
 
 		TestNested testNested = mock(TestNested.class);
 		when(testNested.getNestedId()).thenReturn(2L);
@@ -709,7 +751,17 @@ public class TestProperty {
 		when(testMock.getNested()).thenReturn(testNested);
 
 		Object value = testBean2Context.read("someDecimal", testMock);
-		assertEquals(new BigDecimal(2.7), value);
+		assertEquals(BigDecimal.valueOf(2.7), value);
+	}
+	
+	@Test
+	public void testIgnorePropertyNotNested() {
+
+		BeanPropertySet<TestBean3> testBean3Context = BeanIntrospector.get().getPropertySet(TestBean3.class);
+
+		assertFalse(testBean3Context.getProperty("nested").isPresent());
+		assertTrue(testBean3Context.getProperty("nested.nestedId").isPresent());
+		assertTrue(testBean3Context.getProperty("nested.nestedDate").isPresent());
 	}
 
 	@Test
@@ -791,22 +843,17 @@ public class TestProperty {
 		ps = PropertySet.of(pi);
 		assertTrue(ps.contains(TestPropertySet.NAME));
 
-		PropertySet<Property> p1 = PropertySet.of(TestPropertySet.NAME);
-		PropertySet<Property> p2 = PropertySet.of(TestPropertySet.SEQUENCE);
+		PropertySet<Property<?>> p1 = PropertySet.of(TestPropertySet.NAME);
 
-		PropertySet<Property> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
+		PropertySet<Property<?>> p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
-
-		p3 = PropertySet.join(p1, p2);
-		assertTrue(p3.contains(TestPropertySet.NAME));
-		assertTrue(p3.contains(TestPropertySet.SEQUENCE));
 
 		p3 = PropertySet.builder().add(p1).add(TestPropertySet.GENERIC).build();
 		assertTrue(p3.contains(TestPropertySet.NAME));
 		assertTrue(p3.contains(TestPropertySet.GENERIC));
 
-		PropertySet<Property> p4 = PropertySet.builder().add(p3).remove(TestPropertySet.GENERIC).build();
+		PropertySet<Property<?>> p4 = PropertySet.builder().add(p3).remove(TestPropertySet.GENERIC).build();
 		assertTrue(p4.contains(TestPropertySet.NAME));
 		assertFalse(p4.contains(TestPropertySet.GENERIC));
 
@@ -821,14 +868,134 @@ public class TestProperty {
 		assertTrue(joined.contains(TestPropertySet.SEQUENCE));
 		assertTrue(joined.contains(TestPropertySet.GENERIC));
 		assertTrue(joined.contains(TestPropertySet.VIRTUAL));
-		
-		PropertySet<?> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME).build();
+
+		PropertySet<Property<?>> ps2 = PropertySet.builder().add(TestPropertySet.NAME).add(TestPropertySet.NAME)
+				.build();
 		assertEquals(1, ps2.size());
+
+		PropertySet<Property<?>> pbo = PropertySet.builderOf(TestPropertySet.NAME, TestPropertySet.SEQUENCE)
+				.identifier(TestPropertySet.SEQUENCE).build();
+		assertTrue(pbo.contains(TestPropertySet.NAME));
+		assertTrue(pbo.contains(TestPropertySet.SEQUENCE));
+
+		PropertySet<PathProperty> pps = PropertySet.builder(PathProperty.class).add(TestPropertySet.NAME).build();
+		assertTrue(pps.contains(TestPropertySet.NAME));
+	}
+
+	@Test
+	public void testPropertySetIdentifier() {
+
+		assertFalse(TestIdentifiablePropertySet.PROPERTIES.getIdentifiers().isEmpty());
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.PROPERTIES.getFirstIdentifier().get());
+		assertTrue(TestIdentifiablePropertySet.ID == TestIdentifiablePropertySet.PROPERTIES.identifiers().findFirst()
+				.get());
+
+		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID)
+				.identifier(TestIdentifiablePropertySet.ID).build();
+
+		assertTrue(set.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, set.getFirstIdentifier().get());
+
+		PropertySet<?> set2 = PropertySet.of(set, TestIdentifiablePropertySet.TEXT);
+
+		assertTrue(set2.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set2.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, set2.getFirstIdentifier().get());
+	}
+
+	@Test
+	public void testPropertySetConfiguration() {
+
+		assertTrue(TestIdentifiablePropertySet.PROPERTIES.getConfiguration().hasNotNullParameter("test"));
+		assertEquals("TEST",
+				TestIdentifiablePropertySet.PROPERTIES.getConfiguration().getParameter("test").orElse(null));
+
+		ConfigProperty<Long> cp = ConfigProperty.create("tcfg", Long.class);
+
+		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID).configuration(cp, 7L).build();
+		assertEquals(Long.valueOf(7), set.getConfiguration().getParameter(cp, 1L));
+
+		PropertySet<?> set2 = PropertySet.of(set, TestIdentifiablePropertySet.TEXT);
+		assertEquals(Long.valueOf(7), set2.getConfiguration().getParameter(cp, 1L));
+
+	}
+
+	@Test
+	public void testPropertyBoxIdentifier() {
+
+		PropertyBox box = PropertyBox.create(TestIdentifiablePropertySet.PROPERTIES);
+
+		assertTrue(box.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(box.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ID, box.getFirstIdentifier().get());
+		assertTrue(TestIdentifiablePropertySet.ID == box.identifiers().findFirst().get());
+
+		box = PropertyBox.create(PropertySet.builderOf(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.ENM)
+				.identifier(TestIdentifiablePropertySet.ENM).build());
+		assertTrue(box.getFirstIdentifier().isPresent());
+		assertEquals(TestIdentifiablePropertySet.ENM, box.getFirstIdentifier().get());
+
+		PropertyBox box1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 2L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box3 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "test").build();
+		PropertyBox box4 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.TEXT, "test").build();
+
+		assertTrue(box1.equals(box3));
+		assertFalse(box1.equals(box2));
+		assertFalse(box1.equals(null));
+		assertFalse(box1.equals("a"));
+		assertFalse(box1.equals(box4));
+		assertFalse(box4.equals(box2));
+		assertTrue(box1.equals(box1));
+		assertTrue(box4.equals(box4));
+
+		PropertyBox box5 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES).equalsHandler((a, b) -> true)
+				.hashCodeProvider(pb -> Optional.of(1)).build();
+		assertTrue(box5.equals(box1));
+		assertTrue(box5.equals(null));
+		assertEquals(1, box5.hashCode());
+		
+		Map<Object, Object> map = new HashMap<>();
+		
+		PropertyBox m1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
+		
+		map.put(m1, m1);
+		
+		Object value = map.get(m1);
+		assertNotNull(value);
+		
+		PropertyBox m2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
+				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
+		
+		value = map.get(m2);
+		assertNotNull(value);
+	}
+
+	@Test
+	public void testPropertyBoxConfiguration() {
+
+		PropertyBox box = PropertyBox.create(TestIdentifiablePropertySet.PROPERTIES);
+		box.setValue(TestIdentifiablePropertySet.ID, 3L);
+
+		assertEquals("TEST", box.getConfiguration().getParameter("test").orElse(null));
+
+		PropertyBox box2 = box.cloneBox();
+
+		assertEquals("TEST", box2.getConfiguration().getParameter("test").orElse(null));
+		assertEquals(Long.valueOf(3), box2.getValue(TestIdentifiablePropertySet.ID));
 	}
 
 	@Test
 	public void testPathProperty() {
-		PathProperty<String> property = PathProperty.create("test", String.class);
+		StringProperty property = StringProperty.create("test");
 
 		assertNotNull(property.toString());
 
@@ -996,24 +1163,6 @@ public class TestProperty {
 		assertThat(flt, instanceOf(OperationQueryFilter.class));
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
-
-		TestUtils.expectedException(UnsupportedOperationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				PathProperty<Integer> ap = PathProperty.create("test", int.class);
-				ap.contains("x", false);
-			}
-		});
-
-		TestUtils.expectedException(UnsupportedOperationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				PathProperty<Integer> ap = PathProperty.create("test", int.class);
-				ap.contains("x", true);
-			}
-		});
 
 	}
 

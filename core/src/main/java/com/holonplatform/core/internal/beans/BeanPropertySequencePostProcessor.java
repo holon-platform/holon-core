@@ -18,7 +18,7 @@ package com.holonplatform.core.internal.beans;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Sequence;
 import com.holonplatform.core.internal.Logger;
@@ -46,7 +46,7 @@ public class BeanPropertySequencePostProcessor implements BeanPropertyPostProces
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		property.getAnnotation(Sequence.class).ifPresent(a -> {
 			property.sequence(a.value());
 			LOGGER.debug(() -> "BeanPropertySequencePostProcessor: setted property [" + property + "] sequence ["

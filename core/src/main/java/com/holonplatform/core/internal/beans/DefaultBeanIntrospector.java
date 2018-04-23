@@ -36,16 +36,25 @@ import java.util.WeakHashMap;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.Path.FinalPath;
+import com.holonplatform.core.Path.FinalPath.FinalPathBuilder;
 import com.holonplatform.core.beans.BeanConfigProperties;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.BeanPropertySet;
+import com.holonplatform.core.beans.BeanPropertySetPostProcessor;
+import com.holonplatform.core.beans.BooleanBeanProperty;
 import com.holonplatform.core.beans.Ignore;
+import com.holonplatform.core.beans.IgnoreMode;
+import com.holonplatform.core.beans.NumericBeanProperty;
+import com.holonplatform.core.beans.StringBeanProperty;
+import com.holonplatform.core.beans.TemporalBeanProperty;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.property.PropertyBox;
 
 /**
  * Default {@link BeanIntrospector} implementation.
@@ -95,9 +104,15 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 */
 	private static final Logger LOGGER = BeanLogger.create();
 
-	private static final Comparator<BeanPropertyPostProcessor> PRIORITY_COMPARATOR = Comparator
+	private static final Comparator<BeanPropertySetPostProcessor> PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR = Comparator
 			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : BeanPropertyPostProcessor.DEFAULT_PRIORITY);
+					? p.getClass().getAnnotation(Priority.class).value()
+					: BeanPropertySetPostProcessor.DEFAULT_PRIORITY);
+
+	private static final Comparator<BeanPropertyPostProcessor> PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR = Comparator
+			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
+					? p.getClass().getAnnotation(Priority.class).value()
+					: BeanPropertyPostProcessor.DEFAULT_PRIORITY);
 
 	private static final Comparator<BeanProperty<?>> SEQUENCE_COMPARATOR = new Comparator<BeanProperty<?>>() {
 
@@ -139,7 +154,12 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	}
 
 	/**
-	 * Post processors
+	 * Property set post processors
+	 */
+	private final List<BeanPropertySetPostProcessor> propertySetPostProcessors = new LinkedList<>();
+
+	/**
+	 * Property post processors
 	 */
 	private final List<BeanPropertyPostProcessor> propertyPostProcessors = new LinkedList<>();
 
@@ -154,27 +174,72 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	}
 
 	/**
-	 * Load {@link BeanPropertyPostProcessor}s from <code>META-INF/services</code> extensions.
+	 * Load {@link BeanPropertySetPostProcessor}s and {@link BeanPropertyPostProcessor}s from
+	 * <code>META-INF/services</code> extensions.
 	 * @param classLoader ClassLoader to use
-	 * @return {@link BeanPropertyPostProcessor}s list, empty if none found
 	 */
 	private void init(final ClassLoader classLoader) {
+		// property set post processors
+		LOGGER.debug(() -> "Load BeanPropertySetPostProcessor for classloader [" + classLoader
+				+ "] using ServiceLoader with service name: " + BeanPropertySetPostProcessor.class.getName());
+		Iterable<BeanPropertySetPostProcessor> propertySetPostProcessors = AccessController
+				.doPrivileged(new PrivilegedAction<Iterable<BeanPropertySetPostProcessor>>() {
+					@Override
+					public Iterable<BeanPropertySetPostProcessor> run() {
+						return ServiceLoader.load(BeanPropertySetPostProcessor.class, classLoader);
+					}
+				});
+		propertySetPostProcessors.forEach(pr -> {
+			this.propertySetPostProcessors.add(pr);
+			LOGGER.debug(() -> "Loaded and registered BeanPropertySetPostProcessor [" + pr + "] for classloader ["
+					+ classLoader + "]");
+		});
+		// sort by priority
+		Collections.sort(this.propertySetPostProcessors, PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR);
+		// property post processors
 		LOGGER.debug(() -> "Load BeanPropertyPostProcessors for classloader [" + classLoader
 				+ "] using ServiceLoader with service name: " + BeanPropertyPostProcessor.class.getName());
-		Iterable<BeanPropertyPostProcessor> postProcessors = AccessController
+		Iterable<BeanPropertyPostProcessor> propertyPostProcessors = AccessController
 				.doPrivileged(new PrivilegedAction<Iterable<BeanPropertyPostProcessor>>() {
 					@Override
 					public Iterable<BeanPropertyPostProcessor> run() {
 						return ServiceLoader.load(BeanPropertyPostProcessor.class, classLoader);
 					}
 				});
-		postProcessors.forEach(pr -> {
-			propertyPostProcessors.add(pr);
+		propertyPostProcessors.forEach(pr -> {
+			this.propertyPostProcessors.add(pr);
 			LOGGER.debug(() -> "Loaded and registered BeanPropertyPostProcessor [" + pr + "] for classloader ["
 					+ classLoader + "]");
 		});
 		// sort by priority
-		Collections.sort(propertyPostProcessors, PRIORITY_COMPARATOR);
+		Collections.sort(this.propertyPostProcessors, PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#addBeanPropertySetPostProcessor(com.holonplatform.core.beans.
+	 * BeanPropertySetPostProcessor)
+	 */
+	@Override
+	public void addBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor) {
+		ObjectUtils.argumentNotNull(propertySetPostProcessors, "BeanPropertySetPostProcessor must be not null");
+		propertySetPostProcessors.add(beanPropertySetPostProcessor);
+		LOGGER.debug(() -> "Registered BeanPropertySetPostProcessor [" + beanPropertySetPostProcessor + "]");
+		// sort by priority
+		Collections.sort(propertySetPostProcessors, PROPERTY_SET_POST_PROCESSOR_PRIORITY_COMPARATOR);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.beans.BeanIntrospector#removeBeanPropertySetPostProcessor(com.holonplatform.core.beans.
+	 * BeanPropertySetPostProcessor)
+	 */
+	@Override
+	public void removeBeanPropertySetPostProcessor(BeanPropertySetPostProcessor beanPropertySetPostProcessor) {
+		ObjectUtils.argumentNotNull(beanPropertySetPostProcessor, "BeanPropertySetPostProcessor must be not null");
+		propertySetPostProcessors.remove(beanPropertySetPostProcessor);
+		LOGGER.debug(() -> "Unregistered BeanPropertySetPostProcessor [" + beanPropertySetPostProcessor + "]");
 	}
 
 	/*
@@ -188,7 +253,7 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		propertyPostProcessors.add(beanPropertyPostProcessor);
 		LOGGER.debug(() -> "Registered BeanPropertyPostProcessor [" + beanPropertyPostProcessor + "]");
 		// sort by priority
-		Collections.sort(propertyPostProcessors, PRIORITY_COMPARATOR);
+		Collections.sort(propertyPostProcessors, PROPERTY_POST_PROCESSOR_PRIORITY_COMPARATOR);
 	}
 
 	/*
@@ -201,6 +266,24 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 		ObjectUtils.argumentNotNull(beanPropertyPostProcessor, "BeanPropertyPostProcessor must be not null");
 		propertyPostProcessors.remove(beanPropertyPostProcessor);
 		LOGGER.debug(() -> "Unregistered BeanPropertyPostProcessor [" + beanPropertyPostProcessor + "]");
+	}
+
+	/**
+	 * Post-process given {@link BeanPropertySet} using registered {@link BeanPropertySetPostProcessor}s.
+	 * @param <T> Bean type
+	 * @param propertySet Property set to process
+	 * @param beanClass Bean class
+	 * @return Processed property set
+	 */
+	private <T> void postProcessBeanPropertySet(BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> propertySet,
+			Class<?> beanClass) {
+		BeanPropertySet.Builder<?, ?> processed = propertySet;
+		for (BeanPropertySetPostProcessor propertySetPostProcessor : propertySetPostProcessors) {
+			LOGGER.debug(() -> "Invoke BeanPropertySetPostProcessor [" + propertySetPostProcessor
+					+ "] on property set of bean class [" + beanClass + "]");
+			propertySetPostProcessor.processBeanPropertySet(processed, beanClass);
+
+		}
 	}
 
 	/**
@@ -253,18 +336,71 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#read(com.holonplatform.core.property.PropertyBox,
+	 * java.lang.Object, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> PropertyBox read(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		return getPropertySet((Class<T>) instance.getClass()).read(propertyBox, instance, ignoreMissing);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#read(java.lang.Object)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> PropertyBox read(T instance) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		BeanPropertySet<T> propertySet = getPropertySet((Class<T>) instance.getClass());
+		return propertySet.read(PropertyBox.builder(propertySet).invalidAllowed(true).build(), instance);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#write(com.holonplatform.core.property.PropertyBox,
+	 * java.lang.Object, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T write(PropertyBox propertyBox, T instance, boolean ignoreMissing) {
+		ObjectUtils.argumentNotNull(instance, "Bean instance must be not null");
+		return getPropertySet((Class<T>) instance.getClass()).write(propertyBox, instance, ignoreMissing);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.beans.BeanIntrospector#getPropertySet(java.lang.Class, com.holonplatform.core.Path)
+	 */
+	@Override
+	public <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass, Path<?> parentPath) {
+		return getPropertySet(beanClass);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.beans.BeanIntrospector#getPropertySet(java.lang.Class)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass, Path<?> parentPath) {
+	public <T> BeanPropertySet<T> getPropertySet(Class<? extends T> beanClass) {
 		ObjectUtils.argumentNotNull(beanClass, "Bean class must be not null");
 		LOGGER.debug(() -> "Get BeanPropertySet for bean class [" + beanClass + "]");
 		synchronized (cache) {
 			if (CACHE_ENABLED && cache.containsKey(beanClass)) {
 				return cache.get(beanClass);
 			}
-			BeanPropertySet beanPropertySet = buildBeanPropertySet(beanClass, parentPath);
+
+			// get bean path
+			final FinalPathBuilder<T> rootBeanPath = FinalPath.of(beanClass.getName(), beanClass);
+
+			final BeanPropertySet beanPropertySet = buildBeanPropertySet(beanClass, rootBeanPath);
+
+			// check data path
+			((BeanPropertySet<?>) beanPropertySet).getDataPath().ifPresent(dp -> rootBeanPath.dataPath(dp));
+
 			if (CACHE_ENABLED) {
 				BeanPropertySet existing = cache.putIfAbsent(beanClass, beanPropertySet);
 				return (existing != null ? existing : beanPropertySet);
@@ -283,10 +419,21 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	private <T> BeanPropertySet<T> buildBeanPropertySet(Class<? extends T> beanClass, Path<?> parentPath)
 			throws BeanIntrospectionException {
 		LOGGER.debug(() -> "Build BeanPropertySet for bean class [" + beanClass + "]");
+		// resolve bean properties
 		List<BeanProperty<?>> properties = resolveBeanProperties(beanClass, parentPath, null);
 		// sort
 		properties.sort(SEQUENCE_COMPARATOR);
-		return new DefaultBeanPropertySet<>(beanClass, properties);
+		// property set
+		BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> builder = new DefaultBeanPropertySet.DefaultBuilder<>(
+				beanClass, properties);
+		// post processing
+		postProcessBeanPropertySet(builder, beanClass);
+		// build property set
+		final DefaultBeanPropertySet<T> beanPropertySet = builder.build();
+		// check identifiers
+		properties.stream().filter(p -> p.isIdentifier()).forEach(p -> beanPropertySet.addIdentifier(p));
+		// return bean property set
+		return beanPropertySet;
 	}
 
 	/**
@@ -309,10 +456,13 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 					for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
 						if (!EXCLUDE_DEFAULT_BEAN_PROPERTY_NAMES.contains(propertyDescriptor.getName())) {
 							buildBeanProperty(beanClass, parentPath, parent, propertyDescriptor).ifPresent(p -> {
-								properties.add(p);
-								LOGGER.debug(() -> "Bean class [" + beanClass + "] - added bean property [" + p + "]");
+								if (p.addToPropertySet) {
+									properties.add(p.property);
+									LOGGER.debug(
+											() -> "Bean class [" + beanClass + "] - added bean property [" + p + "]");
+								}
 								// check nested
-								properties.addAll(resolveBeanProperties(p.getType(), null, p));
+								properties.addAll(resolveBeanProperties(p.property.getType(), null, p.property));
 							});
 						}
 					}
@@ -334,36 +484,89 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 	 * @return BeanProperty instance
 	 * @throws BeanIntrospectionException Error introspecting bean class
 	 */
-	private Optional<BeanProperty<?>> buildBeanProperty(Class<?> beanClass, Path<?> parentPath, BeanProperty<?> parent,
-			PropertyDescriptor propertyDescriptor) throws BeanIntrospectionException {
+	private Optional<ResolvedBeanProperty<?>> buildBeanProperty(Class<?> beanClass, Path<?> parentPath,
+			BeanProperty<?> parent, PropertyDescriptor propertyDescriptor) throws BeanIntrospectionException {
+
+		boolean addToPropertySet = true;
+
 		// annotations
 		Annotation[] annotations = null;
 		Field propertyField = findDeclaredField(beanClass, propertyDescriptor.getName());
 		if (propertyField != null) {
 			// check ignore
 			if (propertyField.isAnnotationPresent(Ignore.class)) {
+				final Ignore ignore = propertyField.getAnnotation(Ignore.class);
+
 				LOGGER.debug(() -> "Bean class [" + beanClass + "] - Property " + propertyDescriptor.getName()
-						+ " ignored according to IgnoreProperty annotation ");
-				return Optional.empty();
+						+ " ignored according to IgnoreProperty annotation - Include nested: "
+						+ ignore.includeNested());
+
+				addToPropertySet = false;
+
+				if (ignore.includeNested()) {
+					return Optional.empty();
+				}
 			}
 
 			annotations = propertyField.getAnnotations();
 		}
 
-		BeanProperty.Builder<?> property = BeanProperty
-				.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType()).parent(parent)
-				.readMethod(propertyDescriptor.getReadMethod()).writeMethod(propertyDescriptor.getWriteMethod())
-				.field(propertyField).annotations(annotations);
+		BeanProperty.Builder<?> property = getPropertyBuilder(propertyDescriptor,
+				(annotations != null) ? annotations : new Annotation[0]).parent(parent)
+						.readMethod(propertyDescriptor.getReadMethod()).writeMethod(propertyDescriptor.getWriteMethod())
+						.field(propertyField).annotations(annotations);
 
 		if (parent == null && parentPath != null) {
 			property.parent(parentPath);
 		}
 
 		// post processors
-		property = postProcessBeanProperty(property, beanClass);
+		if (addToPropertySet) {
+			property = postProcessBeanProperty(property, beanClass);
+		}
 
-		return Optional.of(property);
+		// check ignore mode
+		IgnoreMode ignoreMode = property.getIgnoreMode().orElse(IgnoreMode.DO_NOT_IGNORE);
 
+		if (ignoreMode != IgnoreMode.DO_NOT_IGNORE) {
+			if (ignoreMode == IgnoreMode.IGNORE_INCLUDE_NESTED) {
+				return Optional.empty();
+			} else {
+				addToPropertySet = false;
+			}
+		}
+
+		return Optional.of(new ResolvedBeanProperty<>(property, addToPropertySet));
+
+	}
+
+	/**
+	 * Get a suitable {@link BeanProperty} builder according to property type.
+	 * @param propertyDescriptor Property descriptor
+	 * @param annotations The annotations bound to the bean property
+	 * @return {@link BeanProperty} builder
+	 */
+	@SuppressWarnings("unchecked")
+	private static BeanProperty.Builder<?> getPropertyBuilder(PropertyDescriptor propertyDescriptor,
+			Annotation[] annotations) {
+		// check type
+		if (TypeUtils.isString(propertyDescriptor.getPropertyType())) {
+			return StringBeanProperty.builder(propertyDescriptor.getName());
+		}
+		if (TypeUtils.isBoolean(propertyDescriptor.getPropertyType())) {
+			return BooleanBeanProperty.builder(propertyDescriptor.getName(),
+					propertyDescriptor.getPropertyType().isPrimitive());
+		}
+		if (TypeUtils.isNumber(propertyDescriptor.getPropertyType())) {
+			return NumericBeanProperty.builder(propertyDescriptor.getName(),
+					(Class<? extends Number>) propertyDescriptor.getPropertyType());
+		}
+		if (TypeUtils.isDate(propertyDescriptor.getPropertyType())
+				|| TypeUtils.isTemporal(propertyDescriptor.getPropertyType())) {
+			return TemporalBeanProperty.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType());
+		}
+		// default
+		return BeanProperty.builder(propertyDescriptor.getName(), propertyDescriptor.getPropertyType());
 	}
 
 	/**
@@ -405,6 +608,22 @@ public class DefaultBeanIntrospector implements BeanIntrospector {
 				&& !propertyClass.isEnum() && !TypeUtils.isString(propertyClass) && !TypeUtils.isNumber(propertyClass)
 				&& !TypeUtils.isTemporalOrCalendar(propertyClass) && !TypeUtils.isBoolean(propertyClass)
 				&& !Collection.class.isAssignableFrom(propertyClass);
+	}
+
+	/*
+	 * Support class
+	 */
+	private static final class ResolvedBeanProperty<T> {
+
+		final BeanProperty<T> property;
+		final boolean addToPropertySet;
+
+		ResolvedBeanProperty(BeanProperty<T> property, boolean addToPropertySet) {
+			super();
+			this.property = property;
+			this.addToPropertySet = addToPropertySet;
+		}
+
 	}
 
 }

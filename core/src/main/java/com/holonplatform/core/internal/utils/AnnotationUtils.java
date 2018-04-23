@@ -22,6 +22,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Utility class for {@link Annotation} management.
@@ -73,6 +74,27 @@ public final class AnnotationUtils implements Serializable {
 	}
 
 	/**
+	 * Get the first {@link Annotation} of given <code>annotationClass</code> from given <code>annotations</code> set,
+	 * if available.
+	 * @param <A> Annotation type
+	 * @param annotations Annotations set
+	 * @param annotationClass Annotation type (not null)
+	 * @return Optional annotation instance of given annotation class
+	 */
+	@SuppressWarnings("unchecked")
+	public static <A extends Annotation> Optional<A> getAnnotation(Annotation[] annotations, Class<A> annotationClass) {
+		ObjectUtils.argumentNotNull(annotationClass, "Annotation class must be not null");
+		if (annotations != null) {
+			for (Annotation annotation : annotations) {
+				if (annotation != null && annotationClass.isAssignableFrom(annotation.annotationType())) {
+					return Optional.ofNullable((A) annotation);
+				}
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Get the class which is annotated with given <code>annotation</code>, checking any superclass and implemented
 	 * interface.
 	 * @param cls Class to inspect (not null)
@@ -99,11 +121,27 @@ public final class AnnotationUtils implements Serializable {
 	}
 
 	/**
+	 * Get a single annotation of given <code>annotationType</code> present in given <code>element</code>, including any
+	 * meta-annotation and supporting repeatable annotations.
+	 * @param <A> Annotation type
+	 * @param element Annotated element to inspect (not null)
+	 * @param annotationType Annotation type to lookup (not null)
+	 * @return Optional annotation value, if found. If more than one annotation is found, the first one is returned
+	 */
+	public static <A extends Annotation> Optional<A> getAnnotation(AnnotatedElement element, Class<A> annotationType) {
+		List<A> annotations = getAnnotations(element, annotationType);
+		if (!annotations.isEmpty()) {
+			return Optional.ofNullable(annotations.get(0));
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Get all the annotations of given <code>annotationType</code> present in given <code>element</code>, including any
 	 * meta-annotation and supporting repeatable annotations.
 	 * @param <A> Annotation type
 	 * @param element Annotated element to inspect (not null)
-	 * @param annotationType Annotation type to lookup
+	 * @param annotationType Annotation type to lookup (not null)
 	 * @return List of detected annotation of given <code>annotationType</code>, an empty List if none found
 	 */
 	public static <A extends Annotation> List<A> getAnnotations(AnnotatedElement element, Class<A> annotationType) {

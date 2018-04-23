@@ -65,6 +65,15 @@ public class DefaultRelationalTarget<T> implements RelationalTargetEditor<T> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.Path#getDataPath()
+	 */
+	@Override
+	public Optional<String> getDataPath() {
+		return target.getDataPath();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.Path#getType()
 	 */
 	@Override

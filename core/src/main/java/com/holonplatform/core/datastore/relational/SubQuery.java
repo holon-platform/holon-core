@@ -18,8 +18,8 @@ package com.holonplatform.core.datastore.relational;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.internal.datastore.relational.DefaultSubQuery;
-import com.holonplatform.core.internal.query.ConstantExpressionProjection;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.ConstantExpressionProjection;
 import com.holonplatform.core.query.QueryBuilder;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
@@ -65,21 +65,50 @@ public interface SubQuery<T> extends QueryBuilder<SubQuery<T>>, QueryExpression<
 	 */
 	QueryFilter notExists();
 
+	// builders
+
+	/**
+	 * Build a sub query with given selection type.
+	 * @param <T> Subquery selection type
+	 * @param selectionType Sub query selection type (not null)
+	 * @return Sub query instance
+	 */
+	static <T> SubQuery<T> create(Class<? extends T> selectionType) {
+		ObjectUtils.argumentNotNull(selectionType, "Selection type must be not null");
+		return new DefaultSubQuery<>(selectionType);
+	}
+
+	/**
+	 * Build a sub query with given projection as selection.
+	 * @param <T> Subquery selection type
+	 * @param selection Query selection (not null)
+	 * @return Sub query instance
+	 */
+	@SuppressWarnings("unchecked")
+	static <T> SubQuery<T> create(QueryProjection<T> selection) {
+		ObjectUtils.argumentNotNull(selection, "Selection projection must be not null");
+		return create((Class<T>) selection.getType()).select(selection);
+	}
+
+	/**
+	 * Build a sub query with a default <code>select 1</code> projection as selection.
+	 * @return Sub query instance
+	 */
+	static SubQuery<Integer> create() {
+		return create(Integer.class).select(ConstantExpressionProjection.create(Integer.valueOf(1)));
+	}
+
 	/**
 	 * Build a sub query with given selection type.
 	 * @param <T> Subquery selection type
 	 * @param datastore Datastore (not null)
 	 * @param selectionType Sub query selection type (not null)
 	 * @return Sub query instance
+	 * @deprecated Datastore parameter is no longer required, use {@link #create(Class)} instead
 	 */
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	static <T> SubQuery<T> create(Datastore datastore, Class<? extends T> selectionType) {
-		ObjectUtils.argumentNotNull(datastore, "Datastore must be not null");
-		ObjectUtils.argumentNotNull(selectionType, "Selection type must be not null");
-		// inherit resolvers
-		DefaultSubQuery<T> subQuery = new DefaultSubQuery<>(selectionType);
-		datastore.getExpressionResolvers().forEach(r -> subQuery.withExpressionResolver(r));
-		return subQuery;
+		return create(selectionType);
 	}
 
 	/**
@@ -88,21 +117,22 @@ public interface SubQuery<T> extends QueryBuilder<SubQuery<T>>, QueryExpression<
 	 * @param datastore Datastore (not null)
 	 * @param selection Query selection (not null)
 	 * @return Sub query instance
+	 * @deprecated Datastore parameter is no longer required, use {@link #create(QueryProjection)} instead
 	 */
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	static <T> SubQuery<T> create(Datastore datastore, QueryProjection<T> selection) {
-		ObjectUtils.argumentNotNull(datastore, "Datastore must be not null");
-		ObjectUtils.argumentNotNull(selection, "Selection property must be not null");
-		return create(datastore, (Class<T>) selection.getType()).select(selection);
+		return create(selection);
 	}
 
 	/**
 	 * Build a sub query with default <code>select 1</code> projection as selection.
 	 * @param datastore Datastore (not null)
 	 * @return Sub query instance
+	 * @deprecated Datastore parameter is no longer required, use {@link #create()} instead
 	 */
+	@Deprecated
 	static SubQuery<Integer> create(Datastore datastore) {
-		return create(datastore, Integer.class).select(ConstantExpressionProjection.create(Integer.valueOf(1)));
+		return create();
 	}
 
 }

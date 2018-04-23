@@ -15,15 +15,22 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
+import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
- * {@link BulkClause} to execute bulk DELETE operations.
+ * A {@link BulkDeleteOperation} builder to configure a bulk <code>DELETE</code> operation and execute it using the
+ * {@link ExecutableOperation} interface methods.
+ * <p>
+ * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
+ * paradigm.
+ * </p>
  * 
  * @since 5.0.0
  */
 public interface BulkDelete
-		extends DMLClause<BulkDelete>, ExpressionResolverBuilder<BulkDelete>, QueryFilterSupport<BulkDelete> {
+		extends BulkDeleteOperation<BulkDelete>, ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 }

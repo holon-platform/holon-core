@@ -30,6 +30,7 @@ import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.jwt.AuthenticationClaims;
 import com.holonplatform.auth.jwt.JwtAuthenticator;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.token.BearerAuthenticationToken;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
@@ -164,13 +165,20 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 			JwtParser parser = Jwts.parser();
 
-			if (getConfiguration().getSignatureAlgorithm() != null
-					&& !"none".equalsIgnoreCase(getConfiguration().getSignatureAlgorithm())) {
+			if (getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
-				if (getConfiguration().getSharedKey() != null) {
-					parser = parser.setSigningKey(getConfiguration().getSharedKey());
-				} else if (getConfiguration().getPublicKey() != null) {
-					parser = parser.setSigningKey(getConfiguration().getPublicKey());
+				if (getConfiguration().getSignatureAlgorithm().isSymmetric()) {
+					parser = parser.setSigningKey(getConfiguration().getSharedKey()
+							.orElseThrow(() -> new UnexpectedAuthenticationException(
+									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
+											+ getConfiguration().getSignatureAlgorithm().getDescription()
+											+ "] - JWT configuration: [" + getConfiguration() + "]")));
+				} else {
+					parser = parser.setSigningKey(getConfiguration().getPublicKey()
+							.orElseThrow(() -> new UnexpectedAuthenticationException(
+									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
+											+ getConfiguration().getSignatureAlgorithm().getDescription()
+											+ "] - JWT configuration: [" + getConfiguration() + "]")));
 				}
 				claims = parser.parseClaimsJws(jwt).getBody();
 			} else {

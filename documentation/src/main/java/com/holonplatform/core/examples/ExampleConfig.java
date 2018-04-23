@@ -18,6 +18,7 @@ package com.holonplatform.core.examples;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import com.holonplatform.core.ParameterSet;
@@ -32,45 +33,47 @@ public class ExampleConfig {
 
 		// tag::prop[]
 		ConfigProperty<String> property = ConfigProperty.create("test", String.class); // <1>
-		
+
 		String key = property.getKey(); // <2>
-		
+
 		Class<String> type = property.getType(); // <3>
 		// end::prop[]
 
 	}
-	
+
 	public void configPropertyProviders() throws IOException {
-		
+
 		// tag::provider[]
 		Map<String, Object> values = new HashMap<>();
 		ConfigPropertyProvider provider = ConfigPropertyProvider.using(values); // <1>
-		
+
 		Properties properties = new Properties();
 		provider = ConfigPropertyProvider.using(properties); // <2>
-		
+
 		provider = ConfigPropertyProvider.using("config.properties", ClassUtils.getDefaultClassLoader()); // <3>
-		
+
 		provider = ConfigPropertyProvider.usingSystemProperties(); // <4>
 		// end::provider[]
-		
+
 	}
-	
+
 	public void parameterSet() {
 		// tag::params[]
 		final ConfigProperty<String> property = ConfigProperty.create("test", String.class);
-		
-		ParameterSet set = ParameterSet.builder()
-				.parameter("testParameter", 1L) // <1>
+
+		ParameterSet set = ParameterSet.builder().parameter("testParameter", 1L) // <1>
 				.parameter(property, "testValue") // <2>
 				.build();
-		
+
 		boolean present = set.hasParameter("testParameter"); // <3>
 		present = set.hasNotNullParameter("testParameter"); // <4>
-		
-		set.getParameter(property).ifPresent(p -> p.toString()); // <5>
+
+		Optional<String> value = set.getParameter("testParameter", String.class); // <5>
+		String val = set.getParameter("testParameter", String.class, "default"); // <6>
+
+		Optional<String> configPropertyValue = set.getParameter(property); // <7>
+		String configPropertyVal = set.getParameter(property, "default"); // <8>
 		// end::params[]
 	}
-	
 
 }

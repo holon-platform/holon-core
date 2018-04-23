@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
+import com.holonplatform.core.internal.DefaultFinalPath;
 import com.holonplatform.core.internal.DefaultPath;
 
 /**
@@ -37,7 +38,7 @@ import com.holonplatform.core.internal.DefaultPath;
  *
  * @since 5.0.0
  */
-public interface Path<T> extends Expression, Serializable {
+public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable {
 
 	/**
 	 * Separator character used as separator between path hierarchy elements when composing or parsing a path name.
@@ -55,12 +56,6 @@ public interface Path<T> extends Expression, Serializable {
 	 * @return Optional parent path, empty if none
 	 */
 	Optional<Path<?>> getParent();
-
-	/**
-	 * Gets the type of the element identified by this path
-	 * @return Path type
-	 */
-	Class<? extends T> getType();
 
 	/**
 	 * Checks whether this path is a root path, i.e. it has no parent path.
@@ -143,11 +138,11 @@ public interface Path<T> extends Expression, Serializable {
 	}
 
 	/**
-	 * Base path builder
+	 * Base path builder.
 	 * @param <T> Path type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, B extends Builder<T, B>> {
+	public interface Builder<T, B extends Builder<T, B>> extends DataMappable.Builder<B> {
 
 		/**
 		 * Sets the parent path
@@ -173,6 +168,25 @@ public interface Path<T> extends Expression, Serializable {
 		@Override
 		default Optional<Path<?>> getParent() {
 			return Optional.empty();
+		}
+
+		/**
+		 * Create a default {@link FinalPath} implementation with given <code>name</code> and <code>type</code>.
+		 * @param <T> Path type
+		 * @param name Path name (not null)
+		 * @param type Path type (not null)
+		 * @return New PathBuilder path instance
+		 */
+		static <T> FinalPathBuilder<T> of(String name, Class<? extends T> type) {
+			return new DefaultFinalPath<>(name, type);
+		}
+
+		/**
+		 * {@link FinalPath} builder.
+		 * @param <T> Path type
+		 */
+		public interface FinalPathBuilder<T> extends PathBuilder<T>, FinalPath<T> {
+
 		}
 
 	}

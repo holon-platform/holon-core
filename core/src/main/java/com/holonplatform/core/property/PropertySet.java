@@ -16,10 +16,15 @@
 package com.holonplatform.core.property;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.HasConfiguration;
+import com.holonplatform.core.ParameterSet;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -32,12 +37,19 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * @since 5.0.0
  */
 @SuppressWarnings("rawtypes")
-public interface PropertySet<P extends Property> extends Iterable<P> {
+public interface PropertySet<P extends Property> extends Iterable<P>, HasConfiguration<ParameterSet> {
 
 	/**
 	 * Default {@link Context} resource reference
 	 */
 	public static final String CONTEXT_KEY = PropertySet.class.getName();
+
+	/**
+	 * The {@link PropertyConfiguration} attribute to use to declare the PropertySet for a PropertyBox type
+	 * {@link Property}.
+	 */
+	public static final ConfigProperty<PropertySet> PROPERTY_CONFIGURATION_ATTRIBUTE = ConfigProperty
+			.create(CONTEXT_KEY, PropertySet.class);
 
 	/**
 	 * Returns the number of properties in this set. If this set contains more than <tt>Integer.MAX_VALUE</tt> elements,
@@ -61,6 +73,48 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	Stream<P> stream();
 
 	/**
+	 * Get the optional <em>identifier</em> properties which represent the unique identifier of this property set.
+	 * <p>
+	 * If one or more identifier property is declared, the values of such properties uniquely specify the instance of an
+	 * object bound to this property set. The identifier properties of the set can be used, for example, as a
+	 * dicriminator for object equality.
+	 * </p>
+	 * @return A {@link Set} of identifier properties, or an empty {@link Set} if no identifier is provided
+	 * @since 5.1.0
+	 */
+	Set<P> getIdentifiers();
+
+	/**
+	 * Get a {@link Stream} of the properties which represent the unique identifier of this property set.
+	 * @return The identifier properties stream, empty if no identifier is provided by this property set
+	 * @since 5.1.0
+	 */
+	default Stream<P> identifiers() {
+		return getIdentifiers().stream();
+	}
+
+	/**
+	 * Get the first property which acts as property set identifier, if available.
+	 * @return The first <em>identifier</em> property, or an empty Optional if no identifier is provided
+	 * @since 5.1.0
+	 */
+	default Optional<P> getFirstIdentifier() {
+		return getIdentifiers().stream().findFirst();
+	}
+
+	/**
+	 * Get the property set configuration, which can be used for extensions and application-specific purposes.
+	 * <p>
+	 * This configuration is considered as immutable. The configuration parameters has to setted at {@link PropertySet}
+	 * build time, using the appropriate {@link Builder} methods: {@link Builder#configuration(String, Object)} and
+	 * {@link Builder#configuration(ConfigProperty, Object)}.
+	 * </p>
+	 * @return The property set configuration {@link ParameterSet} (never null)
+	 */
+	@Override
+	ParameterSet getConfiguration();
+
+	/**
 	 * Convert this PropertySet into a {@link List} of properties.
 	 * @return List of set properties
 	 */
@@ -79,15 +133,44 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		return Context.get().executeThreadBound(CONTEXT_KEY, this, operation);
 	}
 
-	// builders
+	// Builders
 
 	/**
-	 * Builder to create and populate a {@link PropertySet}.
-	 * @param <P> Type of the property managed by the property set
-	 * @return PropertySetBuilder
+	 * Obtain a builder to create and populate a generic {@link PropertySet}.
+	 * @return A new {@link PropertySet} builder
 	 */
-	static <P extends Property> Builder<P> builder() {
+	static Builder<Property<?>> builder() {
 		return new DefaultPropertySet.DefaultBuilder<>();
+	}
+
+	/**
+	 * Obtain a builder to create and populate a {@link PropertySet} which supports given {@link Property} type.
+	 * @param <P> Property type
+	 * @param propertyType The property type managed by the {@link PropertySet} to build (not null)
+	 * @return A new {@link PropertySet} builder
+	 * @since 5.1.0
+	 */
+	static <P extends Property> Builder<P> builder(Class<? extends P> propertyType) {
+		ObjectUtils.argumentNotNull(propertyType, "Property type must be not null");
+		return new DefaultPropertySet.DefaultBuilder<>();
+	}
+
+	/**
+	 * Obtain a builder to create and populate a {@link PropertySet}, and add given <code>properties</code> to the
+	 * property set to build.
+	 * @param <P> Property type
+	 * @param properties Properties to initially add to the property set (not null)
+	 * @return A new {@link PropertySet} builder
+	 * @since 5.1.0
+	 */
+	@SafeVarargs
+	static <P extends Property> Builder<Property<?>> builderOf(P... properties) {
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		Builder<Property<?>> builder = builder();
+		for (P property : properties) {
+			builder.add(property);
+		}
+		return builder;
 	}
 
 	/**
@@ -114,17 +197,29 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	/**
 	 * Create a new {@link PropertySet} joining given <code>propertySet</code> with given additional
 	 * <code>properties</code>.
+	 * <p>
+	 * Any identifier property declared by given <code>propertySet</code> will be an identifier of the new property set
+	 * too. The original property set configuration is cloned to the new {@link PropertySet} instance configuration.
+	 * </p>
 	 * @param <P> Property type
 	 * @param propertySet Source property set (not null)
 	 * @param properties Additional properties
 	 * @return A new {@link PropertySet} instance containing the properties of given <code>propertySet</code> and any
 	 *         additional provided property
 	 */
+	@SuppressWarnings("unchecked")
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> of(PropertySet<? extends P> propertySet, P... properties) {
 		ObjectUtils.argumentNotNull(propertySet, "Source property set must be not null");
-		Builder<P> builder = builder();
+		final Builder builder = builder();
 		propertySet.forEach(p -> builder.add(p));
+		// identifiers
+		propertySet.identifiers().forEach(i -> builder.identifier(i));
+		// configuration
+		if (propertySet.getConfiguration().hasParameters()) {
+			propertySet.getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
+		}
+		// additional properties
 		if (properties != null && properties.length > 0) {
 			for (P property : properties) {
 				if (property != null) {
@@ -140,13 +235,18 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 	 * @param <P> Actual property type
 	 * @param propertySets PropertySet to join (not null and not empty)
 	 * @return New PropertySet containing all the properties of given sets
+	 * @deprecated Using this method causes the loss of any property set configuration and/or identifier property
+	 *             declaration. Use the default PropertySet builder to compose a new PropertySet from different property
+	 *             sources.
 	 */
+	@SuppressWarnings("unchecked")
+	@Deprecated
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> join(PropertySet<? extends P>... propertySets) {
 		if (propertySets == null || propertySets.length == 0) {
 			throw new IllegalArgumentException("No PropertySet to join");
 		}
-		Builder<P> builder = builder();
+		Builder builder = builder();
 		for (PropertySet<? extends P> ps : propertySets) {
 			ps.forEach(p -> builder.add(p));
 		}
@@ -192,6 +292,55 @@ public interface PropertySet<P extends Property> extends Iterable<P> {
 		 * @return this
 		 */
 		<PT extends P> Builder<P> remove(Iterable<PT> properties);
+
+		/**
+		 * Add given <code>property</code> to the property set identifiers.
+		 * <p>
+		 * The property to declare as identifier must be already present in the property set.
+		 * </p>
+		 * @param <PT> Actual property type
+		 * @param property The property to declare as property set identifier (not null)
+		 * @return this
+		 * @throws IllegalStateException If the property to declare as identifier is not part of the property set
+		 * @since 5.1.0
+		 */
+		<PT extends P> Builder<P> identifier(PT property);
+
+		/**
+		 * Set given <code>properties</code> as property set identifiers. Any previously declared identifier property
+		 * will be replaced by given identifier properties.
+		 * <p>
+		 * The properties to declare as identifiers must be already present in the property set.
+		 * </p>
+		 * @param <PT> Actual property type
+		 * @param properties The properties to declare as property set identifiers (not null)
+		 * @return this
+		 * @throws IllegalStateException If one of the properties to declare as identifier is not part of the property
+		 *         set
+		 * @since 5.1.0
+		 */
+		<PT extends P> Builder<P> identifiers(Iterable<PT> properties);
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter
+		 * @param name The parameter name to add (not null)
+		 * @param value The configuration parameter value
+		 * @return this
+		 */
+		Builder<P> configuration(String name, Object value);
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
+		 * {@link ConfigProperty#getKey()} as parameter name.
+		 * @param <C> Config property type
+		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
+		 * @param value The configuration property value
+		 * @return this
+		 */
+		default <C> Builder<P> configuration(ConfigProperty<C> configurationProperty, C value) {
+			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+			return configuration(configurationProperty.getKey(), value);
+		}
 
 		/**
 		 * Build {@link PropertySet} instance

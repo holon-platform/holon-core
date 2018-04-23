@@ -17,9 +17,12 @@ package com.holonplatform.core.config;
 
 import java.io.InputStream;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Supplier;
 
 import com.holonplatform.core.internal.config.DefaultConfig;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * A set of configuration properties, identified by a specific name, used as property definition prefix.
@@ -43,6 +46,15 @@ public interface ConfigPropertySet {
 	String getName();
 
 	/**
+	 * Get the complete name of given configuration property, i.e. the property key prefixed by the
+	 * {@link ConfigPropertySet} name.
+	 * @param <T> Property type
+	 * @param property The configuration property for which to obtain the complete name (not null)
+	 * @return the complete configuration property name
+	 */
+	<T> String getConfigPropertyName(ConfigProperty<T> property);
+
+	/**
 	 * Checks whether this property set contains a not <code>null</code> value associated to given
 	 * <code>property</code>.
 	 * @param <T> Property type
@@ -53,13 +65,37 @@ public interface ConfigPropertySet {
 	<T> boolean hasConfigProperty(ConfigProperty<T> property);
 
 	/**
+	 * Get the value associated to given <code>property</code>, if available.
+	 * @param <T> Property type
+	 * @param property Configuration property to read (not null)
+	 * @return Optional config property value
+	 */
+	<T> Optional<T> getConfigPropertyValue(ConfigProperty<T> property);
+
+	/**
 	 * Returns the value associated to given <code>property</code>.
 	 * @param <T> Property type
 	 * @param property Configuration property to read (not null)
 	 * @param defaultValue Default value to return if property was not found or has no value
 	 * @return Property value, or <code>defaultValue</code> if not found
 	 */
-	<T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue);
+	default <T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue) {
+		return getConfigPropertyValue(property).orElse(defaultValue);
+	}
+
+	/**
+	 * Get the value associated to given <code>property</code>, if available. If not available, try to obtain the value
+	 * from the provided <code>orElse</code> supplier.
+	 * @param <T> Property type
+	 * @param property Configuration property to read (not null)
+	 * @param orElse Fallback value supplier (not null)
+	 * @return Optional config property value
+	 */
+	default <T> Optional<T> getConfigPropertyValueOrElse(ConfigProperty<T> property, Supplier<Optional<T>> orElse) {
+		ObjectUtils.argumentNotNull(property, "Fallback value supplier must be not null");
+		final Optional<T> value = getConfigPropertyValue(property);
+		return (value.isPresent()) ? value : orElse.get();
+	}
 
 	/**
 	 * Get a key-value {@link Map} of all the properties at sub levels of this property set, starting from given prefix.
@@ -69,7 +105,7 @@ public interface ConfigPropertySet {
 	 */
 	Map<String, String> getSubPropertiesUsingPrefix(String prefix);
 
-	// Builder
+	// ------- Builder
 
 	/**
 	 * Builder to create {@link ConfigPropertySet}s bound to property data sources.
@@ -145,6 +181,15 @@ public interface ConfigPropertySet {
 		 * @return this
 		 */
 		Builder<C> withSystemPropertySource();
+
+		/**
+		 * Add given config property value.
+		 * @param <T> Config property type
+		 * @param property Config property for which to provide the value (not null)
+		 * @param value Config property value
+		 * @return this
+		 */
+		<T> Builder<C> withProperty(ConfigProperty<T> property, T value);
 
 		/**
 		 * Build the {@link ConfigPropertySet} instance

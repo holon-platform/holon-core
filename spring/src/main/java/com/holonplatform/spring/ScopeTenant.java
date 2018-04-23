@@ -13,7 +13,7 @@ import org.springframework.core.annotation.AliasFor;
 import com.holonplatform.spring.internal.tenant.TenantScope;
 
 /**
- * Stereotype annotation for Spring's <code>@Scope("tenant")</code>.
+ * Stereotype annotation for <code>@Scope("tenant")</code> tenant scope declaration.
  */
 @Scope(TenantScope.SCOPE_NAME)
 @Target({ ElementType.TYPE, ElementType.METHOD })

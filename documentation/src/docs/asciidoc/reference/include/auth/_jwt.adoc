@@ -1,16 +1,6 @@
 [[JWT]]
 === JWT support
 
-==== Introduction
-
-The `holon-auth-jwt` artifact provides the support for the https://tools.ietf.org/html/rfc7519[JSON Web Token^] standard, integrating it in the Holon platform authentication and authorization architecture.
-
-The https://github.com/jwtk/jjwt[jjwt] library is used for JWT tokens parsing and building.
-
-JSON Web Token (*JWT*) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. The transmitted information can be digitally signed, in order to be verified and trusted by the parties. 
-
-When used for authentication, thanks to its very compact data representation and encoding, a JWT token can transport and provide not only the informations to perform authentication, but also the information obtained as a result of an authentication operation, such as _principal_'s details and permissions.
-
 _Maven coordinates_:
 [source, xml, subs="attributes+"]
 ----
@@ -19,125 +9,294 @@ _Maven coordinates_:
 <version>{revnumber}</version>
 ----
 
+The `holon-auth-jwt` artifact provides the support for the https://tools.ietf.org/html/rfc7519[JSON Web Token^] standard, providing a full integration with the Holon platform authentication and authorization architecture.
+
+NOTE: The https://github.com/jwtk/jjwt[jjwt] library is used for JWT tokens parsing and building.
+
+JSON Web Token (*JWT*) is an open standard (RFC 7519) that defines a compact and self-contained way for securely transmitting information between parties as a JSON object. The transmitted information can be digitally signed, in order to be verified and trusted by the parties. 
+
+When used for authentication, thanks to its very compact data representation and encoding, a JWT token can transport and provide not only the informations to perform authentication, but also the information obtained as a result of an authentication operation, such as _principal_'s details and permissions.
+
+[[JwtConfiguration]]
 ==== Configuration
 
-To enable and use JWT authentication structures, some configuration parameters must be defined and provided to the objects which perform concrete operations on the JWT tokens.
+The link:{apidir}/com/holonplatform/auth/jwt/JwtConfiguration.html[JwtConfiguration^] interface represents the *default JWT configuration provider* for the Holon Platform JWT support APIs.
 
-The JWT configuration properties are represented by the link:{apidir}/com/holonplatform/auth/jwt/JwtConfiguration.html[JwtConfiguration^] interface, which can be instantiated as follows:
+It makes available a set of methods to obtain the JWT configuration attributes to be used to generate and parse a _JSON Web Token_.
 
-*1.* Using the _builder_ provided by the `JwtConfiguration` interface:
+A `JwtConfiguration` instance can be obtained in two ways:
+
+*1. Using the provided _builder_:*
 
 [source, java]
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=config,indent=0]
 ----
+<1> Obtain a `JwtConfiguration` builder
+<2> Set the JWT token _issuer_
+<3> Set the token expire time in milliseconds
+<4> Include the `Authentication` details in JWT token generation
+<5> Include the `Authentication` permissions in JWT token generation
+<6> Sign the JWT using `HS256` (_HMAC using SHA-256_) as signature algorithm
+<7> Set the shared key to use with the symmetric signing algorithm
 
-*2.* Using the configuration properties collected and represented by the link:{apidir}/com/holonplatform/auth/jwt/JwtConfigProperties.html[JwtConfigProperties^] property set, extending a default `ConfigPropertySet` and bound to the property name prefix *holon.jwt*.
+*2. Using a configuration property set:*
 
-The available configuration properties are listed here below:
+The link:{apidir}/com/holonplatform/auth/jwt/JwtConfigProperties.html[JwtConfigProperties^] property set can be used to provide the JWT configuration attributes using the standard <<ConfigPropertySet>> API.
 
-.JWT configuration properties
+The JWT configuration property set is bound to the property name prefix *holon.jwt*.
+
+The JWT configuration properties are currently used by the <<JWTFromAuthentication,JwtTokenBuilder>> API to create a JWT from an `Authentication` and by the <<JwtAuthenticator,JwtAuthenticator>> to parse a JWT for authentication purposes.
+
+The available configuration properties are listed here below, also indicating which API use a specific property value:
+
 |===
-|Name |Type |Meaning
+|Name |Type |Default |Used by |Meaning
 
 |_holon.jwt._ *issuer*
 |String
-|The JWT token issuer
+|_None_
+|`JwtTokenBuilder`
+|The JWT token issuer. Corresponds to the JWT `iss` claim.
 
 |_holon.jwt._ *signature-algorithm*
-|String
-|JWT signature algorithm name
+|String 
+|_None_
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT signature algorithm name: must be one of the algorithm names listed in the link:{apidir}/com/holonplatform/auth/jwt/JwtSignatureAlgorithm.html[JwtSignatureAlgorithm^] enumeration
 
 |_holon.jwt._ *sharedkey-base64*
 |String
-|JWT sign shared key (base64 encoded) for symmetric signing algorithms
+|_None_
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign shared key, `Base64` encoded, for symmetric signing algorithms
 
-|_holon.jwt._ *publickey-base64*
+|_holon.jwt._ *privatekey.source*
 |String
-|JWT sign public key (base64 encoded) for RSA signing algorithms
+|_None_
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign private key source for asymmetric signing algorithms. The `file:` and `classpath:` prefixes are supported to provide the key using a file or a classpath resource, respectively. The key source is parsed according to the `privatekey.format` and `privatekey.encoding` property values.
 
-|_holon.jwt._ *publickey-file*
+|_holon.jwt._ *privatekey.format*
 |String
-|JWT sign public key (file name) for RSA signing algorithms
+|PKCS#8
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign private key format: must be one of the one of the formats listed in the link:{apidir}/com/holonplatform/auth/keys/KeyFormat.html[KeyFormat^] enumeration. For private keys, the supported format values are `PKCS8`, `PKCS11`, `PKCS12`.
 
-|_holon.jwt._ *privatekey-base64*
+|_holon.jwt._ *privatekey.encoding*
 |String
-|JWT sign private key (base64 encoded) for RSA signing algorithms
+|Base64
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign private key encoding: must be one of the one of the encodings listed in the link:{apidir}/com/holonplatform/auth/keys/KeyEncoding.html[KeyEncoding^] enumeration. The supported encodings are `BASE64`, `PEM` or `NONE`.
 
-|_holon.jwt._ *privatekey-file*
+|_holon.jwt._ *publickey.source*
 |String
-|JWT sign private key (file name) for RSA signing algorithms
+|_None_
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign public key source for asymmetric signing algorithms. The `file:` and `classpath:` prefixes are supported to provide the key using a file or a classpath resource, respectively. The key source is parsed according to the `publickey.format` and `publickey.encoding` property values.
+
+|_holon.jwt._ *publickey.format*
+|String
+|X.509
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign public key format: must be one of the one of the formats listed in the link:{apidir}/com/holonplatform/auth/keys/KeyFormat.html[KeyFormat^] enumeration. For public keys, the supported format values are `X509`, `PKCS#11`, `PKCS#12`.
+
+|_holon.jwt._ *publickey.encoding*
+|String
+|Base64
+|`JwtTokenBuilder` and `JwtAuthenticator`
+|JWT sign public key encoding: must be one of the one of the encodings listed in the link:{apidir}/com/holonplatform/auth/keys/KeyEncoding.html[KeyEncoding^] enumeration. The supported encodings are `BASE64`, `PEM` or `NONE`.
 
 |_holon.jwt._ *expire-ms*
 |Integer number
-|JWT token expire time in milliseconds
+|_None_
+|`JwtTokenBuilder`
+|JWT token expire time in milliseconds.
 
 |_holon.jwt._ *expire-seconds*
 |Integer number
-|JWT token expire time in seconds
+|_None_
+|`JwtTokenBuilder`
+|JWT token expire time in seconds.
 
 |_holon.jwt._ *expire-minutes*
 |Integer number
-|JWT token expire time in minutes
+|_None_
+|`JwtTokenBuilder`
+|JWT token expire time in minutes.
 
 |_holon.jwt._ *expire-hours*
 |Integer number
-|JWT token expire time in hours
+|_None_
+|`JwtTokenBuilder`
+|JWT token expire time in hours.
 
 |_holon.jwt._ *expire-days*
 |Integer number
-|JWT token expire time in days
+|_None_
+|`JwtTokenBuilder`
+|JWT token expire time in days.
 
 |_holon.jwt._ *include-details*
 |Booelan (true/false)
-|Whether to include `Authentication` details in JWT token as claims
+|`false`
+|`JwtTokenBuilder`
+|Whether to include `Authentication` _details_ in the JWT token as _claims_.
 
 |_holon.jwt._ *include-permissions*
 |Booelan (true/false)
-|Whether to include `Authentication` permissions in JWT token as claims
+|`false`
+|`JwtTokenBuilder`
+|Whether to include `Authentication` _permissions_ which provides a `String` representation in the JWT token. A default _claim_ name will be used, with an array of the permission `String` representations as value.
 |===
 
+When the private and/or public key for an asymmetric signing algorithm is provided using a *keystore*, for example when the `PKCS#12` format is used, a set of additional configuration properties are available to configure the key store passwords and alias:
+
+|===
+|Name |Type |Meaning
+
+|_holon.jwt._ *privatekey.store.password*
+|String
+|The key store password to use when the JWT sign private key is provided using a key store format such as `PKCS#12`
+
+|_holon.jwt._ *privatekey.store.alias*
+|String
+|The key store key alias to use when the JWT sign private key is provided using a key store format such as `PKCS#12`
+
+|_holon.jwt._ *privatekey.store.alias-password*
+|String
+|The key store key recovering password to use when the JWT sign private key is provided using a key store format such as `PKCS#12`
+
+|_holon.jwt._ *publickey.store.password*
+|String
+|The key store password to use when the JWT sign public key is provided using a key store format such as `PKCS#12`
+
+|_holon.jwt._ *publickey.store.alias*
+|String
+|The key store key alias to use when the JWT sign public key is provided using a key store format such as `PKCS#12`
+
+|_holon.jwt._ *publickey.store.alias-password*
+|String
+|The key store key recovering password to use when the JWT sign public key is provided using a key store format such as `PKCS#12`
+|===
+
+This configuration property set API can be used to build a link:{apidir}/com/holonplatform/auth/jwt/JwtConfiguration.html[JwtConfiguration^] instance using the `build(JwtConfigProperties properties)` method.
+
 [source, java]
-.JwtConfiguration example using configuration properties
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=config2,indent=0]
 ----
+<1> Load the JWT configuration property set from a properties file named `jwt.properties`
 
-==== Building JWT tokens for an `Authentication`
+TIP: See <<JwtConfigurationAutoConfiguration>> to learn how to rely on the Spring Boot auto-configuration features to automatically create a `JwtConfiguration` bean using JWT configuration properties.
 
-To build JWT token the link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html[JwtTokenBuilder^] class is available, providing static methods to create a *JWT token* from an `Authentication` object, optionally using a `JwtConfiguration` class to provide token configuration attributes.
+==== Supported JWT signing algorithms
 
-If enabled, the *permissions* and *parameters* of the `Authentication` will be written in the JWT token with the following behaviour:
+The link:{apidir}/com/holonplatform/auth/jwt/JwtSignatureAlgorithm.html[JwtSignatureAlgorithm^] enumeration provides a list of the support JWT signing algorithms.
 
-* The `Authentication` *permissions* will be written only for the permissions which provides a `String` representation through the `Permission.getPermission()` method. The serializable permissions are written as String array and associated to the _claim_ name which corresponds to the constant `AuthenticationClaims.CLAIM_NAME_PERMISSIONS` value;
-* Each `Authentication` *parameter* will be written by using the parameter name as _claim_ name and the parameter value as _claim_ value.
+NOTE: When a signing shared key is provided in JWT configuration and a signature algorithm is not specified, the `HMAC using SHA-256` default signature algorithm is used.
+
+For asymmetric signing algorithms such `RSA`, the key pair to use can be loaded using the JWT configuration properties from different sources and using different key formats (`X.509`, `PKCS#8`, `PKCS#11`, `PKCS#12`) and encodings (`Base64`, `PEM`).
+
+See the previous section for the list of the available JWT configuration properties.
+
+[[JWTFromAuthentication]]
+==== Building a JWT from an `Authentication`
+
+The link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html[JwtTokenBuilder^] API can be used to create JSON Web Tokens using an <<Authentication>> as source and a `JwtConfiguration` instance to provide the token configuration attributes.
+
+The `Authentication` instance will be used to:
+
+* Set the JWT subject (`sub`) value using the `Authentication` *principal name*.
+* If configured, include the `Authentication` _details_ as JWT *claims*.
+* If configured, include the `Authentication` _permissions_ as JWT *claims*.
+
+The JWT *id* (`jit`) can be specified at token built time.
 
 [source, java]
-.JWT token building example using JwtConfiguration
 ----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build,indent=0]
+include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build1,indent=0]
 ----
 <1> Build a `JwtConfiguration` instance using the `jwt.properties` file
-<2> Build an example `Authentication`
-<3> Build a JWT *token* by using given configuration and authentication, using a random id as token id
+<2> Build an `Authentication`
+<3> Build a *JWT* using given configuration and authentication
+<4> Build a *JWT* using given configuration and authentication and set a random id as token id
 
-==== Performing authentication using JWT tokens
+===== `Authentication` permissions claim
 
-The link:{apidir}/com/holonplatform/auth/jwt/JwtAuthenticator.html[JwtAuthenticator^] interface is provided as `Authenticator` to handle JWT token based authentication, using a `JwtConfiguration` to obtain JWT token configuration attributes.
+When the `JwtConfiguration` method `isIncludePermissions()` returns `true`, the `Authentication` *permissions* will be included in JWT using the link:{apidir}/com/holonplatform/auth/jwt/AuthenticationClaims.html[AuthenticationClaims^] `CLAIM_NAME_PERMISSIONS` _claim_ name.
 
-The authentication request information are provided by using a `BearerAuthenticationToken`, where the *Bearer* value represents the complete JWT token serialization.
+NOTE: See <<Authentication>> for details about the `Authentication` permissions representation.
 
-From an `HTTPMessage` point of view, the authentication token is obtained from an `Authorization` header using the `Bearer` scheme.
+Only the `Permission` which provide a `String` representation through the `Permission.getPermission()` method will be taken into account, using the permission `String` representation as claim value.
 
-To obtain a `JwtAuthenticator`, the provided _builder_ can be used. The authenticator, just like any other `Authenticator`, must be registered in a `Realm` to enable JWT token based authentication.
+The actual JWT _claim_ value will by a `String` *array* of the authentication permissions `String` representation.
 
-The `JwtAuthenticator` supports:
-
-* An optional set of allowed *JWT issuers*: If one ore more allowed issuer is setted, JWT Issuer _claim_ (`iss`) will be required and checked during token authentication: if token issuer doesn't match one of the given issuers, authentication will fail;
-* Optional *required claims*: If one or more required _claim_ is configured, the specified _claim_ must exist in JWT token, otherwise authentication will fail.
+NOTE: See <<Permission>> for details about the permission `String` representation.
 
 [source, java]
-.JWT token building example using JwtConfiguration
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build2,indent=0]
+----
+<1> Build a `JwtConfiguration` instance and set to `true` the include permissions switch
+<2> Build an `Authentication` with a default permission named `role1` (permission `String` representation) and a default permission named `role2`
+<3> Build a *JWT* using given configuration and authentication: the token will include a `ATH$prms` claim name with the value `['role1','role2']`
+
+===== `Authentication` details claims
+
+When the `JwtConfiguration` method `isIncludeDetails()` returns `true`, the `Authentication` *details* will be included in JWT as _claims_.
+
+The `Authentication` details are obtained through the <<ParameterSet>> API, extended by the `Authentication` interface, as a map of `String` value detail keys and generic `Object` detail values.
+
+Each not null `Authentication` detail will be writter in JWT using the detail *key* as _claim_ *name* and the detail *value* as _claim_ value.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build3,indent=0]
+----
+<1> Build a `JwtConfiguration` instance and set to `true` the include details switch
+<2> Build an `Authentication` with a parameter named `name` with value `John`
+<3> Build a *JWT* using given configuration and authentication: the token will include a `name` claim name with the value `John`
+
+[[JwtAuthenticator]]
+==== Performing authentication using JWT
+
+The link:{apidir}/com/holonplatform/auth/jwt/JwtAuthenticator.html[JwtAuthenticator^] interface represents an  <<Authenticator>> to handle *JWT based authentication* and can be registered in a <<Realm>> to enable JWT authentication capabilities.
+
+A JWT authentication request is represented through a <<BearerAuthenticationToken>> type, where the *Bearer* value must represent the JWT serialization and it is used by the `JwtAuthenticator` to validate the JWT and provide an `Authentication` obtained from the token.
+
+The `JwtAuthenticator` API relies on a <<JWTConfiguration,JWTConfiguration>> definition as JWT configuration properties source to consistently parse and validate the JWT.
+
+Additionally, a `JwtAuthenticator` can support:
+
+* An optional set of allowed *JWT issuers*: If one ore more allowed issuer is setted, the JWT issuer _claim_ (`iss`) will be required and checked during token authentication: if the token issuer doesn't match one of the allowed issuers, the authentication will fail.
+* An optional set of *required claims*: If one or more required _claim_ is configured, the specified _claim_ must exist in the JWT, otherwise the authentication will fail.
+
+To obtain a `JwtAuthenticator`, the provided _builder_ method can be used.
+
+[source, java]
+.JWT authenticator example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=authenticator,indent=0]
 ----
+<1> Build a `JwtConfiguration`
+<2> Build a `JwtAuthenticator` using the configuration
+<3> Set `allowedIssuer` as allowed JWT issuer
+<4> Set the `myClaim` JWT claim as required
+<5> Build a `Realm` and register the `JwtAuthenticator`
+<6> Perform an authentication request using a `BearerAuthenticationToken` with the JWT value
+<7> Build a `Realm` with a `JwtAuthenticator` and a _Bearer_ HTTP message resolver
+<8> Perform an authentication request using a `HttpRequest` message: the message must provide a _Bearer_ `Authorization` type message header with the JWT value
+
+===== JWT to `Authentication`
+
+The `JwtAuthenticator` API parses the JWT to obtain `Authentication` instance from it, if the token is valid and well formed.
+
+The `Authentication` obtained from the JSON Web Token is created with the following rules:
+
+* The _principal_ *name* is obtained from the JWT _subject_ (`sub`) claim and it is required: if not available, an `UnknownAccountException` is thrown.
+* The authentication scheme is set to `Bearer`.
+* If the default *permissions* claim is found (i.e. a claim named `ATH$prms`, see the `CLAIM_NAME_PERMISSIONS` constant of the  ink:{apidir}/com/holonplatform/auth/jwt/AuthenticationClaims.html[AuthenticationClaims^] interface), it is expected to be a String array of _role names_. For each role name, a default <<Permission>> is created with given name and granted to the `Authentication`.
+* Any other JWT claim is setted as an `Authentication` *parameter*.
+
+See <<Authentication>> for more information about the `Authentication` API.

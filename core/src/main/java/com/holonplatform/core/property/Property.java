@@ -22,18 +22,24 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.internal.utils.FormatUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.PropertyRendererRegistry.NoSuitableRendererAvailableException;
 import com.holonplatform.core.temporal.TemporalType;
 
 /**
  * Property is the base interface to represent a generic data attribute. Declares its value type through
  * {@link #getType()} method and it is generalized on such type.
+ * <p>
+ * A property can be identified by a symbolic name, which can be obtained through the {@link #getName()} method.
+ * </p>
  * <p>
  * Supports a {@link PropertyValueConverter} to be used within a {@link PropertyBox} abstraction when property is bound
  * to a data model, allowing property value conversion in both directions when property value type and data model value
@@ -49,19 +55,31 @@ import com.holonplatform.core.temporal.TemporalType;
  * <p>
  * Extends {@link Localizable} to optionally provide a localizable message which describes the property.
  * </p>
+ * <p>
+ * The property <code>equals</code> and <code>hashCode</code> logic can be customized using suitable
+ * {@link EqualsHandler} and {@link HashCodeProvider} functions. See {@link Builder#equalsHandler(EqualsHandler)} and
+ * {@link Builder#hashCodeProvider(HashCodeProvider)} methods for further details.
+ * </p>
  * 
- * @since 4.4.0
+ * @since 5.0.0
  * 
  * @see PathProperty
  * @see VirtualProperty
  * @see PropertySet
  * @see PropertyBox
  */
-public interface Property<T> extends Validatable<T>, Localizable, Serializable {
+public interface Property<T>
+		extends Validatable<T>, Localizable, HasConfiguration<PropertyConfiguration>, Serializable {
 
 	/**
-	 * Type of values supported by this property
-	 * @return Property value type
+	 * Get the name which identifies this property.
+	 * @return The property name (should be not null)
+	 */
+	String getName();
+
+	/**
+	 * Get the type of values supported by this property
+	 * @return Property value type (not null)
 	 */
 	Class<? extends T> getType();
 
@@ -78,13 +96,14 @@ public interface Property<T> extends Validatable<T>, Localizable, Serializable {
 	/**
 	 * Gets the configuration associated to this property.
 	 * <p>
-	 * This configuration is considered as immutable, and only provide methods to read configuration parameters. The
-	 * configuration parameters setting is done at property creation time, using
+	 * This configuration is considered as immutable: it only provides methods to read configuration parameters. The
+	 * configuration parameters setting is done at property creation time, using the
 	 * {@link Builder#configuration(String, Object)} and {@link Builder#configuration(ConfigProperty, Object)} methods
 	 * provided by Property {@link Builder}.
 	 * </p>
 	 * @return The {@link PropertyConfiguration} of this property (immutable and not null)
 	 */
+	@Override
 	PropertyConfiguration getConfiguration();
 
 	/**
@@ -151,10 +170,11 @@ public interface Property<T> extends Validatable<T>, Localizable, Serializable {
 
 	/**
 	 * Base {@link Property} builder.
-	 * @param <T> Property type
+	 * @param <T> Property value type
+	 * @param <P> Property type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, B extends Builder<T, B>> extends Localizable.Builder<B> {
+	public interface Builder<T, P extends Property<T>, B extends Builder<T, P, B>> extends Localizable.Builder<B> {
 
 		/**
 		 * Set the property localization using given {@link Localizable} definition.
@@ -219,6 +239,24 @@ public interface Property<T> extends Validatable<T>, Localizable, Serializable {
 		 * @return this
 		 */
 		B validator(Validator<T> validator);
+
+		/**
+		 * Set the predicate to use to check the property equality using the {@link Object#equals(Object)} method.
+		 * <p>
+		 * If a custom <code>equals</code> handler is provided, a <code>hashCode</code> provider should be provided too,
+		 * using the {@link #hashCodeProvider(HashCodeProvider)} builder mthod.
+		 * </p>
+		 * @param equalsHandler The function to use to check property equality
+		 * @return this
+		 */
+		B equalsHandler(EqualsHandler<? super P> equalsHandler);
+
+		/**
+		 * Set the function to use to provide the property hash code using the {@link Object#hashCode()} method.
+		 * @param hashCodeProvider The function to use to provide the property hash code
+		 * @return this
+		 */
+		B hashCodeProvider(HashCodeProvider<? super P> hashCodeProvider);
 
 	}
 

@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.internal.query.filter;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -38,7 +38,7 @@ public class LessFilter<T> extends AbstractOperationQueryFilter<T> {
 	 * @param right Right operand
 	 * @param includeEquals if <code>true</code>, build a LESS OR EQUAL filter condition
 	 */
-	public LessFilter(QueryExpression<T> left, QueryExpression<? super T> right, boolean includeEquals) {
+	public LessFilter(TypedExpression<T> left, TypedExpression<? super T> right, boolean includeEquals) {
 		super(left, includeEquals ? FilterOperator.LESS_OR_EQUAL : FilterOperator.LESS_THAN, right);
 	}
 

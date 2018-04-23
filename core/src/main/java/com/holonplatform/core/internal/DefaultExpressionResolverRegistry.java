@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.WeakHashMap;
 import java.util.stream.Collectors;
 
 import javax.annotation.Priority;
@@ -47,6 +48,11 @@ public class DefaultExpressionResolverRegistry implements ExpressionResolverRegi
 	private static final Logger LOGGER = CoreLogger.create();
 
 	/**
+	 * Expression resolvers cache
+	 */
+	private final WeakHashMap<Class<?>, WeakHashMap<Class<?>, List<ExpressionResolver>>> cache;
+
+	/**
 	 * {@link ExpressionResolver} comparator using {@link Priority} annotation.
 	 */
 	private static final Comparator<ExpressionResolver> PRIORITY_COMPARATOR = Comparator
@@ -57,6 +63,22 @@ public class DefaultExpressionResolverRegistry implements ExpressionResolverRegi
 	 * Registered resolvers.
 	 */
 	private final List<ExpressionResolver> resolvers = new ArrayList<>();
+
+	/**
+	 * Contructor with cache enabled by default.
+	 */
+	public DefaultExpressionResolverRegistry() {
+		this(true);
+	}
+
+	/**
+	 * Contructor with cache enabling flag.
+	 * @param cacheEnabled Whether to enable the expression resolvers cache
+	 */
+	public DefaultExpressionResolverRegistry(boolean cacheEnabled) {
+		super();
+		cache = cacheEnabled ? new WeakHashMap<>() : null;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -117,13 +139,41 @@ public class DefaultExpressionResolverRegistry implements ExpressionResolverRegi
 		return resolved;
 	}
 
+	/**
+	 * Get a priority-ordered list of the suitable {@link ExpressionResolver} for given expression and resolution type.
+	 * @param expressionType Expression type
+	 * @param resolvedType Resolution type
+	 * @return Expression resolvers list, empty if none
+	 */
 	@SuppressWarnings("unchecked")
 	private List<ExpressionResolver> getResolversForExpressionType(Class<?> expressionType, Class<?> resolvedType) {
-		return resolvers.stream().filter(
+
+		// check cache
+		if (cache != null && cache.containsKey(expressionType) && cache.get(expressionType).containsKey(resolvedType)) {
+			return cache.get(expressionType).get(resolvedType);
+		}
+
+		List<ExpressionResolver> expressionResolvers = resolvers.stream().filter(
 				r -> r.getExpressionType().isAssignableFrom(expressionType) && r.getResolvedType() == resolvedType)
 				.sorted(PRIORITY_COMPARATOR).collect(Collectors.toList());
+
+		// cache resolvers
+		if (cache != null) {
+			cache.computeIfAbsent(expressionType, k -> new WeakHashMap<>()).put(resolvedType, expressionResolvers);
+		}
+
+		return expressionResolvers;
 	}
 
+	/**
+	 * Resolve given expression using provided expression resolvers.
+	 * @param <R> Expresion result type
+	 * @param typeConsistentResolvers Expression resolvers to use
+	 * @param expression Expression to resolve
+	 * @param context Resolution context
+	 * @return Optional resolution result
+	 * @throws InvalidExpressionException If expression validation failed
+	 */
 	@SuppressWarnings("unchecked")
 	private static <R extends Expression> Optional<R> resolveExpression(
 			List<ExpressionResolver> typeConsistentResolvers, final Expression expression, ResolutionContext context)

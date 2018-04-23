@@ -105,6 +105,26 @@ public class TestContext {
 		assertFalse(scope.isPresent());
 
 	}
+	
+//	@Test
+//	public void testScopeMultiThread() {
+//		Optional<ContextScope> threadscope = Context.get().scope(Context.THREAD_SCOPE_NAME);
+//		Assert.assertNotNull(threadscope.get());
+//
+//		Thread th1 = new Thread(() -> threadscope.get().put("key_1", "Value 1"));
+//
+//		Thread th2 = new Thread(() -> {
+//			Optional<String> value1 = Context.get().resource("key_1", String.class);
+//			Assert.assertFalse(value1.isPresent());
+//
+//			threadscope.get().put("key_2", "Value 2");
+//			Optional<String> value2 = Context.get().resource("key_2", String.class);
+//			Assert.assertTrue(value2.isPresent());
+//		});
+//		
+//		th1.start();
+//		th2.start();
+//	}
 
 	@Test
 	public void testScopeHiearchy() {

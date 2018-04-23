@@ -18,6 +18,7 @@ package com.holonplatform.http;
 import java.util.List;
 import java.util.Map;
 
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.exceptions.InvalidHttpMessageException;
 import com.holonplatform.http.internal.DefaultHttpResponse;
 
@@ -48,14 +49,26 @@ public interface HttpResponse<T> extends HttpMessage<T> {
 	}
 
 	/**
-	 * Builder to create default {@link HttpResponse} instances.
+	 * Get a builder to create a default {@link HttpResponse} instance.
 	 * @param <T> Payload type
 	 * @param statusCode Response status code
 	 * @param payloadType Payload type
-	 * @return Response builder
+	 * @return A new {@link HttpResponse} builder
 	 */
 	static <T> Builder<T> builder(int statusCode, Class<? extends T> payloadType) {
 		return new DefaultHttpResponse.DefaultBuilder<>(statusCode, payloadType);
+	}
+
+	/**
+	 * Get a builder to create a default {@link HttpResponse} instance.
+	 * @param <T> Payload type
+	 * @param status Response status (not null)
+	 * @param payloadType Payload type
+	 * @return A new {@link HttpResponse} builder
+	 */
+	static <T> Builder<T> builder(HttpStatus status, Class<? extends T> payloadType) {
+		ObjectUtils.argumentNotNull(status, "HTTP status must be not null");
+		return new DefaultHttpResponse.DefaultBuilder<>(status.getCode(), payloadType);
 	}
 
 	/**
@@ -65,22 +78,38 @@ public interface HttpResponse<T> extends HttpMessage<T> {
 	public interface Builder<T> {
 
 		/**
-		 * Set response headers
-		 * @param headers the headers to set
+		 * Set response headers. Any previously set header value will be replaced by the new ones.
+		 * @param headers The headers to set as a name - values map
 		 * @return this
 		 */
 		Builder<T> headers(Map<String, List<String>> headers);
 
 		/**
-		 * Set response payload
+		 * Add a response header, providing the header values.
+		 * @param name The header name (not null)
+		 * @param values The header values
+		 * @return this
+		 */
+		Builder<T> header(String name, List<String> values);
+
+		/**
+		 * Add a single value response header.
+		 * @param name The header name (not null)
+		 * @param value The header value
+		 * @return this
+		 */
+		Builder<T> header(String name, String value);
+
+		/**
+		 * Set the response payload.
 		 * @param payload the payload to set
 		 * @return this
 		 */
 		Builder<T> payload(T payload);
 
 		/**
-		 * Build the response
-		 * @return HttpResponse
+		 * Build the {@link HttpResponse} instance.
+		 * @return A new {@link HttpResponse} instance
 		 */
 		HttpResponse<T> build();
 

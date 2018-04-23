@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2017 Holon TDCN.
+ * Copyright 2016-2017 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -27,11 +27,18 @@ import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.spring.EnvironmentConfigPropertyProvider;
 import com.holonplatform.spring.boot.internal.ConditionalOnPropertyPrefix;
 
+/**
+ * Spring boot auto-configuration class to setup a {@link JwtConfiguration} bean (if not already present in the Spring
+ * application context) using the <code>holon.jwt.*</code> configuration property set.
+ * 
+ * @since 5.0.0
+ */
 @Configuration
 @ConditionalOnClass(name = "com.holonplatform.auth.jwt.JwtConfiguration")
 public class JwtAutoConfiguration {
 
 	@Configuration
+	@ConditionalOnMissingBean(JwtConfiguration.class)
 	@ConditionalOnPropertyPrefix("holon.jwt")
 	public static class JwtConfigurationConfiguration {
 

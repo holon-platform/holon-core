@@ -15,52 +15,24 @@
  */
 package com.holonplatform.core.query;
 
+import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.DatastoreCommodity;
 
 /**
- * Interface to model a query, apply restrictions, sortings and configurations and obtain query results.
+ * Represents a <em>query</em>, which can be used to configure and execute a query on the data managed by a
+ * {@link Datastore}.
  * <p>
- * Query supports {@link QueryFilter} and {@link QuerySort} clauses and provides common configuration features such as
- * limit/offset for results paging.
+ * Query is configured through the {@link QueryBuilder} interface and executed using the {@link QueryResults} interface,
+ * which provides method to execute the query and obtain a result using a {@link QueryProjection} to specify the
+ * expected result type.
+ * </p>
+ * <p>
+ * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
+ * paradigm.
  * </p>
  * 
  * @since 5.0.0
- * 
- * @see QueryBuilder
  */
-public interface Query extends DatastoreCommodity, QueryBuilder<Query>, QueryResults {
-
-	/**
-	 * Exception thrown for {@link Query} build errors.
-	 */
-	@SuppressWarnings("serial")
-	public class QueryBuildException extends RuntimeException {
-
-		/**
-		 * Constructor with error message
-		 * @param message Error message
-		 */
-		public QueryBuildException(String message) {
-			super(message);
-		}
-
-		/**
-		 * Constructor with nested exception
-		 * @param cause Nested exception
-		 */
-		public QueryBuildException(Throwable cause) {
-			super(cause);
-		}
-
-		/**
-		 * Constructor with error message and nested exception
-		 * @param message Error message
-		 * @param cause Nested exception
-		 */
-		public QueryBuildException(String message, Throwable cause) {
-			super(message, cause);
-		}
-
-	}
+public interface Query extends QueryBuilder<Query>, QueryResults, DatastoreCommodity {
 
 }

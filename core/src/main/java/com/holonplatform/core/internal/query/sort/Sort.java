@@ -128,7 +128,7 @@ public class Sort<T> implements PathQuerySort<T>, VisitableQuerySort {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Sort on path [");
-		sb.append(getPath() != null ? getPath().fullName() : "<NULL>");
+		sb.append(getPath() != null ? getPath().relativeName() : "<NULL>");
 		sb.append("] with direction [");
 		if (getDirection() == null) {
 			sb.append(SortDirection.ASCENDING.name());

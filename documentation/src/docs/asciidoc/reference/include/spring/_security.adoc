@@ -1,0 +1,168 @@
+[[SpringSecurity]]
+=== *Spring Security* integration
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-spring-security</artifactId>
+<version>{revnumber}</version>
+----
+
+The `holon-spring-security` artifact provides integration between the Holon Platform authentication and authorization architecture and the Spring Security components and APIs.
+
+NOTE: See the <<Auth>> for information about the the Holon Platform authentication and authorization architecture.
+
+The main entry point to deal with Spring Security integration is the link:{apidir}/com/holonplatform/spring/security/SpringSecurity.html[SpringSecurity^] API interface, which provides operations to:
+
+* Create an `AuthContext` backed by a Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/core/context/SecurityContext.html[SecurityContext^] and using a link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/authentication/AuthenticationManager.html[AuthenticationManager^] to perform authentication operations.
+
+* Seamlessy use a Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/core/Authentication.html[Authentication^] as a Holon platform <<Authentication>> representation.
+
+* Perform authentication in Spring Security context using standard Holon platform <<AuthenticationToken>>, through the link:{apidir}/com/holonplatform/spring/security/SpringSecurityAuthenticationToken.html[SpringSecurityAuthenticationToken^] bridge interface.
+
+* Build a Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/authentication/AuthenticationProvider.html[AuthenticationProvider^] using a standard Holon platform <<Authenticator>>.
+
+* Provide adapters and conversion methods from Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/core/GrantedAuthority.html[GrantedAuthority^] and standard Holon platform <<Permission>>.
+
+==== `AuthContext` API integration
+
+The Holon platform <<AuthContext>> API can be integrated with the Spring Security context to use the `SecurityContext` as current authentication holder.
+
+The `authContext()` and `authContext(Realm realm)` methods of the `SpringSecurity` integration API allows to create an `AuthContext` which uses the Spring Security `SecurityContext` as authentication holder.
+
+This establishes a link between the Holon platform authentication <<Realm>> and the Spring security authentication context, using the `AuthContext` API as bridge between the two architectures.
+
+When a successful authentication operation is performed using Spring Security, and accordingly the current authenticated principal is available from the `SecurityContext`, the `AuthContext` API will provide the same  
+authenticated principal, represented as an <<Authentication>>. The current `Authentication` is an adapter of the concrete Spring Security authenticated principal, providing the principal name, details and authorizations as Holon platform <<Permission>> representations.
+
+This way, the `AuthContext` API can be seamlessy used to inspect authenticated principal attributes and to perform authorization controls using the Holon Platform conventions.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authcontext1,indent=0]
+----
+<1> Obtain an `AuthContext` API bound to a default `Realm` and which uses the Spring Security `SecurityContext` as authentication holder
+<2> Simulate an authentication operation in the Spring Security context, using a `UsernamePasswordAuthenticationToken` with `user` as principal name and `role1` as granted authority
+<3> The `AuthContext` is now authenticated accordingly, and provided the current authenticated principal as a  `com.holonplatform.auth.Authentication`
+<4> The provided `Authentication` is an adapter of the Spring Security one, with matching principal attributes and permissions. The returned principal name will be `user`
+<5> The `AuthContext` API can be used to perform authorization controls, using the granted authorities of the Spring Security authenticated principal: since the `role1` authority name was granted to the principal, the `isPermitted("role1")` call will return `true`
+<6> When the authenticated principal is removed from the Spring Security context, the bound `AuthContext` won't provide an authentication anymore accordingly
+
+When a `Realm` is provided at `AuthContext` build time, it can be configured with a set of <<Authenticator>> and <<Authorizer>> according to the `Realm` API definition.
+
+If an authentication operation is performed using the `AuthContext` API, the backing `Realm` is used for the actual authentication strategy, through the registered authorizers. When an authentication operation is successful, the authentication result is setted back in the Spring Security `SecurityContext` as current authenticated principal, with the same principal attributes and permissions, represented as granted authorities.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authcontext2,indent=0]
+----
+<1> Create a `Realm` with default authorizer and a `Account` authenticator with given accounts provider (in this case, a single Account named `usr`, with password `pwd` and `role1` as permission)
+<2> Obtain an `AuthContext` API bound to the specified `Realm` and which uses the Spring Security `SecurityContext` as authentication holder
+<3> Perform authentication using the `AuthContext` API, providing an account credentials `AuthenticationToken`
+<4> If the authentication is successful, the authentication result is setted back in the Spring Security `SecurityContext` as current authenticated principal
+<5> The principal name will be `usr`
+<6> The granted authorities will include a `role1` authority
+
+==== Use an `AuthenticationManager` as a Realm `Authenticator`
+
+The Spring Security `AuthenticationManager` can be used as an <<Authenticator>> API, which can registered in a `Realm` to provide authentication capabilities using Spring Security authentication tokens.
+
+This allows to integrate Spring Security authentication architecture with the Holon Platform authentication architecture, and to use a `Realm` (and accordingly the `AuthContext` API) to perform authentication operations using the Holon Platform conventions and APIs.
+
+An `Authenticator` can be obtained from a Spring Security `AuthenticationManager` using the link:{apidir}/com/holonplatform/spring/security/SpringSecurity.html[SpringSecurity^] API:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authenticator1,indent=0]
+----
+<1> Obtain the Spring Security `AuthenticationManager` (for example using Spring's dependency injection)
+<2> Create an Holon Platform `Authenticator` using the Spring Security `AuthenticationManager`
+
+The `Authenticator` is bound to a link:{apidir}/com/holonplatform/spring/security/SpringSecurityAuthenticationToken.html[SpringSecurityAuthenticationToken^] authentication token type, which must be used to provided the authentication credentials.
+
+A `SpringSecurityAuthenticationToken` instance can be built from a Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/core/Authentication.html[Authentication^] instance, either using the `SpringSecurity` API or the `SpringSecurityAuthenticationToken` interface itself.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=token,indent=0]
+----
+<1> Create a `SpringSecurityAuthenticationToken` from given Spring Security `UsernamePasswordAuthenticationToken`
+<2> The same operation using the `SpringSecurity` API
+
+An `account(String accountId, String secret)` convenience method is provided to create Spring Security `UsernamePasswordAuthenticationToken` token type.
+
+The `Authenticator` created in this way can be registered in a `Realm`, thus providing authentication capabilities using the Spring Security context.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authenticator2,indent=0]
+----
+<1> Obtain the Spring Security `AuthenticationManager` (for example using Spring's dependency injection)
+<2> Create a `Realm` and add an _authenticator_ using the Spring Security `AuthenticationManager`
+<3> Perform authentication using a username/password type authentication token
+
+==== Create a fully integrated `AuthContext` API
+
+According to the two previous sections, the `AuthContext` can be fully integrated with the Spring Security context, that is:
+
+* Use the Spring Security context (through the `SecurityContext` API) as the current authentication holder.
+* Use the Spring Security `AuthenticationManager` as authenticator to perform authentication operations using the Spring Security environment.
+
+Of course, you can mix the `AuthenticationManager` based authentication with any other `Authenticator` registered in the `Realm` to which the `AuthContext` is bound.
+
+The link:{apidir}/com/holonplatform/spring/security/SpringSecurity.html[SpringSecurity^] API provides methods to easily create `AuthContext` instances which uses the Spring Security context as the current authentication holder and backed by a `Realm` with `AuthenticationManager` based authentication capabilities.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authcontext3,indent=0]
+----
+<1> Obtain the Spring Security `AuthenticationManager` (for example using Spring's dependency injection)
+<2> Create an `AuthContext` instance which uses the Spring Security context as the current authentication holder and backed by a `Realm` with `AuthenticationManager` based _authenticator_
+<3> With this method, is also registered an `Authenticator` for the default `AccountCredentialsToken` which uses the Spring Security `AuthenticationManager` to perform the authentication operations.
+
+==== Use a Holon `Authenticator` as Spring Security `AuthenticationProvider`
+
+A default Holon <<Authenticator>> can be also adapted to be used as a Spring Security link:https://docs.spring.io/spring-security/site/docs/4.2.4.RELEASE/apidocs/org/springframework/security/authentication/AuthenticationProvider.html[AuthenticationProvider^], which can be used to implement new authentication strategies in the Spring Security environment.
+
+This way, any Holon platform `Authenticator` (either builtin or custom) can be used as a Spring Security authentication processor.
+
+The `authenticationProvider(Authenticator<T> authenticator, Class<A> authenticationType, Function<A, T> converter)` method of the link:{apidir}/com/holonplatform/spring/security/SpringSecurity.html[SpringSecurity^] API can be used for this purpose, providing the _function_ to be used to to convert a Spring Security `Authentication` into the Holon platform `AuthenticationToken` type which will be used as the `Authenticator` authentication credentials.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=authenticator3,indent=0]
+----
+<1> Create an `AccountProvider` bean which provides account infos to be used by the Holon Platform `Account` authenticator
+<2> Create an `AuthenticationManager` Spring Security bean, to which the adapted `Authenticator` will be added
+<3> Add a Spring Security `AuthenticationProvider` using a Holon Platform `Authenticator`
+<4> Create an `Account` type `Authenticator`
+<5> Use the `UsernamePasswordAuthenticationToken` class as Spring Security authentication token type
+<6> Provide the function to be used to convert an `UsernamePasswordAuthenticationToken` into the  `AccountCredentialsToken` token type required by the authenticator
+
+==== Permissions and authorizations
+
+The link:{apidir}/com/holonplatform/spring/security/SpringSecurity.html[SpringSecurity^] API provides methods to seamlessy use a Holon platform <<Permission>> as a Spring Security `GrantedAuthority` and vice-versa.
+
+The `String` representation of the two types is guaranteed to be preserved, i.e. the value returned from the `getPermission()` method of a `Permission` obtained from a `GrantedAuthority` will be the same returned by the `getAuthority()` method and vice-versa.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpringSecurity.java[tag=permissions,indent=0]
+----
+<1> Create a `Permission` from a `GrantedAuthority`
+<2> Create a `GrantedAuthority` from a `Permission`
+
+==== Spring Security _starter_
+
+The following https://projects.spring.io/spring-boot[Spring Boot^] _starter_ artifact is available to provide a quick project configuration setup using Maven dependency system:
+
+_Maven coordinates_:
+[source, xml, subs="attributes+"]
+----
+<groupId>com.holon-platform.core</groupId>
+<artifactId>holon-starter-security</artifactId>
+<version>{revnumber}</version>
+----
+
+This _starter_ includes the base Holon Platform starter (see the <<SpringBoot>> section), the standard Spring Security starter (`spring-boot-starter-security`) and the `holon-spring-security` dependency, to provide the Holon Platform Spring Security integration components and APIs.

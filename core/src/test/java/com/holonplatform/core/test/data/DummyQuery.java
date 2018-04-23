@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 
 import com.holonplatform.core.internal.query.AbstractQuery;
 import com.holonplatform.core.internal.query.QueryDefinition;
+import com.holonplatform.core.query.Query;
 import com.holonplatform.core.query.QueryProjection;
 
 @SuppressWarnings("serial")
@@ -34,7 +35,7 @@ public class DummyQuery extends AbstractQuery<QueryDefinition> {
 	 * @see com.holonplatform.core.query.QueryResults#count()
 	 */
 	@Override
-	public long count() throws QueryExecutionException {
+	public long count() {
 		return 0;
 	}
 
@@ -43,8 +44,17 @@ public class DummyQuery extends AbstractQuery<QueryDefinition> {
 	 * @see com.holonplatform.core.internal.query.QueryResults#stream(com.holonplatform.core.query.QueryProjection)
 	 */
 	@Override
-	public <R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException {
+	public <R> Stream<R> stream(QueryProjection<R> projection) {
 		return Collections.<R>emptyList().stream();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
+	 */
+	@Override
+	protected Query getActualBuilder() {
+		return this;
 	}
 
 }

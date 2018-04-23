@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.datastore;
 
-import com.holonplatform.core.datastore.Datastore.WriteOption;
+import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 
@@ -30,6 +30,16 @@ public enum DefaultWriteOption implements WriteOption {
 	 * Bring back any auto-generated id value into the {@link PropertyBox} which was subject of a data manipulation
 	 * operation, if a corresponding {@link Property} (using the property name) is available in the box property set.
 	 */
-	BRING_BACK_GENERATED_IDS;
+	BRING_BACK_GENERATED_IDS,
+
+	/**
+	 * By default, the {@link DatastoreOperations#save(DataTarget, PropertyBox, WriteOption...)} operation should
+	 * fallback to an <code>INSERT</code> type operation when the value existence cannot be consistently verified in the
+	 * persistence source (for example, is the persistence source entity supports a primary key and the primary key
+	 * cannot be obtained or the primary key values to use are not provided) to determine whether an <code>UPDATE</code>
+	 * type operation should by performed. This write option disables the default behaviour, forcing to throw an error
+	 * in such kind of situations.
+	 */
+	SAVE_DISABLE_INSERT_FALLBACK;
 
 }

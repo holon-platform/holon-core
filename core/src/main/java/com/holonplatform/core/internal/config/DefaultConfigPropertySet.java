@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.stream.Stream;
 
@@ -79,6 +81,17 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 		return name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyName(com.holonplatform.core.config.
+	 * ConfigProperty)
+	 */
+	@Override
+	public <T> String getConfigPropertyName(ConfigProperty<T> property) {
+		ObjectUtils.argumentNotNull(property, "Configuration property must be not null");
+		return getName() + "." + property.getKey();
+	}
+
 	/**
 	 * Add a {@link ConfigPropertyProvider} for configuration properties resolution.
 	 * @param propertyProvider The property provider to add
@@ -118,12 +131,12 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.config.ConfigPropertyResolver#getConfigPropertyValue(com.holonplatform.core.config.
-	 * ConfigProperty, java.lang.Object)
+	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyValue(com.holonplatform.core.config.
+	 * ConfigProperty)
 	 */
 	@Override
-	public <T> T getConfigPropertyValue(ConfigProperty<T> property, T defaultValue) {
-		ObjectUtils.argumentNotNull(property, "Configuration property to read must be not null");
+	public <T> Optional<T> getConfigPropertyValue(ConfigProperty<T> property) {
+		ObjectUtils.argumentNotNull(property, "Configuration property must be not null");
 
 		T value = null;
 
@@ -134,10 +147,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 			}
 		}
 
-		if (value != null) {
-			return value;
-		}
-		return defaultValue;
+		return Optional.ofNullable(value);
 	}
 
 	/*
@@ -187,6 +197,11 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 		 * Building instance
 		 */
 		protected final DefaultConfigPropertySet instance;
+
+		/*
+		 * Explicit values
+		 */
+		protected Map<ConfigProperty<?>, Object> values;
 
 		/**
 		 * Constructor
@@ -304,11 +319,36 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
+		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withProperty(com.holonplatform.core.config.
+		 * ConfigProperty, java.lang.Object)
+		 */
+		@Override
+		public <T> Builder<C> withProperty(ConfigProperty<T> property, T value) {
+			ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+			if (values == null) {
+				values = new HashMap<>(8);
+			}
+			values.put(property, value);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
 		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#build()
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
 		public C build() {
+
+			// explicit values
+			if (values != null && !values.isEmpty()) {
+				final Map<String, Object> properties = new HashMap<>(values.size());
+				for (Entry<ConfigProperty<?>, Object> value : values.entrySet()) {
+					properties.put(instance.getName() + "." + value.getKey().getKey(), value.getValue());
+				}
+				instance.addPropertyProvider(ConfigPropertyProvider.using(properties));
+			}
+
 			return (C) instance;
 		}
 

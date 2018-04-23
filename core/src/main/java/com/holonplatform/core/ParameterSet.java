@@ -16,6 +16,7 @@
 package com.holonplatform.core;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -173,6 +174,14 @@ public interface ParameterSet extends Serializable {
 	// Builders
 
 	/**
+	 * Create an empty {@link ParameterSet}.
+	 * @return A new empty {@link ParameterSet}
+	 */
+	static ParameterSet empty() {
+		return new DefaultParameterSet(Collections.emptyMap());
+	}
+
+	/**
 	 * Builder to create a ParameterSet
 	 * @return ParameterSetBuilder
 	 */
@@ -197,7 +206,7 @@ public interface ParameterSet extends Serializable {
 		Builder<S> parameter(String name, Object value);
 
 		/**
-		 * Add a parameter using a {@link ConfigProperty} an {@link ConfigProperty#getKey()} as parameter name
+		 * Add a parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name
 		 * @param <T> Property type
 		 * @param property ConfigProperty (not null) to obtain parameter name
 		 * @param value Parameter value

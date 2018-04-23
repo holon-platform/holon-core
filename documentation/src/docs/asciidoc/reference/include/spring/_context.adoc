@@ -1,29 +1,51 @@
 [[SpringContextScope]]
-=== Spring beans as context resources
+=== Spring beans as Context resources
 
-The link:{apidir}/com/holonplatform/spring/EnableBeanContext.html[EnableBeanContext^] annotation can be used on Spring `Configuration` classes to configure a link:core.html#Context[Context] scope using the Spring `ApplicationContext` to provide *context resources* instances as Spring beans.
+The link:{apidir}/com/holonplatform/spring/EnableBeanContext.html[EnableBeanContext^] annotation can be used on Spring `Configuration` classes to configure a <<Context>> scope which uses the Spring `ApplicationContext` to provide *Spring bean definitions* as *context resources*.
 
-The scope registration priority order is an intermediate value between the default _thread_ scope (highest priority) and _classloader_ scope (lowest priority).
+TIP: See <<Context>> for information about the Holon Platform _Context_ architecture.
 
-If the scope is registered, when a context resource is requested, using for example the `Context.resource(String resourceKey, Class<T> resourceType)` method, the Spring scope checks if a _bean_ matches the requested resource key and type using the following strategy:
+The scope name is `spring-context` and the scope registration priority order is an intermediate value between the default _thread_ scope (highest priority) and _classloader_ scope (lowest priority).
 
-* If a Spring bean with a *name* equal to the requested resource *key* and with the same required *type* is found, this is returned;
-* Otherwise, if the `lookupByType()` attribute value of the `@EnableBeanContext` annotation is `true` and a Spring bean of the required type, ignoring the its name, is present and _only one candidate_ is available, this instance is returned.
+This scope is a *read-only* scope, i.e. it does not allow direct resource registration or removal using the `put` and `remove` context scope methods.
 
-The Spring *scopes* are respected, in the sense that when a resource is requested and a matching _bean_ is found, the bean instance lookup is performed using standard Spring `ApplicationContext` methods, involving any registered and active Spring scope.
+==== Context resources lookup strategy
+
+The Spring context scope, when a context resource is requested through the Holon Platform <<Context>> API, checks if a Spring _bean_ definition matches the requested resource _key_ and _type_ using the following strategy:
+
+* If a Spring bean with a *name* equal to the requested resource *key* and with the same requested *type* is available, this is returned;
+* Otherwise, if the `lookupByType()` attribute value of the `@EnableBeanContext` annotation is `true` and a Spring bean of the required type, ignoring its name, is present and _only one candidate_ is available, this instance is returned.
+
+NOTE: The `lookupByType()` attribute of the `@EnableBeanContext` annotation is `true` by default.
+
+The _lookup strategy_ can be also configured using the `Environment` configuration property: `holon.context.bean-lookup-by-type`. Set it to `true` to enable the _lookup by type_ strategy or `false` to disable it.
+
+The *Spring scopes* conventions are respected, in the sense that when a resource is requested and a matching _bean_ is found, the bean instance lookup is performed using the standard Spring `BeanFactory` API, involving any registered and active Spring scope.
 
 [source, java]
 .Spring context scope example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=context,indent=0]
 ----
+<1> The `@EnableBeanContext` is used on a Spring Configuration class to enable the Spring context scope. The `lookupByType()` attribute is `true` by default.
+<2> `TestResource` type bean definition with the `testResource` name
+<3> Get a `TestResource` type using the `testResource` key: the `TestResource` Spring bean will be returned
+<4> Get a `TestResource` type without specifying the resource key: since the _lookup by type_ strategy is active, the same `TestResource` Spring bean will be returned
 
+[[EnvironmentConfigPropertyProvider]]
 === EnvironmentConfigPropertyProvider
 
-The link:{apidir}/com/holonplatform/spring/EnvironmentConfigPropertyProvider.html[EnvironmentConfigPropertyProvider^] is provided to build a `ConfigPropertyProvider` which uses the Spring `Environment` structure as property source.
+The link:{apidir}/com/holonplatform/spring/EnvironmentConfigPropertyProvider.html[EnvironmentConfigPropertyProvider^] API can be used to build a `ConfigPropertyProvider` which uses the Spring `Environment` structure as property source.
+
+Any property available from the Spring `Environment` will be available, respecting names and value types, from the `ConfigPropertyProvider` instance.
+
+TIP: See <<ConfigProperty>> for information about configuration property providers.
 
 [source, java]
 .EnvironmentConfigPropertyProvider example
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=env,indent=0]
 ----
+<1> Obtain the Spring `Environment`, for example using dependency injection
+<2> Create a `EnvironmentConfigPropertyProvider` using the Spring environment
+<3> Any property available from the Spring environment will be available from the property provider too, with the same name and value type

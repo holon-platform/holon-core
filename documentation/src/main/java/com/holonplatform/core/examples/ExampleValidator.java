@@ -42,7 +42,7 @@ public class ExampleValidator {
 			Validator.notEmpty("Value must be not empty", "myLocalizationMessageCode").validate("mustBeNotEmpty"); // <2>
 		} catch (ValidationException e) {
 			// invalid value
-			System.out.println(e.getLocalizedMessage());
+			System.out.println(e.getLocalizedMessage()); // <3>
 		}
 		// end::builtin[]
 	}

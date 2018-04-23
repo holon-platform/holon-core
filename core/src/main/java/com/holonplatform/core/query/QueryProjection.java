@@ -16,22 +16,15 @@
 package com.holonplatform.core.query;
 
 import com.holonplatform.core.Expression;
+import com.holonplatform.core.TypedExpression;
 
 /**
- * A query projection to obtain typed query results.
+ * A query projection {@link Expression} to obtain typed query results.
  * 
  * @param <T> Projection result type
  * 
  * @since 5.0.0
- * 
- * @see QueryResults
  */
-public interface QueryProjection<T> extends Expression {
-
-	/**
-	 * Get projection result type
-	 * @return Type class
-	 */
-	Class<? extends T> getType();
+public interface QueryProjection<T> extends TypedExpression<T> {
 
 }

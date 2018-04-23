@@ -45,7 +45,8 @@ public class TestJwtAutoConfiguration {
 	public void testConfig() {
 		Assert.assertNotNull(jwtConfiguration);
 
-		Assert.assertEquals("TestIssuer", jwtConfiguration.getIssuer());
+		Assert.assertTrue("TestIssuer", jwtConfiguration.getIssuer().isPresent());
+		Assert.assertEquals("TestIssuer", jwtConfiguration.getIssuer().get());
 	}
 
 }

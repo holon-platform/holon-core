@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.PatternFlag;
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanProperty.Builder;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Email;
@@ -108,7 +109,8 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Builder<?> processBeanProperty(final Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(final BeanProperty.Builder<?> property,
+			Class<?> beanOrNestedClass) {
 
 		if (isBeanValidationApiPresent(ClassUtils.getDefaultClassLoader())) {
 
@@ -234,7 +236,7 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 
 			} catch (Exception e) {
 				throw new BeanIntrospectionException(
-						"Failed to configure property validation for property [" + property.fullName() + "]", e);
+						"Failed to configure property validation for property [" + property + "]", e);
 			}
 
 		} else {
@@ -246,7 +248,7 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 		return property;
 	}
 
-	private static Localizable getValidationMessage(final Builder<?> property, String message,
+	private static Localizable getValidationMessage(final BeanProperty.Builder<?> property, String message,
 			Validator.ValidationMessage defaultValidationMessage) {
 		// check ValidationMessage annotation
 		if (property.getAnnotation(ValidationMessage.class).isPresent()) {

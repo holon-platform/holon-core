@@ -28,6 +28,8 @@ import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.Validator.ValidatorSupport;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
@@ -35,15 +37,16 @@ import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.temporal.TemporalType;
 
 /**
- * Abstract {@link Property} implementation with {@link Localizable} support.
+ * Abstract {@link Property} implementation and builder.
  * 
  * @param <T> Property value type
- * @param <P> Concrete property type
+ * @param <P> Property type
+ * @param <B> Concrete property type
  * 
  * @since 5.0.0
  */
-public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
-		implements Property<T>, Property.Builder<T, P>, ValidatorSupport<T> {
+public abstract class AbstractProperty<T, P extends Property<T>, B extends Property.Builder<T, P, B>>
+		implements Property<T>, Property.Builder<T, P, B>, ValidatorSupport<T> {
 
 	private static final long serialVersionUID = -6282091421537570564L;
 
@@ -83,6 +86,16 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	private Object[] messageArguments;
 
 	/**
+	 * Optional hash code provider
+	 */
+	private HashCodeProvider<? super P> hashCodeProvider;
+
+	/**
+	 * Optional equals handler
+	 */
+	private EqualsHandler<? super P> equalsHandler;
+
+	/**
 	 * Constructor
 	 * @param type Property value type (not null)
 	 */
@@ -102,6 +115,18 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 		this.type = type;
 		this.configuration = (configuration != null) ? configuration : PropertyConfiguration.create();
 	}
+
+	/**
+	 * Get the actual property instance.
+	 * @return the actual property instance
+	 */
+	protected abstract P getActualProperty();
+
+	/**
+	 * Get the actual property builder.
+	 * @return the actual property builder
+	 */
+	protected abstract B getActualBuilder();
 
 	/*
 	 * (non-Javadoc)
@@ -134,37 +159,34 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.Property.Builder#localization(com.holonplatform.core.i18n.Localizable)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P localization(Localizable localizable) {
+	public B localization(Localizable localizable) {
 		ObjectUtils.argumentNotNull(localizable, "Localizable must be not null");
 		message(localizable.getMessage());
 		messageCode(localizable.getMessageCode());
 		messageArguments(localizable.getMessageArguments());
-		return (P) this;
+		return getActualBuilder();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.Property.Builder#configuration(java.lang.String, java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P configuration(String name, Object value) {
+	public B configuration(String name, Object value) {
 		ObjectUtils.argumentNotNull(name, "Configuration parameter name must be not null");
 		configuration.addParameter(name, value);
-		return (P) this;
+		return getActualBuilder();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.Property.Builder#temporalType(com.holonplatform.core.temporal.TemporalType)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P temporalType(TemporalType temporalType) {
+	public B temporalType(TemporalType temporalType) {
 		configuration.setTemporalType(temporalType);
-		return (P) this;
+		return getActualBuilder();
 	}
 
 	/*
@@ -172,11 +194,10 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 * @see com.holonplatform.core.property.Property.Builder#converter(com.holonplatform.core.property.
 	 * PropertyValueConverter)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P converter(PropertyValueConverter<T, ?> converter) {
+	public B converter(PropertyValueConverter<T, ?> converter) {
 		this.converter = converter;
-		return (P) this;
+		return getActualBuilder();
 	}
 
 	/*
@@ -184,11 +205,10 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 * @see com.holonplatform.core.property.Property.Builder#converter(java.lang.Class, java.util.function.Function,
 	 * java.util.function.Function)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public <MODEL> P converter(Class<MODEL> modelType, Function<MODEL, T> fromModel, Function<T, MODEL> toModel) {
-		this.converter = new CallbackPropertyValueConverter<>((Class<T>) getType(), modelType, fromModel, toModel);
-		return (P) this;
+	public <MODEL> B converter(Class<MODEL> modelType, Function<MODEL, T> fromModel, Function<T, MODEL> toModel) {
+		this.converter = new CallbackPropertyValueConverter<>(getType(), modelType, fromModel, toModel);
+		return getActualBuilder();
 	}
 
 	/*
@@ -228,11 +248,10 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.ModelProperty.Builder#validator(com.holonplatform.core.validator.Validator)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P validator(Validator<T> validator) {
+	public B validator(Validator<T> validator) {
 		addValidator(validator);
-		return (P) this;
+		return getActualBuilder();
 	}
 
 	/*
@@ -299,9 +318,9 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public P messageCode(String messageCode) {
+	public B messageCode(String messageCode) {
 		this.messageCode = messageCode;
-		return (P) this;
+		return (B) this;
 	}
 
 	/*
@@ -310,9 +329,9 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public P message(String defaultMessage) {
+	public B message(String defaultMessage) {
 		this.message = defaultMessage;
-		return (P) this;
+		return (B) this;
 	}
 
 	/*
@@ -321,23 +340,78 @@ public abstract class AbstractProperty<T, P extends Property.Builder<T, P>>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public P messageArguments(Object... arguments) {
+	public B messageArguments(Object... arguments) {
 		this.messageArguments = arguments;
-		return (P) this;
+		return (B) this;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.i18n.Localizable.Builder#message(com.holonplatform.core.i18n.Localizable)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public P message(Localizable localizable) {
+	public B message(Localizable localizable) {
 		ObjectUtils.argumentNotNull(localizable, "Localizable must be not null");
 		this.message = localizable.getMessage();
 		this.messageCode = localizable.getMessageCode();
 		this.messageArguments = localizable.getMessageArguments();
-		return (P) this;
+		return getActualBuilder();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.Property.Builder#equalsHandler(com.holonplatform.core.objects.EqualsHandler)
+	 */
+	@Override
+	public B equalsHandler(EqualsHandler<? super P> equalsHandler) {
+		this.equalsHandler = equalsHandler;
+		return getActualBuilder();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.Property.Builder#hashCodeProvider(com.holonplatform.core.objects.
+	 * HashCodeProvider)
+	 */
+	@Override
+	public B hashCodeProvider(HashCodeProvider<? super P> hashCodeProvider) {
+		this.hashCodeProvider = hashCodeProvider;
+		return getActualBuilder();
+	}
+
+	/**
+	 * Get the provider to use to obtain the property <code>hashCode</code>.
+	 * @return Optional hash code provider
+	 */
+	protected Optional<HashCodeProvider<? super P>> getHashCodeProvider() {
+		return Optional.ofNullable(hashCodeProvider);
+	}
+
+	/**
+	 * Get the handler to use for the property <code>equals</code> logic.
+	 * @return Optional equals handler
+	 */
+	protected Optional<EqualsHandler<? super P>> getEqualsHandler() {
+		return Optional.ofNullable(equalsHandler);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return getHashCodeProvider().flatMap(provider -> provider.hashCode(getActualProperty()))
+				.orElse(super.hashCode());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return getEqualsHandler().map(handler -> handler.equals(getActualProperty(), obj)).orElse(super.equals(obj));
 	}
 
 	/*

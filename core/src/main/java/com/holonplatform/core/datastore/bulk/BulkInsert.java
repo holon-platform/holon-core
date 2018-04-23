@@ -15,21 +15,22 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
- * {@link BulkClause} to execute bulk INSERT operations.
+ * A {@link BulkInsertOperation} builder to configure a bulk <code>INSERT</code> operation and execute it using the
+ * {@link ExecutableOperation} interface methods.
+ * <p>
+ * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
+ * paradigm.
+ * </p>
  * 
  * @since 5.0.0
  */
-public interface BulkInsert extends DMLClause<BulkInsert>, ExpressionResolverBuilder<BulkInsert> {
-
-	/**
-	 * Add a {@link PropertyBox} to insert.
-	 * @param propertyBox PropertyBox to add to the bulk insert operation
-	 * @return Modified BulkInsert
-	 */
-	BulkInsert add(PropertyBox propertyBox);
+public interface BulkInsert
+		extends BulkInsertOperation<BulkInsert>, ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 }

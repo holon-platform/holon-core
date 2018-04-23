@@ -36,7 +36,6 @@ import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.internal.query.DefaultPropertyConstantExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor.VisitableQueryFilter;
 import com.holonplatform.core.internal.query.QuerySortVisitor;
 import com.holonplatform.core.internal.query.filter.AndFilter;
@@ -50,6 +49,8 @@ import com.holonplatform.core.internal.query.filter.NotFilter;
 import com.holonplatform.core.internal.query.filter.NotInFilter;
 import com.holonplatform.core.internal.query.filter.NotNullFilter;
 import com.holonplatform.core.internal.query.filter.NullFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
+import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.query.filter.OrFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter.MatchMode;
@@ -59,10 +60,9 @@ import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.query.CollectionExpression;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QueryFilter.FilterOperator;
-import com.holonplatform.core.query.QueryFilter.OperationQueryFilter;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.CompositeQuerySort;
 import com.holonplatform.core.query.QuerySort.PathQuerySort;
@@ -321,9 +321,6 @@ public class TestQueryData {
 		f.validate();
 		((VisitableQueryFilter) f).accept(visitor, null);
 
-		((StringMatchFilter) f).setIgnoreCase(false);
-		assertFalse(((StringMatchFilter) f).isIgnoreCase());
-
 		f = new StringMatchFilter(p, "test", MatchMode.CONTAINS, false);
 		assertEquals(p, f.getLeftOperand());
 		assertEquals(FilterOperator.MATCH, f.getOperator());
@@ -348,7 +345,7 @@ public class TestQueryData {
 		Collection<String> vs = new ArrayList<>();
 		vs.add("v1");
 
-		f = new InFilter<>(p, ConstantExpression.create("test", "test2"));
+		f = new InFilter<>(p, CollectionExpression.create("test", "test2"));
 		assertEquals(p, f.getLeftOperand());
 		assertEquals(FilterOperator.IN, f.getOperator());
 		assertNotNull(f.toString());
@@ -362,7 +359,7 @@ public class TestQueryData {
 		f.validate();
 		((VisitableQueryFilter) f).accept(visitor, null);
 
-		f = new NotInFilter<>(p, ConstantExpression.create("test", "test2"));
+		f = new NotInFilter<>(p, CollectionExpression.create("test", "test2"));
 		assertEquals(p, f.getLeftOperand());
 		assertEquals(FilterOperator.NOT_IN, f.getOperator());
 		assertNotNull(f.toString());
@@ -425,11 +422,6 @@ public class TestQueryData {
 		assertThat(filter, instanceOf(OperationQueryFilter.class));
 		assertEquals(TestPropertySet.NAME, ((OperationQueryFilter<?>) filter).getLeftOperand());
 		assertEquals(FilterOperator.NOT_EQUAL, ((OperationQueryFilter<?>) filter).getOperator());
-		assertThat(((OperationQueryFilter<?>) filter).getRightOperand().get(),
-				instanceOf(DefaultPropertyConstantExpression.class));
-		assertEquals("testValue",
-				((DefaultPropertyConstantExpression<?>) ((OperationQueryFilter<?>) filter).getRightOperand().get())
-						.getValue());
 
 		final NotFilter nf = new NotFilter(filter);
 		assertNotNull(nf.toString());

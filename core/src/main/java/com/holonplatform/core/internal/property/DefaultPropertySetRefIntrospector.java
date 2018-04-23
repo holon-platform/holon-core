@@ -85,7 +85,8 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((clazz == null || clazz.get() == null) ? 0 : clazz.get().hashCode());
+			final Class<?> cls = (clazz == null) ? null : clazz.get();
+			result = prime * result + ((cls == null) ? 0 : cls.hashCode());
 			result = prime * result + ((fieldName == null) ? 0 : fieldName.hashCode());
 			return result;
 		}
@@ -99,10 +100,15 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 			if (getClass() != obj.getClass())
 				return false;
 			CacheKey other = (CacheKey) obj;
-			if (clazz == null || clazz.get() == null) {
-				if (other.clazz != null || other.clazz.get() != null)
+			if (clazz == null && other.clazz != null) {
+				return false;
+			}
+			final Class<?> cls1 = (clazz == null) ? null : clazz.get();
+			final Class<?> cls2 = (other.clazz == null) ? null : other.clazz.get();
+			if (cls1 == null) {
+				if (cls2 != null)
 					return false;
-			} else if (other.clazz == null || other.clazz.get() == null || !clazz.get().equals(other.clazz.get()))
+			} else if (!cls1.equals(cls2))
 				return false;
 			if (fieldName == null) {
 				if (other.fieldName != null)

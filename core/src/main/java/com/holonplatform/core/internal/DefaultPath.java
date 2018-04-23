@@ -48,6 +48,11 @@ public class DefaultPath<T> implements PathBuilder<T> {
 	private Path<?> parent;
 
 	/**
+	 * Optional data path
+	 */
+	private String dataPath;
+
+	/**
 	 * Construct a new DefaultPath
 	 * @param name Path name (not null)
 	 * @param type Path type (not null)
@@ -101,11 +106,30 @@ public class DefaultPath<T> implements PathBuilder<T> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.DataMappable.Builder#dataPath(java.lang.String)
+	 */
+	@Override
+	public PathBuilder<T> dataPath(String dataPath) {
+		this.dataPath = dataPath;
+		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.DataMappable#getDataPath()
+	 */
+	@Override
+	public Optional<String> getDataPath() {
+		return Optional.ofNullable(dataPath);
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return fullName();
+		return "DefaultPath [name=" + name + ", type=" + type + ", parent=" + parent + "]";
 	}
 
 	/*

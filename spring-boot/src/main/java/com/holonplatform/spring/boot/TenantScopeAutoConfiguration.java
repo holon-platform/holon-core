@@ -15,8 +15,8 @@
  */
 package com.holonplatform.spring.boot;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Configuration;
 
 import com.holonplatform.core.tenancy.TenantResolver;
@@ -33,8 +33,13 @@ import com.holonplatform.spring.internal.tenant.TenantScope;
  */
 @Configuration
 @ConditionalOnClass(TenantScope.class)
-@ConditionalOnBean(TenantResolver.class)
-@EnableTenantScope
+@ConditionalOnSingleCandidate(TenantResolver.class)
 public class TenantScopeAutoConfiguration {
+
+	@Configuration
+	@EnableTenantScope
+	public static class EnableTenantScopeConfiguration {
+
+	}
 
 }

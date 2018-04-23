@@ -229,13 +229,11 @@ public final class ContextManager {
 			ObjectUtils.argumentNotNull(scopeName, "Scope name must be not null");
 
 			final ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
-			ensureInited(cl);
-
-			return scopes.get(cl).containsKey(scopeName);
+			return ensureInited(cl).containsKey(scopeName);
 		}
 
 		/**
-		 * Register the given {@link ContextScope} bound to givren <code>classLoader</code>
+		 * Register the given {@link ContextScope} bound to given <code>classLoader</code>
 		 * @param classLoader ClassLoader
 		 * @param scope Scope to register
 		 */
@@ -244,9 +242,8 @@ public final class ContextManager {
 			ObjectUtils.argumentNotNull(scope.getName(), "Scope name must be not null");
 
 			final ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
-			ensureInited(cl);
 
-			LinkedHashMap<String, ContextScope> contextScopes = scopes.get(cl);
+			LinkedHashMap<String, ContextScope> contextScopes = ensureInited(cl);
 			contextScopes.put(scope.getName(), scope);
 			sortScopes(contextScopes);
 
@@ -264,10 +261,9 @@ public final class ContextManager {
 			ObjectUtils.argumentNotNull(name, "Scope name must be not null");
 
 			final ClassLoader cl = classLoader == null ? getDefaultClassLoader() : classLoader;
-			ensureInited(cl);
 
 			final boolean removed;
-			LinkedHashMap<String, ContextScope> contextScopes = scopes.get(cl);
+			LinkedHashMap<String, ContextScope> contextScopes = ensureInited(cl);
 			if (contextScopes.containsKey(name)) {
 				contextScopes.remove(name);
 				removed = true;
@@ -390,8 +386,7 @@ public final class ContextManager {
 		 */
 		private Collection<ContextScope> getScopesForClassLoader(ClassLoader cl) {
 			if (cl != null) {
-				ensureInited(cl);
-				Collection<ContextScope> classLoaderScopes = scopes.get(cl).values();
+				Collection<ContextScope> classLoaderScopes = ensureInited(cl).values();
 				if (classLoaderScopes != null) {
 					return classLoaderScopes;
 				}
@@ -407,9 +402,8 @@ public final class ContextManager {
 		 * @return The {@link ContextScope} with given name, or <code>null</code> if not found
 		 */
 		private ContextScope getScopeForClassLoader(String name, ClassLoader cl) {
-			if (cl != null) {
-				ensureInited(cl);
-				LinkedHashMap<String, ContextScope> contextScopes = scopes.get(cl);
+			if (cl != null) {			
+				LinkedHashMap<String, ContextScope> contextScopes = ensureInited(cl);
 				return contextScopes.get(name);
 			}
 			return null;
@@ -418,8 +412,9 @@ public final class ContextManager {
 		/**
 		 * Ensure scopes registry inited using {@link ServiceLoader}
 		 * @param classLoader ClassLoader
+		 * @return The {LinkedHashMap} associated to ClassLoader ensuring it's never null
 		 */
-		private void ensureInited(final ClassLoader classLoader) {
+		private LinkedHashMap<String, ContextScope> ensureInited(final ClassLoader classLoader) {
 
 			LinkedHashMap<String, ContextScope> contextScopes = scopes.get(classLoader);
 
@@ -449,6 +444,8 @@ public final class ContextManager {
 						});
 				scopes.put(classLoader, contextScopes);
 			}
+			
+			return contextScopes;
 		}
 
 		/**

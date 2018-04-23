@@ -18,7 +18,7 @@ package com.holonplatform.core.internal.beans;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.i18n.Caption;
 import com.holonplatform.core.internal.Logger;
@@ -46,7 +46,8 @@ public class BeanPropertyCaptionPostProcessor implements BeanPropertyPostProcess
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(final Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(final BeanProperty.Builder<?> property,
+			Class<?> beanOrNestedClass) {
 		property.getAnnotation(Caption.class).ifPresent(a -> {
 			property.message(a.value());
 			if (!Caption.NO_VALUE.equals(a.messageCode())) {

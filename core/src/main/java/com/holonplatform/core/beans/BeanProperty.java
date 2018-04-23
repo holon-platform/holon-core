@@ -20,14 +20,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import com.holonplatform.core.Validator;
 import com.holonplatform.core.internal.beans.DefaultBeanProperty;
 import com.holonplatform.core.property.PathProperty;
-import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
  * Represents a Java Bean property as a {@link PathProperty}, providing additional configuration informations and
- * methods.
+ * read/write methods.
+ * <p>
+ * This class is mainly intended for internal use.
+ * </p>
  * 
  * @param <T> Property type
  * 
@@ -68,6 +69,13 @@ public interface BeanProperty<T> extends PathProperty<T> {
 	Optional<Integer> getSequence();
 
 	/**
+	 * Get whether the property is declared as an identifier for the bean property set.
+	 * @return <code>true</code> if it is an identifier property, <code>false</code> otherwise
+	 * @since 5.1.0
+	 */
+	boolean isIdentifier();
+
+	/**
 	 * Gets the annotation of given <code>annotationClass</code> type declared on this property, if available.
 	 * <p>
 	 * Only annotations declared on the {@link Field} which corresponds to this property are taken into account, any
@@ -90,17 +98,6 @@ public interface BeanProperty<T> extends PathProperty<T> {
 		return getAnnotation(annotationClass).isPresent();
 	}
 
-	// Clone
-
-	/**
-	 * Clone this property to obtain a property with same configuration but different type. Because of the potential
-	 * type change, any {@link PropertyValueConverter} or {@link Validator} is not inherited from the cloned property.
-	 * @param <NT> Type of the cloned property
-	 * @param type New property type (not null)
-	 * @return {@link BeanProperty} builder for the newly created property
-	 */
-	<NT> Builder<NT> clone(Class<NT> type);
-
 	// Builder
 
 	/**
@@ -118,7 +115,7 @@ public interface BeanProperty<T> extends PathProperty<T> {
 	 * BeanProperty builder.
 	 * @param <T> Property type
 	 */
-	public interface Builder<T> extends PathProperty.Builder<T, Builder<T>>, BeanProperty<T> {
+	public interface Builder<T> extends PathProperty.Builder<T, BeanProperty<T>, Builder<T>>, BeanProperty<T> {
 
 		/**
 		 * Set the bean property read (get) method
@@ -149,11 +146,32 @@ public interface BeanProperty<T> extends PathProperty<T> {
 		Builder<T> sequence(Integer sequence);
 
 		/**
+		 * Set the bean property as an identifier property.
+		 * @param identifier Whether the property is an identifier for the bean property set
+		 * @return this
+		 * @since 5.1.0
+		 */
+		Builder<T> identifier(boolean identifier);
+
+		/**
 		 * Set the property annotations
 		 * @param annotations Annotations to set
 		 * @return this
 		 */
 		Builder<T> annotations(Annotation[] annotations);
+
+		/**
+		 * Mark the property as to be ignored (i.e. not to be part of the bean property set) or not.
+		 * @param ignoreMode The ignore mode
+		 * @return this
+		 */
+		Builder<T> ignoreMode(IgnoreMode ignoreMode);
+
+		/**
+		 * Get whether the property is marked as to be ignored and the ignore modality.
+		 * @return Optional property ignore mode
+		 */
+		Optional<IgnoreMode> getIgnoreMode();
 
 	}
 

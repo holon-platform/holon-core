@@ -43,7 +43,7 @@ public class TestTenantScopeProxyMode {
 		public TenantScopedServiceTest serviceTest() {
 			return new TenantScopedServiceTest();
 		}
-		
+
 		@Bean
 		public SingletonComponent singletonComponent() {
 			return new SingletonComponent();
@@ -65,13 +65,13 @@ public class TestTenantScopeProxyMode {
 			CURRENT_TENANT_ID.set("T1");
 			SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);
 			Assert.assertNotNull(sc);
-			
+
 			Assert.assertEquals("T1", sc.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
 	}
-	
+
 	@Test(expected = BeanCreationException.class)
 	public void testTenantScopeProxyFail() {
 		SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);

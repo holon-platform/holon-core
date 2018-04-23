@@ -15,15 +15,22 @@
  */
 package com.holonplatform.core.datastore.bulk;
 
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
+import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
- * {@link BulkClause} to execute bulk UPDATE operations.
+ * A {@link BulkUpdateOperation} builder to configure a bulk <code>UPDATE</code> operation and execute it using the
+ * {@link ExecutableOperation} interface methods.
+ * <p>
+ * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities
+ * paradigm.
+ * </p>
  * 
  * @since 5.0.0
  */
 public interface BulkUpdate
-		extends BulkClause<BulkUpdate>, ExpressionResolverBuilder<BulkUpdate>, QueryFilterSupport<BulkUpdate> {
+		extends BulkUpdateOperation<BulkUpdate>, ExecutableOperation<OperationResult>, DatastoreCommodity {
 
 }

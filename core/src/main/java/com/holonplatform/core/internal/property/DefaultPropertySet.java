@@ -17,8 +17,14 @@ package com.holonplatform.core.internal.property;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.ParameterSet;
+import com.holonplatform.core.internal.DefaultParameterSet;
+import com.holonplatform.core.internal.MutableParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
@@ -34,6 +40,16 @@ import com.holonplatform.core.property.PropertySet;
 public class DefaultPropertySet<P extends Property> extends ArrayList<P> implements PropertySet<P> {
 
 	private static final long serialVersionUID = 288703271476761715L;
+
+	/**
+	 * Identifiers
+	 */
+	private Set<P> identifiers;
+
+	/**
+	 * Configuration
+	 */
+	private MutableParameterSet configuration;
 
 	/**
 	 * Default empty constructor
@@ -113,11 +129,74 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getIdentifiers()
+	 */
+	@Override
+	public Set<P> getIdentifiers() {
+		return (identifiers == null) ? Collections.emptySet() : Collections.unmodifiableSet(identifiers);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getConfiguration()
+	 */
+	@Override
+	public ParameterSet getConfiguration() {
+		return (configuration != null) ? configuration : ParameterSet.empty();
+	}
+
+	/**
+	 * Add a parameter to the property set configuration.
+	 * @param name Parameter name (not null)
+	 * @param value Parameter value
+	 */
+	protected void addConfigurationParameter(String name, Object value) {
+		ObjectUtils.argumentNotNull(name, "Configuration parameter name must be not null");
+		if (configuration == null) {
+			configuration = new DefaultParameterSet();
+		}
+		configuration.addParameter(name, value);
+	}
+
+	/**
+	 * Add given property to property set identifiers.
+	 * @param property The property to declare as property set identifier (not null)
+	 */
+	protected void addIdentifier(P property) {
+		ObjectUtils.argumentNotNull(property, "Identifier property must be not null");
+		if (identifiers == null) {
+			identifiers = new LinkedHashSet<>(4);
+		}
+		identifiers.add(property);
+	}
+
+	/**
+	 * Set given properties as property set identifiers.
+	 * @param <PT> Actual property type
+	 * @param properties Identifier properties (not null)
+	 */
+	protected <PT extends P> void setIdentifers(Iterable<PT> properties) {
+		ObjectUtils.argumentNotNull(properties, "Identifier properties must be not null");
+		identifiers = new LinkedHashSet<>(4);
+		properties.forEach(p -> identifiers.add(p));
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		return "DefaultPropertySet [" + super.toString() + "]";
+		final StringBuilder sb = new StringBuilder();
+		sb.append("PropertySet [");
+		sb.append(super.toString());
+		if (identifiers != null && !identifiers.isEmpty()) {
+			sb.append(" / Identifiers: {");
+			sb.append(identifiers.toString());
+			sb.append("}");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 	// Builder
@@ -188,6 +267,36 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		public <PT extends P> Builder<P> remove(Iterable<PT> properties) {
 			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
 			properties.forEach(p -> this.instance.remove(p));
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#identifier(com.holonplatform.core.property.Property)
+		 */
+		@Override
+		public <PT extends P> Builder<P> identifier(PT property) {
+			this.instance.addIdentifier(property);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#identifiers(java.lang.Iterable)
+		 */
+		@Override
+		public <PT extends P> Builder<P> identifiers(Iterable<PT> properties) {
+			this.instance.setIdentifers(properties);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#configuration(java.lang.String, java.lang.Object)
+		 */
+		@Override
+		public Builder<P> configuration(String name, Object value) {
+			this.instance.addConfigurationParameter(name, value);
 			return this;
 		}
 

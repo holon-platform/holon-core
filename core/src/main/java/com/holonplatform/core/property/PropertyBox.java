@@ -25,16 +25,36 @@ import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.internal.property.DefaultPropertyBox;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
 import com.holonplatform.core.property.Property.PropertyReadOnlyException;
 
 /**
  * PropertyBox is the base container for {@link Property} values, provinding methods to get and set property values,
- * performing value validation and conversions according to property configurations. The set of the properties managed
- * by a PropertyBox is well defined through {@link PropertySet} abstraction.
+ * performing value validation and conversions according to property configurations.
+ * <p>
+ * The set of the properties managed by a PropertyBox is well defined through the {@link PropertySet} abstraction.
+ * </p>
+ * <p>
+ * If the {@link PropertySet} to which the {@link PropertyBox} is bound provides a set of <em>identifier</em>
+ * properties, the identifier property values are used by default to check {@link PropertyBox} objects equality and to
+ * provide the object hash code. The default builder allows to provide a custom equals/hashCode logic using suitable
+ * {@link EqualsHandler} and {@link HashCodeProvider} functions. See {@link Builder#equalsHandler(EqualsHandler)} and
+ * {@link Builder#hashCodeProvider(HashCodeProvider)} methods for further details.
+ * </p>
+ * <p>
+ * By default, property value validation is enabled, and when a property value is setted in the {@link PropertyBox}
+ * using {@link #setValue(Property, Object)} any property validator is invoked, throwing a {@link ValidationException}
+ * if the value is not valid. Property value validation can be controlled using the {@link #setInvalidAllowed(boolean)}
+ * method. Property value validation can always be manually triggered using the {@link #validate()} method.
+ * </p>
  * 
  * @since 5.0.0
+ * 
+ * @see PropertySet
+ * @see PropertySet#getIdentifiers()
  */
 @SuppressWarnings("rawtypes")
 public interface PropertyBox extends PropertySet<Property> {
@@ -190,9 +210,13 @@ public interface PropertyBox extends PropertySet<Property> {
 
 	/**
 	 * Shorter method to create a PropertyBox with given <code>properties</code> set.
+	 * <p>
+	 * If given <code>properties</code> are provided as a {@link PropertySet} instance, any property set configuration,
+	 * such as identifier properties, is inherited by the {@link PropertyBox} property set.
+	 * </p>
 	 * @param <P> Actual property type
 	 * @param properties Set of properties of the PropertyBox to create
-	 * @return Builder
+	 * @return A new {@link PropertyBox} builder
 	 */
 	static <P extends Property> PropertyBox create(Iterable<P> properties) {
 		return builder(properties).build();
@@ -202,7 +226,7 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * Shorter method to create a PropertyBox with given <code>properties</code> set.
 	 * @param <P> Actual property type
 	 * @param properties Set of properties of the PropertyBox to create
-	 * @return Builder
+	 * @return A new {@link PropertyBox} builder
 	 */
 	@SafeVarargs
 	static <P extends Property> PropertyBox create(P... properties) {
@@ -211,9 +235,13 @@ public interface PropertyBox extends PropertySet<Property> {
 
 	/**
 	 * Builder to create and populate a PropertyBox.
+	 * <p>
+	 * If given <code>properties</code> are provided as a {@link PropertySet} instance, any property set configuration,
+	 * such as identifier properties, is inherited by the {@link PropertyBox} property set.
+	 * </p>
 	 * @param <P> Actual property type
 	 * @param properties Set of properties of the PropertyBox to create
-	 * @return Builder
+	 * @return A new {@link PropertyBox} builder
 	 */
 	static <P extends Property> Builder builder(Iterable<P> properties) {
 		return new DefaultPropertyBox.PropertyBoxBuilder(properties);
@@ -223,7 +251,7 @@ public interface PropertyBox extends PropertySet<Property> {
 	 * Builder to create and populate a PropertyBox.
 	 * @param <P> Actual property type
 	 * @param properties Set of properties of the PropertyBox to create
-	 * @return Builder
+	 * @return A new {@link PropertyBox} builder
 	 */
 	@SafeVarargs
 	static <P extends Property> Builder builder(P... properties) {
@@ -275,6 +303,36 @@ public interface PropertyBox extends PropertySet<Property> {
 		 * @return this
 		 */
 		Builder invalidAllowed(boolean invalidAllowed);
+
+		/**
+		 * Set the predicate to use to check the {@link PropertyBox} object equality using the
+		 * {@link Object#equals(Object)} method.
+		 * <p>
+		 * By default, {@link PropertyBox} objects equality is checked using the property set identifier property
+		 * values, if available.
+		 * </p>
+		 * <p>
+		 * If a custom <code>equals</code> handler is provided, a <code>hashCode</code> provider should be provided too,
+		 * using the {@link #hashCodeProvider(HashCodeProvider)} builder mthod.
+		 * </p>
+		 * @param equalsHandler The function to use to check {@link PropertyBox} object equality
+		 * @return this
+		 * @see PropertySet#getIdentifiers()
+		 */
+		Builder equalsHandler(EqualsHandler<PropertyBox> equalsHandler);
+
+		/**
+		 * Set the function to use to provide the {@link PropertyBox} object hash code using the
+		 * {@link Object#hashCode()} method.
+		 * <p>
+		 * By default, {@link PropertyBox} objects hash code is calculated using the property set identifier property
+		 * values, if available.
+		 * </p>
+		 * @param hashCodeProvider The function to use to provide the {@link PropertyBox} object hash code
+		 * @return this
+		 * @see PropertySet#getIdentifiers()
+		 */
+		Builder hashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider);
 
 		/**
 		 * Set value of given <code>property</code>. Value type must be consistent with declared {@link Property} type.

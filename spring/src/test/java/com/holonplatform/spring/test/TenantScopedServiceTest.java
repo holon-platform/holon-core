@@ -12,12 +12,12 @@ import com.holonplatform.core.tenancy.TenantResolver;
 public class TenantScopedServiceTest implements ITenantScopedTest, Serializable, DisposableBean {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	@Autowired
 	private TenantResolver tenantResolver;
-	
+
 	private String tenantId;
-	
+
 	@PostConstruct
 	public void init() {
 		this.tenantId = tenantResolver.getTenantId().orElse(null);

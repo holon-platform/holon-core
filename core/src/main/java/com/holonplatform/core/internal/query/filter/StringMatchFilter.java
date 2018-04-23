@@ -15,10 +15,10 @@
  */
 package com.holonplatform.core.internal.query.filter;
 
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.internal.query.QueryUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.query.QueryExpression;
+import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -59,6 +59,11 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	}
 
 	/*
+	 * Value
+	 */
+	private final String value;
+
+	/*
 	 * Match mode
 	 */
 	private final MatchMode matchMode;
@@ -66,7 +71,7 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	/*
 	 * Ignore case
 	 */
-	private boolean ignoreCase;
+	private final boolean ignoreCase;
 
 	/**
 	 * Constructor.
@@ -75,12 +80,22 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	 * @param matchMode Match mode
 	 * @param ignoreCase Set if to match like pattern ignoring case
 	 */
-	public StringMatchFilter(QueryExpression<String> expression, String value, MatchMode matchMode,
+	public StringMatchFilter(TypedExpression<String> expression, String value, MatchMode matchMode,
 			boolean ignoreCase) {
-		super(expression, FilterOperator.MATCH, QueryUtils.asConstantExpression(expression, value));
+		super(expression, FilterOperator.MATCH, ConstantExpression.create(expression, value));
+		ObjectUtils.argumentNotNull(value, "Value must be not null");
 		ObjectUtils.argumentNotNull(matchMode, "Match mode must be not null");
+		this.value = value;
 		this.matchMode = matchMode;
 		this.ignoreCase = ignoreCase;
+	}
+
+	/**
+	 * Get the value to match.
+	 * @return the value
+	 */
+	public String getValue() {
+		return value;
 	}
 
 	/**
@@ -99,14 +114,6 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 		return ignoreCase;
 	}
 
-	/**
-	 * Set if to match like pattern ignoring case
-	 * @param ignoreCase <code>true</code> to ignore case in pattern match
-	 */
-	public void setIgnoreCase(boolean ignoreCase) {
-		this.ignoreCase = ignoreCase;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.query.filter.AbstractOperationQueryFilter#validate()
@@ -114,8 +121,8 @@ public class StringMatchFilter extends AbstractOperationQueryFilter<String> {
 	@Override
 	public void validate() throws InvalidExpressionException {
 		super.validate();
-		if (!getRightOperand().isPresent()) {
-			throw new InvalidExpressionException("Missing right hand operand");
+		if (getValue() == null) {
+			throw new InvalidExpressionException("Null value to match");
 		}
 	}
 

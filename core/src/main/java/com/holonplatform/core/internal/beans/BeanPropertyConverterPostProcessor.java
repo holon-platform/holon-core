@@ -22,7 +22,7 @@ import java.lang.reflect.Modifier;
 import javax.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Converter;
 import com.holonplatform.core.beans.Converter.BUILTIN;
@@ -49,7 +49,7 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		if (property.getAnnotation(Converter.class).isPresent()) {
 
 			BUILTIN builtin = property.getAnnotation(Converter.class).get().builtin();
@@ -60,13 +60,13 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 			if (BUILTIN.NONE == builtin && PropertyValueConverter.class == converterClass) {
 				throw new BeanIntrospectionException(
 						"No builtin or custom PropertyValueConverter declared using Converter annotation on bean property ["
-								+ property.fullName() + "]");
+								+ property + "]");
 			}
 
 			if (BUILTIN.NONE != builtin && PropertyValueConverter.class != converterClass) {
 				throw new BeanIntrospectionException(
 						"Both builtin and custom PropertyValueConverter declared using Converter annotation on bean property ["
-								+ property.fullName() + "]: only one is admitted");
+								+ property + "]: only one is admitted");
 			}
 
 			if (BUILTIN.NONE != builtin) {
@@ -77,7 +77,7 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 			Constructor<?>[] constructors = converterClass.getDeclaredConstructors();
 			if (constructors == null || constructors.length == 0) {
 				throw new BeanIntrospectionException("Invalid PropertyValueConverter [" + converterClass.getName()
-						+ "] declared using Converter annotation on bean property [" + property.fullName()
+						+ "] declared using Converter annotation on bean property [" + property
 						+ "]: no accessible Constructor found");
 			}
 
@@ -87,14 +87,15 @@ public class BeanPropertyConverterPostProcessor implements BeanPropertyPostProce
 				Constructor<?> constructor = getNoArgumentsConstructor(constructors);
 				if (constructor == null) {
 					throw new BeanIntrospectionException("Invalid PropertyValueConverter [" + converterClass.getName()
-							+ "] declared using Converter annotation on bean property [" + property.fullName()
+							+ "] declared using Converter annotation on bean property [" + property
 							+ "]: no public Constructor with no arguments found");
 				}
 				converter = (PropertyValueConverter) constructor.newInstance();
 			} catch (Exception e) {
-				throw new BeanIntrospectionException("Failed to instantiate PropertyValueConverter ["
-						+ converterClass.getName() + "] declared using Converter annotation on bean property ["
-						+ property.fullName() + "]", e);
+				throw new BeanIntrospectionException(
+						"Failed to instantiate PropertyValueConverter [" + converterClass.getName()
+								+ "] declared using Converter annotation on bean property [" + property + "]",
+						e);
 			}
 
 			property.converter(converter);

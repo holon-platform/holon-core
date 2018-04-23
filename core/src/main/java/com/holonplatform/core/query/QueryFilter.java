@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.CallbackExpressionResolver;
-import com.holonplatform.core.internal.query.QueryUtils;
 import com.holonplatform.core.internal.query.filter.AndFilter;
 import com.holonplatform.core.internal.query.filter.BetweenFilter;
 import com.holonplatform.core.internal.query.filter.EqualFilter;
@@ -80,357 +80,349 @@ public interface QueryFilter extends Expression, Serializable {
 	// Builders and helpers
 
 	/**
-	 * Build a {@link FilterOperator#NULL} filter on given <code>expression</code>, which checks if given expression
-	 * value is <code>null</code>.
+	 * Build a {@link QueryFilter} on given <code>expression</code>, which checks if given expression value is
+	 * <code>null</code>.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter isNull(QueryExpression<T> expression) {
+	static <T> QueryFilter isNull(TypedExpression<T> expression) {
 		return new NullFilter(expression);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_NULL} filter on given <code>expression</code>, which checks if given expression
-	 * value is not <code>null</code>.
+	 * Build a {@link QueryFilter} on given <code>expression</code>, which checks if given expression value is not
+	 * <code>null</code>.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter isNotNull(QueryExpression<T> expression) {
+	static <T> QueryFilter isNotNull(TypedExpression<T> expression) {
 		return new NotNullFilter(expression);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#EQUAL} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter eq(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter eq(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new EqualFilter<>(left, right);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#EQUAL} filter using given <code>expression</code>, which checks if expression value
-	 * is equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter eq(QueryExpression<T> expression, T value) {
-		return new EqualFilter<>(expression, QueryUtils.asConstantExpression(expression, value));
+	static <T> QueryFilter eq(TypedExpression<T> expression, T value) {
+		return new EqualFilter<>(expression, ConstantExpression.create(expression, value));
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_EQUAL} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is not equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is not equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter neq(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter neq(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new NotEqualFilter<>(left, right);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_EQUAL} filter using given <code>expression</code>, which checks if expression
-	 * value is not equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not equal to
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter neq(QueryExpression<T> expression, T value) {
-		return new NotEqualFilter<>(expression, QueryUtils.asConstantExpression(expression, value));
+	static <T> QueryFilter neq(TypedExpression<T> expression, T value) {
+		return new NotEqualFilter<>(expression, ConstantExpression.create(expression, value));
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} or a {@link FilterOperator#LESS_OR_EQUAL} filter using given
-	 * <code>left</code> and <code>right</code> operands, which checks if left expression value is less than or less
-	 * than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than or less than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#LESS_OR_EQUAL} operator (which includes
-	 *        value equality), <code>false</code> to use the {@link FilterOperator#LESS_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lessThan(QueryExpression<T> left, QueryExpression<? super T> right, boolean includeEquals) {
+	static <T> QueryFilter lessThan(TypedExpression<T> left, TypedExpression<? super T> right, boolean includeEquals) {
 		return new LessFilter<>(left, right, includeEquals);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} or a {@link FilterOperator#LESS_OR_EQUAL} filter using given
-	 * <code>expression</code>, which checks if expression value is less than or less than or equal to given constant
-	 * value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than or
+	 * less than or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#LESS_OR_EQUAL} operator (which includes
-	 *        value equality), <code>false</code> to use the {@link FilterOperator#LESS_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lessThan(QueryExpression<T> expression, T value, boolean includeEquals) {
-		return new LessFilter<>(expression, QueryUtils.asConstantExpression(expression, value), includeEquals);
+	static <T> QueryFilter lessThan(TypedExpression<T> expression, T value, boolean includeEquals) {
+		return new LessFilter<>(expression, ConstantExpression.create(expression, value), includeEquals);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is less than right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lt(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter lt(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return lessThan(left, right, false);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_THAN} filter using given <code>expression</code>, which checks if expression
-	 * value is less than given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter lt(QueryExpression<T> expression, T value) {
-		return lessThan(expression, QueryUtils.asConstantExpression(expression, value), false);
+	static <T> QueryFilter lt(TypedExpression<T> expression, T value) {
+		return lessThan(expression, ConstantExpression.create(expression, value), false);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_OR_EQUAL} filter using given <code>left</code> and <code>right</code>
-	 * operands, which checks if left expression value is less than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is less than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter loe(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter loe(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return lessThan(left, right, true);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#LESS_OR_EQUAL} filter using given <code>expression</code>, which checks if
-	 * expression value is less than or equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is less than or
+	 * equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter loe(QueryExpression<T> expression, T value) {
-		return lessThan(expression, QueryUtils.asConstantExpression(expression, value), true);
+	static <T> QueryFilter loe(TypedExpression<T> expression, T value) {
+		return lessThan(expression, ConstantExpression.create(expression, value), true);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} or a {@link FilterOperator#GREATER_OR_EQUAL} filter using given
-	 * <code>left</code> and <code>right</code> operands, which checks if left expression value is greater than or
-	 * greater than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than or greater than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#GREATER_OR_EQUAL} operator (which
-	 *        includes value equality), <code>false</code> to use the {@link FilterOperator#GREATER_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter greaterThan(QueryExpression<T> left, QueryExpression<? super T> right,
+	static <T> QueryFilter greaterThan(TypedExpression<T> left, TypedExpression<? super T> right,
 			boolean includeEquals) {
 		return new GreaterFilter<>(left, right, includeEquals);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} or a {@link FilterOperator#GREATER_OR_EQUAL} filter using given
-	 * <code>expression</code>, which checks if expression value is greater than or greater than or equal to given
-	 * constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * or greater than or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
-	 * @param includeEquals <code>true</code> to use the {@link FilterOperator#GREATER_OR_EQUAL} operator (which
-	 *        includes value equality), <code>false</code> to use the {@link FilterOperator#GREATER_THAN} operator
+	 * @param includeEquals <code>true</code> to include value equality, <code>false</code> otherwise
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter greaterThan(QueryExpression<T> expression, T value, boolean includeEquals) {
-		return new GreaterFilter<>(expression, QueryUtils.asConstantExpression(expression, value), includeEquals);
+	static <T> QueryFilter greaterThan(TypedExpression<T> expression, T value, boolean includeEquals) {
+		return new GreaterFilter<>(expression, ConstantExpression.create(expression, value), includeEquals);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} filter using given <code>left</code> and <code>right</code> operands,
-	 * which checks if left expression value is greater than right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter gt(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter gt(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return greaterThan(left, right, false);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_THAN} filter using given <code>expression</code>, which checks if
-	 * expression value is greater than given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter gt(QueryExpression<T> expression, T value) {
-		return greaterThan(expression, QueryUtils.asConstantExpression(expression, value), false);
+	static <T> QueryFilter gt(TypedExpression<T> expression, T value) {
+		return greaterThan(expression, ConstantExpression.create(expression, value), false);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_OR_EQUAL} filter using given <code>left</code> and <code>right</code>
-	 * operands, which checks if left expression value is greater than or equal to right expression value.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is greater than or equal to right expression value.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter goe(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter goe(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return greaterThan(left, right, true);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#GREATER_OR_EQUAL} filter using given <code>expression</code>, which checks if
-	 * expression value is greater than or equal to given constant value.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is greater than
+	 * or equal to given constant value.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param value Constant value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter goe(QueryExpression<T> expression, T value) {
-		return greaterThan(expression, QueryUtils.asConstantExpression(expression, value), true);
+	static <T> QueryFilter goe(TypedExpression<T> expression, T value) {
+		return greaterThan(expression, ConstantExpression.create(expression, value), true);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#BETWEEN} filter using given <code>expression</code>, which checks if expression
-	 * value is between given <code>from</code> and <code>to</code> values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is between
+	 * given <code>from</code> and <code>to</code> values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param from From value (not null)
 	 * @param to To value (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter between(QueryExpression<T> expression, T from, T to) {
+	static <T> QueryFilter between(TypedExpression<T> expression, T from, T to) {
 		return new BetweenFilter<>(expression, from, to);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is equal to any of the right expression values.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is equal to any of the right expression values.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter in(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter in(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new InFilter<>(left, right);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>expression</code>, which checks if expression value is
-	 * equal to any of the given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to any
+	 * of the given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> QueryFilter in(QueryExpression<T> expression, T... values) {
-		return in(expression, QueryUtils.asConstantExpression(expression, values));
+	static <T> QueryFilter in(TypedExpression<T> expression, T... values) {
+		return in(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
-	 * Build a {@link FilterOperator#IN} filter using given <code>expression</code>, which checks if expression value is
-	 * equal to any of the given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is equal to any
+	 * of the given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter in(QueryExpression<T> expression, Collection<T> values) {
-		return in(expression, QueryUtils.asConstantExpression(expression, values));
+	static <T> QueryFilter in(TypedExpression<T> expression, Collection<T> values) {
+		return in(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>left</code> and <code>right</code> operands, which
-	 * checks if left expression value is not included in the right expression values.
+	 * Build a {@link QueryFilter} using given <code>left</code> and <code>right</code> operands, which checks if left
+	 * expression value is not included in the right expression values.
 	 * @param <T> Expression type
 	 * @param left Left operand expression (not null)
 	 * @param right Right operand expression (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter nin(QueryExpression<T> left, QueryExpression<? super T> right) {
+	static <T> QueryFilter nin(TypedExpression<T> left, TypedExpression<? super T> right) {
 		return new NotInFilter<>(left, right);
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>expression</code>, which checks if expression
-	 * value is not included in given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not included
+	 * in given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
 	@SuppressWarnings("unchecked")
-	static <T> QueryFilter nin(QueryExpression<T> expression, T... values) {
-		return nin(expression, QueryUtils.asConstantExpression(expression, values));
+	static <T> QueryFilter nin(TypedExpression<T> expression, T... values) {
+		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
-	 * Build a {@link FilterOperator#NOT_IN} filter using given <code>expression</code>, which checks if expression
-	 * value is not included in given constant values.
+	 * Build a {@link QueryFilter} using given <code>expression</code>, which checks if expression value is not included
+	 * in given constant values.
 	 * @param <T> Expression type
 	 * @param expression Filter expression (not null)
 	 * @param values Filter values (not null)
 	 * @return QueryFilter
 	 */
-	static <T> QueryFilter nin(QueryExpression<T> expression, Collection<T> values) {
-		return nin(expression, QueryUtils.asConstantExpression(expression, values));
+	static <T> QueryFilter nin(TypedExpression<T> expression, Collection<T> values) {
+		return nin(expression, CollectionExpression.create(expression, values));
 	}
 
 	/**
-	 * Build a <em>contains</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>contains</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value contains given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value which must be contained in expression value
+	 * @param value Value which must be contained in expression value (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter contains(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter contains(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.CONTAINS, ignoreCase);
 	}
 
 	/**
-	 * Build a <em>starts with</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>starts with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value starts with given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value with which the expression value must start with
+	 * @param value Value with which the expression value must start with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter startsWith(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter startsWith(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.STARTS_WITH, ignoreCase);
 	}
 
 	/**
-	 * Build a <em>ends with</em> filter on given {@link String} <code>expression</code>, checking if the
+	 * Build a <em>ends with</em> {@link QueryFilter} on given {@link String} <code>expression</code>, checking if the
 	 * <code>expression</code> value ends with given value.
 	 * @param expression Filter expression (not null)
-	 * @param value Value with which the expression value must end with
+	 * @param value Value with which the expression value must end with (not null)
 	 * @param ignoreCase Whether to ignore case
 	 * @return QueryFilter
 	 */
-	static QueryFilter endsWith(QueryExpression<String> expression, String value, boolean ignoreCase) {
+	static QueryFilter endsWith(TypedExpression<String> expression, String value, boolean ignoreCase) {
 		return new StringMatchFilter(expression, value, MatchMode.ENDS_WITH, ignoreCase);
 	}
 
 	/**
-	 * Build a QueryFilter as ne negation of given <code>filter</code>.
+	 * Build a {@link QueryFilter} as ne negation of given <code>filter</code>.
 	 * @param filter Filter to negate
 	 * @return QueryFilter
 	 */
@@ -439,7 +431,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the conjunction (AND) of all given not null <code>filters</code>
+	 * Build a {@link QueryFilter} with the conjunction (AND) of all given not null <code>filters</code>
 	 * @param filters Filters
 	 * @return QueryFilter representing the conjunction (AND) of all given QueryFilters, or an empty optional if no
 	 *         not-null filter is given
@@ -455,7 +447,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the conjunction (AND) of all given <code>filters</code>
+	 * Build a {@link QueryFilter} with the conjunction (AND) of all given <code>filters</code>
 	 * @param <Q> Actual filter type
 	 * @param filters Filters
 	 * @return QueryFilter representing the conjunction (AND) of all given QueryFilters, or an empty optional if given
@@ -469,7 +461,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the disjunction (OR) of all given not null <code>filters</code>
+	 * Build a {@link QueryFilter} with the disjunction (OR) of all given not null <code>filters</code>
 	 * @param filters Filters
 	 * @return QueryFilter representing the disjunction (OR) of all given filters, or an empty optional if no not-null
 	 *         filter is given
@@ -485,7 +477,7 @@ public interface QueryFilter extends Expression, Serializable {
 	}
 
 	/**
-	 * Build a QueryFilter with the disjunction (OR) of all given <code>filters</code>
+	 * Build a {@link QueryFilter} with the disjunction (OR) of all given <code>filters</code>
 	 * @param <Q> Actual filter type
 	 * @param filters Filters
 	 * @return QueryFilter representing the disjunction (OR) of all given QueryFilters, or an empty optional if given
@@ -537,168 +529,6 @@ public interface QueryFilter extends Expression, Serializable {
 				ExpressionResolverFunction<T, QueryFilter> function) {
 			return new CallbackExpressionResolver<>(type, QueryFilter.class, function);
 		}
-
-	}
-
-	/**
-	 * Filter operators.
-	 * @since 4.4.0
-	 */
-	public enum FilterOperator {
-
-		/**
-		 * EQUAL
-		 */
-		EQUAL("=", "$eq"),
-
-		/**
-		 * NOT EQUAL
-		 */
-		NOT_EQUAL("<>", "$ne"),
-
-		/**
-		 * GREATER THAN
-		 */
-		GREATER_THAN(">", "$gt"),
-
-		/**
-		 * GREATER OR EQUAL
-		 */
-		GREATER_OR_EQUAL(">=", "$goe"),
-
-		/**
-		 * LESS THAN
-		 */
-		LESS_THAN("<", "$lt"),
-
-		/**
-		 * LESS OR EQUAL
-		 */
-		LESS_OR_EQUAL("<=", "$loe"),
-
-		/**
-		 * BETWEEN
-		 */
-		BETWEEN("[]", "$btw"),
-
-		/**
-		 * IN
-		 */
-		IN("^", "$in"),
-
-		/**
-		 * NOT IN
-		 */
-		NOT_IN("!^", "$nin"),
-
-		/**
-		 * MATCH
-		 */
-		MATCH("~", "$mtch"),
-
-		/*
-		 * IS NULL
-		 */
-		NULL("-", "$null"),
-
-		/**
-		 * IS NOT NULL
-		 */
-		NOT_NULL("+", "$notNull");
-
-		/*
-		 * Operator symbol
-		 */
-		private final String symbol;
-
-		/*
-		 * Serialized form id
-		 */
-		private final String serializedId;
-
-		/**
-		 * Constructor
-		 * @param symbol Operator symbol
-		 * @param serializedId Serialized form id
-		 */
-		private FilterOperator(String symbol, String serializedId) {
-			this.symbol = symbol;
-			this.serializedId = serializedId;
-		}
-
-		/**
-		 * Get operator symbol
-		 * @return Symbol
-		 */
-		public String getSymbol() {
-			return symbol;
-		}
-
-		/**
-		 * Serialized form id
-		 * @return Serialized id
-		 */
-		public String getSerializedId() {
-			return serializedId;
-		}
-
-		/**
-		 * Parse a {@link FilterOperator} from symbol
-		 * @param symbol Symbol
-		 * @return Filter operator, or <code>null</code> if symbol is not associated to any operator
-		 */
-		public static FilterOperator fromSymbol(String symbol) {
-			if (symbol != null) {
-				for (FilterOperator operator : values()) {
-					if (symbol.equals(operator.symbol)) {
-						return operator;
-					}
-				}
-			}
-			return null;
-		}
-
-		/**
-		 * Get the {@link FilterOperator} matching the given serialized id
-		 * @param serializedId Serialized operator id
-		 * @return FilterOperator, or <code>null</code> if none match
-		 */
-		public static FilterOperator deserialize(String serializedId) {
-			if (serializedId != null) {
-				for (FilterOperator operator : values()) {
-					if (serializedId.equals(operator.serializedId)) {
-						return operator;
-					}
-				}
-			}
-			return null;
-		}
-
-	}
-
-	/**
-	 * A {@link QueryFilter} which represents an operation with operator and arguments.
-	 * @param <T> Operation subject type
-	 */
-	public interface OperationQueryFilter<T> extends QueryFilter {
-
-		/**
-		 * Get the left hand {@link QueryExpression} operand.
-		 * @return The left hand operand expression
-		 */
-		QueryExpression<T> getLeftOperand();
-
-		/**
-		 * Get the operator.
-		 * @return The operator (not null)
-		 */
-		FilterOperator getOperator();
-
-		/**
-		 * Get the right hand {@link QueryExpression} operand, if applicable.
-		 * @return Optional right hand operand expression
-		 */
-		Optional<QueryExpression<? super T>> getRightOperand();
 
 	}
 

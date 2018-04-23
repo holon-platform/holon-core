@@ -15,8 +15,15 @@
  */
 package com.holonplatform.core.temporal;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.Temporal;
+import java.util.Optional;
 
 /**
  * Enumeration of temporal macro-types.
@@ -41,18 +48,44 @@ public enum TemporalType {
 	DATE_TIME;
 
 	/**
-	 * Get temporal macro-type of given <code>temporal</code> instance
-	 * @param temporal Temporal to process
-	 * @return TemporalType of given {@link Temporal}, or <code>null</code> if given temporal was null
+	 * Get the temporal macro-type of given <code>temporal</code> instance, if available.
+	 * @param temporal Temporal object
+	 * @return {@link TemporalType} of given {@link Temporal}, empty if given temporal is <code>null</code>
 	 */
-	public static TemporalType getTemporalType(Temporal temporal) {
+	public static Optional<TemporalType> getTemporalType(Temporal temporal) {
 		if (temporal != null) {
 			if (temporal.isSupported(ChronoUnit.HOURS)) {
-				return (temporal.isSupported(ChronoUnit.DAYS)) ? DATE_TIME : TIME;
+				return Optional.of((temporal.isSupported(ChronoUnit.DAYS)) ? DATE_TIME : TIME);
 			}
-			return DATE;
+			return Optional.of(DATE);
 		}
-		return null;
+		return Optional.empty();
+	}
+
+	/**
+	 * Get the temporal macro-type of given <code>type</code>, if it is well-known temporal type.
+	 * <p>
+	 * For {@link java.util.Date} and {@link java.util.Calendar} types, {@link #DATE_TIME} is returned.
+	 * </p>
+	 * @param type Type to inspect
+	 * @return {@link TemporalType} of given type, empty if <code>null</code> or if it is not recognized as a known
+	 *         temporal type
+	 */
+	public static Optional<TemporalType> getTemporalType(Class<?> type) {
+		if (type != null) {
+			if (LocalDate.class.isAssignableFrom(type)) {
+				return Optional.of(DATE);
+			}
+			if (LocalTime.class.isAssignableFrom(type) || OffsetTime.class.isAssignableFrom(type)) {
+				return Optional.of(TIME);
+			}
+			if (java.util.Date.class.isAssignableFrom(type) || java.util.Calendar.class.isAssignableFrom(type)
+					|| LocalDateTime.class.isAssignableFrom(type) || OffsetDateTime.class.isAssignableFrom(type)
+					|| ZonedDateTime.class.isAssignableFrom(type)) {
+				return Optional.of(DATE_TIME);
+			}
+		}
+		return Optional.empty();
 	}
 
 }

@@ -17,18 +17,19 @@ package com.holonplatform.core.query;
 
 import java.util.Optional;
 
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
+import com.holonplatform.core.Expression;
+import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverProvider;
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.datastore.DataTarget;
 
 /**
- * Interface to provide {@link Query} configuration elements for query building and execution.
+ * Represents the configuration of a <em>query</em>, providing configuration elements and supporting
+ * {@link ExpressionResolver}s.
  * 
  * @since 5.0.0
- * 
- * @see Query
  */
-public interface QueryConfiguration extends ParameterSet, ExpressionResolverHandler {
+public interface QueryConfiguration extends ParameterSet, Expression, ExpressionResolverProvider {
 
 	/**
 	 * Get the data target.

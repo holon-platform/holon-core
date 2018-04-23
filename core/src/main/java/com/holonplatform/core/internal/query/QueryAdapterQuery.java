@@ -18,8 +18,11 @@ package com.holonplatform.core.internal.query;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.Query;
+import com.holonplatform.core.query.QueryAdapter;
+import com.holonplatform.core.query.QueryOperation;
 import com.holonplatform.core.query.QueryProjection;
 
 /**
@@ -40,19 +43,36 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	private final QueryAdapter<? super D> queryAdapter;
 
 	/**
+	 * Constructor.
+	 * @param queryAdapter Query adapter (not null)
+	 * @param queryDefinition Query definition (not null)
+	 */
+	public QueryAdapterQuery(QueryAdapter<? super D> queryAdapter, D queryDefinition) {
+		super(queryDefinition);
+		ObjectUtils.argumentNotNull(queryAdapter, "QueryAdapter must be not null");
+		this.queryAdapter = queryAdapter;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.AbstractQueryBuilder#getActualBuilder()
+	 */
+	@Override
+	protected Query getActualBuilder() {
+		return this;
+	}
+
+	/**
 	 * Constructor
 	 * @param datastore Datastore (not null)
 	 * @param queryAdapter Query adapter (not null)
 	 * @param queryDefinition Query definition (not null)
+	 * @deprecated Datastore parameter is no longer required, use
+	 *             {@link #QueryAdapterQuery(QueryAdapter, QueryDefinition)}
 	 */
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	public QueryAdapterQuery(Datastore datastore, QueryAdapter<? super D> queryAdapter, D queryDefinition) {
-		super(queryDefinition);
-		ObjectUtils.argumentNotNull(datastore, "Datastore must be not null");
-		ObjectUtils.argumentNotNull(queryAdapter, "QueryAdapter must be not null");
-		this.queryAdapter = queryAdapter;
-		// inherit datastore resolvers
-		datastore.getExpressionResolvers().forEach(r -> queryDefinition.addExpressionResolver(r));
+		this(queryAdapter, queryDefinition);
 	}
 
 	/**
@@ -68,13 +88,13 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	 * @see com.holonplatform.core.internal.query.QueryResults#stream(com.holonplatform.core.query.QueryProjection)
 	 */
 	@Override
-	public <R> Stream<R> stream(QueryProjection<R> projection) throws QueryExecutionException {
+	public <R> Stream<R> stream(QueryProjection<R> projection) throws DataAccessException {
 		try {
-			return getQueryAdapter().stream(getQueryDefinition(), projection);
-		} catch (QueryExecutionException e) {
+			return getQueryAdapter().stream(QueryOperation.create(getQueryDefinition(), projection));
+		} catch (DataAccessException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new QueryExecutionException(e);
+			throw new DataAccessException(e);
 		}
 	}
 

@@ -40,6 +40,11 @@ public class DefaultJoin<T> extends DefaultPath<T> implements Join<T> {
 	private final JoinType joinType;
 
 	/**
+	 * Optional data path
+	 */
+	private final String dataPath;
+
+	/**
 	 * Optional alias
 	 */
 	private String alias;
@@ -57,11 +62,21 @@ public class DefaultJoin<T> extends DefaultPath<T> implements Join<T> {
 	public DefaultJoin(DataTarget<T> target, JoinType joinType) {
 		super(target.getName(), target.getType());
 		this.joinType = joinType;
+		this.dataPath = target.getDataPath().orElse(null);
 
 		// check aliasable
 		if (AliasablePath.class.isAssignableFrom(target.getClass())) {
 			this.alias = ((AliasablePath<?, ?>) target).getAlias().orElse(null);
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.Path#getDataPath()
+	 */
+	@Override
+	public Optional<String> getDataPath() {
+		return Optional.ofNullable(dataPath);
 	}
 
 	/*

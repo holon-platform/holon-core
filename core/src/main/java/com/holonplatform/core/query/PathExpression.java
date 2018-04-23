@@ -18,6 +18,7 @@ package com.holonplatform.core.query;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.query.DefaultPathExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.query.QuerySort.SortDirection;
 
 /**
  * A {@link QueryExpression} wich represents a {@link Path}.
@@ -26,7 +27,27 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  *
  * @since 5.0.0
  */
-public interface PathExpression<T> extends Path<T>, QueryExpression<T> {
+public interface PathExpression<T> extends Path<T>, QueryExpression<T>, QueryProjection<T> {
+
+	// ------- sorts
+
+	/**
+	 * Build a {@link SortDirection#ASCENDING} sort using this property.
+	 * @return Ascending {@link QuerySort}
+	 */
+	default QuerySort asc() {
+		return QuerySort.asc(this);
+	}
+
+	/**
+	 * Build a {@link SortDirection#DESCENDING} sort using this property.
+	 * @return Descending {@link QuerySort}
+	 */
+	default QuerySort desc() {
+		return QuerySort.desc(this);
+	}
+
+	// ------- Builders
 
 	/**
 	 * Create a {@link PathExpression}.

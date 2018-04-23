@@ -15,32 +15,66 @@
  */
 package com.holonplatform.core.internal.query;
 
+import java.util.Optional;
+
+import com.holonplatform.core.ConverterExpression;
+import com.holonplatform.core.ExpressionValueConverter;
+import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.internal.AbstractConverterExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.ConstantExpression;
-import com.holonplatform.core.query.QueryExpression;
 
 /**
- * A {@link QueryExpression} which represents a constant value
+ * Default {@link ConstantExpression} implementation.
  * 
  * @param <T> Value type
  * 
  * @since 5.0.0
  */
-public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
+public class DefaultConstantExpression<T> extends AbstractConverterExpression<T> implements ConstantExpression<T> {
 
 	/*
-	 * Constant value (immutable)
+	 * Constant value
 	 */
 	private final T value;
 
+	/*
+	 * Value type
+	 */
+	private final Class<? extends T> type;
+
 	/**
 	 * Constructor
+	 * @param value Constant value
+	 */
+	@SuppressWarnings("unchecked")
+	public DefaultConstantExpression(T value) {
+		this(value, (value != null ? (Class<? extends T>) value.getClass() : (Class<? extends T>) Void.class));
+	}
+
+	/**
+	 * Constructor
+	 * @param value Constant value
+	 * @param type Value type (not null)
+	 */
+	public DefaultConstantExpression(T value, Class<? extends T> type) {
+		super();
+		ObjectUtils.argumentNotNull(type, "Value type must be not null");
+		this.value = value;
+		this.type = type;
+	}
+
+	/**
+	 * Constructor
+	 * @param expression Expression from which to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param value Constant value (not null)
 	 */
-	public DefaultConstantExpression(T value) {
-		super();
-		ObjectUtils.argumentNotNull(value, "Expression value must be not null");
+	public DefaultConstantExpression(TypedExpression<T> expression, T value) {
+		super((expression instanceof ConverterExpression)
+				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
 		this.value = value;
+		this.type = expression.getType();
+		expression.getTemporalType().ifPresent(t -> setTemporalType(t));
 	}
 
 	/*
@@ -54,12 +88,24 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConstantExpression#getModelValue()
+	 */
+	@Override
+	public Object getModelValue() {
+		Optional<?> modelValue = getExpressionValueConverter().map(converter -> converter.toModel(getValue()));
+		if (modelValue.isPresent()) {
+			return modelValue.get();
+		}
+		return getValue();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.query.QueryDataExpression#getType()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public Class<? extends T> getType() {
-		return (Class<? extends T>) value.getClass();
+		return type;
 	}
 
 	/*
@@ -68,9 +114,6 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
-		if (getValue() == null) {
-			throw new InvalidExpressionException("Null value");
-		}
 	}
 
 	/*
@@ -80,39 +123,6 @@ public class DefaultConstantExpression<T> implements ConstantExpression<T, T> {
 	@Override
 	public String toString() {
 		return "DefaultConstantExpression [value=" + value + "]";
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		DefaultConstantExpression<?> other = (DefaultConstantExpression<?>) obj;
-		if (value == null) {
-			if (other.value != null)
-				return false;
-		} else if (!value.equals(other.value))
-			return false;
-		return true;
 	}
 
 }

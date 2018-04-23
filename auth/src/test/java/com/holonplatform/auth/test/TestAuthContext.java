@@ -18,6 +18,7 @@ package com.holonplatform.auth.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Test;
 
 import com.holonplatform.auth.AuthContext;
+import com.holonplatform.auth.AuthContext.AuthenticationHolder;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Authentication.AuthenticationListener;
 import com.holonplatform.auth.AuthenticationToken;
@@ -142,6 +144,64 @@ public class TestAuthContext {
 		final AccountCredentialsToken token2 = new AccountCredentialsToken("usr", "pwd");
 		dctx.authenticate(token2);
 
+		assertNotNull(dctx.requireAuthentication());
+
+	}
+
+	Authentication theAuthc = null;
+
+	@Test
+	public void testAutheticationHolder() {
+
+		final Authenticator<AccountCredentialsToken> authenticator = new Authenticator<AccountCredentialsToken>() {
+
+			@Override
+			public Class<? extends AccountCredentialsToken> getTokenType() {
+				return AccountCredentialsToken.class;
+			}
+
+			@Override
+			public Authentication authenticate(AccountCredentialsToken authenticationToken)
+					throws AuthenticationException {
+				if ("usr".equals(authenticationToken.getPrincipal())) {
+					return Authentication.builder("usr").build();
+				}
+				throw new UnknownAccountException("usr");
+			}
+		};
+
+		AuthContext ctx = AuthContext.create(
+				Realm.builder().name("realm").authenticator(authenticator).withDefaultAuthorizer().build(),
+				new AuthenticationHolder() {
+
+					@Override
+					public void setAuthentication(Authentication authentication) {
+						theAuthc = authentication;
+					}
+
+					@Override
+					public Optional<Authentication> getAuthentication() {
+						return Optional.ofNullable(theAuthc);
+					}
+				});
+
+		final AuthenticationToken token = AuthenticationToken.accountCredentials("usr", "pwd");
+		ctx.authenticate(token);
+
+		final Optional<Authentication> authc = ctx.getAuthentication();
+
+		assertNotNull(authc);
+		assertTrue(authc.isPresent());
+		assertEquals(token.getPrincipal(), authc.get().getName());
+
+		assertNotNull(theAuthc);
+		assertEquals(token.getPrincipal(), theAuthc.getName());
+
+		ctx.unauthenticate();
+
+		assertFalse(ctx.getAuthentication().isPresent());
+		assertNull(theAuthc);
+
 	}
 
 	@Test
@@ -152,6 +212,16 @@ public class TestAuthContext {
 			@Override
 			public void run() {
 				AuthContext.require();
+			}
+		});
+
+		final AuthContext ac = AuthContext.create(Realm.builder().build());
+
+		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
+
+			@Override
+			public void run() {
+				ac.requireAuthentication();
 			}
 		});
 
@@ -209,7 +279,7 @@ public class TestAuthContext {
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
 		assertEquals(1, realmCounter.get());
-		
+
 		authc = realm.authenticate(tkn);
 		assertNotNull(authc);
 		assertEquals(2, counter.get());

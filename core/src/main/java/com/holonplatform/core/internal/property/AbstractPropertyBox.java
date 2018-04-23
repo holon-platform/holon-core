@@ -18,14 +18,18 @@ package com.holonplatform.core.internal.property;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
+import com.holonplatform.core.objects.EqualsHandler;
+import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
@@ -49,12 +53,13 @@ import com.holonplatform.core.property.VirtualProperty;
  * 
  * @see PropertyBox
  */
+@SuppressWarnings("rawtypes")
 public abstract class AbstractPropertyBox implements PropertyBox {
 
 	/*
 	 * Property set (immutable)
 	 */
-	private final PropertySet<?> propertySet;
+	private final PropertySet<Property> propertySet;
 
 	/*
 	 * Whether to accept invalid property values (ignore property validators)
@@ -62,22 +67,31 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	private transient boolean invalidAllowed;
 
 	/**
+	 * Optional hash code provider
+	 */
+	private HashCodeProvider<PropertyBox> hashCodeProvider;
+
+	/**
+	 * Optional equals handler
+	 */
+	private EqualsHandler<PropertyBox> equalsHandler;
+
+	/**
 	 * Constructor
 	 * @param propertySet PropertySet instance to use
 	 */
-	public AbstractPropertyBox(PropertySet<?> propertySet) {
+	@SuppressWarnings("unchecked")
+	public AbstractPropertyBox(PropertySet<? extends Property> propertySet) {
 		super();
-
 		ObjectUtils.argumentNotNull(propertySet, "PropertySet must be not null");
-
-		this.propertySet = propertySet;
+		this.propertySet = (PropertySet<Property>) propertySet;
 	}
 
 	/**
 	 * Box property set
 	 * @return PropertySet
 	 */
-	protected PropertySet<?> getPropertySet() {
+	protected PropertySet<Property> getPropertySet() {
 		return propertySet;
 	}
 
@@ -85,8 +99,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * Get current PropertySet, throwing an {@link IllegalArgumentException} if it is <code>null</code>
 	 * @return The property set
 	 */
-	@SuppressWarnings("rawtypes")
-	protected PropertySet getAndCheckPropertySet() {
+	protected PropertySet<Property> getAndCheckPropertySet() {
 		if (propertySet == null) {
 			throw new IllegalStateException("Null PropertySet");
 		}
@@ -124,7 +137,6 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertySet#contains(com.holonplatform.core.property.Property)
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean contains(Property property) {
 		return getAndCheckPropertySet().contains(property);
@@ -134,7 +146,6 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see java.lang.Iterable#iterator()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Iterator<Property> iterator() {
 		return getAndCheckPropertySet().iterator();
@@ -144,10 +155,27 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertySet#stream()
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Stream<Property> stream() {
 		return getAndCheckPropertySet().stream();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getIdentifiers()
+	 */
+	@Override
+	public Set<Property> getIdentifiers() {
+		return getAndCheckPropertySet().getIdentifiers();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertySet#getConfiguration()
+	 */
+	@Override
+	public ParameterSet getConfiguration() {
+		return getAndCheckPropertySet().getConfiguration();
 	}
 
 	/*
@@ -198,9 +226,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	 */
 	@Override
 	public <T> Optional<T> getValueIfPresent(Property<T> property) throws PropertyAccessException {
-
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
-
 		try {
 			return Optional.ofNullable(getAndCheckPropertyValue(property));
 		} catch (PropertyAccessException e) {
@@ -375,6 +401,69 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 		// set the value
 		setPropertyValue(property, checkupPropertyValue(property, value));
 	}
+
+	/**
+	 * Get the provider to use to obtain the {@link PropertyBox} <code>hashCode</code>.
+	 * @return Optional hash code provider
+	 */
+	protected Optional<HashCodeProvider<PropertyBox>> getHashCodeProvider() {
+		return Optional.ofNullable(hashCodeProvider);
+	}
+
+	/**
+	 * Set the provider to use to obtain the {@link PropertyBox} <code>hashCode</code>.
+	 * @param hashCodeProvider the hash code provider to set
+	 */
+	protected void setHashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider) {
+		this.hashCodeProvider = hashCodeProvider;
+	}
+
+	/**
+	 * Get the handler to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @return Optional equals handler
+	 */
+	protected Optional<EqualsHandler<PropertyBox>> getEqualsHandler() {
+		return Optional.ofNullable(equalsHandler);
+	}
+
+	/**
+	 * Set the handler to use for the {@link PropertyBox} <code>equals</code> logic.
+	 * @param equalsHandler the equals handler to set
+	 */
+	protected void setEqualsHandler(EqualsHandler<PropertyBox> equalsHandler) {
+		this.equalsHandler = equalsHandler;
+	}
+
+	/**
+	 * Get the {@link PropertyBox} hash code.
+	 * <p>
+	 * If an hash code provider function is provided, it is used to provide the hash code. Otherwise, the default
+	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
+	 * values, if available, to provide the object's hash code.
+	 * </p>
+	 * @return the hash code
+	 */
+	@Override
+	public int hashCode() {
+		return getHashCodeProvider().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).hashCode(this)
+				.orElse(super.hashCode());
+	}
+
+	/**
+	 * Checks whether some other object is "equal to" this {@link PropertyBox}.
+	 * <p>
+	 * If an equals handler is provided, it is used to check objects equality. Otherwise, the default
+	 * {@link DefaultPropertyBoxEqualsHashCodeHandler} is used, relying on the {@link PropertyBox} identifier properties
+	 * values, if available, to check objects equality.
+	 * </p>
+	 * @return <code>true</code> if object are equal, <code>false</code> otherwise
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		return getEqualsHandler().orElse(DefaultPropertyBoxEqualsHashCodeHandler.INSTANCE).equals(this, obj);
+	}
+
+	// ------- Abstract methods
 
 	/**
 	 * Gets the actual value for given property.

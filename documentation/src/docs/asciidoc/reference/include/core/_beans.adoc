@@ -1,83 +1,43 @@
 [[Beans]]
-=== Java Beans and the `Property` architecture
+=== Java Beans and the `Property` model
 
-The Holon platform offers a wide support to treat standard Java Beans properties as <<Property>> abstraction.
+The Holon platform offers a wide support to handle standard link:http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html[Java Beans^] and seamlessy integrate them with the platform <<Property,Property model>>.
 
-The properties of a Java Bean class can be represented as `PathProperty`s, where the property path name corresponds to the bean property name, and are collected in a bean-related property set represented by the <<BeanPropertySet>> interface.
+A Java Bean can be seen as a collection of typed _properties_, with _getter_ and _setter_ methods to read and write the property values. From this perspective, we can introduce the following analogies:
 
-A <<BeanIntrospector>> can be used to inspect the properties of a Java Bean class and obtain the corresponding `BeanPropertySet`.
+* A Bean property can be represented by a <<Property,Property>>.
+* The Bean definition (the collection of the declared properties) can be represented by a <<PropertySet,PropertySet>>.
+* A Bean instance, which holds the property values, can be represented by a <<PropertyBox,PropertyBox>>.
 
-[[BeanIntrospector]]
-==== BeanIntrospector
-The link:{apidir}/com/holonplatform/core/beans/BeanIntrospector.html[BeanIntrospector^] interface provides methods to inspect a Java Bean class and obtain informations about bean properties, representing them as a <<PathProperty>> where the path name of each property corresponds to the bean property name.
+The Holon platform provides a complete API to manage Java Beans using the *property model*, making available all the essential services to switch from one model to another, i.e. to handle a Bean as a `Property` set and to manage the Bean property values through a `PropertyBox`, both to read the Bean property values and to write them.
 
-TIP: *Nested* bean classes are supported, keeping the property hierarchy intact, i.e. the parent property of a `PathProperty` obtained from the bean property of a nested class will be the bean property to which the nested class refers to. To access a nested property by path name, the conventional _dot notation_ is supported. For example `parentProperty.nestedProperty`.
+==== Bean properties
 
-The detected bean properties are collected and returned as a <<BeanPropertySet>>.
+A Java Bean property is represented by a <<PathProperty>>, where the property *path name* corresponds to the Bean *property name*. 
 
-[source, java]
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=introspector,indent=0]
-----
-<1> Get the current `BeanIntrospector`, i.e. the instance registered as a <<Context>> resource, or the default instance if not available in context
-<2> Introspect given bean class and obtain a `BeanPropertySet` which contains all detected bean properties
+*Nested* Bean classes are supported, keeping the property hierarchy intact: i.e. the parent property of a `PathProperty` obtained from the bean property of a nested class will be the bean property to which the nested class refers to.
 
-[[BeanPropertyPostProcessor]]
-===== BeanPropertyPostProcessor
-
-A link:{apidir}/com/holonplatform/core/beans/BeanPropertyPostProcessor.html[BeanPropertyPostProcessor^] can be used to integrate the bean instrospection strategy and process the properties which will become part of resulting <<BeanPropertySet>>, for example to modify or add property configuration attributes, validators, converters and so on.
-
-The `BeanPropertyPostProcessor` _functional interface_ method `processBeanProperty` is called for every detected and valid bean property, provided as _builder_ to participate in the property building process.
-
-The registration of a `BeanPropertyPostProcessor` can be performed in two ways: 
-
-*1. Registration using `BeanIntrospector`*: The `addBeanPropertyPostProcessor` method can be used to register a `BeanPropertyPostProcessor`.
-
-*2. Registration using the standard Java service extensions*: `BeanPropertyPostProcessor` registration can be performed also using default Java extension services, providing a _com.holonplatform.core.beans.BeanPropertyPostProcessor_ file under the `META-INF/services` folder containing the fully qualified BeanPropertyPostProcessor concrete class names to register.
-
-[source, java]
-.BeanPropertyPostProcessor registration example
-----
-include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=postprocessor,indent=0]
-----
-<1> Register a `BeanPropertyPostProcessor` which adds a `test` property configuration attribute to all processed properties
-
-TIP: The `javax.annotation.Priority` annotation can be used on a `BeanPropertyPostProcessor` implementation class to assign a priority order within the registered processors list, where lower values corresponds to higher priority.
-
-===== Builtin bean property processing annotations
-
-The Holon platform provides a number of annotations, processed by the default set of `BeanPropertyPostProcessor`, automatically registered in the `BeanIntrospector`, to tune the property definitions and add property configuration elements such as validators and localizable captions.
-
-The following annotations can be placed on bean property class _attributes_ to be processed during the bean class introspection:
-
-* `@Ignore`: Can be used to skip a bean class attribute during the introspection process, which will not be part of the resulting <<BeanPropertySet>>
-* `@Caption`: The default platform internationalization _caption_ annotation is supported to set the property _localizable_ caption
-* `@Sequence`: Set the property sequence order within the <<BeanPropertySet>>
-* `@Config`: a _repeteable_ annotation to specify a configuration key and its value to be setted in the property configuration. Only `String` type configuration values are supported by this annotation, use your own <<BeanPropertyPostProcessor>> to perform more advanced property configuration setup operations
-* `@Converter`: Setup a <<PropertyValueConverter>> for the property, providing either a _builtin_ converter or the `PropertyValueConverter` class to use.
-* *Validators*: One or more <<Validator>> can be added to a bean property using one of the following methods:
-** Using the standard _javax.validation.constraints_ bean validation API annotations. The supported annotations are: `@Null`, `@NotNull`, `@Size`, `@Min`, `@Max`, `@DecimalMin`, `@DecimalMax`, `@Digits`, `@Future`, `@Past`, `@Pattern`;
-** Using the additional platform validation annotations: `@NotEmpty` (CharSequence not null and not empty), `@NotBlank` (CharSequence not null and not empty trimming spaces), `@NotNegative` (Number not negative) and `@Email` (String is a valid e-mail address);
-** Using the _repeteable_ `@Validator` annotation, specifying the custom validator class to use.
-
-IMPORTANT: For bean validation API and builtin validation annotations, the `message` attribute is used to obtain the *invalid value message* to associate to the validator and, by convention, if the message is included between braces is considered as a localization message code, otherwise as a simple, not localizable, message. The `@ValidationMessage` annotation can be used instead to provide a different, localizable, invalid value message. If such annotation is present, the `message` attribute is ignored.
+Internally, a Bean property is actually represented by a `PathProperty` extension, which is defined through the link:{apidir}/com/holonplatform/core/beans/BeanProperty.html[BeanProperty^] interface. A `BeanProperty` instance holds the references to the Bean property _getter_ and _setter_ methods, besides other property configuration attributes, to ensure consistency for the property value read and write operations.
 
 [[BeanPropertySet]]
-==== BeanPropertySet
+==== Bean property set
 
-The link:{apidir}/com/holonplatform/core/beans/BeanPropertySet.html[BeanPropertySet^] interface represents a set of `PathProperty`s which corresponds to the properties of a Java Bean class, where the path _name_ of each property of the set corresponds to the bean property name.
+The link:{apidir}/com/holonplatform/core/beans/BeanPropertySet.html[BeanPropertySet^] interface represents the collection of the Bean definition properties as a `PropertySet`.
 
-For nested bean classes, the parent property of the nested `PathProperty` will be the bean property the nested class refers to, and the full path of the nested property will be the property path hierachy separated by a _dot_ character, for example `parentProperty.nestedProperty`.
+The `BeanPropertySet` is obtained from a Bean class and provides the available Bean properties as `PathProperty` references.
 
-It extends the default <<PropertySet>> structure and provides additional functionalities to:
+Fully supports *nested* bean classes, allowing to access the nested bean class properties by name using the conventional *dot notation*, for example `parentProperty.nestedProperty`.
 
-* Obtain a property *by name*
-* *Read* and *write* single property values to and from an instance of the Java Bean class bound to the set
-* *Read* the property values from an instance of the Java Bean class bound to the set and obtain such values as a <<PropertyBox>>
-* *Write* the property values contained in a <<PropertyBox>> to an instance of the Java Bean class bound to the set
+The `BeanPropertySet` API extends the default `PropertySet` API and additionally provides operations to:
+
+* Obtain a Bean property *by name* as a `PathProperty`.
+* *Read* and *write* single property values to and from an instance of the Java Bean class bound to the set.
+* *Read* the property values from a Bean instance and obtain such values as a `PropertyBox`.
+* *Write* the property values contained in a `PropertyBox` to a Bean instance.
+
+A `BeanPropertySet` can be simply obtained from a Bean class using the `create(Class beanClass)` method.
 
 [source, java]
-.BeanPropertySet examples
 ----
 include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=set,indent=0]
 ----
@@ -87,12 +47,208 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=set
 <4> Get the _nested_ property which corresponds to the full path `nested.nestedName`
 <5> Read the value of the property with the `id` path name from given bean instance (`1`)
 <6> Read all the values of the bean property set from given bean instance, obtaining a `PropertyBox` which contains the read values
-<7> Read the value of the `id` property from the PropertyBox obtained in previous read operation (`1`)
+<7> Read the value of the `id` property from the `PropertyBox` obtained in previous read operation (`1`)
 <8> Write the `test` value to the property with path `nested.nestedName` in given bean instance
-<9> Write all the values of given PropertyBox to the given bean instance
+<9> Write all the values of given `PropertyBox` to the given bean instance
+
+In addition to the standard `PathProperty` representation, a Bean property can be also obtained as a specific sub type, when type consistency is ensured. The supported sub types are the builtin <<PathPropertySubTypes>> made available by the Holon platform.
+
+Each Bean property can be obtained as a specific `PathProperty` type using the appropriate methods of the `BeanPropertySet` API. When type consistency is not respected, an exception is thrown.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=set2,indent=0]
+----
+<1> Get the Bean property named `aStringTypeBeanPropertyName` as a `StringProperty`
+<2> Get the Bean property named `aIntegerTypeBeanPropertyName` as a `NumericProperty`
+<3> Get the Bean property named `aLocalDateTypeBeanPropertyName` as a `TemporalProperty`
+<4> Get the Bean property named `aBooleanTypeBeanPropertyName` as a `BooleanProperty`
+
+[[BeanIntrospector]]
+==== BeanIntrospector
+
+A `BeanPropertySet` is built using the link:{apidir}/com/holonplatform/core/beans/BeanIntrospector.html[BeanIntrospector^] API. It provides methods to actually obtain a `BeanPropertySet` from a Bean class, introspecting it to resolve the Bean properties and their configuration.
+
+The `BeanIntrospector` interface provides static methods to obtain a `BeanIntrospector` as a <<Context>> resource, if available, or retrieve the default implementation, which is always available.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=introspector,indent=0]
+----
+<1> Get the current `BeanIntrospector`, i.e. the instance registered as a <<Context>> resource, or the default instance if not available in context
+<2> Introspect given bean class and obtain a `BeanPropertySet` which contains all detected bean properties
+
+Furthermore, the `BeanIntrospector` API makes available convenience methods to directly obtain a Bean instance as a `PropertyBox` and vice-versa.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=introspector2,indent=0]
+----
+<1> Read the given `MyBean` instance as a `PropertyBox`. The `PropertyBox` property set will be the `MyBean` class bean property set
+<2> Write a `PropertyBox` into a `MyBean` instance. The `PropertyBox` property values, matched by name, will be written into the corresponding Bean instance properties
+
+The `BeanIntrospector` API is easily *extensible* regarding the introspection strategy, especially for the Bean properties configuration. The main extension points are represented by the `BeanPropertyPostProcessor` and the `BeanPropertySetPostProcessor` interfaces, as described below.
+
+[[BeanPropertyPostProcessor]]
+==== BeanPropertyPostProcessor
+
+A link:{apidir}/com/holonplatform/core/beans/BeanPropertyPostProcessor.html[BeanPropertyPostProcessor^] can be used to extend the Bean introspection strategy at Bean properties level, before they will be returned as part of the final `BeanPropertySet`.
+
+A `BeanPropertyPostProcessor` can be used for example to set <<PropertyConfiguration,property configuration>> attributes, manage <<PropertyValidation,property validators>>, configure <<PropertyValueConverter,property value converters>> and so on.
+
+A `BeanPropertyPostProcessor` must be registered in the `BeanIntrospector` and it is called for every detected and valid Bean property at Bean introspection time. The `processBeanProperty` method accepts the current `BeanProperty` builder, which can be used to modify the configuration of the Property that will be part of the final `BeanPropertySet`.
+
+The registration of a `BeanPropertyPostProcessor` can be performed in two ways: 
+
+*1. Registration using the `BeanIntrospector`*: The `addBeanPropertyPostProcessor` method can be used to register a `BeanPropertyPostProcessor`.
+
+*2. Registration using the standard Java service extensions*: `BeanPropertyPostProcessor` registration can be performed also using default Java extension services, providing a _com.holonplatform.core.beans.BeanPropertyPostProcessor_ file under the `META-INF/services` folder containing the fully qualified `BeanPropertyPostProcessor` concrete class names to register.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=postprocessor,indent=0]
+----
+<1> Register a `BeanPropertyPostProcessor` which adds a `test` property configuration attribute to all the processed properties
+
+TIP: The `javax.annotation.Priority` annotation can be used on a `BeanPropertyPostProcessor` implementation class to assign a priority order within the registered processors list, where lower values corresponds to higher priority.
+
+[[BeanPropertySetPostProcessor]]
+==== BeanPropertySetPostProcessor
+
+A link:{apidir}/com/holonplatform/core/beans/BeanPropertySetPostProcessor.html[BeanPropertySetPostProcessor^] can be used to extend the Bean introspection strategy at Bean property set level, before the final `BeanPropertySet` is returned.
+
+A `BeanPropertySetPostProcessor` can be used for example to modify the `BeanPropertySet` configuration.
+
+A `BeanPropertySetPostProcessor` must be registered in the `BeanIntrospector` and it is called for each Bean class at Bean introspection time. The `processBeanPropertySet` method accepts the current `BeanPropertySet` builder, which can be used to modify the configuration of Bean property set.
+
+The registration of a `BeanPropertySetPostProcessor` can be performed in two ways: 
+
+*1. Registration using the `BeanIntrospector`*: The `addBeanPropertySetPostProcessor` method can be used to register a `BeanPropertySetPostProcessor`.
+
+*2. Registration using the standard Java service extensions*: `BeanPropertySetPostProcessor` registration can be performed also using default Java extension services, providing a _com.holonplatform.core.beans.BeanPropertySetPostProcessor_ file under the `META-INF/services` folder containing the fully qualified `BeanPropertySetPostProcessor` concrete class names to register.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=postprocessor2,indent=0]
+----
+<1> Register a `BeanPropertySetPostProcessor` which adds a `test` property configuration attribute to the Bean property set
+
+TIP: The `javax.annotation.Priority` annotation can be used on a `BeanPropertySetPostProcessor` implementation class to assign a priority order within the registered processors list, where lower values corresponds to higher priority.
+
+[[BuiltinBeanPostProcessors]]
+==== Builtin Bean post processors
+
+The Holon platform makes available a set of builtin Bean post processors, automatically registered in the default `BeanIntrospector` implementation.
+
+Most of them supports *annotations* on Bean property field which can be used to tune the Bean introspection strategy and to manage Bean properties configuration. 
+
+See below for a list of all the avaiable annotations. All the listed annotations are located in the `com.holonplatform.core.beans` package.
+
+===== @Ignore
+
+The `@Ignore` annotation can be used on Bean property fields to *skip* the Bean property during the introspection process. The ignored property will not be part of the final <<BeanPropertySet>>.
+
+The annotation provides a `includeNested()` attribute which can be used to set whether to ignore any _nested_ Bean property (if the Bean property type is itself a Bean class) or not. Defaults to `true`, which means that if the ignored property is a Bean class type, also the properties of the nested bean class will be ignored.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=ignore,indent=0]
+----
+<1> Set the `name` property as ignored
+<2> The Bean property set will not contain the `name` property
+
+===== @Caption
+
+The `@Caption` annotation can be used on Bean property fields to provide the property *localization* attributes, such as the property _caption_ and the property _caption localization message code_.
+
+See <<PropertyLocalization,the Property localization section>> for further details.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=caption,indent=0]
+----
+<1> Set the `id` property default caption message to `Code`. The property caption can later be read using the `getMessage()` method of the `Localizable` interface, a super interface of `Property`.
+<2> Set the `name` property caption default message and localization message code
+
+===== @Sequence
+
+The `@Sequence` annotation can be used on Bean property fields to *order* the bean properties within the <<BeanPropertySet>>. When used as an `Iterable`, the Bean property set will return the Bean properties ordered according to the _sequence_ value declared through this annotation.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=sequence,indent=0]
+----
+<1> Set the `id` property sequence number to `10`
+<2> Set the `name` property sequence number to `20`: this property will be always returned after the `id` property when the `BeanPropertySet` is used as an `Iterable`
+
+===== @Config
+
+The `@Config` annotation can be used on Bean property fields to add a <<PropertyConfiguration,property configuration>> attribute to the annotated property, specifying the *configuration* key and its value. 
+
+Only `String` type configuration values are supported by this annotation, use your own <<BeanPropertyPostProcessor>> to perform more advanced property configuration setup operations.
+
+The `@Config` annotation is a _repeteable_ annotation, so it can be repeated on a Bean property to provide more than one configuration attribute.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=config,indent=0]
+----
+<1> Set two property configuration attributes using the `@Config` annotation on the `name` bean property 
+
+===== @Converter
+
+The `@Converter` annotation can be used on Bean property fields to configure a <<PropertyValueConverter, property value converter>> for a bean property.
+
+Besides the `PropertyValueConverter` class to use, the `@Converter` annotation supports the configuration of a *builtin* property value converter through the `builtin()` annotation attribute. The builtin property value converter can be selected among the ones provided by default by the Holon platform.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=converter,indent=0]
+----
+<1> Set a custom `MyConverter` property value converter for the `id` bean property 
+<2> Set a builtin _numeric booelan_ converter for the `value` bean property
+
+===== Validators
+ 
+The Bean property <<PropertyValidation,validation>> can be configured in one of the following ways:
+
+* Using the standard _javax.validation.constraints_ bean validation API annotations. The supported annotations are: `@Null`, `@NotNull`, `@Size`, `@Min`, `@Max`, `@DecimalMin`, `@DecimalMax`, `@Digits`, `@Future`, `@Past`, `@Pattern`. A Bean validation API implementation must be available in classpath.
+
+* Using the additional platform validation annotations: `@NotEmpty` (`CharSequence` not null and not empty), `@NotBlank` (`CharSequence` not null and not empty trimming spaces), `@NotNegative` (`Number` not negative) and `@Email` (`String` is a valid e-mail address).
+
+* Using the _repeteable_ `@Validator` annotation, specifying the custom link:{apidir}/com/holonplatform/core/Validator[Validator^] class to use.
+
+IMPORTANT: For bean validation API and builtin validation annotations, the `message` attribute is used to obtain the *invalid value message* to associate to the validator and, by convention, if the message is included between braces is considered as a localization message code, otherwise as a simple, not localizable, message. The `@ValidationMessage` annotation can be used instead to provide a different, localizable, invalid value message. If such annotation is present, the `message` attribute is ignored.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=validation,indent=0]
+----
+<1> Set the _mininum_ value for the `id` bean property using the standard _javax.validation.constraints_ annotation
+<2> Set the _maximum_ value for the `id` bean property using the standard _javax.validation.constraints_ annotation and providing the invalid value message localization code
+<3> Set the `name` bean property as _not blank_ using the additional platform validation annotation. The `@ValidationMessage` annotation is used to specify the invalid value default message and localization message code
+<4> Set two custom `Validator` implementations for the `value` bean property using the `@Validator` repeteable annotation
+
+[[BeanDataPath]]
+===== @DataPath
+
+The `@DataPath` annotation can be used on Bean class and on Bean property fields to declare a *data path mapping* as Bean property or property set configuration attributes, using the default `PATH` configuration property of the link:{apidir}/com/holonplatform/core/DataMappable[DataMappable^] interface.
+
+The _data path_ mapping can be used to declare the data model attribute *path* when it is not the same as the Bean class name or Bean property name, and the Bean property set is used for persistence related operations.
+
+The data path mapping must be explicitly supported by the data model handler API which will be used, that could be for example a <<Datastore>>.
+
+See the specific Datastore implementation documentation to check the data path mapping support and the actual meaning it assumes.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleBeans.java[tag=datapath,indent=0]
+----
+<1> Set the data path mapping to `code` for the `id` bean property 
+<2> Set the Bean class data path mapping to `myPath`
 
 ==== BeanIntrospector cache
 
-By default, the `BeanIntrospector` uses an internal cache of processed bean class adn property sets, to boost introspecton operations and obtain better performace.
+The default `BeanIntrospector` implementation uses an internal cache of processed bean class and property sets, to boost introspecton operations and obtain better performaces.
 
-If memory consuption issues are detected, the internal cache can be disabled setting _holon.beans.introspector-cache-enabled_ configuration property to `false`. To set the configuration property, either a `System` property or a default `holon.properties` file can be used.
+If memory consuption issues are detected, the internal cache can be disabled setting the _holon.beans.introspector-cache-enabled_ configuration property to `false`. To set the configuration property, either a `System` property or a default `holon.properties` file can be used.

@@ -340,10 +340,7 @@ public enum DefaultStringValuePresenter implements StringValuePresenter {
 	 */
 	private static String convertTemporalWithDefaultLocale(Temporal value) {
 		// use default formatters
-		TemporalType type = TemporalType.getTemporalType(value);
-		if (type == null) {
-			type = TemporalType.DATE;
-		}
+		final TemporalType type = TemporalType.getTemporalType(value).orElse(TemporalType.DATE);
 		switch (type) {
 		case DATE_TIME:
 			return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(Locale.getDefault())

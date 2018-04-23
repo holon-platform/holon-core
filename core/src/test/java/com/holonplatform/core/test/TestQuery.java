@@ -16,12 +16,10 @@
 package com.holonplatform.core.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
@@ -47,20 +45,10 @@ public class TestQuery {
 		assertEquals(String.class, ce.getType());
 		assertEquals("test", ce.getValue());
 
-		DefaultConstantExpression<String> ce2 = new DefaultConstantExpression<>("test");
-		DefaultConstantExpression<String> ce3 = new DefaultConstantExpression<>("test3");
-
-		assertTrue(ce.equals(ce));
-		assertTrue(ce.equals(ce2));
-		assertTrue(ce.hashCode() == ce2.hashCode());
-		assertFalse(ce.equals(ce3));
-		assertFalse(ce.equals(null));
-		assertFalse(ce.equals("x"));
-
 		DefaultCollectionExpression<String> le = new DefaultCollectionExpression<>("test", "test2");
 
 		assertNotNull(le.getValue());
-		assertEquals(Collection.class, le.getType());
+		assertEquals(String.class, le.getType());
 		assertEquals(2, le.size());
 
 		List<String> ls = new ArrayList<>();
@@ -69,7 +57,7 @@ public class TestQuery {
 
 		le = new DefaultCollectionExpression<>(ls);
 
-		assertEquals(Collection.class, le.getType());
+		assertEquals(String.class, le.getType());
 		assertEquals(2, le.size());
 
 	}

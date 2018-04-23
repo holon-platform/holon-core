@@ -1,0 +1,41 @@
+[[DataMappable]]
+=== DataMappable
+
+The link:{apidir}/com/holonplatform/core/DataMappable.html[DataMappable^] interface can be used to define and provide a *data mapping* for a data model related object, declaring the actual *data attribute path* to to which it refers.
+
+The *data mapping* declaration can also be used when the _path_ represented by a data model related object does not match the actual data model path name, to provide the real data model path name itself.
+
+The `DataMappable` provides the data path mapping, if available, through the method:
+
+[source, java]
+----
+Optional<String> getDataPath();
+----
+
+==== Data mapping declaration
+
+Some Holom Platform APIs directly extends the `DataMappable` API and provides _builder_ methods to set the data path mapping. Two of these are link:{apidir}/com/holonplatform/core/Path.html[Path^] and <<PathProperty>>.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=datamappable1,indent=0]
+----
+<1> Set the actual data path for the property
+<2> Obtain the data path, if available
+
+As a general convention, the data path mapping is configured in the objects which support a _configuration_ using the `DataMappable.PATH` configuration property, and this property can be used as an alternative for the `DataMappable` API method when the object does not directly implement that interface.
+
+For example, to set the data path for a `PropertySet` type object the `DataMappable.PATH` configuration property can be used in this way:
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=datamappable2,indent=0]
+----
+<1> Set the property set data path using the `DataMappable.PATH` configuration property
+<2> Get the data path, if available, through the `DataMappable.PATH` configuration property
+
+==== Data mapping usage
+
+The meaning and usage strategy of the data path value is completely dependent from each concrete API or implementation.
+
+See, for example, the link:holon-datastore-jdbc.html[JDBC Datastore] documentation for an use case of the data path representation.

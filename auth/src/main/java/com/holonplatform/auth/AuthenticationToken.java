@@ -17,10 +17,12 @@ package com.holonplatform.auth;
 
 import java.io.Serializable;
 import java.util.Optional;
+import java.util.function.Function;
 
 import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.internal.BasicAuthenticationTokenResolver;
 import com.holonplatform.auth.internal.BearerAuthenticationTokenResolver;
+import com.holonplatform.auth.internal.CallbackAuthenticationTokenResolver;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.auth.token.BearerAuthenticationToken;
 import com.holonplatform.core.messaging.Message;
@@ -127,6 +129,33 @@ public interface AuthenticationToken extends CredentialsContainer, Serializable 
 		 *         incomplete
 		 */
 		Optional<AuthenticationToken> getAuthenticationToken(R request) throws AuthenticationException;
+
+		/**
+		 * Create a new {@link AuthenticationTokenResolver} for given <code>messageType</code>, providing the resolution
+		 * function to obtain an {@link AuthenticationToken} from a message instance.
+		 * @param <M> Message type
+		 * @param messageType Message type to resolve (not null)
+		 * @param resolverFunction Resolution function (not null)
+		 * @return A new {@link AuthenticationTokenResolver} instance
+		 */
+		static <M extends Message> AuthenticationTokenResolver<M> create(Class<? extends Message> messageType,
+				Function<M, Optional<AuthenticationToken>> resolverFunction) {
+			return new CallbackAuthenticationTokenResolver<>(messageType, resolverFunction, null);
+		}
+
+		/**
+		 * Create a new {@link AuthenticationTokenResolver} for given <code>messageType</code>, providing the resolution
+		 * function to obtain an {@link AuthenticationToken} from a message instance.
+		 * @param <M> Message type
+		 * @param messageType Message type to resolve (not null)
+		 * @param resolverFunction Resolution function (not null)
+		 * @param scheme Authentication scheme to which the resolver is bound
+		 * @return A new {@link AuthenticationTokenResolver} instance
+		 */
+		static <M extends Message> AuthenticationTokenResolver<M> create(Class<? extends Message> messageType,
+				Function<M, Optional<AuthenticationToken>> resolverFunction, String scheme) {
+			return new CallbackAuthenticationTokenResolver<>(messageType, resolverFunction, scheme);
+		}
 
 	}
 

@@ -15,7 +15,6 @@
  */
 package com.holonplatform.core.internal.query;
 
-import com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection;
 import com.holonplatform.core.query.CountAllProjection;
 
 /**
@@ -23,7 +22,7 @@ import com.holonplatform.core.query.CountAllProjection;
  *
  * @since 5.0.0
  */
-public class DefaultCountAllProjection implements CountAllProjection, VisitableQueryProjection<Long> {
+public class DefaultCountAllProjection implements CountAllProjection {
 
 	/*
 	 * (non-Javadoc)
@@ -40,17 +39,6 @@ public class DefaultCountAllProjection implements CountAllProjection, VisitableQ
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.query.QueryProjectionVisitor.VisitableQueryProjection#accept(com.holonplatform.
-	 * core.internal.query.QueryProjectionVisitor, java.lang.Object)
-	 */
-	@Override
-	public <R, C> R accept(QueryProjectionVisitor<R, C> visitor, C context) {
-		return visitor.visit(this, context);
 	}
 
 }

@@ -17,9 +17,15 @@ package com.holonplatform.core.beans;
 
 import java.util.Optional;
 
+import com.holonplatform.core.DataMappable;
+import com.holonplatform.core.HasConfiguration;
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Path;
+import com.holonplatform.core.Path.FinalPath;
 import com.holonplatform.core.Validator.ValidationException;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.exceptions.TypeMismatchException;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
@@ -35,64 +41,13 @@ import com.holonplatform.core.property.PropertyValueConverter;
  * 
  * @see BeanIntrospector
  */
-public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>> {
+public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>>, BeanPropertyInspector, DataMappable {
 
 	/**
 	 * Get the bean class to which this property set refers.
 	 * @return the bean class
 	 */
 	Class<? extends T> getBeanClass();
-
-	/**
-	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
-	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @return The bean property with given name, or an empty Optional if not found
-	 */
-	<PT> Optional<PathProperty<PT>> getProperty(String propertyName);
-
-	/**
-	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
-	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
-	 * is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @param type Property type
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws TypeMismatchException If the given type is not consistent with actual property type
-	 */
-	<PT> Optional<PathProperty<PT>> getProperty(String propertyName, Class<PT> type);
-
-	/**
-	 * Get the bean property with given <code>propertyName</code>. For nested properties, the default property name
-	 * hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
-	 */
-	@SuppressWarnings("unchecked")
-	default <PT> PathProperty<PT> requireProperty(String propertyName) {
-		return (PathProperty<PT>) getProperty(propertyName).orElseThrow(
-				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
-	}
-
-	/**
-	 * Get the bean property with given <code>propertyName</code> and given <code>type</code>. For nested properties,
-	 * the default property name hierarchy notation using {@link Path#PATH_HIERARCHY_SEPARATOR} as separator character
-	 * is used.
-	 * @param <PT> Property type
-	 * @param propertyName Property name (not null)
-	 * @param type Property type
-	 * @return The bean property with given name, or an empty Optional if not found
-	 * @throws PropertyNotFoundException If property with given name was not found in bean property set
-	 * @throws TypeMismatchException If the given type is not consistent with actual property type
-	 */
-	default <PT> PathProperty<PT> requireProperty(String propertyName, Class<PT> type) {
-		return getProperty(propertyName, type).orElseThrow(
-				() -> new PropertyNotFoundException(null, "Property with name [" + propertyName + "] not found"));
-	}
 
 	/**
 	 * Read the value of the property with given <code>propertyName</code> from given bean instance.
@@ -257,6 +212,26 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>> {
 		return write(propertyBox, instance, false);
 	}
 
+	// ------- Data mappings
+
+	/**
+	 * Get the data model path name to which this bean property set is mapped.
+	 * <p>
+	 * If the {@link DataMappable#PATH} configuration property is present, the property value is returned. Otherwise,
+	 * the simple bean class name is returned.
+	 * </p>
+	 * <p>
+	 * The {@link DataPath} annotation can be used on bean class to declare the data path at bean introspection time.
+	 * </p>
+	 * @return The data model path name
+	 */
+	@Override
+	default Optional<String> getDataPath() {
+		return getConfiguration().getParameter(DataMappable.PATH);
+	}
+
+	// ------- Creation
+
 	/**
 	 * Create a bean property set using default {@link BeanIntrospector}.
 	 * @param <T> Bean type
@@ -264,7 +239,7 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>> {
 	 * @return {@link PropertySet} of the properties detected from given bean class
 	 */
 	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass) {
-		return create(beanClass, null);
+		return BeanIntrospector.get().getPropertySet(beanClass);
 	}
 
 	/**
@@ -274,9 +249,66 @@ public interface BeanPropertySet<T> extends PropertySet<PathProperty<?>> {
 	 * @param beanClass Bean class for which to create the property set (not null)
 	 * @param parentPath Optional parent path to set as bean root properties parent path
 	 * @return {@link PropertySet} of the properties detected from given bean class
+	 * @deprecated The root bean property path will always be a {@link FinalPath} typed on bean class and with the bean
+	 *             class name as path name. Use {@link #create(Class)} instead.
 	 */
+	@Deprecated
 	static <T> BeanPropertySet<T> create(Class<? extends T> beanClass, Path<?> parentPath) {
 		return BeanIntrospector.get().getPropertySet(beanClass, parentPath);
+	}
+
+	// Builder for property set post processing
+
+	/**
+	 * {@link BeanPropertySet} builder.
+	 * 
+	 * @param <T> Bean type
+	 * @param <B> Concrete bean property set type
+	 * 
+	 * @since 5.1.0
+	 */
+	public interface Builder<T, B extends BeanPropertySet<T>> extends HasConfiguration<ParameterSet> {
+
+		/**
+		 * Set given property names as {@link BeanPropertySet} identifier properties. Any previously declared identifier
+		 * property will be replaced by given identifier properties.
+		 * <p>
+		 * The property names to declare as identifiers must be present in the bean property set.
+		 * </p>
+		 * @param propertyNames The property names to declare as property set identifiers
+		 * @return this
+		 * @throws IllegalStateException If one of the property name to declare as identifier is not part of the bean
+		 *         property set
+		 */
+		Builder<T, B> identifiers(String... propertyNames);
+
+		/**
+		 * Add a {@link BeanPropertySet} configuration parameter.
+		 * @param name The parameter name to add (not null)
+		 * @param value The configuration parameter value
+		 * @return this
+		 */
+		Builder<T, B> configuration(String name, Object value);
+
+		/**
+		 * Add a {@link BeanPropertySet} configuration parameter using a {@link ConfigProperty}, with
+		 * {@link ConfigProperty#getKey()} as parameter name.
+		 * @param <C> Config property type
+		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
+		 * @param value The configuration property value
+		 * @return this
+		 */
+		default <C> Builder<T, B> configuration(ConfigProperty<C> configurationProperty, C value) {
+			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+			return configuration(configurationProperty.getKey(), value);
+		}
+
+		/**
+		 * Build the {@link BeanPropertySet} instance.
+		 * @return the {@link BeanPropertySet} instance
+		 */
+		B build();
+
 	}
 
 }

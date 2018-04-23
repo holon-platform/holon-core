@@ -20,7 +20,7 @@ import javax.annotation.Priority;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.internal.Logger;
 
@@ -47,7 +47,7 @@ public class BeanPropertyValidationPostProcessor implements BeanPropertyPostProc
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		if (property.getAnnotation(com.holonplatform.core.beans.Validator.class).isPresent()) {
 			addValidators(property, property.getAnnotation(com.holonplatform.core.beans.Validator.class).get());
 		} else {
@@ -60,8 +60,8 @@ public class BeanPropertyValidationPostProcessor implements BeanPropertyPostProc
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void addValidators(Builder<?> property, com.holonplatform.core.beans.Validator... annotations)
-			throws BeanIntrospectionException {
+	private static void addValidators(BeanProperty.Builder<?> property,
+			com.holonplatform.core.beans.Validator... annotations) throws BeanIntrospectionException {
 		if (annotations != null) {
 			for (com.holonplatform.core.beans.Validator annotation : annotations) {
 				try {

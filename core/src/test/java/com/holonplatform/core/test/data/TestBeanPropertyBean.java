@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 
 import com.holonplatform.core.beans.Config;
 import com.holonplatform.core.beans.Converter;
+import com.holonplatform.core.beans.Identifier;
 import com.holonplatform.core.beans.Converter.BUILTIN;
 import com.holonplatform.core.beans.Ignore;
 import com.holonplatform.core.beans.NotBlank;
@@ -47,6 +48,7 @@ public class TestBeanPropertyBean {
 
 	}
 
+	@Identifier
 	@NotNull(message = "Name is required")
 	@NotBlank(message = "Name is empty")
 	@Caption("TheName")

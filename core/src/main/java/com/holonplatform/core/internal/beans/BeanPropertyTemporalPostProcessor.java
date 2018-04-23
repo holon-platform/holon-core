@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.beans;
 
 import javax.annotation.Priority;
 
-import com.holonplatform.core.beans.BeanProperty.Builder;
+import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Temporal;
 import com.holonplatform.core.internal.Logger;
@@ -43,7 +43,7 @@ public class BeanPropertyTemporalPostProcessor implements BeanPropertyPostProces
 	 * BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
-	public Builder<?> processBeanProperty(Builder<?> property, Class<?> beanOrNestedClass) {
+	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
 		property.getAnnotation(Temporal.class).ifPresent(a -> {
 			property.temporalType(a.value());
 			LOGGER.debug(() -> "BeanPropertyTemporalPostProcessor: setted property [" + property

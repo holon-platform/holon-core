@@ -18,15 +18,15 @@ package com.holonplatform.core.datastore;
 import java.util.Optional;
 
 /**
- * Interface to distinguish a specific data context (such as a database connection) between multiple avaialable contexts
- * using a String id.
+ * Declares support for a symbolic <em>data context id</em>, i.e. a String identifier to identify a data related objects
+ * stack with the same type within the overall persistence context.
  * 
  * @since 5.0.0
  */
 public interface DataContextBound {
 
 	/**
-	 * Get data context id, if configured.
+	 * Get data context id, if available.
 	 * @return Optional data context id
 	 */
 	Optional<String> getDataContextId();

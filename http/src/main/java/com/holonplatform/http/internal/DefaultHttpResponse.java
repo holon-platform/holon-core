@@ -16,10 +16,12 @@
 package com.holonplatform.http.internal;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.HttpResponse;
 
 /**
@@ -99,11 +101,33 @@ public class DefaultHttpResponse<T> implements HttpResponse<T> {
 	}
 
 	/**
-	 * Set response headers
-	 * @param headers the headers to set
+	 * Set response headers. Any previously set header value will be replaced by the new ones.
+	 * @param headers The headers to set as a name - values map
 	 */
 	public void setHeaders(Map<String, List<String>> headers) {
 		this.headers = headers;
+	}
+
+	/**
+	 * Set a response header with given values.
+	 * @param name Header name (not null)
+	 * @param values Header values
+	 */
+	public void setHeaderValues(String name, List<String> values) {
+		ObjectUtils.argumentNotNull(name, "The header name must be not null");
+		if (headers == null) {
+			headers = new HashMap<>();
+		}
+		headers.put(name, values);
+	}
+
+	/**
+	 * Set a response header value.
+	 * @param name Header name (not null)
+	 * @param value Header value
+	 */
+	public void setHeaderValue(String name, String value) {
+		setHeaderValues(name, Collections.singletonList(value));
 	}
 
 	/**
@@ -153,6 +177,26 @@ public class DefaultHttpResponse<T> implements HttpResponse<T> {
 		@Override
 		public com.holonplatform.http.HttpResponse.Builder<T> headers(Map<String, List<String>> headers) {
 			this.response.setHeaders(headers);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.http.HttpResponse.Builder#header(java.lang.String, java.util.List)
+		 */
+		@Override
+		public Builder<T> header(String name, List<String> values) {
+			this.response.setHeaderValues(name, values);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.http.HttpResponse.Builder#header(java.lang.String, java.lang.String)
+		 */
+		@Override
+		public Builder<T> header(String name, String value) {
+			this.response.setHeaderValue(name, value);
 			return this;
 		}
 

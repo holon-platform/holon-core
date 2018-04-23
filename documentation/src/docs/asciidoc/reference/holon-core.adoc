@@ -1,4 +1,6 @@
-= Holon Platform Core
+= Holon Platform Core Module - Reference manual
+:description: Holon platform Core module reference documentation. \
+The Core section covers all the platform foundation architecture arguments, including Context resources, the Property data model, the Datastore API, multi-tenancy support, authentication and authorization, JWT support, Spring framework and Spring Boot integration.
 :revnumber: {project-version}
 :apidir: ../api/holon-core
 :linkattrs:
@@ -7,13 +9,24 @@
 :toc: left
 :toclevels: 4
 
-Copyright © 2016-2017
+Copyright © 2016-2018
 
 _Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically._
 
 == Introduction
 
 The Holon Platform *Core* module represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
+
+=== Sources and contributions
+
+The Holon Platform *Core* module source code is available from the GitHub repository link:https://github.com/holon-platform/holon-core[https://github.com/holon-platform/holon-core^].
+
+See the repository `README` file for information about:
+
+* The source code structure.
+* How to build the module artifacts from sources.
+* Where to find the code examples.
+* How to contribute to the module development.
 
 == Obtaining the artifacts
 
@@ -54,6 +67,70 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+[[WhatsNew51x]]
+== What's new in version 5.1.x
+
+=== Property model
+
+* The `Property` instance identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. See <<PropertyIdentity>>.
+
+* The `PathProperty` interface now provides a set of sub types, to consistently handle property _expressions_ which are type specific, for the main Java types (*String*, *Numbers*, *Temporal types* and *Boolean*). See <<PathPropertySubTypes>>.
+
+* The `PropertySet` interface now supports a generic *configuration* container, likewise the `Property` interface. See <<PropertySetConfiguration>>.
+
+* The `PropertySet` interface now supports _identifier_ properties declaration, which can be used to provide a virtual primary key to distinguish a `PropertyBox` instance from another (using the _identifier_ property values), both at Java objects level (`equals` and `hashCode`) and at persistence architecture level. See <<IdentifierProperties>>.
+
+* Just like the `Property` instances, the `PropertyBox` instances identification strategy can now be customized using specific _equals_ and _hashCode_ handlers. Furthermore, if the `PropertyBox` property set declares one or more _identifier_ property, their values will be used by default to implement the `PropertyBox` instance identification strategy. See <<PropertyBoxIdentification>>.
+
+* The new <<BeanPropertySetPostProcessor>> interface can be used to extend the <<BeanIntrospector>> Bean introspection strategy at Bean property set level, allowing for example to customize the Bean property set configuration. See <<BeanPropertySetPostProcessor>>.
+
+* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different form the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition. See <<BeanDataPath>>.
+
+=== Datastore
+
+* A deep revision of the `Expression` based architecture, which is the foundation, above all, of the `Datastore` API and the abstract `Query` engine. This lead to a more consistent and extensible architecture, along with considerable performance improvements. See the <<Query>> and <<DatastoreExtension>> sections of the `Datastore` documentation.
+
+* New standard `QueryFunction` implementations was made available for the core `Datastore` API. Besides <<StringRelatedFunctions,String related functions>>, a set of *temporal* data types related functions is now available to obtain current date/time (with `java.time.*` types support) and to extract a temporal part (_year_, _month_, _day_, _hour_). See <<TemporalFunctions>>.
+
+* A new `Transactional` API which can be used when a `Datastore` implementation supports *transactions*, which can be managed at a higher level, in an abstract and implementation-independent way. The `Transactional` API allows to execute `Datastore` operations whithin a transaction, taking care of the transaction lifecycle and providing transaction reference to perform _commit_ and _rollback_ operations. See <<TransactionalDatastores>>.
+
+* New `DataMappable` API to represent data model _mappings_. See <<DataMappable>>.
+
+=== JWT authentication
+
+* The JWT configuration now supports a wider range of key sources, formats (such as the `PKCS#12` key store format) and encodings (such as the `PEM` encoding) for private and public key declarations when an asymmetric signing algorithm is used. See <<JwtConfiguration,JWT configuration>>.
+
+=== Spring ecosystem integration
+
+* The `TenantScopeManager` API is now available to manage the _tenant_ scoped beans lifecycle. See <<TenantScopeManager>>.
+
+* The new `holon-spring-security` artifact provides integration between the Holon Platform authentication and authorization architecture and the *Spring Security* one. Furthermore, a `holon-starter-security` Spring Boot starter is now available for quick project setup. See <<SpringSecurity>>.
+
+[[MigratingFrom50x]]
+=== Migrating from version 5.0.x
+
+==== Deprecations
+
+* *PropertySet API*: link:{apidir}/com/holonplatform/core/property/PropertySet.html#join-com.holonplatform.core.property.PropertySet...-[join^]. Using this method causes the loss of any property set configuration and/or identifier property declaration. Use the default <<PropertySet,PropertySet>> builder instead.
+* *BeanPropertySet API*: link:{apidir}/com/holonplatform/core/beans/BeanPropertySet.html#create-java.lang.Class-com.holonplatform.core.Path-[create providing a parent path^]. The bean properties _parent path_ will always be the `FinalPath` which represents the Bean class, with the bean fully qualified class name as path name. Use the default `create(Class<? extends T> beanClass)` method instead. The same considerations are valid for the `getPropertySet` method of the <<BeanIntrospector,BeanIntrospector>> API.
+* *BeanPropertySet/BeanPropertyInspector API*: link:{apidir}/com/holonplatform/core/beans/BeanPropertyInspector.html#requireProperty-java.lang.String-[requireProperty^] methods. The methods name are changed in `property` for consistency with the naming conventions of the new `BeanPropertyInspector` API.
+* *SubQuery API*: link:{apidir}/com/holonplatform/core/datastore/relational/SubQuery.html#create-com.holonplatform.core.datastore.Datastore-java.lang.Class-[creation methods providing a Datastore^]. The `Datastore` parameter is no longer required. Use the new `create(...)` method versions which does not require the `Datastore` parameter.
+* *JwtConfigProperties API*: link:{apidir}/com/holonplatform/auth/jwt/JwtConfigProperties.html[private and public key source configuration properties^]. The private and public key sources can now be specified using the `publickey.source` property and using the `file:` and `classpath:` prefixes to declare the source type.
+* *JwtTokenBuilder API*: link:{apidir}/com/holonplatform/auth/jwt/JwtTokenBuilder.html#buildJwtToken-com.holonplatform.auth.jwt.JwtConfiguration-com.holonplatform.auth.Authentication-java.lang.String-[static token creation method]. The `JwtTokenBuilder` is now an interface. The default implementation can be obtained using the `get()` static method.
+
+==== Property model
+
+With the introduction of the <<PathPropertySubTypes,PathProperty sub types>>, a `PathProperty` declaration should be made using the most suitable sub type, if available.
+
+This is also necessary to use the convenience `QueryFilter` and `QueryFunction` static builder methods to create an expression using the property itself. The expression builder methods are now *organized by sub type*, so, for example, the `contains` method is only available for `String` type properties and the `StringProperty` sub type should by used in this case.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=subtypes1,indent=0]
+----
+<1> Create a `StringProperty` path property type with the `name` path name
+<2> The `StringProperty` type makes available convenience expression builder methods according to the `String` property type, for example `contains`
+
 == Core API, services and components
 
 === Introduction
@@ -84,11 +161,13 @@ include::include/core/_beans.adoc[]
 
 include::include/core/_datastore.adoc[]
 
+include::include/core/_datamappable.adoc[]
+
 include::include/core/_tenancy.adoc[]
 
 include::include/core/_utils.adoc[]
 
-== HTTP and REST
+== HTTP messages and RESTful Java client
 
 The `holon-http` artifact provides base *HTTP* protocol support to the Holon platform, dealing with HTTP _messages_ and providing support for _RESTful_ web services invocation through a _client_ API.
 
@@ -107,7 +186,7 @@ include::include/http/_restclient.adoc[]
 [[Auth]]
 == Authentication and Authorization
 
-The `holon-auth` artifact provides a complete and highly configurable *Authentication* and *Authorization* architecture, integrated with all platform modules. *HTTP* messages authentication is supported, and several APIs are provided to manage _accounts_ and their credentials, perform authentication in a *Realm* and check for *permissions*.
+The `holon-auth` artifact provides a complete and highly configurable *authentication* and *authorization* architecture, integrated with all the platform modules. 
 
 _Maven coordinates_:
 [source, xml, subs="attributes+"]
@@ -129,9 +208,10 @@ include::include/auth/_annotation.adoc[]
 
 include::include/auth/_jwt.adoc[]
 
-== Spring framework integration
+[[SpringIntegration]]
+== Spring ecosystem integration
 
-The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^] for the Holon platform core module.
+The `holon-spring` artifact provides integration with the https://spring.io[Spring^] framework and auto-configuration features using https://projects.spring.io/spring-boot[Spring Boot^].
 
 _Maven coordinates_:
 [source, xml, subs="attributes+"]
@@ -150,6 +230,8 @@ include::include/spring/_datastore.adoc[]
 include::include/spring/_restclient.adoc[]
 
 include::include/spring/_boot.adoc[]
+
+include::include/spring/_security.adoc[]
 
 == Loggers
 

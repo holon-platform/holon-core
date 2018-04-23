@@ -15,13 +15,14 @@
  */
 package com.holonplatform.auth;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.holonplatform.auth.internal.DefaultAuthorizer;
 
 /**
- * Authorizer is responsible for {@link Authentication} authorization control using
- * {@link Authentication#getPermissions() permissions}.
+ * An Authorizer is responsible for {@link Authentication} authorization control using
+ * {@link Authentication#getPermissions()} permissions.
  * 
  * @param <P> Supported Permission type
  * 
@@ -36,64 +37,69 @@ public interface Authorizer<P extends Permission> {
 	Class<? extends P> getPermissionType();
 
 	/**
-	 * Check if given Authentication has all specified permission/s
-	 * @param <T> Actual permission type
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has all specified permission
-	 */
-	@SuppressWarnings("unchecked")
-	<T extends P> boolean isPermitted(Authentication authentication, T... permissions);
-
-	/**
-	 * Check if given Authentication has all specified permission/s using String permission form.
-	 * <p>
-	 * String permission match against Authentication {@link Permission}s will be performed using
-	 * {@link Permission#getPermission()} method.
-	 * </p>
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has all specified permission
-	 */
-	boolean isPermitted(Authentication authentication, String... permissions);
-
-	/**
-	 * Check if given Authentication has any of specified permission/s
-	 * @param <T> Actual permission type
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has any of specified permission
-	 */
-	@SuppressWarnings("unchecked")
-	<T extends P> boolean isPermittedAny(Authentication authentication, T... permissions);
-
-	/**
-	 * Check if given Authentication has any of specified permission/s using String permission form.
-	 * <p>
-	 * String permission match against Authentication {@link Permission}s will be performed using
-	 * {@link Permission#getPermission()} method.
-	 * </p>
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has any of specified permission
-	 */
-	boolean isPermittedAny(Authentication authentication, String... permissions);
-
-	/**
-	 * Check if given Authentication has all specified permission/s using a Collection
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has all specified permission
+	 * Check if given Authentication has all the specified permissions.
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has all the specified permissions
 	 */
 	boolean isPermitted(Authentication authentication, Collection<? extends P> permissions);
 
 	/**
-	 * Check if given Authentication has any of specified permission/s using a Collection
-	 * @param authentication Authentication subject
-	 * @param permissions Permissions to check
-	 * @return <code>true</code> if given Authentication has any of specified permission
+	 * Check if given Authentication has all the specified permission/s.
+	 * @param <T> Permission type
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has all the specified permissions
+	 */
+	@SuppressWarnings("unchecked")
+	default <T extends P> boolean isPermitted(Authentication authentication, T... permissions) {
+		return isPermitted(authentication, Arrays.asList(permissions));
+	}
+
+	/**
+	 * Check if given Authentication has all specified permission/s, using the {@link String} permission representation.
+	 * <p>
+	 * String permission match against Authentication {@link Permission}s should be performed using the
+	 * {@link Permission#getPermission()} method.
+	 * </p>
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has all the specified permissions
+	 */
+	boolean isPermitted(Authentication authentication, String... permissions);
+
+	/**
+	 * Check if given Authentication has any of the specified permissions.
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has any of the specified permission
 	 */
 	boolean isPermittedAny(Authentication authentication, Collection<? extends P> permissions);
+
+	/**
+	 * Check if given Authentication has any of the specified permission/s.
+	 * @param <T> Permission type
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has any of the specified permission
+	 */
+	@SuppressWarnings("unchecked")
+	default <T extends P> boolean isPermittedAny(Authentication authentication, T... permissions) {
+		return isPermittedAny(authentication, Arrays.asList(permissions));
+	}
+
+	/**
+	 * Check if given Authentication has any of the specified permission/s, using the {@link String} permission
+	 * representation.
+	 * <p>
+	 * String permission match against Authentication {@link Permission}s will be performed using
+	 * {@link Permission#getPermission()} method.
+	 * </p>
+	 * @param authentication The Authentication for which to check the permissions
+	 * @param permissions The permissions to be checked
+	 * @return <code>true</code> if given Authentication has any of the specified permission
+	 */
+	boolean isPermittedAny(Authentication authentication, String... permissions);
 
 	/**
 	 * Create a default Authorizer.

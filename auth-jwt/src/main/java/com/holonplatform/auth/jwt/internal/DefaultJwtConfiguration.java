@@ -16,9 +16,12 @@
 package com.holonplatform.auth.jwt.internal;
 
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Optional;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.jwt.JwtConfiguration;
+import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 
 /**
  * {@link JwtConfiguration} implementation
@@ -37,7 +40,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	/*
 	 * Signature algorithm
 	 */
-	private String signatureAlgorithm;
+	private JwtSignatureAlgorithm signatureAlgorithm;
 
 	/*
 	 * Shared key
@@ -74,8 +77,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getIssuer()
 	 */
 	@Override
-	public String getIssuer() {
-		return issuer;
+	public Optional<String> getIssuer() {
+		return Optional.ofNullable(issuer);
 	}
 
 	/*
@@ -83,8 +86,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSignatureAlgorithm()
 	 */
 	@Override
-	public String getSignatureAlgorithm() {
-		return signatureAlgorithm;
+	public JwtSignatureAlgorithm getSignatureAlgorithm() {
+		return (signatureAlgorithm != null) ? signatureAlgorithm : JwtSignatureAlgorithm.NONE;
 	}
 
 	/*
@@ -92,8 +95,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSharedKey()
 	 */
 	@Override
-	public byte[] getSharedKey() {
-		return sharedKey;
+	public Optional<byte[]> getSharedKey() {
+		return Optional.ofNullable(sharedKey);
 	}
 
 	/*
@@ -101,8 +104,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPublicKey()
 	 */
 	@Override
-	public Key getPublicKey() {
-		return publicKey;
+	public Optional<Key> getPublicKey() {
+		return Optional.ofNullable(publicKey);
 	}
 
 	/*
@@ -110,8 +113,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPrivateKey()
 	 */
 	@Override
-	public Key getPrivateKey() {
-		return privateKey;
+	public Optional<Key> getPrivateKey() {
+		return Optional.ofNullable(privateKey);
 	}
 
 	/*
@@ -150,10 +153,10 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	}
 
 	/**
-	 * Set JWT token signature algorithm name
-	 * @param signatureAlgorithm Signature algorithm name
+	 * Set JWT token signature algorithm
+	 * @param signatureAlgorithm Signature algorithm
 	 */
-	public void setSignatureAlgorithm(String signatureAlgorithm) {
+	public void setSignatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm) {
 		this.signatureAlgorithm = signatureAlgorithm;
 	}
 
@@ -205,7 +208,19 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		this.includePermissions = includePermissions;
 	}
 
-	// Builder
+	// ------ Builder
+
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "JwtConfiguration [issuer=" + issuer + ", signatureAlgorithm=" + signatureAlgorithm + ", sharedKey="
+				+ Arrays.toString(sharedKey) + ", publicKey=" + publicKey + ", privateKey=" + privateKey
+				+ ", expireTime=" + expireTime + ", includeDetails=" + includeDetails + ", includePermissions="
+				+ includePermissions + "]";
+	}
 
 	/**
 	 * Default {@link Builder} implementation.
@@ -237,7 +252,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		 * @see com.holonplatform.auth.jwt.internal.JwtConfigurationBuilder#signatureAlgorithm(java.lang.String)
 		 */
 		@Override
-		public Builder signatureAlgorithm(String signatureAlgorithm) {
+		public Builder signatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm) {
 			this.configuration.setSignatureAlgorithm(signatureAlgorithm);
 			return this;
 		}

@@ -64,7 +64,7 @@ public interface DataTarget<T> extends FinalPath<T> {
 	 * @return The new property
 	 */
 	default <P> PathProperty<P> property(PathProperty<P> fromProperty) {
-		ObjectUtils.argumentNotNull(fromProperty, "Property to clone must be not null");
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
 		return fromProperty.clone().parent(this);
 	}
 

@@ -1,36 +1,30 @@
 package com.holonplatform.spring.internal.tenant;
 
-import java.lang.ref.WeakReference;
+import java.util.Map;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.EnvironmentAware;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 
-import com.holonplatform.core.internal.Logger;
 import com.holonplatform.spring.EnableTenantScope;
-import com.holonplatform.spring.internal.SpringLogger;
+import com.holonplatform.spring.internal.BeanRegistryUtils;
 
 /**
  * Registers tenant scope.
  */
-public class TenantScopeRegistrar implements ImportBeanDefinitionRegistrar, BeanFactoryAware {
+public class TenantScopeRegistrar implements ImportBeanDefinitionRegistrar, EnvironmentAware {
 
-	/*
-	 * Logger
-	 */
-	private static final Logger LOGGER = SpringLogger.create();
+	private static final String TENANT_SCOPE_POST_PROCESSOR_NAME = TenantScopePostProcessor.class.getName();
 
-	private volatile BeanFactory beanFactory;
+	private volatile Environment environment;
 
 	@Override
-	public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
-		this.beanFactory = beanFactory;
+	public void setEnvironment(Environment environment) {
+		this.environment = environment;
 	}
 
 	@Override
@@ -41,42 +35,39 @@ public class TenantScopeRegistrar implements ImportBeanDefinitionRegistrar, Bean
 			return;
 		}
 
-		if (beanFactory instanceof ConfigurableBeanFactory) {
-			// register scope
-			TenantScope scope = new TenantScope(beanFactory);
+		// register post processor
+		if (!registry.containsBeanDefinition(TENANT_SCOPE_POST_PROCESSOR_NAME)) {
 
-			((ConfigurableBeanFactory) beanFactory).registerScope(TenantScope.SCOPE_NAME, scope);
+			Map<String, Object> attributes = importingClassMetadata
+					.getAnnotationAttributes(EnableTenantScope.class.getName());
 
-			LOGGER.info("Registered scope [" + TenantScope.SCOPE_NAME + "]");
+			// tenant resolver bean definition name
+			String tenantResolver = null;
 
-			// register finalizer
-			BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(TenantScopeFinalizer.class)
-					.addConstructorArgValue(scope).setDestroyMethodName("destroy")
-					.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
-			registry.registerBeanDefinition(TenantScopeFinalizer.class.getName(), builder.getBeanDefinition());
-
-		} else {
-
-			LOGGER.warn("Cannot register tenant scope: BeanFactory is not a ConfigurableBeanFactory");
-
-		}
-
-	}
-
-	public static final class TenantScopeFinalizer {
-
-		private final WeakReference<TenantScope> scopeRef;
-
-		public TenantScopeFinalizer(TenantScope scope) {
-			super();
-			this.scopeRef = new WeakReference<>(scope);
-		}
-
-		public void destroy() {
-			TenantScope scope = scopeRef.get();
-			if (scope != null) {
-				scope.destroy();
+			// check environment
+			if (environment.containsProperty(EnableTenantScope.TENANT_RESOLVER_PROPERTY_NAME)) {
+				tenantResolver = environment.getProperty(EnableTenantScope.TENANT_RESOLVER_PROPERTY_NAME, String.class);
 			}
+
+			if (tenantResolver == null || tenantResolver.trim().length() == 0) {
+				// check annotation
+				tenantResolver = BeanRegistryUtils.getAnnotationValue(attributes, "tenantResolver", null);
+			}
+
+			if (tenantResolver != null && tenantResolver.trim().length() == 0) {
+				tenantResolver = null;
+			}
+
+			// tenant scope manager
+			boolean enableTenantScopeManager = BeanRegistryUtils.getAnnotationValue(attributes,
+					"enableTenantScopeManager", true);
+
+			final BeanDefinitionBuilder postProcessorBuilder = BeanDefinitionBuilder
+					.genericBeanDefinition(TenantScopePostProcessor.class).setDestroyMethodName("unregister")
+					.addConstructorArgValue(tenantResolver).addConstructorArgValue(enableTenantScopeManager)
+					.setRole(BeanDefinition.ROLE_INFRASTRUCTURE);
+			registry.registerBeanDefinition(TENANT_SCOPE_POST_PROCESSOR_NAME, postProcessorBuilder.getBeanDefinition());
+
 		}
 
 	}

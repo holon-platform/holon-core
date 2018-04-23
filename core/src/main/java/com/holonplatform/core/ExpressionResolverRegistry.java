@@ -33,6 +33,15 @@ public interface ExpressionResolverRegistry extends ExpressionResolverSupport, E
 	 * @return A new {@link ExpressionResolverRegistry} instance
 	 */
 	static ExpressionResolverRegistry create() {
+		return create(true);
+	}
+
+	/**
+	 * Create a new {@link ExpressionResolverRegistry}.
+	 * @param cacheEnabled Whether to enable the expression resolvers cache
+	 * @return A new {@link ExpressionResolverRegistry} instance
+	 */
+	static ExpressionResolverRegistry create(boolean cacheEnabled) {
 		return new DefaultExpressionResolverRegistry();
 	}
 
