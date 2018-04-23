@@ -22,7 +22,7 @@ import com.holonplatform.spring.internal.tenant.TenantScopeRegistrar;
  * </p>
  * <p>
  * The convenience {@link ScopeTenant} annotation can be used to declare tenant scoped beans.
- * <p>
+ * </p>
  * <p>
  * If the {@link #enableTenantScopeManager()} attribute is <code>true</code>, a {@link TenantScopeManager} bean is
  * registered and made available in Spring context to manage the tenant scoped beans lifecycle.
