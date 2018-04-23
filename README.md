@@ -36,6 +36,10 @@ The Holon Platform is built using __Java 8__, so you need a JRE/JDK version 8 or
 
 See [releases](https://github.com/holon-platform/holon-core/releases) for the available releases. Each release tag provides a link to the closed issues.
 
+#### 5.1.x release notes
+
+See [What's new in version 5.1.x](https://docs.holon-platform.com/current/reference/holon-core.html#WhatsNew51x) to learn about the new features and API operations of the 5.1 minor release.
+
 ### Obtain the artifacts
 
 The [Holon Platform](https://holon-platform.com) is open source and licensed under the [Apache 2.0 license](LICENSE.md). All the artifacts (including binaries, sources and javadocs) are available from the [Maven Central](https://mvnrepository.com/repos/central) repository.
@@ -48,7 +52,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.core</groupId>
         <artifactId>holon-bom</artifactId>
-        <version>5.0.6</version>
+        <version>5.1.0</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
@@ -118,8 +122,10 @@ Artifact id | Description
 `holon-auth` | Authentication and Authorization
 `holon-auth-jwt` | JSON Web Tokens support 
 `holon-spring` | Spring integration
+`holon-spring-security` | Spring Security integration
 `holon-spring-boot` | Spring Boot integration
 `holon-starter` | Base Spring Boot starter
+`holon-starter-security` | Base Spring Boot starter with Spring Security integration
 `holon-starter-test` | Base Spring Boot starter for Unit tests
 `holon-bom` | Bill Of Materials
 `holon-bom-platform` | Bill Of Materials including external dependencies
