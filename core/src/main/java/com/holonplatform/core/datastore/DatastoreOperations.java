@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.datastore;
 
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
 import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
 import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
@@ -155,6 +156,46 @@ public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU e
 	 */
 	public interface WriteOption {
 		// marker interface
+	}
+
+	// ------- Base builder
+
+	/**
+	 * Base {@link DatastoreOperations} instance builder.
+	 * @param <D> DatastoreOperations type
+	 * @param <B> Concrete builder type
+	 */
+	@SuppressWarnings("rawtypes")
+	public interface Builder<D extends DatastoreOperations, B extends Builder<D, B>>
+			extends ExpressionResolverBuilder<B> {
+
+		/**
+		 * Set the <code>data context id</code> to which the Datastore is bound.
+		 * @param dataContextId The data context id to set
+		 * @return this
+		 */
+		B dataContextId(String dataContextId);
+
+		/**
+		 * Set whether to trace Datastore operations in log.
+		 * @param trace <code>true</code> to enable tracing
+		 * @return this
+		 */
+		B traceEnabled(boolean trace);
+
+		/**
+		 * Set the datastore configuration property source to use.
+		 * @param configuration Datastore configuration properties (not null)
+		 * @return this
+		 */
+		B configuration(DatastoreConfigProperties configuration);
+
+		/**
+		 * Build the Datastore.
+		 * @return Datastore instance
+		 */
+		D build();
+
 	}
 
 }

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
@@ -353,44 +352,6 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 			OperationResult build();
 
 		}
-
-	}
-
-	// Builder
-
-	/**
-	 * Base {@link Datastore} builder.
-	 * @param <D> Datastore type
-	 * @param <B> Concrete builder type
-	 */
-	public interface Builder<D extends Datastore, B extends Builder<D, B>> extends ExpressionResolverBuilder<B> {
-
-		/**
-		 * Set the <code>data context id</code> to which the Datastore is bound.
-		 * @param dataContextId The data context id to set
-		 * @return this
-		 */
-		B dataContextId(String dataContextId);
-
-		/**
-		 * Set whether to trace Datastore operations in log.
-		 * @param trace <code>true</code> to enable tracing
-		 * @return this
-		 */
-		B traceEnabled(boolean trace);
-
-		/**
-		 * Set the datastore configuration property source to use.
-		 * @param configuration Datastore configuration properties (not null)
-		 * @return this
-		 */
-		B configuration(DatastoreConfigProperties configuration);
-
-		/**
-		 * Build the Datastore.
-		 * @return Datastore instance
-		 */
-		D build();
 
 	}
 
