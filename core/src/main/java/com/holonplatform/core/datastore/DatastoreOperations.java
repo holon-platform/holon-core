@@ -35,6 +35,7 @@ import com.holonplatform.core.query.QueryBuilder;
  * </p>
  * 
  * @param <R> Operation result type
+ * @param <REFRESH> Refresh result type
  * @param <BI> Bulk insert operation type
  * @param <BU> Bulk update operation type
  * @param <BD> Bulk delete operation type
@@ -42,17 +43,17 @@ import com.holonplatform.core.query.QueryBuilder;
  *
  * @since 5.1.0
  */
-public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>> {
+public interface DatastoreOperations<R, REFRESH, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>> {
 
 	/**
 	 * Refresh a {@link PropertyBox}, updating all its model properties to current value in data store and using given
 	 * <code>target</code> to denote the data store persistent entity to use.
 	 * @param target {@link DataTarget} to declare the data store persistent entity from which data has to be refreshed
 	 * @param propertyBox The data to refresh, represented using a {@link PropertyBox} (not null)
-	 * @return The refreshed PropertyBox (not null)
+	 * @return The refresh operation result, which should provide the refreshed PropertyBox instance
 	 * @throws DataAccessException If an error occurred during operation execution
 	 */
-	PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox);
+	REFRESH refresh(DataTarget<?> target, PropertyBox propertyBox);
 
 	/**
 	 * Insert a {@link PropertyBox} in the data store, using given <code>target</code> to denote the data store

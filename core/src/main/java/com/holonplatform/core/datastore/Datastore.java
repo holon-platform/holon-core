@@ -64,7 +64,7 @@ import com.holonplatform.core.query.Query;
  * @see Query
  * @see DatastoreCommodityFactory
  */
-public interface Datastore extends DatastoreOperations<OperationResult, BulkInsert, BulkUpdate, BulkDelete, Query>,
+public interface Datastore extends DatastoreOperations<OperationResult, PropertyBox, BulkInsert, BulkUpdate, BulkDelete, Query>,
 		DatastoreCommodityHandler, ExpressionResolverSupport, DataContextBound, Serializable {
 
 	/*
