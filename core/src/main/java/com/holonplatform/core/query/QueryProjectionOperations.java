@@ -16,51 +16,49 @@
 package com.holonplatform.core.query;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.exceptions.DataAccessException;
-import com.holonplatform.core.internal.query.QueryUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
+import com.holonplatform.core.query.QueryResults.QueryNonUniqueResultException;
 
 /**
- * Provide operations to get the results of a {@link Query} operation using a {@link QueryProjection}.
+ * Base interface to provide query results using a {@link QueryProjection}.
  * 
- * @since 5.0.0
- * 
- * @see Query
+ * @param <SR> Actual Stream result type
+ * @param <LR> Actual List result type
+ * @param <OR> Actual optional single result type
+ * @param <CR> Actual count result type
+ *
+ * @since 5.2.0
  */
 @SuppressWarnings("rawtypes")
-public interface QueryResults extends QueryProjectionOperations<Stream, List, Optional, Long> {
+public interface QueryProjectionOperations<SR, LR, OR, CR> {
 
 	/**
-	 * Execute query and get a {@link Stream} of query results using given <code>projection</code> to map results to
-	 * required type.
-	 * @param <R> Results type
+	 * Execute the query and get a {@link Stream} of query results using given <code>projection</code> to map results to
+	 * the required type.
+	 * @param <R> Query projection (result) type
 	 * @param projection Query projection (not null)
-	 * @return Query results stream, an empty Stream if none
+	 * @return Query results stream
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	<R> Stream<R> stream(QueryProjection<R> projection);
+	<R> SR stream(QueryProjection<R> projection);
 
 	/**
 	 * Convenience method to obtain the query results {@link #stream(QueryProjection)} as a {@link List}
-	 * @param <R> Results type
+	 * @param <R> Query projection (result) type
 	 * @param projection Query projection (not null)
 	 * @return Query results list, an empty List if none
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default <R> List<R> list(QueryProjection<R> projection) {
-		return stream(projection).collect(Collectors.toList());
-	}
+	<R> LR list(QueryProjection<R> projection);
 
 	/**
-	 * Execute query and get an expected unique result using <code>projection</code> to map result to required type.
+	 * Execute the query and get an expected unique result using given <code>projection</code> to map the result to the
+	 * required type.
 	 * <p>
 	 * If more than one result is returned by the query, a {@link QueryNonUniqueResultException} is thrown.
 	 * </p>
@@ -70,33 +68,14 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default <R> Optional<R> findOne(QueryProjection<R> projection) throws QueryNonUniqueResultException {
-		return stream(projection).collect(Collectors.collectingAndThen(Collectors.toList(), QueryUtils.uniqueResult()));
-	}
+	<R> OR findOne(QueryProjection<R> projection) throws QueryNonUniqueResultException;
 
 	/**
 	 * Count all the results of a query.
-	 * @return Total results count, an empty Optional if none
-	 * @throws DataAccessException Error in query execution
-	 */
-	@Override
-	default Long countAll() {
-		return findOne(CountAllProjection.create()).orElse(0L);
-	}
-
-	/**
-	 * Count all the results of a query.
-	 * <p>
-	 * This is {@link #countAll()} alternative convenience method to provide a primitive long type result.
-	 * </p>
 	 * @return Total results count
 	 * @throws DataAccessException Error in query execution
 	 */
-	default long count() {
-		final Long count = countAll();
-		return (count != null) ? count : 0L;
-	}
+	CR countAll();
 
 	/**
 	 * Execute query and get a {@link Stream} of query results as {@link PropertyBox} using given
@@ -110,8 +89,7 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @return Query results {@link PropertyBox} stream
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default <P extends Property> Stream<PropertyBox> stream(Iterable<P> properties) {
+	default <P extends Property> SR stream(Iterable<P> properties) {
 		return stream(PropertySetProjection.of(properties));
 	}
 
@@ -128,9 +106,7 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default <P extends Property> Optional<PropertyBox> findOne(Iterable<P> properties)
-			throws QueryNonUniqueResultException {
+	default <P extends Property> OR findOne(Iterable<P> properties) throws QueryNonUniqueResultException {
 		return findOne(PropertySetProjection.of(properties));
 	}
 
@@ -146,8 +122,7 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @return Query results {@link PropertyBox} list
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default <P extends Property> List<PropertyBox> list(Iterable<P> properties) {
+	default <P extends Property> LR list(Iterable<P> properties) {
 		return list(PropertySetProjection.of(properties));
 	}
 
@@ -162,8 +137,7 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @return Query results {@link PropertyBox} stream
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default Stream<PropertyBox> stream(Property... properties) {
+	default SR stream(Property... properties) {
 		return stream(PropertySet.of(properties));
 	}
 
@@ -179,8 +153,7 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default Optional<PropertyBox> findOne(Property... properties) throws QueryNonUniqueResultException {
+	default OR findOne(Property... properties) throws QueryNonUniqueResultException {
 		return findOne(PropertySet.of(properties));
 	}
 
@@ -195,32 +168,8 @@ public interface QueryResults extends QueryProjectionOperations<Stream, List, Op
 	 * @return Query results {@link PropertyBox} list
 	 * @throws DataAccessException Error in query execution
 	 */
-	@Override
-	default List<PropertyBox> list(Property... properties) {
+	default LR list(Property... properties) {
 		return list(PropertySet.of(properties));
-	}
-
-	/**
-	 * Exception thrown by when only one query result was expected but more than one found.
-	 */
-	@SuppressWarnings("serial")
-	public class QueryNonUniqueResultException extends RuntimeException {
-
-		/**
-		 * Constructor
-		 */
-		public QueryNonUniqueResultException() {
-			super();
-		}
-
-		/**
-		 * Constructor with error message
-		 * @param message Error message
-		 */
-		public QueryNonUniqueResultException(String message) {
-			super(message);
-		}
-
 	}
 
 }
