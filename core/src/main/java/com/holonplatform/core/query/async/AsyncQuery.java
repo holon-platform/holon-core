@@ -24,7 +24,7 @@ import com.holonplatform.core.query.QueryProjection;
  * Represents an asynchronous <em>query</em>, which can be used to configure and execute a query on the data managed by
  * a {@link Datastore} and obtain the results asynchronously.
  * <p>
- * The query is configured through the {@link QueryBuilder} API and executed using the {@link AyncQueryResults} API,
+ * The query is configured through the {@link QueryBuilder} API and executed using the {@link AsyncQueryResults} API,
  * which provides methods to execute the query and obtain the results asynchronously, using a {@link QueryProjection} to
  * specify the expected result type.
  * </p>
