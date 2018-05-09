@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.Validator;
@@ -29,6 +30,10 @@ import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.property.BooleanProperty;
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
+import com.holonplatform.core.property.PathPropertyBoxAdapter;
+import com.holonplatform.core.property.PathPropertySetAdapter;
+import com.holonplatform.core.property.PathPropertySetAdapter.PathConverter;
+import com.holonplatform.core.property.PathPropertySetAdapter.PathMatcher;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertyConfiguration;
@@ -388,6 +393,81 @@ public class ExampleProperty {
 
 		QueryFilter filter = STR.contains("value"); // <2>
 		// end::subtypes1[]
+	}
+
+	public void pathPropertySetAdapter1() {
+		// tag::ppsa1[]
+		final StringProperty STR = StringProperty.create("str");
+		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
+		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+
+		final Path<String> PATH = Path.of("str", String.class);
+
+		PathPropertySetAdapter adapter = PathPropertySetAdapter.create(SET); // <1>
+
+		boolean contains = adapter.contains(PATH); // <2>
+		Optional<Property<String>> property = adapter.getProperty(PATH); // <3>
+		Optional<Path<String>> path = adapter.getPath(STR); // <4>
+		Stream<Path<?>> paths = adapter.pathStream(); // <5>
+		// end::ppsa1[]
+
+		// tag::ppsa2[]
+		PathPropertySetAdapter pathPropertySetAdapter = PathPropertySetAdapter.builder(SET) // <1>
+				.pathConverter(new MyPathConverter()) // <2>
+				.pathMatcher(new MyPathMatcher()) // <3>
+				.build();
+		// end::ppsa2[]
+	}
+
+	public void pathPropertySetAdapter2() {
+		// tag::ppsa3[]
+		final StringProperty STR = StringProperty.create("str");
+		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
+		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+
+		PathPropertySetAdapter adapter = PathPropertySetAdapter.create(SET); // <1>
+
+		boolean contains = adapter.contains("str"); // <2>
+		Optional<Property<?>> property = adapter.getProperty("str"); // <3>
+		Optional<Property<String>> typedProperty = adapter.getProperty("str", String.class); // <4>
+		Stream<String> paths = adapter.nameStream(); // <5>
+		// end::ppsa3[]
+	}
+
+	public void pathPropertyBoxAdapter() {
+		// tag::ppba[]
+		final StringProperty STR = StringProperty.create("str");
+		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
+		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+
+		final Path<String> PATH = Path.of("str", String.class);
+
+		PropertyBox box = PropertyBox.builder(SET).set(STR, "test1").set(ITG, 1).build();
+
+		PathPropertyBoxAdapter adapter = PathPropertyBoxAdapter.create(box); // <1>
+
+		boolean contains = adapter.containsValue(PATH); // <2>
+		Optional<String> value = adapter.getValue(PATH); // <3>
+		adapter.setValue(PATH, "value"); // <4>
+		// end::ppba[]
+	}
+
+	private class MyPathConverter implements PathConverter {
+
+		@Override
+		public <T> Optional<Path<T>> convert(Property<T> property) {
+			return null;
+		}
+
+	}
+
+	private class MyPathMatcher implements PathMatcher {
+
+		@Override
+		public boolean match(Path<?> path, Path<?> otherPath) {
+			return false;
+		}
+
 	}
 
 }

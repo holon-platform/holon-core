@@ -251,7 +251,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 <4> Create a `VirtualProperty` of String type providing the person _full_ name, concatenating the person _name_ and _surname_ values read from the current `PropertyBox`
 
 [[PropertySet]]
-=== Organizing and collecting properties using a PropertySet
+=== Organizing and collecting properties using a `PropertySet`
 
 The link:{apidir}/com/holonplatform/core/property/PropertySet.html[PropertySet^] interface represents an immutable set of `Property`, providing methods to inspect and obtain the `Property` elements. It is an `Iterable`, in analogy with the standard Java collections structures.
 
@@ -307,8 +307,59 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 <4> Get the first identifier property, if available
 <5> Get the identifier properties as a `Stream`
 
+[[PathPropertySetAdapter]]
+==== Using a `PathPropertySetAdapter`
+
+The link:{apidir}/com/holonplatform/core/property/PathPropertySetAdapter.html[PathPropertySetAdapter^] API can be used to inspect a `PropertySet` using `Path` type expressions and allows to:
+
+* Check if a `Property` which corresponds to a given `Path` is available in the property set and obtain it.
+* Obtain the `Path` representation of a property set `Property`, if applicable.
+* Get the property set identifier properties as `Path` representations.
+* Obtain a Stream of all the available `Path` representations of the properties in the property set.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=ppsa1,indent=0]
+----
+<1> Create a `PathPropertySetAdapter` from given `SET`
+<2> Checks if a `Path` is available in the property set
+<3> Get the `Property` of the property set which corresponds to given `Path`, if available
+<4> Get the `Path` which corresponds to given `Property`, if available
+<5> Obtain a `Stream` of all the available `Path` representations in the property set
+
+The `PathPropertySetAdapter` behaviour can be customized through its builder API, providing:
+
+* A link:{apidir}/com/holonplatform/core/property/PathPropertySetAdapter.PathConverter.html[PathConverter^] implementation to control how the `Path` representation of a `Property` is obtained. By default, the `Property` definition must implement the `Path` interface to be represented as a `Path`, and in this case the `Property` itself is used as `Path` representation.
+
+* A link:{apidir}/com/holonplatform/core/property/PathPropertySetAdapter.PathMatcher.html[PathMatcher^] implementation to declare the `Path` matching strategy. By default the `Path` _relative name_ is used and a standard "equals" comparison is performed to decide if two `Path` definitions match.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=ppsa2,indent=0]
+----
+<1> Use the `PathPropertySetAdapter` builder API
+<2> Set a custom `PathConverter`
+<3> Set a custom `PathMatcher`
+
+===== Inspect a PropertySet using the Property names
+
+The link:{apidir}/com/holonplatform/core/property/PathPropertySetAdapter.html[PathPropertySetAdapter^] API can be also used to inspect a `PropertySet` using the `Property` *name* and allows to:
+
+* Check if a `Property` whith a given _name_ is available in the property set and obtain it.
+* Obtain a `Stream` of all the available property _names_ in the property set.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=ppsa3,indent=0]
+----
+<1> Create a `PathPropertySetAdapter` from given `SET`
+<2> Checks if a `Property` with given name is available in the property set
+<3> Get the `Property` with given name, if available
+<4> Get the `Property` with given name, if available, providing the expected property type
+<5> Obtain a `Stream` of all the available `Property` names in the property set
+
 [[PropertyBox]]
-=== Managing property values using a PropertyBox
+=== Managing property values using a `PropertyBox`
 
 A link:{apidir}/com/holonplatform/core/property/PropertyBox.html[PropertyBox^] represents a container of `Property` values and it is bound to a specific (and immutable) <<PropertySet,PropertySet>>. For each `Property` of the property set, the `PropertyBox` can be used to set or obtain the associated property value.
 
@@ -394,6 +445,26 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 ----
 <1> Custom `HashCodeProvider`
 <2> Custom `EqualsHandler`
+
+[[PathPropertyBoxAdapter]]
+==== Using a `PathPropertyBoxAdapter`
+
+Similarly to the <<PathPropertySetAdapter,PathPropertySetAdapter>> API, the link:{apidir}/com/holonplatform/core/property/PathPropertyBoxAdapter.html[PathPropertyBoxAdapter^] API can be used to inspect a `PropertyBox` using `Path` type expressions and allows to:
+
+* Check if a `Property` value is present using its `Path` representation.
+* Obtain a `Property` value through its `Path` representation.
+* Set a `Property` value through its `Path` representation.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=ppba,indent=0]
+----
+<1> Create a `PathPropertyBoxAdapter` using given `PropertyBox` instance
+<2> Checks if the value of the `Property` which corresponds to given `Path` is available
+<3> Get the value of the `Property` which corresponds to given `Path`
+<4> Set the value of the `Property` which corresponds to given `Path`
+
+The `Path` mathing strategies can be customized in the same way as for the <<PathPropertySetAdapter,PathPropertySetAdapter>> API.
 
 [[Property.presentation]]
 === Property value presentation

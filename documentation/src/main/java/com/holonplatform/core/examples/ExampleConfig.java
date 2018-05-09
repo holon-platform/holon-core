@@ -73,6 +73,9 @@ public class ExampleConfig {
 
 		Optional<String> configPropertyValue = set.getParameter(property); // <7>
 		String configPropertyVal = set.getParameter(property, "default"); // <8>
+
+		boolean matches = set.hasParameterValue("testParameter", "myValue"); // <9>
+		matches = set.hasParameterValue(property, "myValue"); // <10>
 		// end::params[]
 	}
 

@@ -71,3 +71,5 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleConfig.java[tag=pa
 <6> Get a parameter value of `String` type with default fallback value when the parameter value is not available
 <7> Get a parameter value using a `ConfigProperty`
 <8> Get a parameter value using a `ConfigProperty`, providing the default fallback value if not available
+<9> Checks if a parameter named `testParameter` is present and its value equals to the `myValue` value
+<10> Checks if a `ConfigProperty` is present and its value equals to the `myValue` value
