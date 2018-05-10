@@ -173,12 +173,26 @@ public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 	 * @see com.holonplatform.core.property.PathPropertySetAdapter#pathStream()
 	 */
 	@Override
-	public Stream<Path<?>> pathStream() {
+	public Stream<Path<?>> paths() {
 		List<Path<?>> paths = new ArrayList<>(getPropertySet().size());
 		for (Property<?> property : getPropertySet()) {
 			getPathConverter().convert(property).ifPresent(p -> paths.add(p));
 		}
 		return paths.stream();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#propertyPaths()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Stream<PropertyPath<?>> propertyPaths() {
+		final List<PropertyPath<?>> pps = new ArrayList<>(getPropertySet().size());
+		for (Property<?> property : getPropertySet()) {
+			getPathConverter().convert(property).ifPresent(path -> pps.add(new DefaultPropertyPath(property, path)));
+		}
+		return pps.stream();
 	}
 
 	// ------- by name
@@ -244,8 +258,38 @@ public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 	 * @see com.holonplatform.core.property.PathPropertySetAdapter#nameStream()
 	 */
 	@Override
-	public Stream<String> nameStream() {
+	public Stream<String> names() {
 		return getPropertySet().stream().filter(p -> p.getName() != null).map(p -> p.getName());
+	}
+
+	// ------- Internal types
+
+	/**
+	 * Default {@link PropertyPath} implementation.
+	 * 
+	 * @param <T> Property and path type
+	 */
+	public static class DefaultPropertyPath<T> implements PropertyPath<T> {
+
+		private final Property<T> property;
+		private final Path<T> path;
+
+		public DefaultPropertyPath(Property<T> property, Path<T> path) {
+			super();
+			this.property = property;
+			this.path = path;
+		}
+
+		@Override
+		public Property<T> getProperty() {
+			return property;
+		}
+
+		@Override
+		public Path<T> getPath() {
+			return path;
+		}
+
 	}
 
 	// ------- Builder

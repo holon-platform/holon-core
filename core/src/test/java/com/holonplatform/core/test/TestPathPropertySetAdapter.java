@@ -32,6 +32,7 @@ import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PathPropertySetAdapter.PathConverter;
 import com.holonplatform.core.property.PathPropertySetAdapter.PathMatcher;
+import com.holonplatform.core.property.PathPropertySetAdapter.PropertyPath;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.StringProperty;
@@ -95,17 +96,29 @@ public class TestPathPropertySetAdapter {
 
 		assertEquals("p1", ids.iterator().next().relativeName());
 
-		Stream<Path<?>> ps = adapter.pathStream();
+		Stream<Path<?>> ps = adapter.paths();
 
 		assertNotNull(ps);
 		assertEquals(3, ps.count());
 
-		assertEquals("p1", adapter.pathStream().filter(p -> "p1".equals(p.relativeName())).limit(1).findFirst()
+		assertEquals("p1", adapter.paths().filter(p -> "p1".equals(p.relativeName())).limit(1).findFirst()
 				.map(p -> p.relativeName()).orElse(null));
-		assertEquals("p2", adapter.pathStream().filter(p -> "p2".equals(p.relativeName())).limit(1).findFirst()
+		assertEquals("p2", adapter.paths().filter(p -> "p2".equals(p.relativeName())).limit(1).findFirst()
 				.map(p -> p.relativeName()).orElse(null));
-		assertEquals("p1.p3", adapter.pathStream().filter(p -> "p1.p3".equals(p.relativeName())).limit(1).findFirst()
+		assertEquals("p1.p3", adapter.paths().filter(p -> "p1.p3".equals(p.relativeName())).limit(1).findFirst()
 				.map(p -> p.relativeName()).orElse(null));
+
+		Stream<PropertyPath<?>> pps = adapter.propertyPaths();
+
+		assertNotNull(pps);
+		assertEquals(3, pps.count());
+
+		assertEquals(P1, adapter.propertyPaths().filter(p -> "p1".equals(p.getPath().relativeName())).limit(1)
+				.findFirst().map(p -> p.getProperty()).orElse(null));
+		assertEquals(P2, adapter.propertyPaths().filter(p -> "p2".equals(p.getPath().relativeName())).limit(1)
+				.findFirst().map(p -> p.getProperty()).orElse(null));
+		assertEquals(P3, adapter.propertyPaths().filter(p -> "p1.p3".equals(p.getPath().relativeName())).limit(1)
+				.findFirst().map(p -> p.getProperty()).orElse(null));
 	}
 
 	@Test
@@ -133,14 +146,14 @@ public class TestPathPropertySetAdapter {
 
 		assertEquals(P2, adapter.getProperty("p2", Number.class).orElse(null));
 
-		Stream<String> ps = adapter.nameStream();
+		Stream<String> ps = adapter.names();
 
 		assertNotNull(ps);
 		assertEquals(3, ps.count());
 
-		assertEquals("p1", adapter.nameStream().filter(n -> "p1".equals(n)).limit(1).findFirst().orElse(null));
-		assertEquals("p2", adapter.nameStream().filter(n -> "p2".equals(n)).limit(1).findFirst().orElse(null));
-		assertEquals("p3", adapter.nameStream().filter(n -> "p3".equals(n)).limit(1).findFirst().orElse(null));
+		assertEquals("p1", adapter.names().filter(n -> "p1".equals(n)).limit(1).findFirst().orElse(null));
+		assertEquals("p2", adapter.names().filter(n -> "p2".equals(n)).limit(1).findFirst().orElse(null));
+		assertEquals("p3", adapter.names().filter(n -> "p3".equals(n)).limit(1).findFirst().orElse(null));
 
 	}
 
@@ -165,7 +178,7 @@ public class TestPathPropertySetAdapter {
 		assertTrue(adapter.contains(Path.of("P1", String.class)));
 		assertFalse(adapter.contains(Path.of("xxx", String.class)));
 	}
-	
+
 	@Test
 	public void testPathConverter() {
 
@@ -178,12 +191,10 @@ public class TestPathPropertySetAdapter {
 				}
 				return Optional.empty();
 			}
-			
+
 		};
 
-		final PathPropertySetAdapter adapter = PathPropertySetAdapter.builder(SET)
-				.pathConverter(pc)
-				.build();
+		final PathPropertySetAdapter adapter = PathPropertySetAdapter.builder(SET).pathConverter(pc).build();
 
 		assertTrue(adapter.contains(Path.of("P1", String.class)));
 		assertFalse(adapter.contains(Path.of("p1", String.class)));

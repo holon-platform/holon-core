@@ -108,7 +108,7 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	@Override
 	public void setOperationPaths(PropertySet<?> propertySet) {
 		ObjectUtils.argumentNotNull(propertySet, "Operation path property set must be not nulll");
-		setOperationPaths(PathPropertySetAdapter.create(propertySet).pathStream().collect(Collectors.toList())
+		setOperationPaths(PathPropertySetAdapter.create(propertySet).paths().collect(Collectors.toList())
 				.toArray(new Path<?>[0]));
 	}
 
@@ -137,7 +137,7 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 
 		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
 
-		propertyBoxAdapter.pathStream().forEach(path -> {
+		propertyBoxAdapter.paths().forEach(path -> {
 			propertyBoxAdapter.getValue(path).ifPresent(val -> {
 				values.put(path, ConstantExpression.create((Path) path, val));
 			});

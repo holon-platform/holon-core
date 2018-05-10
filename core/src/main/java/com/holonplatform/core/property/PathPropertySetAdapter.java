@@ -82,7 +82,15 @@ public interface PathPropertySetAdapter {
 	 * property set which can be represented as a {@link Path}.
 	 * @return Property set paths stream
 	 */
-	Stream<Path<?>> pathStream();
+	Stream<Path<?>> paths();
+
+	/**
+	 * Returns a stream of the property set {@link Property} definitions which can be represented as a {@link Path},
+	 * providing the corresponding {@link Path} representation, using the {@link PropertyPath} interface to provide the
+	 * Property-Path pairs.
+	 * @return A stream of {@link PropertyPath} elements
+	 */
+	Stream<PropertyPath<?>> propertyPaths();
 
 	// ------- by name
 
@@ -120,7 +128,7 @@ public interface PathPropertySetAdapter {
 	 * @return Property names stream
 	 * @since 5.2.0
 	 */
-	Stream<String> nameStream();
+	Stream<String> names();
 
 	// ------- Builders
 
@@ -140,6 +148,29 @@ public interface PathPropertySetAdapter {
 	 */
 	static PathPropertySetAdapterBuilder builder(PropertySet<?> propertySet) {
 		return new DefaultPathPropertySetAdapterBuilder(propertySet);
+	}
+
+	// ------- Related types
+
+	/**
+	 * {@link Property} and corresponding {@link Path} pair representation.
+	 *
+	 * @param <T> Property and path type
+	 */
+	public interface PropertyPath<T> {
+
+		/**
+		 * Get the property definition.
+		 * @return The property
+		 */
+		Property<T> getProperty();
+
+		/**
+		 * Get the path bound the property definition.
+		 * @return The property path
+		 */
+		Path<T> getPath();
+
 	}
 
 	/**

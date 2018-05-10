@@ -172,7 +172,7 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 
 		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
 
-		propertyBoxAdapter.pathStream().forEach(path -> {
+		propertyBoxAdapter.paths().forEach(path -> {
 			propertyBoxAdapter.getValueOrElse(path, pathWithNoValue -> {
 				if (includeNullValues) {
 					values.put(path, NullExpression.create(path));

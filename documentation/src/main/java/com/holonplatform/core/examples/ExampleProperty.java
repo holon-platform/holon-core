@@ -408,7 +408,7 @@ public class ExampleProperty {
 		boolean contains = adapter.contains(PATH); // <2>
 		Optional<Property<String>> property = adapter.getProperty(PATH); // <3>
 		Optional<Path<String>> path = adapter.getPath(STR); // <4>
-		Stream<Path<?>> paths = adapter.pathStream(); // <5>
+		Stream<Path<?>> paths = adapter.paths(); // <5>
 		// end::ppsa1[]
 
 		// tag::ppsa2[]
@@ -430,7 +430,7 @@ public class ExampleProperty {
 		boolean contains = adapter.contains("str"); // <2>
 		Optional<Property<?>> property = adapter.getProperty("str"); // <3>
 		Optional<Property<String>> typedProperty = adapter.getProperty("str", String.class); // <4>
-		Stream<String> paths = adapter.nameStream(); // <5>
+		Stream<String> paths = adapter.names(); // <5>
 		// end::ppsa3[]
 	}
 
