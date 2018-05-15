@@ -21,8 +21,15 @@ import com.holonplatform.core.Path.FinalPath;
 import com.holonplatform.core.internal.CallbackExpressionResolver;
 import com.holonplatform.core.internal.datastore.DefaultDataTarget;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.CloneableProperty.CloneablePathProperty;
+import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathProperty.PathPropertyBuilder;
+import com.holonplatform.core.property.Property;
+import com.holonplatform.core.property.PropertyBoxProperty;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.TemporalProperty;
 
 /**
  * Representation of the target element of a data model persistence/query operation.
@@ -56,16 +63,73 @@ public interface DataTarget<T> extends FinalPath<T> {
 	}
 
 	/**
-	 * Create a new {@link PathProperty} cloning from given <code>fromProperty</code>, setting this {@link DataTarget}
-	 * as property parent path. Property name, type and configuration of the the property will be cloned from given
-	 * property.
+	 * Create a new {@link Path} type {@link Property} cloned from the given property, setting this {@link DataTarget}
+	 * as property parent path.
+	 * @param <V> Property value type
 	 * @param <P> Property type
-	 * @param fromProperty Property from which to clone (not null)
-	 * @return The new property
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
 	 */
-	default <P> PathProperty<P> property(PathProperty<P> fromProperty) {
+	default <V, P extends CloneablePathProperty<V, P>> P property(P fromProperty) {
 		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
-		return fromProperty.clone().parent(this);
+		return fromProperty.clone(builder -> builder.parent(this));
+	}
+
+	/**
+	 * Create a new {@link StringProperty} cloned from the given property, setting this {@link DataTarget} as property
+	 * parent path.
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
+	 */
+	default StringProperty property(StringProperty fromProperty) {
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
+		return fromProperty.clone(builder -> builder.parent(this));
+	}
+
+	/**
+	 * Create a new {@link NumericProperty} cloned from the given property, setting this {@link DataTarget} as property
+	 * parent path.
+	 * @param <N> Number type
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
+	 */
+	default <N extends Number> NumericProperty<N> property(NumericProperty<N> fromProperty) {
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
+		return fromProperty.clone(builder -> builder.parent(this));
+	}
+
+	/**
+	 * Create a new {@link TemporalProperty} cloned from the given property, setting this {@link DataTarget} as property
+	 * parent path.
+	 * @param <TT> Property type
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
+	 */
+	default <TT> TemporalProperty<TT> property(TemporalProperty<TT> fromProperty) {
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
+		return fromProperty.clone(builder -> builder.parent(this));
+	}
+
+	/**
+	 * Create a new {@link BooleanProperty} cloned from the given property, setting this {@link DataTarget} as property
+	 * parent path.
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
+	 */
+	default BooleanProperty property(BooleanProperty fromProperty) {
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
+		return fromProperty.clone(builder -> builder.parent(this));
+	}
+
+	/**
+	 * Create a new {@link PropertyBoxProperty} cloned from the given property, setting this {@link DataTarget} as
+	 * property parent path.
+	 * @param fromProperty The property to clone (not null)
+	 * @return The cloned property
+	 */
+	default PropertyBoxProperty property(PropertyBoxProperty fromProperty) {
+		ObjectUtils.argumentNotNull(fromProperty, "Property must be not null");
+		return fromProperty.clone(builder -> builder.parent(this));
 	}
 
 	/**

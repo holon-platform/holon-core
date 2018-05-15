@@ -15,9 +15,11 @@
  */
 package com.holonplatform.core.internal.beans;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.beans.BooleanBeanProperty;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
+import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.PathProperty;
 
 /**
  * Default {@link BooleanBeanProperty} implementation.
@@ -28,23 +30,25 @@ public class DefaultBooleanBeanProperty extends AbstractBeanProperty<Boolean> im
 
 	private static final long serialVersionUID = -8900420385684447894L;
 
+	private final boolean primitive;
+
 	/**
 	 * Constructor.
 	 * @param name Property name (not null)
 	 * @param primitive Whether to use the primitive <code>boolean</code> type
 	 */
 	public DefaultBooleanBeanProperty(String name, boolean primitive) {
-		this(name, primitive, null);
+		super(name, primitive ? boolean.class : Boolean.class);
+		this.primitive = primitive;
 	}
 
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param primitive Whether to use the primitive <code>boolean</code> type
-	 * @param configuration Optional property configuration instance
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.BooleanProperty#clone(java.util.function.Consumer)
 	 */
-	public DefaultBooleanBeanProperty(String name, boolean primitive, PropertyConfigurationEditor configuration) {
-		super(name, primitive ? boolean.class : Boolean.class, configuration);
+	@Override
+	public BooleanProperty clone(Consumer<PathProperty.Builder<Boolean, PathProperty<Boolean>, ?>> builder) {
+		return new DefaultBooleanBeanProperty(getName(), primitive);
 	}
 
 }

@@ -22,6 +22,7 @@ import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultPathProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.CloneableProperty.CloneablePathProperty;
 import com.holonplatform.core.query.PathExpression;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryProjection;
@@ -55,7 +56,8 @@ import com.holonplatform.core.temporal.TemporalType;
  * @see BooleanProperty
  * @see PropertyBoxProperty
  */
-public interface PathProperty<T> extends Property<T>, PathExpression<T>, ConverterExpression<T> {
+public interface PathProperty<T>
+		extends CloneablePathProperty<T, PathProperty<T>>, PathExpression<T>, ConverterExpression<T> {
 
 	/*
 	 * (non-Javadoc)
@@ -66,22 +68,14 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 		return false;
 	}
 
-	/**
-	 * Clone this property.
-	 * @return A new {@link PathPropertyBuilder} using property name, type and configuration cloned from this property
-	 */
-	PathPropertyBuilder<T> clone();
-
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.TypedExpression#getTemporalType()
 	 */
 	@Override
 	default Optional<TemporalType> getTemporalType() {
-		Optional<TemporalType> configurationTemporalType = getConfiguration().getTemporalType();
-		if (configurationTemporalType.isPresent())
-			return configurationTemporalType;
-		return PathExpression.super.getTemporalType();
+		return Optional.ofNullable(
+				getConfiguration().getTemporalType().orElse(PathExpression.super.getTemporalType().orElse(null)));
 	}
 
 	/*
@@ -121,12 +115,12 @@ public interface PathProperty<T> extends Property<T>, PathExpression<T>, Convert
 	}
 
 	/**
-	 * Base interface for {@link PathProperty} building.
+	 * Base interface for {@link Path} and {@link Property} builders.
 	 * @param <T> Property value type
 	 * @param <P> Property type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, P extends PathProperty<T>, B extends Builder<T, P, B>>
+	public interface Builder<T, P extends Path<T> & Property<T>, B extends Builder<T, P, B>>
 			extends Path.Builder<T, B>, Property.Builder<T, P, B> {
 
 	}

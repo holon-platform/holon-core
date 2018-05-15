@@ -15,6 +15,9 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
+import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.StringProperty.StringPropertyBuilder;
 
@@ -52,6 +55,15 @@ public class DefaultStringProperty extends AbstractPathProperty<String, StringPr
 	@Override
 	protected StringPropertyBuilder getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.StringProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public StringProperty clone(Consumer<PathProperty.Builder<String, PathProperty<String>, ?>> builder) {
+		return clonePathProperty(new DefaultStringProperty(getName()), builder);
 	}
 
 }

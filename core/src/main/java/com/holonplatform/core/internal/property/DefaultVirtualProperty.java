@@ -16,8 +16,6 @@
 package com.holonplatform.core.internal.property;
 
 import com.holonplatform.core.i18n.Localizable;
-import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.VirtualProperty;
 import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
 
@@ -28,20 +26,10 @@ import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
  * 
  * @since 5.0.0
  */
-public class DefaultVirtualProperty<T> extends AbstractProperty<T, VirtualProperty<T>, VirtualPropertyBuilder<T>>
+public class DefaultVirtualProperty<T> extends AbstractVirtualProperty<T, VirtualProperty<T>, VirtualPropertyBuilder<T>>
 		implements VirtualPropertyBuilder<T> {
 
 	private static final long serialVersionUID = -7091967623813118367L;
-
-	/**
-	 * Property name
-	 */
-	private String name;
-
-	/**
-	 * Optional value provider
-	 */
-	private PropertyValueProvider<T> valueProvider;
 
 	/**
 	 * Constructor
@@ -67,65 +55,6 @@ public class DefaultVirtualProperty<T> extends AbstractProperty<T, VirtualProper
 	@Override
 	protected DefaultVirtualProperty<T> getActualBuilder() {
 		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.Property#getName()
-	 */
-	@Override
-	public String getName() {
-		if (name == null) {
-			return VirtualProperty.class.getSimpleName() + "|" + hashCode();
-		}
-		return name;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.VirtualProperty.Builder#name(java.lang.String)
-	 */
-	@Override
-	public DefaultVirtualProperty<T> name(String name) {
-		ObjectUtils.argumentNotNull(name, "Property name must be not null");
-		this.name = name;
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.ValueProviderProperty#getValueProvider()
-	 */
-	@Override
-	public PropertyValueProvider<T> getValueProvider() {
-		return valueProvider;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.VirtualPropertyBuilder#valueProvider(com.holonplatform.core.property.
-	 * PropertyValueProvider)
-	 */
-	@Override
-	public DefaultVirtualProperty<T> valueProvider(PropertyValueProvider<T> valueProvider) {
-		ObjectUtils.argumentNotNull(valueProvider, "PropertyValueProvider must be not null");
-		this.valueProvider = valueProvider;
-		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("VirtualProperty [name=");
-		sb.append(getName());
-		sb.append(", type=");
-		sb.append(((getType() != null) ? getType().getName() : "null"));
-		sb.append("]");
-		return sb.toString();
 	}
 
 }

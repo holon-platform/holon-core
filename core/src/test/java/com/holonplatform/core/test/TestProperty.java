@@ -133,35 +133,35 @@ public class TestProperty {
 		VirtualProperty vp3 = VirtualProperty.create(String.class).valueProvider(pb -> "TEST").name("virtualName");
 		assertEquals("virtualName", vp3.getName());
 	}
-	
+
 	@Test
 	public void testPropertyEqualsHashCode() {
-		
+
 		PathProperty<String> p1 = PathProperty.create("p1", String.class);
 		PathProperty<String> p2 = PathProperty.create("p1", String.class);
-		
+
 		assertFalse(p1.equals(p2));
 		assertNotEquals(p1.hashCode(), p2.hashCode());
-		
-		EqualsHandler<PathProperty<?>> eh = (p,o) -> {
+
+		EqualsHandler<PathProperty<?>> eh = (p, o) -> {
 			if (p != null && o != null) {
 				if (o instanceof PathProperty) {
-					return p.getName().equals(((PathProperty<?>)o).getName());
+					return p.getName().equals(((PathProperty<?>) o).getName());
 				}
 			}
 			return false;
 		};
-		
+
 		HashCodeProvider<PathProperty<?>> hcp = p -> {
 			return Optional.of(p.getName().hashCode());
 		};
-		
+
 		p1 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
 		p2 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
-		
+
 		assertTrue(p1.equals(p2));
 		assertEquals(p1.hashCode(), p2.hashCode());
-		
+
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class TestProperty {
 			.configuration(StringValuePresenter.DECIMAL_POSITIONS, 2);
 	private final static Property<TestEnum> P5 = PathProperty.create("test5", TestEnum.class);
 	private final static Property<TestEnum2> P6 = PathProperty.create("test6", TestEnum2.class);
-	private final static Property<Date> P7 = PathProperty.create("test7", Date.class)
+	private final static PathProperty<Date> P7 = PathProperty.create("test7", Date.class)
 			.temporalType(TemporalType.DATE_TIME);
 	private final static Property<LocalDate> P8 = PathProperty.create("test8", LocalDate.class);
 	private final static Property<LocalTime> P9 = PathProperty.create("test9", LocalTime.class);
@@ -278,6 +278,11 @@ public class TestProperty {
 	private final static Property<TestCaptionable> P14 = PathProperty.create("test14", TestCaptionable.class);
 	private final static Property<Integer> P15 = PathProperty.create("test2", Integer.class)
 			.configuration(StringValuePresenter.DISABLE_GROUPING, true);
+
+	@Test
+	public void testTemporalType() {
+		assertEquals(TemporalType.DATE_TIME, P7.getTemporalType().orElse(null));
+	}
 
 	@Test
 	public void testPropertyValuePresenter() {
@@ -753,7 +758,7 @@ public class TestProperty {
 		Object value = testBean2Context.read("someDecimal", testMock);
 		assertEquals(BigDecimal.valueOf(2.7), value);
 	}
-	
+
 	@Test
 	public void testIgnorePropertyNotNested() {
 
@@ -961,20 +966,20 @@ public class TestProperty {
 		assertTrue(box5.equals(box1));
 		assertTrue(box5.equals(null));
 		assertEquals(1, box5.hashCode());
-		
+
 		Map<Object, Object> map = new HashMap<>();
-		
+
 		PropertyBox m1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
 				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
-		
+
 		map.put(m1, m1);
-		
+
 		Object value = map.get(m1);
 		assertNotNull(value);
-		
+
 		PropertyBox m2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
 				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
-		
+
 		value = map.get(m2);
 		assertNotNull(value);
 	}

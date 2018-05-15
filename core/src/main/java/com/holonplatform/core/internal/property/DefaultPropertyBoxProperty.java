@@ -15,7 +15,10 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertyBoxProperty;
 import com.holonplatform.core.property.PropertyBoxProperty.PropertyBoxPropertyBuilder;
@@ -68,6 +71,16 @@ public class DefaultPropertyBoxProperty
 	@Override
 	protected PropertyBoxPropertyBuilder getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PropertyBoxProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public PropertyBoxProperty clone(
+			Consumer<PathProperty.Builder<PropertyBox, PathProperty<PropertyBox>, ?>> builder) {
+		return clonePathProperty(new DefaultPropertyBoxProperty(getName(), getPropertySet()), builder);
 	}
 
 }

@@ -17,7 +17,10 @@ package com.holonplatform.core.examples;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -28,6 +31,8 @@ import com.holonplatform.core.Path;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.ListPathProperty;
+import com.holonplatform.core.property.ListVirtualProperty;
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathPropertyBoxAdapter;
@@ -43,6 +48,8 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValuePresenter;
 import com.holonplatform.core.property.PropertyValuePresenterRegistry;
+import com.holonplatform.core.property.SetPathProperty;
+import com.holonplatform.core.property.SetVirtualProperty;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.property.VirtualProperty;
@@ -451,6 +458,60 @@ public class ExampleProperty {
 		adapter.setValue(PATH, "value"); // <4>
 		// end::ppba[]
 	}
+
+	public void collectionProperties() {
+		// tag::collprops[]
+		final ListPathProperty<String> STR = ListPathProperty.create("str", String.class); // <1>
+		final SetPathProperty<Integer> ITG = SetPathProperty.create("str", Integer.class); // <2>
+
+		Class<?> elementType = STR.getElementType(); // <3>
+
+		PropertyBox box = PropertyBox.create(STR, ITG);
+
+		box.setValue(STR, Collections.singletonList("a")); // <4>
+		List<String> listValue = box.getValue(STR); // <5>
+
+		box.setValue(ITG, Collections.singleton(1)); // <6>
+		Set<Integer> setValue = box.getValue(ITG); // <7>
+		// end::collprops[]
+	}
+
+	public void collectionProperties2() {
+		// tag::collprops2[]
+		final ListPathProperty<String> STR = ListPathProperty.create("str", String.class) // <1>
+				.elementConverter(Integer.class, v -> String.valueOf(v), v -> Integer.valueOf(v)); // <2>
+		// end::collprops2[]
+	}
+
+	// tag::vcollprops[]
+	static final StringProperty STR = StringProperty.create("test");
+
+	static final ListVirtualProperty<String> VIRTUAL_LIST = ListVirtualProperty.create(String.class, // <1>
+			pb -> {
+				String value = pb.getValue(STR);
+				if (value != null) {
+					List<String> l = new ArrayList<>();
+					for (char c : value.toCharArray()) {
+						l.add(String.valueOf(c));
+					}
+					return l;
+				}
+				return Collections.emptyList();
+			});
+
+	static final SetVirtualProperty<String> VIRTUAL_SET = SetVirtualProperty.create(String.class, // <2>
+			pb -> {
+				String value = pb.getValue(STR);
+				if (value != null) {
+					Set<String> l = new HashSet<>();
+					for (char c : value.toCharArray()) {
+						l.add(String.valueOf(c));
+					}
+					return l;
+				}
+				return Collections.emptySet();
+			});
+	// end::vcollprops[]
 
 	private class MyPathConverter implements PathConverter {
 

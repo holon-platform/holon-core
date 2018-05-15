@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathProperty.PathPropertyBuilder;
 
@@ -55,6 +57,15 @@ public class DefaultPathProperty<T> extends AbstractPathProperty<T, PathProperty
 	@Override
 	protected PathPropertyBuilder<T> getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.CloneableProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public PathProperty<T> clone(Consumer<PathProperty.Builder<T, PathProperty<T>, ?>> builder) {
+		return clonePathProperty(new DefaultPathProperty<>(getName(), getType()), builder);
 	}
 
 }

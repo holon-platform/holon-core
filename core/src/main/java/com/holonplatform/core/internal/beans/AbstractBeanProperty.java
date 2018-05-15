@@ -28,8 +28,6 @@ import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.IgnoreMode;
 import com.holonplatform.core.internal.property.AbstractPathProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
  * Abstract {@link BeanProperty} class.
@@ -83,18 +81,8 @@ public abstract class AbstractBeanProperty<T> extends AbstractPathProperty<T, Be
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
 	 */
-	public AbstractBeanProperty(String name, Class<T> type) {
-		this(name, type, null);
-	}
-
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
-	 * @param configuration Optional property configuration instance
-	 */
-	public AbstractBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	public AbstractBeanProperty(String name, Class<? extends T> type) {
+		super(name, type);
 	}
 
 	@Override

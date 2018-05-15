@@ -513,6 +513,9 @@ public class TestUtilities {
 
 		assertTrue(TypeUtils.isByte(new Byte("127").getClass()));
 
+		assertTrue(TypeUtils.isAssignable(String.class, String.class));
+		assertTrue(TypeUtils.isAssignable(Integer.class, Number.class));
+		assertFalse(TypeUtils.isAssignable(Number.class, Integer.class));
 	}
 
 	@Test

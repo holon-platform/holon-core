@@ -15,8 +15,11 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.NumericProperty.NumericPropertyBuilder;
+import com.holonplatform.core.property.PathProperty;
 
 /**
  * Default {@link NumericProperty} implementation.
@@ -55,6 +58,15 @@ public class DefaultNumericProperty<N extends Number> extends
 	@Override
 	protected NumericPropertyBuilder<N> getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.NumericProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public NumericProperty<N> clone(Consumer<PathProperty.Builder<N, PathProperty<N>, ?>> builder) {
+		return clonePathProperty(new DefaultNumericProperty<>(getName(), getType()), builder);
 	}
 
 }
