@@ -133,35 +133,35 @@ public class TestProperty {
 		VirtualProperty vp3 = VirtualProperty.create(String.class).valueProvider(pb -> "TEST").name("virtualName");
 		assertEquals("virtualName", vp3.getName());
 	}
-	
+
 	@Test
 	public void testPropertyEqualsHashCode() {
-		
+
 		PathProperty<String> p1 = PathProperty.create("p1", String.class);
 		PathProperty<String> p2 = PathProperty.create("p1", String.class);
-		
+
 		assertFalse(p1.equals(p2));
 		assertNotEquals(p1.hashCode(), p2.hashCode());
-		
-		EqualsHandler<PathProperty<?>> eh = (p,o) -> {
+
+		EqualsHandler<PathProperty<?>> eh = (p, o) -> {
 			if (p != null && o != null) {
 				if (o instanceof PathProperty) {
-					return p.getName().equals(((PathProperty<?>)o).getName());
+					return p.getName().equals(((PathProperty<?>) o).getName());
 				}
 			}
 			return false;
 		};
-		
+
 		HashCodeProvider<PathProperty<?>> hcp = p -> {
 			return Optional.of(p.getName().hashCode());
 		};
-		
+
 		p1 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
 		p2 = PathProperty.create("p1", String.class).equalsHandler(eh).hashCodeProvider(hcp);
-		
+
 		assertTrue(p1.equals(p2));
 		assertEquals(p1.hashCode(), p2.hashCode());
-		
+
 	}
 
 	@Test
@@ -343,7 +343,15 @@ public class TestProperty {
 
 		assertEquals("1300", P15.present(1300));
 
-		assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.US).build(), () -> {
+					assertEquals("35;57.8", P12.present(new Double[] { 35d, 57.8d }));
+				});
+
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.ITALY).build(), () -> {
+					assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
+				});
 
 		assertEquals("p1", box.present(P1));
 	}
@@ -753,7 +761,7 @@ public class TestProperty {
 		Object value = testBean2Context.read("someDecimal", testMock);
 		assertEquals(BigDecimal.valueOf(2.7), value);
 	}
-	
+
 	@Test
 	public void testIgnorePropertyNotNested() {
 
@@ -961,20 +969,20 @@ public class TestProperty {
 		assertTrue(box5.equals(box1));
 		assertTrue(box5.equals(null));
 		assertEquals(1, box5.hashCode());
-		
+
 		Map<Object, Object> map = new HashMap<>();
-		
+
 		PropertyBox m1 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
 				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
-		
+
 		map.put(m1, m1);
-		
+
 		Object value = map.get(m1);
 		assertNotNull(value);
-		
+
 		PropertyBox m2 = PropertyBox.builder(TestIdentifiablePropertySet.PROPERTIES)
 				.set(TestIdentifiablePropertySet.ID, 1L).set(TestIdentifiablePropertySet.TEXT, "m1").build();
-		
+
 		value = map.get(m2);
 		assertNotNull(value);
 	}
