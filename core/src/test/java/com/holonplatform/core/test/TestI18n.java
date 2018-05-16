@@ -18,6 +18,7 @@ package com.holonplatform.core.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -36,12 +37,12 @@ import org.junit.Test;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.i18n.Localizable;
+import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.i18n.Localization;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.i18n.MessageProvider;
 import com.holonplatform.core.i18n.NumberFormatFeature;
 import com.holonplatform.core.i18n.TemporalFormat;
-import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.internal.i18n.DefaultLocalization;
 import com.holonplatform.core.internal.i18n.DefaultLocalizationContext;
 import com.holonplatform.core.internal.utils.TestUtils;
@@ -210,31 +211,71 @@ public class TestI18n {
 		LocalizationContext ctx = LocalizationContext.builder().build();
 		ctx.localize(Locale.ITALIAN);
 
-		assertEquals("09/03/79", ctx.format(date, TemporalType.DATE));
-		assertEquals("09/03/79", ctx.format(date, TemporalType.DATE, TemporalFormat.SHORT, null));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalType.DATE, TemporalFormat.MEDIUM, null));
-		assertEquals("9 marzo 1979", ctx.format(date, TemporalType.DATE, TemporalFormat.LONG, null));
-		assertEquals("venerdì 9 marzo 1979", ctx.format(date, TemporalType.DATE, TemporalFormat.FULL, null));
+		String fdate = ctx.format(date, TemporalType.DATE);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("09"));
+		assertTrue(fdate.contains("03"));
+		assertTrue(fdate.contains("79"));
+
+		fdate = ctx.format(date, TemporalType.DATE, TemporalFormat.SHORT, null);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("09"));
+		assertTrue(fdate.contains("03"));
+		assertTrue(fdate.contains("79"));
+
+		fdate = ctx.format(date, TemporalType.DATE, TemporalFormat.MEDIUM, null);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("mar"));
+		assertTrue(fdate.contains("1979"));
+
+		fdate = ctx.format(date, TemporalType.DATE, TemporalFormat.LONG, null);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("marzo"));
+		assertTrue(fdate.contains("1979"));
+
+		fdate = ctx.format(date, TemporalType.DATE, TemporalFormat.FULL, null);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("venerd"));
 
 		ctx.localize(Localization.builder(Locale.ITALY).defaultDateTemporalFormat(TemporalFormat.MEDIUM).build());
 
-		assertEquals("9-mar-1979", ctx.format(date, TemporalType.DATE));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalType.DATE, TemporalFormat.DEFAULT, null));
+		fdate = ctx.format(date, TemporalType.DATE);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("mar"));
+		assertTrue(fdate.contains("1979"));
 
-		assertEquals("18.30", ctx.format(date, TemporalType.TIME));
-		assertEquals("18.30.15", ctx.format(date, TemporalType.TIME, null, TemporalFormat.MEDIUM));
-		assertEquals("18.30.15 CET", ctx.format(date, TemporalType.TIME, null, TemporalFormat.LONG));
-		assertEquals("18.30.15 CET", ctx.format(date, TemporalType.TIME, null, TemporalFormat.FULL));
+		fdate = ctx.format(date, TemporalType.DATE, TemporalFormat.DEFAULT, null);
+		assertNotNull(fdate);
+		assertTrue(fdate.contains("mar"));
+		assertTrue(fdate.contains("1979"));
 
-		assertEquals("09/03/79 18.30", ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.SHORT, null));
-		assertEquals("9-mar-1979 18.30.15",
-				ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.MEDIUM, TemporalFormat.MEDIUM));
-		assertEquals("9 marzo 1979 18.30.15",
-				ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.LONG, TemporalFormat.MEDIUM));
-		assertEquals("9 marzo 1979 18.30.15 CET",
-				ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.LONG, TemporalFormat.LONG));
-		assertEquals("venerdì 9 marzo 1979 18.30.15",
-				ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.FULL, TemporalFormat.MEDIUM));
+		String ftime = ctx.format(date, TemporalType.TIME);
+		assertNotNull(ftime);
+		assertFalse(ftime.contains("15"));
+
+		ftime = ctx.format(date, TemporalType.TIME, null, TemporalFormat.MEDIUM);
+		assertNotNull(ftime);
+		assertTrue(ftime.contains("15"));
+
+		ftime = ctx.format(date, TemporalType.TIME, null, TemporalFormat.LONG);
+		assertNotNull(ftime);
+		assertTrue(ftime.contains("15"));
+
+		String fdt = ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.SHORT, null);
+		assertNotNull(fdt);
+		assertTrue(fdt.contains("03"));
+		assertTrue(fdt.contains("18"));
+		assertTrue(fdt.contains("30"));
+
+		fdt = ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.MEDIUM, TemporalFormat.MEDIUM);
+		assertNotNull(fdt);
+		assertTrue(fdt.contains("mar"));
+		assertTrue(fdt.contains("15"));
+
+		fdt = ctx.format(date, TemporalType.DATE_TIME, TemporalFormat.LONG, TemporalFormat.MEDIUM);
+		assertNotNull(fdt);
+		assertTrue(fdt.contains("marzo"));
+		assertTrue(fdt.contains("15"));
 	}
 
 	@Test

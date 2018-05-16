@@ -149,14 +149,6 @@ public class TestExpression {
 
 	}
 
-	/*
-	 * @Priority(100) private class Resolver3 implements ExpressionResolver<ExpressionB, ExpressionC> {
-	 * @Override public Class<? extends ExpressionB> getExpressionType() { return ExpressionB.class; }
-	 * @Override public Class<? extends ExpressionC> getResolvedType() { return ExpressionC.class; }
-	 * @Override public Optional<ExpressionC> resolve(ExpressionB expression, ResolutionContext context) throws
-	 * InvalidExpressionException { return Optional.of(new ExpressionCImpl("x" + expression.getId())); } }
-	 */
-
 	@Test
 	public void testResolvers() {
 

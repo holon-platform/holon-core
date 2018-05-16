@@ -348,7 +348,19 @@ public class TestProperty {
 
 		assertEquals("1300", P15.present(1300));
 
-		assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.US)
+						.build(),
+				() -> {
+					assertEquals("35;57.8", P12.present(new Double[] { 35d, 57.8d }));
+				});
+		
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.ITALY)
+						.build(),
+				() -> {
+					assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
+				});
 
 		assertEquals("p1", box.present(P1));
 	}

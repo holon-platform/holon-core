@@ -15,7 +15,9 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
 
@@ -67,6 +69,29 @@ public class TestTenantResolver {
 		Context.get().threadScope().ifPresent(s -> s.remove(TenantResolver.CONTEXT_KEY));
 		resolver = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
 		assertFalse(resolver.isPresent());
+
+	}
+
+	@SuppressWarnings("unused")
+	@Test(expected = RuntimeException.class)
+	public void testTenantResolverCallable() {
+
+		String value = TenantResolver.execute("x", () -> {
+			throw new NullPointerException("test");
+		});
+
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void testTenantResolverRunnable() {
+
+		TenantResolver.execute("x", new Runnable() {
+
+			@Override
+			public void run() {
+				throw new NullPointerException("test");
+			}
+		});
 
 	}
 
