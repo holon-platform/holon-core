@@ -30,15 +30,12 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,9 +46,7 @@ import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.i18n.Localizable;
-import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
-import com.holonplatform.core.internal.property.NumericBooleanConverter;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
 import com.holonplatform.core.internal.utils.TestUtils;
@@ -67,8 +62,6 @@ import com.holonplatform.core.property.Property.PropertyReadOnlyException;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertyValueConverter;
-import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
-import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.VirtualProperty;
@@ -90,6 +83,25 @@ import com.holonplatform.core.test.data.TestPropertySet;
  */
 @SuppressWarnings("rawtypes")
 public class TestProperty {
+
+	final static Property<String> P1 = PathProperty.create("test1", String.class);
+	final static Property<Integer> P2 = PathProperty.create("test2", Integer.class);
+	final static Property<Boolean> P3 = PathProperty.create("test3", boolean.class)
+			.converter(PropertyValueConverter.numericBoolean(Long.class));
+	final static Property<Double> P4 = PathProperty.create("test4", Double.class)
+			.configuration(StringValuePresenter.DECIMAL_POSITIONS, 2);
+	final static Property<TestEnum> P5 = PathProperty.create("test5", TestEnum.class);
+	final static Property<TestEnum2> P6 = PathProperty.create("test6", TestEnum2.class);
+	final static PathProperty<Date> P7 = PathProperty.create("test7", Date.class).temporalType(TemporalType.DATE_TIME);
+	final static Property<LocalDate> P8 = PathProperty.create("test8", LocalDate.class);
+	final static Property<LocalTime> P9 = PathProperty.create("test9", LocalTime.class);
+	final static Property<LocalDateTime> P10 = PathProperty.create("test10", LocalDateTime.class);
+	final static Property<String[]> P11 = PathProperty.create("test11", String[].class);
+	final static Property<Double[]> P12 = PathProperty.create("test12", Double[].class);
+	final static Property<String> P13 = VirtualProperty.create(String.class, p -> "VRT:" + p.getValue(P1));
+	final static Property<TestCaptionable> P14 = PathProperty.create("test14", TestCaptionable.class);
+	final static Property<Integer> P15 = PathProperty.create("test2", Integer.class)
+			.configuration(StringValuePresenter.DISABLE_GROUPING, true);
 
 	@Test
 	public void testPaths() {
@@ -164,221 +176,10 @@ public class TestProperty {
 
 	}
 
-	@Test
-	public void testPropertyConverters() {
-
-		NumericBooleanConverter<Integer> pc = new NumericBooleanConverter<>(int.class);
-
-		PathProperty<Boolean> p = PathProperty.create("test", boolean.class).converter(pc);
-
-		assertNotNull(p.getConverter());
-
-		Boolean cnv = pc.fromModel(null, p);
-		assertNotNull(cnv);
-		assertEquals(Boolean.FALSE, cnv);
-
-		cnv = pc.fromModel(Integer.valueOf(0), p);
-		assertNotNull(cnv);
-		assertEquals(Boolean.FALSE, cnv);
-
-		cnv = pc.fromModel(Integer.valueOf(1), p);
-		assertNotNull(cnv);
-		assertEquals(Boolean.TRUE, cnv);
-
-		Integer mod = pc.toModel(Boolean.FALSE, p);
-		assertNotNull(mod);
-		assertEquals(new Integer(0), mod);
-
-		mod = pc.toModel(Boolean.TRUE, p);
-		assertNotNull(mod);
-		assertEquals(new Integer(1), mod);
-
-		NumericBooleanConverter<Long> pc2 = new NumericBooleanConverter<>(Long.class);
-
-		PathProperty<Boolean> p2 = PathProperty.create("test", boolean.class).converter(pc2);
-
-		Long lm = pc2.toModel(Boolean.FALSE, p2);
-		assertNotNull(lm);
-		assertEquals(new Long(0), lm);
-
-		lm = pc2.toModel(Boolean.TRUE, p2);
-		assertNotNull(lm);
-		assertEquals(new Long(1), lm);
-
-		p2 = PathProperty.create("test", boolean.class).converter(PropertyValueConverter.numericBoolean(Long.class));
-
-		lm = pc2.toModel(Boolean.FALSE, p2);
-		assertNotNull(lm);
-		assertEquals(new Long(0), lm);
-
-		lm = pc2.toModel(Boolean.TRUE, p2);
-		assertNotNull(lm);
-		assertEquals(new Long(1), lm);
-
-		p = PathProperty.create("test", boolean.class).converter(Integer.class, v -> v != null && v > 0,
-				v -> v ? 1 : 0);
-
-		assertEquals(new Integer(0), p.getConvertedValue(false));
-		assertEquals(new Integer(1), p.getConvertedValue(true));
-
-		@SuppressWarnings("unchecked")
-		PropertyBox box = PropertyBox.builder(p).set((Property) p, new Integer(1)).build();
-		assertTrue(box.getValue(p));
-
-		// Enums
-
-		final PathProperty<TestEnum> ENMP = PathProperty.create("testenum", TestEnum.class)
-				.converter(PropertyValueConverter.enumByOrdinal());
-
-		@SuppressWarnings("unchecked")
-		PropertyBox eb = PropertyBox.builder(ENMP).set((Property) ENMP, new Integer(1)).build();
-		assertEquals(TestEnum.B, eb.getValue(ENMP));
-
-		assertEquals(new Integer(0), ENMP.getConvertedValue(TestEnum.A));
-
-		final PathProperty<TestEnum> ENMP2 = PathProperty.create("testenum", TestEnum.class)
-				.converter(PropertyValueConverter.enumByName());
-
-		@SuppressWarnings("unchecked")
-		PropertyBox eb2 = PropertyBox.builder(ENMP2).set((Property) ENMP2, "C").build();
-		assertEquals(TestEnum.C, eb2.getValue(ENMP2));
-
-		assertEquals("A", ENMP2.getConvertedValue(TestEnum.A));
-	}
-
-	@Test
-	public void testPropertyConverterErrors() {
-		TestUtils.expectedException(PropertyConversionException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				NumericBooleanConverter<InvalidNumberClass> pc = new NumericBooleanConverter<>(
-						InvalidNumberClass.class);
-				pc.toModel(Boolean.TRUE, null);
-			}
-		});
-	}
-
-	private final static Property<String> P1 = PathProperty.create("test1", String.class);
-	private final static Property<Integer> P2 = PathProperty.create("test2", Integer.class);
-	private final static Property<Boolean> P3 = PathProperty.create("test3", boolean.class)
-			.converter(PropertyValueConverter.numericBoolean(Long.class));
-	private final static Property<Double> P4 = PathProperty.create("test4", Double.class)
-			.configuration(StringValuePresenter.DECIMAL_POSITIONS, 2);
-	private final static Property<TestEnum> P5 = PathProperty.create("test5", TestEnum.class);
-	private final static Property<TestEnum2> P6 = PathProperty.create("test6", TestEnum2.class);
-	private final static PathProperty<Date> P7 = PathProperty.create("test7", Date.class)
-			.temporalType(TemporalType.DATE_TIME);
-	private final static Property<LocalDate> P8 = PathProperty.create("test8", LocalDate.class);
-	private final static Property<LocalTime> P9 = PathProperty.create("test9", LocalTime.class);
-	private final static Property<LocalDateTime> P10 = PathProperty.create("test10", LocalDateTime.class);
-	private final static Property<String[]> P11 = PathProperty.create("test11", String[].class);
-	private final static Property<Double[]> P12 = PathProperty.create("test12", Double[].class);
-	private final static Property<String> P13 = VirtualProperty.create(String.class, p -> "VRT:" + p.getValue(P1));
-	private final static Property<TestCaptionable> P14 = PathProperty.create("test14", TestCaptionable.class);
-	private final static Property<Integer> P15 = PathProperty.create("test2", Integer.class)
-			.configuration(StringValuePresenter.DISABLE_GROUPING, true);
 
 	@Test
 	public void testTemporalType() {
 		assertEquals(TemporalType.DATE_TIME, P7.getTemporalType().orElse(null));
-	}
-
-	@Test
-	public void testPropertyValuePresenter() {
-
-		assertEquals("str", P1.present("str"));
-
-		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
-				LocalizationContext.builder().withInitialLocale(Locale.ITALY)
-						.withDefaultBooleanLocalization(Boolean.TRUE, Localizable.builder().message("isTrue").build())
-						.withDefaultBooleanLocalization(Boolean.FALSE, Localizable.builder().message("isFalse").build())
-						.build(),
-				() -> {
-					assertEquals("7", P2.present(7));
-					assertEquals("1.300", P2.present(1300));
-
-					assertEquals("3.500,00", P4.present(3500d));
-					assertEquals("3.500,42", P4.present(3500.42d));
-					assertEquals("3.500,01", P4.present(3500.007d));
-
-					assertEquals("isTrue", P3.present(Boolean.TRUE));
-					assertEquals("isFalse", P3.present(Boolean.FALSE));
-					assertEquals("isFalse", P3.present(null));
-				});
-
-		assertEquals("B", P5.present(TestEnum.B));
-
-		assertEquals("valueA", P6.present(TestEnum2.A));
-
-		final Calendar c = Calendar.getInstance(Locale.ITALIAN);
-		c.set(Calendar.DAY_OF_MONTH, 9);
-		c.set(Calendar.MONTH, 2);
-		c.set(Calendar.YEAR, 1979);
-		c.set(Calendar.HOUR_OF_DAY, 18);
-		c.set(Calendar.MINUTE, 30);
-		c.set(Calendar.SECOND, 15);
-		c.set(Calendar.MILLISECOND, 0);
-
-		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
-				LocalizationContext.builder().withInitialLocale(Locale.ITALY).build(), () -> {
-
-					assertEquals("09/03/79 18.30", P7.present(c.getTime()));
-
-					final LocalDate date = LocalDate.of(1979, Month.MARCH, 9);
-					assertEquals("09/03/79", P8.present(date));
-
-					final LocalTime time = LocalTime.of(18, 30, 15);
-					assertEquals("18.30", P9.present(time));
-
-					final LocalDateTime dt = LocalDateTime.of(1979, Month.MARCH, 9, 18, 30, 15);
-					assertEquals("09/03/79 18.30", P10.present(dt));
-
-				});
-
-		String[] sa = new String[] { "a", "b", "c" };
-
-		assertEquals("a;b;c", P11.present(sa));
-
-		assertEquals("TestCaptionableCaption", P14.present(new TestCaptionable()));
-
-		PropertyBox box = PropertyBox.builder(P1, P2, P13).set(P1, "p1").set(P2, 2).build();
-
-		assertEquals("VRT:p1", P13.present(box.getValue(P13)));
-
-		assertEquals("1300", P15.present(1300));
-
-		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
-				LocalizationContext.builder().withInitialLocale(Locale.US)
-						.build(),
-				() -> {
-					assertEquals("35;57.8", P12.present(new Double[] { 35d, 57.8d }));
-				});
-		
-		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
-				LocalizationContext.builder().withInitialLocale(Locale.ITALY)
-						.build(),
-				() -> {
-					assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
-				});
-
-		assertEquals("p1", box.present(P1));
-	}
-
-	@Test
-	public void testPropertyValuePresenterRegistry() {
-
-		PropertyValuePresenterRegistry registry = PropertyValuePresenterRegistry.create(true);
-
-		registry.register(p -> p.getConfiguration().hasNotNullParameter("testpar"), (p, v) -> "TEST_PRS");
-
-		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).configuration("testpar", "x");
-
-		assertEquals("1", prp.present(1));
-
-		assertEquals("TEST_PRS", Context.get().executeThreadBound(PropertyValuePresenterRegistry.CONTEXT_KEY, registry,
-				() -> prp.present(1)));
-
 	}
 
 	@Test
@@ -463,10 +264,6 @@ public class TestProperty {
 						return null;
 					}
 
-					/*
-					 * (non-Javadoc)
-					 * @see com.holonplatform.core.property.PropertyValueConverter#getPropertyType()
-					 */
 					@Override
 					public Class<Integer> getPropertyType() {
 						return Integer.class;
@@ -570,6 +367,18 @@ public class TestProperty {
 
 		TestUtils.expectedException(PropertyReadOnlyException.class,
 				() -> pbro.setValue(TestPropertySet.VIRTUAL, "readonly"));
+
+		PropertyBox pb6 = PropertyBox.create(TestPropertySet.PROPERTIES);
+		pb6.setValue(TestPropertySet.NAME, "theName");
+
+		long cnt = pb6.propertyValues().filter(pv -> TestPropertySet.NAME.equals(pv.getProperty()))
+				.filter(pv -> "theName".equals(pv.getValue())).count();
+		assertEquals(1, cnt);
+
+		cnt = pb6.propertyValues().filter(pv -> TestPropertySet.SEQUENCE.equals(pv.getProperty())).filter(pv -> pv.hasValue())
+				.count();
+
+		assertEquals(0, cnt);
 
 	}
 
@@ -1183,36 +992,11 @@ public class TestProperty {
 
 	}
 
-	@SuppressWarnings("serial")
-	private class InvalidNumberClass extends Number {
-
-		@Override
-		public int intValue() {
-			return 0;
-		}
-
-		@Override
-		public long longValue() {
-			return 0;
-		}
-
-		@Override
-		public float floatValue() {
-			return 0;
-		}
-
-		@Override
-		public double doubleValue() {
-			return 0;
-		}
-
-	}
-
-	private static enum TestEnum {
+	static enum TestEnum {
 		A, B, C;
 	}
 
-	private static enum TestEnum2 implements Localizable {
+	static enum TestEnum2 implements Localizable {
 		A("valueA"), B("valueB"), C("valueC");
 
 		private final String caption;
@@ -1232,7 +1016,7 @@ public class TestProperty {
 		}
 	}
 
-	private static class TestCaptionable implements Localizable {
+	static class TestCaptionable implements Localizable {
 
 		@Override
 		public String getMessage() {

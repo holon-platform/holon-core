@@ -15,7 +15,10 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -23,23 +26,10 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertyRenderer;
 import com.holonplatform.core.property.PropertyRendererRegistry;
-import com.holonplatform.core.property.PropertyValuePresenter;
-import com.holonplatform.core.property.PropertyValuePresenterRegistry;
+import com.holonplatform.core.property.PropertyRendererRegistry.NoSuitableRendererAvailableException;
 import com.holonplatform.core.test.data.TestPropertySet;
 
 public class TestPropertyRenderers {
-
-	@Test
-	public void testPropertyPresenter() {
-
-		final PropertyValuePresenter<String> np = (p, v) -> p.getMessage() + ":" + v;
-
-		PropertyValuePresenterRegistry.get().register(p -> TestPropertySet.NAME.equals(p), np);
-
-		String pv = np.present(TestPropertySet.NAME, "v");
-
-		assertEquals("Name:v", pv);
-	}
 
 	@Test
 	public void testPropertyRenderer() {
@@ -70,6 +60,28 @@ public class TestPropertyRenderers {
 
 		assertFalse(TestPropertySet.NAME.renderIfAvailable(Number.class).isPresent());
 
+		PropertyRenderer<RenderTest, String> rnd2 = PropertyRenderer.create(RenderTest.class,
+				p -> new RenderTest(p.getName()));
+
+		assertNotNull(rnd2);
+
+		rt = rnd2.render(TestPropertySet.NAME);
+		assertNotNull(rt);
+		assertEquals("name", rt.getValue());
+
+		PropertyRendererRegistry.get().register(p -> String.class.isAssignableFrom(p.getType()), rnd2);
+
+		rt = TestPropertySet.NAME.render(RenderTest.class);
+		assertNotNull(rt);
+		assertEquals("name", rt.getValue());
+
+	}
+
+	@Test(expected = NoSuitableRendererAvailableException.class)
+	public void testPropertyRendererNotAvailable() {
+
+		TestPropertySet.NAME.render(NotAvailableRenderTest.class);
+
 	}
 
 	private static class RenderTest {
@@ -84,6 +96,10 @@ public class TestPropertyRenderers {
 		public String getValue() {
 			return value;
 		}
+
+	}
+
+	private static class NotAvailableRenderTest {
 
 	}
 

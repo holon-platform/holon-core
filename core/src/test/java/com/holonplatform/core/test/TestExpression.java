@@ -16,6 +16,7 @@
 package com.holonplatform.core.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
@@ -27,7 +28,9 @@ import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 import com.holonplatform.core.ExpressionResolverRegistry;
+import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.internal.DefaultExpressionResolverRegistry;
+import com.holonplatform.core.query.ConstantExpression;
 
 public class TestExpression {
 
@@ -184,6 +187,31 @@ public class TestExpression {
 		Optional<ExpressionA> resolved2 = registry.resolve(expb, ExpressionA.class, ctx);
 		assertTrue(resolved2.isPresent());
 		assertEquals(1, resolved2.get().getId());
+
+		ExpressionResolverRegistry registry2 = new DefaultExpressionResolverRegistry();
+
+		registry2.addExpressionResolver(ExpressionResolver.create(ExpressionB.class, ExpressionA.class,
+				(e, c) -> Optional.of(new ExpressionAImpl(e.getId() + 1))));
+
+		expb = new ExpressionBImpl(0);
+		resolved2 = registry2.resolve(expb, ExpressionA.class, ctx);
+		assertTrue(resolved2.isPresent());
+		assertEquals(1, resolved2.get().getId());
+
+	}
+
+	@Test
+	public void testNullExpression() {
+
+		NullExpression<String> ne = NullExpression.create(String.class);
+
+		assertNotNull(ne);
+		assertEquals(String.class, ne.getType());
+
+		ne = NullExpression.create(ConstantExpression.create("A"));
+
+		assertNotNull(ne);
+		assertEquals(String.class, ne.getType());
 
 	}
 
