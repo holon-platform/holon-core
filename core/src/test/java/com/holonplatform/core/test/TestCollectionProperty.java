@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 
 import org.junit.Test;
 
+import com.holonplatform.core.i18n.Caption;
 import com.holonplatform.core.property.ListPathProperty;
 import com.holonplatform.core.property.ListVirtualProperty;
 import com.holonplatform.core.property.Property;
@@ -194,6 +195,44 @@ public class TestCollectionProperty {
 		assertTrue(set.contains("a"));
 		assertTrue(set.contains("b"));
 		assertTrue(set.contains("c"));
+	}
+
+	@Test
+	public void testPresentation() {
+
+		ListPathProperty<String> LP = ListPathProperty.create("test", String.class);
+		SetPathProperty<String> SP = SetPathProperty.create("test", String.class);
+
+		List<String> list = Arrays.asList("a", "b", "c");
+		String value = LP.present(list);
+
+		assertNotNull(value);
+		assertEquals("a,b,c", value);
+
+		Set<String> set = new HashSet<>(Arrays.asList("a", "b", "c"));
+		value = SP.present(set);
+
+		assertNotNull(value);
+		assertEquals("a,b,c", value);
+
+		ListPathProperty<CEnum> LEP = ListPathProperty.create("test", CEnum.class);
+
+		List<CEnum> elist = Arrays.asList(CEnum.B, CEnum.A);
+		value = LEP.present(elist);
+
+		assertNotNull(value);
+		assertEquals("valueB,valueA", value);
+
+	}
+
+	static enum CEnum {
+
+		@Caption("valueA")
+		A,
+
+		@Caption("valueB")
+		B;
+
 	}
 
 }
