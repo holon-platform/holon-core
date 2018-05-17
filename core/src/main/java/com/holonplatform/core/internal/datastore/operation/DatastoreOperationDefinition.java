@@ -35,6 +35,13 @@ public interface DatastoreOperationDefinition extends DatastoreOperationConfigur
 	<T> void setTarget(DataTarget<T> target);
 
 	/**
+	 * Add an operation parameter.
+	 * @param name Parameter name (not null)
+	 * @param value Parameter value
+	 */
+	void addParameter(String name, Object value);
+
+	/**
 	 * Add a {@link WriteOption} to this operation.
 	 * @param writeOption The write option to add (not null)
 	 */

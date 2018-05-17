@@ -24,11 +24,15 @@ import java.util.Set;
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.NullExpression;
+import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
+import com.holonplatform.core.internal.DefaultParameterSet;
+import com.holonplatform.core.internal.MutableParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathPropertyBoxAdapter;
 import com.holonplatform.core.property.PropertyBox;
@@ -45,6 +49,11 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	 * Data target
 	 */
 	private DataTarget<?> target;
+
+	/*
+	 * Parameters
+	 */
+	private final MutableParameterSet parameters = new DefaultParameterSet();
 
 	/*
 	 * Write options
@@ -75,6 +84,15 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration#getParameters()
+	 */
+	@Override
+	public ParameterSet getParameters() {
+		return parameters;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration#getWriteOptions()
 	 */
 	@Override
@@ -91,6 +109,18 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 	@Override
 	public <T> void setTarget(DataTarget<T> target) {
 		this.target = target;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.operation.DatastoreOperationDefinition#addParameter(java.lang.String,
+	 * java.lang.Object)
+	 */
+	@Override
+	public void addParameter(String name, Object value) {
+		ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
+		this.parameters.addParameter(name, value);
 	}
 
 	/*
@@ -240,6 +270,30 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 		@Override
 		public B target(DataTarget<?> target) {
 			getInstance().setTarget(target);
+			return getActualBuilder();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration.Builder#parameter(java.lang.
+		 * String, java.lang.Object)
+		 */
+		@Override
+		public B parameter(String name, Object value) {
+			ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
+			getInstance().addParameter(name, value);
+			return getActualBuilder();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration.Builder#parameter(com.
+		 * holonplatform.core.config.ConfigProperty, java.lang.Object)
+		 */
+		@Override
+		public <T> B parameter(ConfigProperty<T> property, T value) {
+			ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+			getInstance().addParameter(property.getKey(), value);
 			return getActualBuilder();
 		}
 

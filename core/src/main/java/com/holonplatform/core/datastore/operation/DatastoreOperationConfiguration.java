@@ -24,6 +24,8 @@ import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverProvider;
+import com.holonplatform.core.ParameterSet;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -43,6 +45,12 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	 * @return The operation {@link DataTarget}
 	 */
 	DataTarget<?> getTarget();
+
+	/**
+	 * Get the operation parameters.
+	 * @return the operation parameters set (not null)
+	 */
+	ParameterSet getParameters();
 
 	/**
 	 * Get the {@link WriteOption}s associated to this operation.
@@ -100,6 +108,24 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 		 * @return this
 		 */
 		B target(DataTarget<?> target);
+
+		/**
+		 * Add an operation parameter.
+		 * @param name Parameter name (not null)
+		 * @param value Parameter value
+		 * @return this
+		 */
+		B parameter(String name, Object value);
+
+		/**
+		 * Add an operation parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter
+		 * name.
+		 * @param <T> Property type
+		 * @param property ConfigProperty (not null)
+		 * @param value Property value
+		 * @return this
+		 */
+		<T> B parameter(ConfigProperty<T> property, T value);
 
 		/**
 		 * Add a {@link WriteOption} to this operation.
