@@ -19,6 +19,7 @@ import java.util.Set;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.operation.DatastoreOperation;
@@ -99,6 +100,31 @@ public abstract class AbstractDatastoreOperation<O extends DatastoreOperation<O,
 	@Override
 	public O target(DataTarget<?> target) {
 		getDefinition().setTarget(target);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration.Builder#parameter(java.lang.String,
+	 * java.lang.Object)
+	 */
+	@Override
+	public O parameter(String name, Object value) {
+		getDefinition().addParameter(name, value);
+		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see
+	 * com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration.Builder#parameter(com.holonplatform.
+	 * core.config.ConfigProperty, java.lang.Object)
+	 */
+	@Override
+	public <T> O parameter(ConfigProperty<T> property, T value) {
+		ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+		getDefinition().addParameter(property.getKey(), value);
 		return getActualOperation();
 	}
 
