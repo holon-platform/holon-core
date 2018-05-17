@@ -65,9 +65,10 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	 * @param type WriteOption type to look for (not null)
 	 * @return A set of write options of given type, empty if none
 	 */
-	default Set<WriteOption> getWriteOptions(Class<? extends WriteOption> type) {
+	@SuppressWarnings("unchecked")
+	default <WO extends WriteOption> Set<WO> getWriteOptions(Class<WO> type) {
 		ObjectUtils.argumentNotNull(type, "Write option type be not null");
-		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass()))
+		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass())).map(wo -> (WO) wo)
 				.collect(Collectors.toSet());
 	}
 
@@ -79,9 +80,11 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	 * @param type WriteOption type to look for (not null)
 	 * @return Optional write option of given type
 	 */
-	default Optional<WriteOption> getWriteOption(Class<? extends WriteOption> type) {
+	@SuppressWarnings("unchecked")
+	default <WO extends WriteOption> Optional<WO> getWriteOption(Class<WO> type) {
 		ObjectUtils.argumentNotNull(type, "Write option type be not null");
-		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass())).findFirst();
+		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass())).map(wo -> (WO) wo)
+				.findFirst();
 	}
 
 	/**
