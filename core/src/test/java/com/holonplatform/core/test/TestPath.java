@@ -72,6 +72,14 @@ public class TestPath {
 		assertEquals("test", fp.getName());
 
 		assertFalse(fp.getParent().isPresent());
+		
+		Path<String> path = Path.of("test", String.class).parent(fp);
+
+		assertTrue(path.getParent().isPresent());
+
+		assertEquals("test", path.getName());
+		assertEquals("test", path.relativeName());
+		assertEquals("test.test", path.fullName());
 
 	}
 

@@ -95,6 +95,8 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<configuration>
 					<excludes>
+						<exclude>**/**Exception.java</exclude>
+						<exclude>**/holonplatform/core/Validator$**Exception**</exclude>
 						<exclude>**/TestUtils.*</exclude>
 						<exclude>**/ClassUtils.*</exclude>
 						<exclude>**/holonplatform/core/exceptions/**</exclude>
