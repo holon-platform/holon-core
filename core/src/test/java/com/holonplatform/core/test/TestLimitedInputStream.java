@@ -28,7 +28,7 @@ public class TestLimitedInputStream {
 
 	@SuppressWarnings("resource")
 	@Test
-	public void testLimitedInputStream() {
+	public void testLimitedInputStream() throws IOException {
 		
 		final InputStream stream = new InputStream() {
 			
@@ -43,6 +43,7 @@ public class TestLimitedInputStream {
 		assertNotNull(lis);
 		assertEquals(stream, lis.getActualStream());
 		assertEquals(1, lis.getLength());
+		assertEquals(1, lis.read());
 		
 	}
 	

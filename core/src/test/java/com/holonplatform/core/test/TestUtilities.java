@@ -29,15 +29,21 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.Test;
 
+import com.holonplatform.core.Initializer;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
+import com.holonplatform.core.internal.utils.CalendarUtils;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.FormatUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.test.data.TestClass;
@@ -60,16 +66,86 @@ public class TestUtilities {
 		TestUtils.checkUtilityClass(ConversionUtils.class);
 		TestUtils.checkUtilityClass(FormatUtils.class);
 		TestUtils.checkUtilityClass(TypeUtils.class);
+		TestUtils.checkUtilityClass(CalendarUtils.class);
 	}
 
 	@Test
 	public void testFormatUtils() {
+
+		String tos = FormatUtils.toString("a");
+		assertEquals("a", tos);
+		tos = FormatUtils.toString(null);
+		assertNull(tos);
+
 		String str = FormatUtils.trimAll(null);
 		assertNull(str);
 		str = FormatUtils.trimAll("");
 		assertEquals("", str);
 		str = FormatUtils.trimAll(" a b c  ");
 		assertEquals("abc", str);
+
+		assertTrue(FormatUtils.isHexNumber("0x2a"));
+		assertTrue(FormatUtils.isHexNumber("0X2a"));
+		assertTrue(FormatUtils.isHexNumber("#2a"));
+		assertTrue(FormatUtils.isHexNumber("-0x2a"));
+		assertTrue(FormatUtils.isHexNumber("-0X2a"));
+		assertTrue(FormatUtils.isHexNumber("-#2a"));
+		assertFalse(FormatUtils.isHexNumber("123"));
+
+		String limited = FormatUtils.limit("abc", 3, false);
+		assertEquals("abc", limited);
+		limited = FormatUtils.limit("abcd", 3, false);
+		assertEquals("abc", limited);
+		limited = FormatUtils.limit("abc", 3, true);
+		assertEquals("abc", limited);
+		limited = FormatUtils.limit("abcde", 4, true);
+		assertEquals("a...", limited);
+		limited = FormatUtils.limit(null, 4, true);
+		assertNull(limited);
+
+		assertTrue(FormatUtils.hasDecimals(2.3d));
+		assertTrue(FormatUtils.hasDecimals(12345.045d));
+		assertFalse(FormatUtils.hasDecimals(123d));
+		assertFalse(FormatUtils.hasDecimals(null));
+
+		String escaped = FormatUtils.escapeRegexCharacters("$abc");
+		assertEquals("\\$abc", escaped);
+		escaped = FormatUtils.escapeRegexCharacters(null);
+		assertNull(escaped);
+
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> FormatUtils.resolveMessageArguments(null, "msg", new Object[] { "a" }));
+
+		String resolved = FormatUtils.resolveMessageArguments("&", "msg&", new Object[] { "a" });
+		assertEquals("msga", resolved);
+		resolved = FormatUtils.resolveMessageArguments("&", "m&sg&", new Object[] { "a", "b" });
+		assertEquals("masgb", resolved);
+		resolved = FormatUtils.resolveMessageArguments("&", "m&sg", new Object[] { "a", "b" });
+		assertEquals("masg", resolved);
+		resolved = FormatUtils.resolveMessageArguments("&", "msg&", new Object[] {});
+		assertEquals("msg&", resolved);
+		resolved = FormatUtils.resolveMessageArguments("&", "msg&", null);
+		assertEquals("msg&", resolved);
+		resolved = FormatUtils.resolveMessageArguments("&", "msg&", new Object[] { null });
+		assertEquals("msg", resolved);
+
+		assertTrue(FormatUtils.isValidEmailAddress("test@test.com"));
+		assertFalse(FormatUtils.isValidEmailAddress("test@"));
+
+	}
+
+	@Test
+	public void testInitializer() {
+
+		Initializer<String> i = Initializer.using(() -> "test");
+		assertNotNull(i);
+		assertEquals("test", i.get());
+
+		String value = Initializer.init("x", () -> "test");
+		assertEquals("x", value);
+		value = Initializer.init(null, () -> "test");
+		assertEquals("test", value);
+
 	}
 
 	@Test
@@ -559,6 +635,72 @@ public class TestUtilities {
 
 		m = getMethodByName(ms, "nothing");
 		assertFalse(ClassUtils.isSetterMethod(m));
+
+	}
+
+	@Test
+	public void testObjectUtils() {
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> ObjectUtils.argumentNotNull(null, "null"));
+
+		assertTrue(ObjectUtils.isEmpty(""));
+		assertTrue(ObjectUtils.isEmpty(null));
+		assertFalse(ObjectUtils.isEmpty("a"));
+
+		assertFalse(ObjectUtils.contains(null, ""));
+		assertFalse(ObjectUtils.contains(new String[] { "a" }, null));
+		assertFalse(ObjectUtils.contains(null, null));
+		assertFalse(ObjectUtils.contains(new String[] { "a", "b" }, "x"));
+		assertTrue(ObjectUtils.contains(new String[] { "a", "b" }, "a"));
+		assertTrue(ObjectUtils.contains(new String[] { "a", "b" }, "b"));
+		assertFalse(ObjectUtils.contains(new String[] {}, "x"));
+
+	}
+
+	@Test
+	public void testCalendarUtils() {
+
+		assertNull(CalendarUtils.floorTime((Date) null));
+		assertNull(CalendarUtils.floorTime((Calendar) null));
+		assertNull(CalendarUtils.ceilTime((Date) null));
+		assertNull(CalendarUtils.ceilTime((Calendar) null));
+
+		Calendar c = Calendar.getInstance(Locale.ITALIAN);
+		c.set(Calendar.DAY_OF_MONTH, 9);
+		c.set(Calendar.MONTH, 2);
+		c.set(Calendar.YEAR, 1979);
+		c.set(Calendar.HOUR_OF_DAY, 18);
+		c.set(Calendar.MINUTE, 30);
+		c.set(Calendar.SECOND, 15);
+		c.set(Calendar.MILLISECOND, 500);
+
+		Calendar cal = CalendarUtils.floorTime(c);
+		assertEquals(0, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(0, cal.get(Calendar.MINUTE));
+		assertEquals(0, cal.get(Calendar.SECOND));
+		assertEquals(0, cal.get(Calendar.MILLISECOND));
+
+		Date dat = CalendarUtils.floorTime(c.getTime());
+		cal = Calendar.getInstance();
+		cal.setTime(dat);
+		assertEquals(0, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(0, cal.get(Calendar.MINUTE));
+		assertEquals(0, cal.get(Calendar.SECOND));
+		assertEquals(0, cal.get(Calendar.MILLISECOND));
+
+		cal = CalendarUtils.ceilTime(c);
+		assertEquals(23, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(59, cal.get(Calendar.MINUTE));
+		assertEquals(59, cal.get(Calendar.SECOND));
+		assertEquals(999, cal.get(Calendar.MILLISECOND));
+
+		dat = CalendarUtils.ceilTime(c.getTime());
+		cal = Calendar.getInstance();
+		cal.setTime(dat);
+		assertEquals(23, cal.get(Calendar.HOUR_OF_DAY));
+		assertEquals(59, cal.get(Calendar.MINUTE));
+		assertEquals(59, cal.get(Calendar.SECOND));
+		assertEquals(999, cal.get(Calendar.MILLISECOND));
 
 	}
 

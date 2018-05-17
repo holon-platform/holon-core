@@ -70,6 +70,8 @@ public class TestPath {
 		assertNotNull(fp);
 		assertEquals(String.class, fp.getType());
 		assertEquals("test", fp.getName());
+		assertEquals("", fp.relativeName());
+		assertEquals("test", fp.fullName());
 
 		assertFalse(fp.getParent().isPresent());
 		
