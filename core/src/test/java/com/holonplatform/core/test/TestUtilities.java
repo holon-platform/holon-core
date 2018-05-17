@@ -31,9 +31,13 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.Vector;
+import java.util.stream.Stream;
 
 import org.junit.Test;
 
@@ -249,6 +253,26 @@ public class TestUtilities {
 		assertEquals("a", cl.get(0));
 		assertEquals("b", cl.get(1));
 
+		Set<String> ss = new HashSet<>();
+		ss.add("a");
+
+		cl = ConversionUtils.iterableAsList(ss);
+		assertNotNull(cl);
+		assertEquals(1, cl.size());
+		assertEquals("a", cl.get(0));
+
+		Vector<String> vct = new Vector<>();
+		vct.add("a");
+
+		try (Stream<String> strm = ConversionUtils.enumerationAsStream(vct.elements())) {
+			assertNotNull(strm);
+			assertEquals(1, strm.count());
+		}
+
+		try (Stream<String> strm = ConversionUtils.enumerationAsStream(vct.elements())) {
+			strm.forEach(s -> s.toString());
+		}
+
 		// strings
 
 		String str = ConversionUtils.convertStringValue(null, String.class);
@@ -343,6 +367,9 @@ public class TestUtilities {
 		bigint = BigInteger.valueOf(-3);
 		ig = ConversionUtils.parseNumber("-0x3", BigInteger.class);
 		assertEquals(bigint, ig);
+		
+		BigDecimal bdn = ConversionUtils.parseNumber("12.35", BigDecimal.class);
+		assertEquals(BigDecimal.valueOf(12.35), bdn);
 
 		long lg = ConversionUtils.convertNumberToTargetClass(new Integer(3), long.class);
 		assertNotNull(lg);
