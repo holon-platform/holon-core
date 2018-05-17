@@ -15,7 +15,9 @@
  */
 package com.holonplatform.core.datastore.operation;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
@@ -56,6 +58,30 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	default boolean hasWriteOption(WriteOption writeOption) {
 		ObjectUtils.argumentNotNull(writeOption, "Write option must be not null");
 		return getWriteOptions().contains(writeOption);
+	}
+
+	/**
+	 * Get the {@link WriteOption} of given type available in this configuration.
+	 * @param type WriteOption type to look for (not null)
+	 * @return A set of write options of given type, empty if none
+	 */
+	default Set<WriteOption> getWriteOptions(Class<? extends WriteOption> type) {
+		ObjectUtils.argumentNotNull(type, "Write option type be not null");
+		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass()))
+				.collect(Collectors.toSet());
+	}
+
+	/**
+	 * Get the {@link WriteOption} of given type, if avaible.
+	 * <p>
+	 * When more than one {@link WriteOption} of given type is available, the first available one is returned.
+	 * </p>
+	 * @param type WriteOption type to look for (not null)
+	 * @return Optional write option of given type
+	 */
+	default Optional<WriteOption> getWriteOption(Class<? extends WriteOption> type) {
+		ObjectUtils.argumentNotNull(type, "Write option type be not null");
+		return getWriteOptions().stream().filter(wo -> type.isAssignableFrom(wo.getClass())).findFirst();
 	}
 
 	/**
