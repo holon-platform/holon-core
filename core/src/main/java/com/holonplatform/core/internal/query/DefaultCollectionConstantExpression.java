@@ -26,17 +26,17 @@ import java.util.Optional;
 import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.query.CollectionExpression;
+import com.holonplatform.core.query.CollectionConstantExpression;
 import com.holonplatform.core.temporal.TemporalType;
 
 /**
- * Default {@link CollectionExpression} implementation.
+ * Default {@link CollectionConstantExpression} implementation.
  * 
  * @param <E> List elements type
  * 
  * @since 5.0.0
  */
-public class DefaultCollectionExpression<E> extends ArrayList<E> implements CollectionExpression<E> {
+public class DefaultCollectionConstantExpression<E> extends ArrayList<E> implements CollectionConstantExpression<E> {
 
 	private static final long serialVersionUID = -3974289166776361490L;
 
@@ -59,7 +59,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * Constructor with a collection of values.
 	 * @param values Constant expression values
 	 */
-	public DefaultCollectionExpression(Collection<? extends E> values) {
+	public DefaultCollectionConstantExpression(Collection<? extends E> values) {
 		this(null, values);
 	}
 
@@ -68,7 +68,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param values Constant expression values
 	 */
 	@SafeVarargs
-	public DefaultCollectionExpression(E... values) {
+	public DefaultCollectionConstantExpression(E... values) {
 		this(null, values);
 	}
 
@@ -78,7 +78,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param values Constant expression values
 	 */
 	@SafeVarargs
-	public DefaultCollectionExpression(TypedExpression<E> expression, E... values) {
+	public DefaultCollectionConstantExpression(TypedExpression<E> expression, E... values) {
 		this(expression, Arrays.asList(values));
 	}
 
@@ -88,7 +88,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 	 * @param values Constant expression values
 	 */
 	@SuppressWarnings("unchecked")
-	public DefaultCollectionExpression(TypedExpression<E> expression, Collection<? extends E> values) {
+	public DefaultCollectionConstantExpression(TypedExpression<E> expression, Collection<? extends E> values) {
 		super((values != null) ? values : Collections.emptySet());
 		this.expressionValueConverter = (expression instanceof ConverterExpression)
 				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null) : null;
@@ -170,7 +170,7 @@ public class DefaultCollectionExpression<E> extends ArrayList<E> implements Coll
 		if (temporalType != null) {
 			return Optional.of(temporalType);
 		}
-		return CollectionExpression.super.getTemporalType();
+		return CollectionConstantExpression.super.getTemporalType();
 	}
 
 	/*

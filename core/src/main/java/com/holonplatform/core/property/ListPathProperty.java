@@ -55,7 +55,8 @@ public interface ListPathProperty<T> extends CollectionPathProperty<T, List<T>>,
 	 * @param <T> Collection elements type
 	 */
 	public interface ListPathPropertyBuilder<T>
-			extends CollectionPathProperty.Builder<T, List<T>, ListPathProperty<T>, ListPathPropertyBuilder<T>>, ListPathProperty<T> {
+			extends CollectionPathProperty.Builder<T, List<T>, ListPathProperty<T>, ListPathPropertyBuilder<T>>,
+			ListPathProperty<T> {
 
 	}
 

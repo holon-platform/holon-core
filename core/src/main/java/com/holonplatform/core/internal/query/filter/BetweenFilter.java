@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.query.filter;
 
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.query.CollectionExpression;
+import com.holonplatform.core.query.CollectionConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -40,7 +40,7 @@ public class BetweenFilter<T> extends AbstractOperationQueryFilter<T> {
 	 * @param to Maximum value
 	 */
 	public BetweenFilter(TypedExpression<T> expression, T from, T to) {
-		super(expression, FilterOperator.BETWEEN, CollectionExpression.create(expression, from, to));
+		super(expression, FilterOperator.BETWEEN, CollectionConstantExpression.create(expression, from, to));
 	}
 
 	/*

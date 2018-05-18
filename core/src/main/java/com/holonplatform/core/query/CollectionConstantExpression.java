@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.internal.query.DefaultCollectionExpression;
+import com.holonplatform.core.internal.query.DefaultCollectionConstantExpression;
 
 /**
  * A {@link ConstantExpression} with a {@link Collection} value type.
@@ -28,7 +28,7 @@ import com.holonplatform.core.internal.query.DefaultCollectionExpression;
  *
  * @since 5.1.0
  */
-public interface CollectionExpression<T> extends ConstantConverterExpression<Collection<T>, T> {
+public interface CollectionConstantExpression<T> extends ConstantConverterExpression<Collection<T>, T> {
 
 	/**
 	 * Get whether the {@link Collection} expression value is not <code>null</code> or empty.
@@ -37,8 +37,6 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 	default boolean hasValues() {
 		return getValue() != null && !getValue().isEmpty();
 	}
-
-	// builders
 
 	/*
 	 * (non-Javadoc)
@@ -53,8 +51,8 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
 	 */
-	static <T> CollectionExpression<T> create(Collection<? extends T> values) {
-		return new DefaultCollectionExpression<>(values);
+	static <T> CollectionConstantExpression<T> create(Collection<? extends T> values) {
+		return new DefaultCollectionConstantExpression<>(values);
 	}
 
 	/**
@@ -64,8 +62,8 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 	 * @return A new collection expression
 	 */
 	@SafeVarargs
-	static <T> CollectionExpression<T> create(T... values) {
-		return new DefaultCollectionExpression<>(values);
+	static <T> CollectionConstantExpression<T> create(T... values) {
+		return new DefaultCollectionConstantExpression<>(values);
 	}
 
 	/**
@@ -76,8 +74,8 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
 	 */
-	static <T> CollectionExpression<T> create(TypedExpression<T> expression, Collection<? extends T> values) {
-		return new DefaultCollectionExpression<>(expression, values);
+	static <T> CollectionConstantExpression<T> create(TypedExpression<T> expression, Collection<? extends T> values) {
+		return new DefaultCollectionConstantExpression<>(expression, values);
 	}
 
 	/**
@@ -89,8 +87,8 @@ public interface CollectionExpression<T> extends ConstantConverterExpression<Col
 	 * @return A new collection expression
 	 */
 	@SafeVarargs
-	static <T> CollectionExpression<T> create(TypedExpression<T> expression, T... values) {
-		return new DefaultCollectionExpression<>(expression, values);
+	static <T> CollectionConstantExpression<T> create(TypedExpression<T> expression, T... values) {
+		return new DefaultCollectionConstantExpression<>(expression, values);
 	}
 
 }

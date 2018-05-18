@@ -27,7 +27,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * 
  * @since 5.0.0
  * 
- * @see CollectionExpression
+ * @see CollectionConstantExpression
  */
 public interface ConstantExpression<T> extends ConstantConverterExpression<T, T> {
 

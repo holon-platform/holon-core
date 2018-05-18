@@ -203,6 +203,17 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.Expression#validate()
+	 */
+	@Override
+	public void validate() throws InvalidExpressionException {
+		if (getType() == null) {
+			throw new InvalidExpressionException("Null property type");
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.validator.Validatable#addValidator(com.holonplatform.core.validator.Validator)
 	 */
 	@Override

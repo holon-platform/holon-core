@@ -17,6 +17,8 @@ package com.holonplatform.core.property;
 
 import java.util.Collection;
 
+import com.holonplatform.core.CollectionExpression;
+
 /**
  * A {@link CollectionProperty} type {@link PathProperty}.
  * 
@@ -28,7 +30,8 @@ import java.util.Collection;
  * @see ListPathProperty
  * @see SetPathProperty
  */
-public interface CollectionPathProperty<E, C extends Collection<E>> extends CollectionProperty<E, C>, PathProperty<C> {
+public interface CollectionPathProperty<E, C extends Collection<E>>
+		extends CollectionProperty<E, C>, PathProperty<C>, CollectionExpression<E, C> {
 
 	/**
 	 * Base {@link CollectionPathProperty} builder.

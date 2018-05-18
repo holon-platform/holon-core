@@ -118,6 +118,7 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
+		super.validate();
 		if (getName() == null) {
 			throw new InvalidExpressionException("Null path name");
 		}

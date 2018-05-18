@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.internal.query.DefaultCollectionExpression;
+import com.holonplatform.core.internal.query.DefaultCollectionConstantExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
 import com.holonplatform.core.internal.query.DefaultQueryDefinition;
 import com.holonplatform.core.internal.query.QueryDefinition;
@@ -45,7 +45,7 @@ public class TestQuery {
 		assertEquals(String.class, ce.getType());
 		assertEquals("test", ce.getValue());
 
-		DefaultCollectionExpression<String> le = new DefaultCollectionExpression<>("test", "test2");
+		DefaultCollectionConstantExpression<String> le = new DefaultCollectionConstantExpression<>("test", "test2");
 
 		assertNotNull(le.getValue());
 		assertEquals(String.class, le.getType());
@@ -55,7 +55,7 @@ public class TestQuery {
 		ls.add("test");
 		ls.add("test2");
 
-		le = new DefaultCollectionExpression<>(ls);
+		le = new DefaultCollectionConstantExpression<>(ls);
 
 		assertEquals(String.class, le.getType());
 		assertEquals(2, le.size());
