@@ -26,6 +26,7 @@ import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
+import com.holonplatform.auth.jwt.JwtTokenParser;
 import com.holonplatform.http.HttpRequest;
 
 @SuppressWarnings("unused")
@@ -81,6 +82,21 @@ public class ExampleJwt {
 
 		String jwt = JwtTokenBuilder.get().buildJwt(configuration, authc); // <3>
 		// end::build3[]
+	}
+
+	public void parse() throws IOException {
+		// tag::parse[]
+		JwtConfiguration configuration = JwtConfiguration.builder().includeDetails(true).includePermissions(true)
+				.build(); // <1>
+
+		String jwt = getJwt();
+
+		Authentication authc = JwtTokenParser.get().parseJwt(configuration, jwt).build(); // <2>
+		// end::parse[]
+	}
+
+	private static String getJwt() {
+		return null;
 	}
 
 	public void authenticator() throws IOException {

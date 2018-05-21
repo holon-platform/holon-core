@@ -41,8 +41,8 @@ public interface JwtTokenParser {
 	 * @param configuration JWT configuration to use (not null)
 	 * @param jwt JWT value (not null)
 	 * @return The {@link Authentication} instance which represents the JWT value, if the token is valid.
-	 * @throws InvalidJwtConfigurationException
-	 * @throws AuthenticationException
+	 * @throws InvalidJwtConfigurationException If the JWT confguration is not valid
+	 * @throws AuthenticationException If the JWT token validation fails
 	 */
 	Authentication.Builder parseJwt(JwtConfiguration configuration, String jwt)
 			throws InvalidJwtConfigurationException, AuthenticationException;
