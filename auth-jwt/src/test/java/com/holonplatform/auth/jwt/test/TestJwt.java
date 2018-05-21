@@ -27,6 +27,8 @@ import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -51,10 +53,13 @@ import com.holonplatform.auth.jwt.JwtConfigProperties;
 import com.holonplatform.auth.jwt.JwtConfiguration;
 import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
+import com.holonplatform.auth.jwt.JwtTokenParser;
 import com.holonplatform.auth.jwt.internal.AuthenticationClaimsImpl;
 import com.holonplatform.core.internal.utils.TestUtils;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 
@@ -148,6 +153,59 @@ public class TestJwt {
 			}
 		});
 
+	}
+
+	@Test
+	public void testConfigNbf() {
+
+		Properties props = new Properties();
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.ISSUER.getKey(), "TestIssuer");
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.NOT_BEFORE_NOW.getKey(), "true");
+
+		JwtConfigProperties cfg = JwtConfigProperties.builder().withPropertySource(props).build();
+
+		assertEquals(JwtConfigProperties.NAME, cfg.getName());
+		assertEquals("TestIssuer", cfg.getConfigPropertyValue(JwtConfigProperties.ISSUER, null));
+		assertTrue(cfg.getConfigPropertyValue(JwtConfigProperties.NOT_BEFORE_NOW, Boolean.FALSE));
+
+		Authentication authc = Authentication.builder("testuser").build();
+
+		String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.build(cfg), authc);
+
+		JwtParser parser = Jwts.parser();
+		Claims claims = parser.parseClaimsJwt(jwt).getBody();
+		assertNotNull(claims.get("nbf", Date.class));
+
+		authc = JwtTokenParser.get()
+				.parseJwt(JwtConfiguration.builder().issuer("TestIssuer").includeDetails(true).build(), jwt).build();
+		assertNotNull(authc);
+		assertEquals("testuser", authc.getName());
+	}
+
+	@Test
+	public void testTokenParser() {
+
+		final JwtConfiguration cfg = JwtConfiguration.builder().includeDetails(true).includePermissions(true).build();
+
+		Authentication authc = Authentication.builder("testuser").parameter("test", "value").permission("rolex")
+				.build();
+
+		String jwt = JwtTokenBuilder.get().buildJwt(cfg, authc);
+		assertNotNull(jwt);
+
+		Authentication authc2 = JwtTokenParser.get().parseJwt(cfg, jwt).build();
+		assertNotNull(authc2);
+
+		assertEquals("testuser", authc.getName());
+		assertTrue(authc2.hasParameter("test"));
+		assertEquals("value", authc2.getParameter("test").orElse(null));
+
+		Collection<Permission> ps = authc2.getPermissions();
+		assertEquals(1, ps.size());
+
+		Permission p = ps.iterator().next();
+		assertNotNull(p);
+		assertEquals("rolex", p.getPermission().orElse(null));
 	}
 
 	@Test

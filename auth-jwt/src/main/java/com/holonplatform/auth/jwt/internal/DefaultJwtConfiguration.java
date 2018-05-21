@@ -63,6 +63,11 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	private long expireTime;
 
 	/*
+	 * Not before now
+	 */
+	private boolean notBeforeNow;
+
+	/*
 	 * Include authentication details
 	 */
 	private boolean includeDetails;
@@ -124,6 +129,15 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	@Override
 	public long getExpireTime() {
 		return expireTime;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#isNotBeforeNow()
+	 */
+	@Override
+	public boolean isNotBeforeNow() {
+		return notBeforeNow;
 	}
 
 	/*
@@ -190,6 +204,15 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	 */
 	public void setExpireTime(long expireTime) {
 		this.expireTime = expireTime;
+	}
+
+	/**
+	 * Set whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
+	 * @param notBeforeNow <code>true</code> to set the <code>nbf</code> (not before) JWT claim to the timestamp at
+	 *        which the token is created.
+	 */
+	public void setNotBeforeNow(boolean notBeforeNow) {
+		this.notBeforeNow = notBeforeNow;
 	}
 
 	/**
@@ -294,6 +317,16 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		@Override
 		public Builder expireTime(long expireTime) {
 			this.configuration.setExpireTime(expireTime);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.auth.jwt.JwtConfiguration.Builder#notBeforeNow(boolean)
+		 */
+		@Override
+		public Builder notBeforeNow(boolean notBeforeNow) {
+			this.configuration.setNotBeforeNow(notBeforeNow);
 			return this;
 		}
 
