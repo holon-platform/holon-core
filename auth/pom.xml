@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.holon-platform.core</groupId>
 		<artifactId>holon-root</artifactId>
-		<version>5.1.1-SNAPSHOT</version>
+		<version>5.1.1</version>
 	</parent>
 
 	<artifactId>holon-auth</artifactId>
