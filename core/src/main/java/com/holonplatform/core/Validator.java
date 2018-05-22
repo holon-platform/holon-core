@@ -886,6 +886,64 @@ public interface Validator<T> extends Serializable {
 		};
 	}
 
+	// NotZero
+
+	/**
+	 * Build a validator that checks that given {@link Number} value is not <code>0</code>, using default
+	 * {@link ValidationMessage#NOT_ZERO} message as validation error message.
+	 * <p>
+	 * Supported data types: {@link Number}
+	 * </p>
+	 * @param <T> Validator type
+	 * @return Validator
+	 */
+	static <T extends Number> Validator<T> notZero() {
+		return notZero(ValidationMessage.NOT_ZERO);
+	}
+
+	/**
+	 * Build a validator that checks that given {@link Number} value is not <code>0</code>, using given
+	 * {@link Localizable} message as validation error message.
+	 * <p>
+	 * Supported data types: {@link Number}
+	 * </p>
+	 * @param <T> Validator type
+	 * @param message Validation error message
+	 * @return Validator
+	 */
+	static <T extends Number> Validator<T> notZero(Localizable message) {
+		ObjectUtils.argumentNotNull(message, "Validation error message must be not null");
+		return notZero(message.getMessage(), message.getMessageCode());
+	}
+
+	/**
+	 * Build a validator that checks that given {@link Number} value is not <code>0</code>.
+	 * <p>
+	 * Supported data types: {@link Number}
+	 * </p>
+	 * @param <T> Validator type
+	 * @param message Validation error message
+	 * @param messageCode Optional validation error message localization code
+	 * @return Validator
+	 */
+	@SuppressWarnings("serial")
+	static <T extends Number> Validator<T> notZero(String message, String messageCode) {
+		return new BuiltinValidator<T>() {
+
+			@Override
+			public void validate(T v) throws ValidationException {
+				if (v != null && Math.signum(v.intValue()) == 0) {
+					throw new ValidationException(message, messageCode);
+				}
+			}
+
+			@Override
+			public Optional<ValidatorDescriptor> getDescriptor() {
+				return Optional.of(ValidatorDescriptor.builder().notIn(0).build());
+			}
+		};
+	}
+
 	// NotNegative
 
 	/**
@@ -1526,12 +1584,14 @@ public interface Validator<T> extends Serializable {
 		/**
 		 * Default <em>max</em> validation error message
 		 */
-		MAX("Value too large. Maximum is " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "max"),
+		MAX("Value too large. Maximum is " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "max"),
 
 		/**
 		 * Default <em>min</em> validation error message
 		 */
-		MIN("Value too small. Minimum is " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "min"),
+		MIN("Value too small. Minimum is " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "min"),
 
 		/**
 		 * Default <em>pattern</em> validation error message
@@ -1559,6 +1619,11 @@ public interface Validator<T> extends Serializable {
 		NOT_NEGATIVE("Negative values are not allowed", DEFAULT_MESSAGE_CODE_PREFIX + "notnegative"),
 
 		/**
+		 * Default <em>notZero</em> validation error message
+		 */
+		NOT_ZERO("0 is not allowed", DEFAULT_MESSAGE_CODE_PREFIX + "notzero"),
+
+		/**
 		 * Default <em>past</em> validation error message
 		 */
 		PAST("Date must be in the past", DEFAULT_MESSAGE_CODE_PREFIX + "past"),
@@ -1571,22 +1636,27 @@ public interface Validator<T> extends Serializable {
 		/**
 		 * Default <em>lessThan</em> validation error message
 		 */
-		LESS_THAN("Value must be less than " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "lt"),
+		LESS_THAN("Value must be less than " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "lt"),
 
 		/**
 		 * Default <em>lessOrEqual</em> validation error message
 		 */
-		LESS_OR_EQUAL("Value must be less than or equal to " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "loe"),
+		LESS_OR_EQUAL("Value must be less than or equal to " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "loe"),
 
 		/**
 		 * Default <em>greaterThan</em> validation error message
 		 */
-		GREATER_THAN("Value must be greater than " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "gt"),
+		GREATER_THAN("Value must be greater than " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "gt"),
 
 		/**
 		 * Default <em>greaterOrEqual</em> validation error message
 		 */
-		GREATER_OR_EQUAL("Value must be greater than or equal to " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER, DEFAULT_MESSAGE_CODE_PREFIX + "goe"),
+		GREATER_OR_EQUAL(
+				"Value must be greater than or equal to " + MessageProvider.DEFAULT_MESSAGE_ARGUMENT_PLACEHOLDER,
+				DEFAULT_MESSAGE_CODE_PREFIX + "goe"),
 
 		/**
 		 * Default <em>email</em> validation error message

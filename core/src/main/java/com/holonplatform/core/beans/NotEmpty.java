@@ -30,10 +30,13 @@ import java.util.Map;
  * </p>
  *
  * @since 5.0.0
+ * 
+ * @deprecated Use the {@link javax.validation.constraints.NotEmpty} constraint of the Bean Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
+@Deprecated
 public @interface NotEmpty {
 
 	/**

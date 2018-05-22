@@ -33,6 +33,8 @@ import javax.validation.constraints.Null;
 import javax.validation.constraints.Past;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Pattern.Flag;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 import com.holonplatform.core.Validator;
@@ -74,6 +76,7 @@ import com.holonplatform.core.internal.utils.ClassUtils;
  * 
  * @since 5.0.0
  */
+@SuppressWarnings("deprecation")
 @Priority(210)
 public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPostProcessor {
 
@@ -88,7 +91,12 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 	private static final Map<ClassLoader, Boolean> BEAN_VALIDATION_API_PRESENT = new WeakHashMap<>();
 
 	/**
-	 * Checks whether bean validation API is available from classpath
+	 * Bean validation API version for classloader
+	 */
+	private static final Map<ClassLoader, BeanValidationAPIVersion> BEAN_VALIDATION_API_VERSION = new WeakHashMap<>();
+
+	/**
+	 * Checks whether bean validation API is available from classpath.
 	 * @param classLoader ClassLoader to use
 	 * @return <code>true</code> if present
 	 */
@@ -99,7 +107,24 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 		}
 		boolean present = ClassUtils.isPresent("javax.validation.Validation", classLoader);
 		BEAN_VALIDATION_API_PRESENT.put(classLoader, present);
+		// check version
+		BEAN_VALIDATION_API_VERSION.put(classLoader, BeanValidationAPIVersion.getVersion(classLoader));
 		return present;
+	}
+
+	/**
+	 * Get the bean validation API version for given ClassLoader.
+	 * @param classLoader ClassLoader to use
+	 * @return The bean validation API version
+	 */
+	private static BeanValidationAPIVersion getBeanValidationApiVersion(ClassLoader classLoader) {
+		if (BEAN_VALIDATION_API_VERSION.containsKey(classLoader)) {
+			BeanValidationAPIVersion version = BEAN_VALIDATION_API_VERSION.get(classLoader);
+			return (version != null) ? version : BeanValidationAPIVersion.UNKNOWN;
+		}
+		BeanValidationAPIVersion version = BeanValidationAPIVersion.getVersion(classLoader);
+		BEAN_VALIDATION_API_VERSION.put(classLoader, version);
+		return version;
 	}
 
 	/*
@@ -112,7 +137,9 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 	public BeanProperty.Builder<?> processBeanProperty(final BeanProperty.Builder<?> property,
 			Class<?> beanOrNestedClass) {
 
-		if (isBeanValidationApiPresent(ClassUtils.getDefaultClassLoader())) {
+		final ClassLoader cl = ClassUtils.getDefaultClassLoader();
+
+		if (isBeanValidationApiPresent(cl)) {
 
 			LOGGER.debug(() -> "Bean validation API found, processing constraint annotations");
 
@@ -205,6 +232,8 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 
 				// ------- EXTENSIONS
 
+				final BeanValidationAPIVersion version = getBeanValidationApiVersion(cl);
+
 				// not empty
 				property.getAnnotation(NotEmpty.class).ifPresent(a -> {
 					((Builder) property).validator(Validator.notEmpty(
@@ -212,6 +241,17 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 					LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 							+ property + "] for constraint [" + NotEmpty.class.getName() + "]");
 				});
+				// check validation API 2.0.x
+				if (version.is20xOrHigher()) {
+					property.getAnnotation(javax.validation.constraints.NotEmpty.class).ifPresent(a -> {
+						((Builder) property).validator(Validator.notEmpty(
+								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_EMPTY)));
+						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
+								+ property + "] for constraint ["
+								+ javax.validation.constraints.NotEmpty.class.getName() + "]");
+					});
+				}
+
 				// not blank
 				property.getAnnotation(NotBlank.class).ifPresent(a -> {
 					((Builder) property).validator(Validator.notBlank(
@@ -219,6 +259,17 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 					LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 							+ property + "] for constraint [" + NotBlank.class.getName() + "]");
 				});
+				// check validation API 2.0.x
+				if (version.is20xOrHigher()) {
+					property.getAnnotation(javax.validation.constraints.NotBlank.class).ifPresent(a -> {
+						((Builder) property).validator(Validator.notBlank(
+								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_BLANK)));
+						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
+								+ property + "] for constraint ["
+								+ javax.validation.constraints.NotBlank.class.getName() + "]");
+					});
+				}
+
 				// not negative
 				property.getAnnotation(NotNegative.class).ifPresent(a -> {
 					((Builder) property).validator(Validator.notNegative(
@@ -226,6 +277,24 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 					LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 							+ property + "] for constraint [" + NotNegative.class.getName() + "]");
 				});
+				// check validation API 2.0.x
+				if (version.is20xOrHigher()) {
+					property.getAnnotation(Positive.class).ifPresent(a -> {
+						((Builder) property).validator(Validator.notZero(
+								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_ZERO)));
+						((Builder) property).validator(Validator.notNegative(
+								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_NEGATIVE)));
+						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
+								+ property + "] for constraint [" + Positive.class.getName() + "]");
+					});
+					property.getAnnotation(PositiveOrZero.class).ifPresent(a -> {
+						((Builder) property).validator(Validator.notNegative(
+								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_NEGATIVE)));
+						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
+								+ property + "] for constraint [" + PositiveOrZero.class.getName() + "]");
+					});
+				}
+
 				// email
 				property.getAnnotation(Email.class).ifPresent(a -> {
 					((Builder) property).validator(Validator
@@ -233,6 +302,16 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 					LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 							+ property + "] for constraint [" + Email.class.getName() + "]");
 				});
+				// check validation API 2.0.x
+				if (version.is20xOrHigher()) {
+					property.getAnnotation(javax.validation.constraints.Email.class).ifPresent(a -> {
+						((Builder) property).validator(Validator
+								.email(getValidationMessage(property, a.message(), Validator.ValidationMessage.EMAIL)));
+						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
+								+ property + "] for constraint [" + javax.validation.constraints.Email.class.getName()
+								+ "]");
+					});
+				}
 
 			} catch (Exception e) {
 				throw new BeanIntrospectionException(

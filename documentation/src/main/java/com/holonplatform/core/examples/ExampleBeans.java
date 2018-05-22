@@ -20,6 +20,7 @@ import java.util.Optional;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
@@ -28,7 +29,6 @@ import com.holonplatform.core.beans.Converter;
 import com.holonplatform.core.beans.Converter.BUILTIN;
 import com.holonplatform.core.beans.DataPath;
 import com.holonplatform.core.beans.Ignore;
-import com.holonplatform.core.beans.NotBlank;
 import com.holonplatform.core.beans.Sequence;
 import com.holonplatform.core.beans.ValidationMessage;
 import com.holonplatform.core.beans.Validator;

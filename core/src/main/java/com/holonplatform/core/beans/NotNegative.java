@@ -21,6 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import javax.validation.constraints.PositiveOrZero;
+
 /**
  * Additional validation constraint to check the annotated element is not a negative number.
  * <p>
@@ -28,10 +30,14 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @since 5.0.0
+ * 
+ * @deprecated Use the {@link javax.validation.constraints.Positive} or {@link PositiveOrZero} constraint of the Bean
+ *             Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
+@Deprecated
 public @interface NotNegative {
 
 	/**

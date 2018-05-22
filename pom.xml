@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -10,7 +12,6 @@
 	<groupId>com.holon-platform.core</groupId>
 	<artifactId>holon-root</artifactId>
 	<version>5.2.0-SNAPSHOT</version>
-
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -59,7 +60,7 @@
 		<bintray.package>holon-core</bintray.package>
 
 		<!-- Annotation api -->
-		<annotation-api.version>1.2</annotation-api.version>
+		<annotation-api.version>1.3.2</annotation-api.version>
 
 		<!-- slf4j -->
 		<slf4j.version>1.7.25</slf4j.version>
@@ -68,16 +69,20 @@
 		<commons.lang.version>3.7</commons.lang.version>
 
 		<!-- Bean validation -->
-		<bean.validation.version>1.1.0.Final</bean.validation.version>
+		<bean.validation.version>2.0.1.Final</bean.validation.version>
 
 		<!-- Spring -->
-		<spring.version>4.3.17.RELEASE</spring.version>
+		<spring.version>5.0.6.RELEASE</spring.version>
 
 		<!-- Spring Security -->
-		<spring.security.version>4.2.6.RELEASE</spring.security.version>
+		<spring.security.version>5.0.5.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>1.5.13.RELEASE</spring.boot.version>
+		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+
+		<!-- Test -->
+		<holon.json.test.version>5.2.0-SNAPSHOT</holon.json.test.version>
+		<jersey.test.version>2.25</jersey.test.version>
 
 	</properties>
 

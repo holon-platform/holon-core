@@ -28,10 +28,8 @@ import java.util.Date;
 import org.junit.Test;
 
 import com.holonplatform.core.DataMappable;
-import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.BooleanProperty;
 import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
@@ -52,6 +50,7 @@ public class TestBeanIntrospector {
 		BeanPropertySet<TestBeanPropertyBean> set = BeanIntrospector.get().getPropertySet(TestBeanPropertyBean.class);
 
 		assertTrue(set.getProperty("name").isPresent());
+		assertTrue(set.getProperty("text").isPresent());
 		assertTrue(set.getProperty("numbool").isPresent());
 		assertTrue(set.getProperty("enm").isPresent());
 		assertTrue(set.getProperty("enmOrdinal").isPresent());
@@ -96,43 +95,6 @@ public class TestBeanIntrospector {
 		assertEquals(1979, c.get(Calendar.YEAR));
 		assertEquals(2, c.get(Calendar.MONTH));
 		assertEquals(9, c.get(Calendar.DAY_OF_MONTH));
-
-		set.property("name").validate("xxx");
-
-		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate(null));
-
-		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate("   "));
-
-		try {
-			set.property("name").validate(null);
-		} catch (ValidationException e) {
-			assertEquals("Name is required; Name is empty", e.getMessage());
-		}
-
-		set.property("numbool").validate(0);
-		set.property("numbool").validate(1);
-
-		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(-1));
-		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(11));
-
-		try {
-			set.property("intval").validate(11);
-		} catch (ValidationException e) {
-			assertEquals("0-10 range", e.getMessage());
-			assertEquals("test-mc", e.getMessageCode());
-		}
-
-		set.property("lng").validate(7L);
-
-		TestUtils.expectedException(ValidationException.class, () -> set.property("lng").validate(3L));
-
-		try {
-			set.property("lng").validate(0L);
-		} catch (ValidationException e) {
-			assertEquals("Must be 7", e.getMessage());
-		}
-
-		TestUtils.expectedException(ValidationException.class, () -> set.property("notneg").validate(-1));
 
 		assertTrue(set.property("notneg").getConfiguration().hasNotNullParameter("k1"));
 		assertEquals("v1", set.property("notneg").getConfiguration().getParameter("k1", String.class, null));

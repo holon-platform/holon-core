@@ -17,13 +17,6 @@
 
 	<url>https://holon-platform.com</url>
 
-	<properties>
-		<!-- Jersey for test -->
-		<jersey.test.version>2.25</jersey.test.version>
-		<!-- Holon JSON for test -->
-		<holon.json.version>5.0.0</holon.json.version>
-	</properties>
-
 	<dependencies>
 
 		<!-- Holon -->
@@ -70,19 +63,12 @@
 			<version>${spring.version}</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- Spring logging SLF4J bridge -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>jcl-over-slf4j</artifactId>
-			<version>${slf4j.version}</version>
-			<scope>test</scope>
-		</dependency>
 
 		<!-- Holon JSON for test -->
 		<dependency>
 			<groupId>com.holon-platform.json</groupId>
 			<artifactId>holon-jackson-jaxrs</artifactId>
-			<version>${holon.json.version}</version>
+			<version>${holon.json.test.version}</version>
 			<scope>test</scope>
 		</dependency>
 
