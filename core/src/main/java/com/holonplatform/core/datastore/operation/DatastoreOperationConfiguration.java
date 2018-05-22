@@ -70,6 +70,7 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 
 	/**
 	 * Get the {@link WriteOption} of given type available in this configuration.
+	 * @param <WO> WriteOption type
 	 * @param type WriteOption type to look for (not null)
 	 * @return A set of write options of given type, empty if none
 	 */
@@ -85,6 +86,7 @@ public interface DatastoreOperationConfiguration extends Expression, ExpressionR
 	 * <p>
 	 * When more than one {@link WriteOption} of given type is available, the first available one is returned.
 	 * </p>
+	 * @param <WO> WriteOption type
 	 * @param type WriteOption type to look for (not null)
 	 * @return Optional write option of given type
 	 */
