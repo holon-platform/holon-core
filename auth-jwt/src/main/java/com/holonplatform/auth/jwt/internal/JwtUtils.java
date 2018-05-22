@@ -185,6 +185,11 @@ public final class JwtUtils implements Serializable {
 
 			cfg.setExpireTime((expireMs > 0) ? expireMs.longValue() : 0);
 
+			// nbf
+			if (config.getConfigPropertyValue(JwtConfigProperties.NOT_BEFORE_NOW, Boolean.FALSE)) {
+				cfg.setNotBeforeNow(true);
+			}
+
 			// inclusions
 			cfg.setIncludeDetails(config.getConfigPropertyValue(JwtConfigProperties.INCLUDE_DETAILS, Boolean.TRUE));
 			cfg.setIncludePermissions(

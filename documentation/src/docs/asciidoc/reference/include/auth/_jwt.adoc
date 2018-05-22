@@ -107,6 +107,12 @@ The available configuration properties are listed here below, also indicating wh
 |`JwtTokenBuilder` and `JwtAuthenticator`
 |JWT sign public key encoding: must be one of the one of the encodings listed in the link:{apidir}/com/holonplatform/auth/keys/KeyEncoding.html[KeyEncoding^] enumeration. The supported encodings are `BASE64`, `PEM` or `NONE`.
 
+|_holon.jwt._ *not-before-now*
+|Booelan (true/false)
+|`false`
+|`JwtTokenBuilder`
+|Whether to automatically set the `nbf` (not before) JWT claim to the timestamp at which the token is created.
+
 |_holon.jwt._ *expire-ms*
 |Integer number
 |_None_
@@ -257,6 +263,28 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=build
 <1> Build a `JwtConfiguration` instance and set to `true` the include details switch
 <2> Build an `Authentication` with a parameter named `name` with value `John`
 <3> Build a *JWT* using given configuration and authentication: the token will include a `name` claim name with the value `John`
+
+[[AuthenticationFromJWT]]
+==== Building an `Authentication` from a JWT
+
+The link:{apidir}/com/holonplatform/auth/jwt/JwtTokenParser.html[JwtTokenParser^] API can be used to create an <<Authentication,Authentication>> instance from a JSON Web Token value, using a `JwtConfiguration` instance to provide the token configuration attributes.
+
+The JWT is validated before building the `Authentication` instance, and an error is thrown if the validation fails, for example if the token is malformed, expired or the signatire is not valid.
+
+The `Authentication` instance is created with the following strategy:
+
+* The JWT subject (`sub`) value is used as `Authentication` *principal name*.
+* If configured, any JWT *claim* is included as an `Authentication` _detail_ parameter, using the claim name as parameter key.
+* If configured, the default `ATH$prms` JWT *claim* is parsed to obtain the corresponding  `Authentication` _permissions_.
+
+The `JwtTokenParser` API returns an `Authentication.Builder` instance, allowing to perform additional `Authentication` configuration before obtaining the actual `Authentication` instance.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleJwt.java[tag=parse,indent=0]
+----
+<1> Build a `JwtConfiguration` instance and set to include the JWT claims as authentication details and to parse the default `ATH$prms` JWT claim to obtain the `Authentication` _permissions_
+<2> Build an `Authentication` from given JWT value
 
 [[JwtAuthenticator]]
 ==== Performing authentication using JWT

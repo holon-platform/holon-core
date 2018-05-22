@@ -74,6 +74,13 @@ public interface JwtConfiguration extends Serializable {
 	long getExpireTime();
 
 	/**
+	 * Get whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
+	 * @return <code>true</code> to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token
+	 *         is created
+	 */
+	boolean isNotBeforeNow();
+
+	/**
 	 * Get whether to include {@link Authentication} details in JWT token at token generation time.
 	 * @return <code>true</code> to include {@link Authentication} details in JWT token, <code>false</code> otherwise
 	 */
@@ -175,6 +182,14 @@ public interface JwtConfiguration extends Serializable {
 		 * @return this
 		 */
 		Builder expireTime(long expireTime);
+
+		/**
+		 * Whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
+		 * @param notBeforeNow <code>true</code> to set the <code>nbf</code> (not before) JWT claim to the timestamp at
+		 *        which the token is created.
+		 * @return this
+		 */
+		Builder notBeforeNow(boolean notBeforeNow);
 
 		/**
 		 * Set whether to include {@link Authentication} details in JWT token generation

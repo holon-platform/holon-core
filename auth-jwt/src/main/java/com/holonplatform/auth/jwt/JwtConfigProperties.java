@@ -221,6 +221,13 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	 */
 	public static final ConfigProperty<Long> EXPIRE_TIME_DAYS = ConfigProperty.create("expire-days", Long.class);
 
+	// ------ nbf
+
+	/**
+	 * Whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
+	 */
+	public static final ConfigProperty<Boolean> NOT_BEFORE_NOW = ConfigProperty.create("not-before-now", boolean.class);
+
 	// ------ Authentication
 
 	/**

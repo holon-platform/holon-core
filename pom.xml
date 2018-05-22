@@ -71,13 +71,13 @@
 		<bean.validation.version>1.1.0.Final</bean.validation.version>
 
 		<!-- Spring -->
-		<spring.version>4.3.16.RELEASE</spring.version>
+		<spring.version>4.3.17.RELEASE</spring.version>
 
 		<!-- Spring Security -->
-		<spring.security.version>4.2.4.RELEASE</spring.security.version>
+		<spring.security.version>4.2.6.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>1.5.12.RELEASE</spring.boot.version>
+		<spring.boot.version>1.5.13.RELEASE</spring.boot.version>
 
 	</properties>
 

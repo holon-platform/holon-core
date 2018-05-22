@@ -30,12 +30,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.Month;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,6 +49,7 @@ import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.i18n.Localizable;
+import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
@@ -62,6 +66,7 @@ import com.holonplatform.core.property.Property.PropertyReadOnlyException;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertyValueConverter;
+import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.VirtualProperty;
@@ -176,10 +181,101 @@ public class TestProperty {
 
 	}
 
-
 	@Test
 	public void testTemporalType() {
 		assertEquals(TemporalType.DATE_TIME, P7.getTemporalType().orElse(null));
+	}
+
+	@Test
+	public void testPropertyValuePresenter() {
+
+		assertEquals("str", P1.present("str"));
+
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.ITALY)
+						.withDefaultBooleanLocalization(Boolean.TRUE, Localizable.builder().message("isTrue").build())
+						.withDefaultBooleanLocalization(Boolean.FALSE, Localizable.builder().message("isFalse").build())
+						.build(),
+				() -> {
+					assertEquals("7", P2.present(7));
+					assertEquals("1.300", P2.present(1300));
+
+					assertEquals("3.500,00", P4.present(3500d));
+					assertEquals("3.500,42", P4.present(3500.42d));
+					assertEquals("3.500,01", P4.present(3500.007d));
+
+					assertEquals("isTrue", P3.present(Boolean.TRUE));
+					assertEquals("isFalse", P3.present(Boolean.FALSE));
+					assertEquals("isFalse", P3.present(null));
+				});
+
+		assertEquals("B", P5.present(TestEnum.B));
+
+		assertEquals("valueA", P6.present(TestEnum2.A));
+
+		final Calendar c = Calendar.getInstance(Locale.ITALIAN);
+		c.set(Calendar.DAY_OF_MONTH, 9);
+		c.set(Calendar.MONTH, 2);
+		c.set(Calendar.YEAR, 1979);
+		c.set(Calendar.HOUR_OF_DAY, 18);
+		c.set(Calendar.MINUTE, 30);
+		c.set(Calendar.SECOND, 15);
+		c.set(Calendar.MILLISECOND, 0);
+
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.ITALY).build(), () -> {
+
+					assertEquals("09/03/79 18.30", P7.present(c.getTime()));
+
+					final LocalDate date = LocalDate.of(1979, Month.MARCH, 9);
+					assertEquals("09/03/79", P8.present(date));
+
+					final LocalTime time = LocalTime.of(18, 30, 15);
+					assertEquals("18.30", P9.present(time));
+
+					final LocalDateTime dt = LocalDateTime.of(1979, Month.MARCH, 9, 18, 30, 15);
+					assertEquals("09/03/79 18.30", P10.present(dt));
+
+				});
+
+		String[] sa = new String[] { "a", "b", "c" };
+
+		assertEquals("a;b;c", P11.present(sa));
+
+		assertEquals("TestCaptionableCaption", P14.present(new TestCaptionable()));
+
+		PropertyBox box = PropertyBox.builder(P1, P2, P13).set(P1, "p1").set(P2, 2).build();
+
+		assertEquals("VRT:p1", P13.present(box.getValue(P13)));
+
+		assertEquals("1300", P15.present(1300));
+
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.US).build(), () -> {
+					assertEquals("35;57.8", P12.present(new Double[] { 35d, 57.8d }));
+				});
+
+		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
+				LocalizationContext.builder().withInitialLocale(Locale.ITALY).build(), () -> {
+					assertEquals("35;57,8", P12.present(new Double[] { 35d, 57.8d }));
+				});
+
+		assertEquals("p1", box.present(P1));
+	}
+
+	@Test
+	public void testPropertyValuePresenterRegistry() {
+
+		PropertyValuePresenterRegistry registry = PropertyValuePresenterRegistry.create(true);
+
+		registry.register(p -> p.getConfiguration().hasNotNullParameter("testpar"), (p, v) -> "TEST_PRS");
+
+		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).configuration("testpar", "x");
+
+		assertEquals("1", prp.present(1));
+
+		assertEquals("TEST_PRS", Context.get().executeThreadBound(PropertyValuePresenterRegistry.CONTEXT_KEY, registry,
+				() -> prp.present(1)));
 	}
 
 	@Test
@@ -375,8 +471,8 @@ public class TestProperty {
 				.filter(pv -> "theName".equals(pv.getValue())).count();
 		assertEquals(1, cnt);
 
-		cnt = pb6.propertyValues().filter(pv -> TestPropertySet.SEQUENCE.equals(pv.getProperty())).filter(pv -> pv.hasValue())
-				.count();
+		cnt = pb6.propertyValues().filter(pv -> TestPropertySet.SEQUENCE.equals(pv.getProperty()))
+				.filter(pv -> pv.hasValue()).count();
 
 		assertEquals(0, cnt);
 

@@ -63,10 +63,11 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 		}
 
 		Long expire = (configuration.getExpireTime() > 0) ? configuration.getExpireTime() : null;
+		boolean nbf = configuration.isNotBeforeNow();
 
 		if (configuration.getSignatureAlgorithm() == JwtSignatureAlgorithm.NONE) {
 			// no signature
-			return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire, parts);
+			return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire, nbf, parts);
 		} else {
 
 			final SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm
@@ -78,7 +79,7 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 								"Missing shared key for symmetric JWT signature algorithm ["
 										+ signatureAlgorithm.getDescription() + "] - JWT configuration: ["
 										+ configuration + "]"));
-				return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire,
+				return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire, nbf,
 						signatureAlgorithm, key, parts);
 			} else {
 				Key privateKey = configuration.getPrivateKey()
@@ -86,7 +87,7 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 								"Missing JWT private signing key for asymmetric JWT signature algorithm ["
 										+ signatureAlgorithm.getDescription() + "] - JWT configuration: ["
 										+ configuration + "]"));
-				return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire,
+				return buildJWT(authentication, jwtTokenId, configuration.getIssuer().orElse(null), expire, nbf,
 						signatureAlgorithm, privateKey, parts);
 			}
 		}
@@ -100,12 +101,14 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param issuer Optional Issuer name
 	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
 	 *        expires)
+	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param includeParts Optional Authentication parts to include as claims in JWT
 	 * @return JWT String
 	 */
 	private static String buildJWT(Authentication authentication, String id, String issuer, Long timeToLiveMs,
-			AuthPart... includeParts) {
-		return buildJWT(authentication, id, issuer, timeToLiveMs, null, null, (byte[]) null, includeParts);
+			boolean notBeforeNow, AuthPart... includeParts) {
+		return buildJWT(authentication, id, issuer, timeToLiveMs, notBeforeNow, null, null, (byte[]) null,
+				includeParts);
 	}
 
 	/**
@@ -115,6 +118,7 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param issuer Optional Issuer name
 	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
 	 *        expires)
+	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>
 	 * @param privateKey Optional {@link Key} to sign JWT using given <code>algorithm</code>
@@ -122,8 +126,9 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @return JWT String
 	 */
 	private static String buildJWT(Authentication authentication, String id, String issuer, Long timeToLiveMs,
-			SignatureAlgorithm algorithm, Key privateKey, AuthPart... includeParts) {
-		return buildJWT(authentication, id, issuer, timeToLiveMs, algorithm, privateKey, null, includeParts);
+			boolean notBeforeNow, SignatureAlgorithm algorithm, Key privateKey, AuthPart... includeParts) {
+		return buildJWT(authentication, id, issuer, timeToLiveMs, notBeforeNow, algorithm, privateKey, null,
+				includeParts);
 	}
 
 	/**
@@ -133,6 +138,7 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param issuer Optional Issuer name
 	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
 	 *        expires)
+	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>
 	 * @param signingKey Optional Base64 encoded key to sign JWT using given <code>algorithm</code>
@@ -140,8 +146,9 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @return JWT String
 	 */
 	private static String buildJWT(Authentication authentication, String id, String issuer, Long timeToLiveMs,
-			SignatureAlgorithm algorithm, byte[] signingKey, AuthPart... includeParts) {
-		return buildJWT(authentication, id, issuer, timeToLiveMs, algorithm, null, signingKey, includeParts);
+			boolean notBeforeNow, SignatureAlgorithm algorithm, byte[] signingKey, AuthPart... includeParts) {
+		return buildJWT(authentication, id, issuer, timeToLiveMs, notBeforeNow, algorithm, null, signingKey,
+				includeParts);
 	}
 
 	/**
@@ -151,6 +158,7 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param issuer Optional Issuer name
 	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
 	 *        expires)
+	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>
 	 * @param privateKey Optional {@link Key} to sign JWT using given an asymmetric algorithm
@@ -159,14 +167,15 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @return The JWT String representation
 	 */
 	private static String buildJWT(Authentication authentication, String id, String issuer, Long timeToLiveMs,
-			SignatureAlgorithm algorithm, Key privateKey, byte[] signingKey, AuthPart... includeParts) {
+			boolean notBeforeNow, SignatureAlgorithm algorithm, Key privateKey, byte[] signingKey,
+			AuthPart... includeParts) {
 
 		if (authentication == null) {
 			throw new IllegalArgumentException("Null Authentication");
 		}
 
 		JwtBuilder builder = createJWT(id, authentication.getName(), issuer,
-				(timeToLiveMs != null) ? timeToLiveMs.longValue() : -1);
+				(timeToLiveMs != null) ? timeToLiveMs.longValue() : -1, notBeforeNow);
 
 		// sign
 
@@ -240,7 +249,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	/*
 	 * Create JWT builder
 	 */
-	private static JwtBuilder createJWT(String id, String subject, String issuer, long timeToLiveMs) {
+	private static JwtBuilder createJWT(String id, String subject, String issuer, long timeToLiveMs,
+			boolean notBeforeNow) {
 
 		long nowMs = System.currentTimeMillis();
 		Date now = new Date(nowMs);
@@ -263,6 +273,10 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 		if (timeToLiveMs >= 0) {
 			long expireMs = nowMs + timeToLiveMs;
 			builder.setExpiration(new Date(expireMs));
+		}
+
+		if (notBeforeNow) {
+			builder.setNotBefore(new Date());
 		}
 
 		return builder;
