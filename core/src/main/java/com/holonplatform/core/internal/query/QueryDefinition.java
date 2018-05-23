@@ -68,6 +68,14 @@ public interface QueryDefinition extends QueryConfiguration, ExpressionResolverS
 	void setAggregation(QueryAggregation aggregation);
 
 	/**
+	 * Set whether the query should return <em>distinct</em> query projection result values.
+	 * @param distinct <code>true</code> if the query should return <em>distinct</em> query projection result values,
+	 *        <code>false</code> otherwise
+	 * @since 5.2.0
+	 */
+	void setDistinct(boolean distinct);
+
+	/**
 	 * Add a parameter. If parameter with <code>name</code> already exists, its value will be replaced by new
 	 * <code>value</code>.
 	 * @param name Parameter name (not null)

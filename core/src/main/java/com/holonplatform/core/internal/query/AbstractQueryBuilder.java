@@ -177,6 +177,16 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.QueryBuilder#distinct()
+	 */
+	@Override
+	public Q distinct() {
+		getQueryDefinition().setDistinct(true);
+		return getActualBuilder();
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see
 	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core
 	 * .ExpressionResolver)
