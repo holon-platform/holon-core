@@ -22,9 +22,9 @@ import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
 import com.holonplatform.core.datastore.beans.BeanDatastore.BeanOperationResult;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.ExecutableOperation;
 import com.holonplatform.core.datastore.beans.BeanDatastoreOperationBuilder;
-import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
-import com.holonplatform.core.datastore.operation.ExecutableOperation;
 
 /**
  * Abstract bean datastore operation class.

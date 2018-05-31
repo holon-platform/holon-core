@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.datastore.beans;
 
-import com.holonplatform.core.datastore.bulk.BulkDeleteConfiguration;
-import com.holonplatform.core.datastore.operation.DatastoreOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkDeleteOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperation;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
@@ -28,6 +28,6 @@ import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
  * @since 5.1.0
  */
 public interface BeanBulkDeleteOperation<B, O extends BeanBulkDeleteOperation<B, O>>
-		extends BeanDatastoreOperation<O, BulkDeleteConfiguration>, QueryFilterSupport<O> {
+		extends BeanDatastoreOperation<O, BulkDeleteOperationConfiguration>, QueryFilterSupport<O> {
 
 }

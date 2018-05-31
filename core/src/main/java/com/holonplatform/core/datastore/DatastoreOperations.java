@@ -16,9 +16,9 @@
 package com.holonplatform.core.datastore;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
-import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
-import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
-import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkDeleteOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkInsertOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperation;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
@@ -43,7 +43,7 @@ import com.holonplatform.core.query.QueryBuilder;
  *
  * @since 5.1.0
  */
-public interface DatastoreOperations<R, REFRESH, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>> {
+public interface DatastoreOperations<R, REFRESH, BI extends BulkInsertOperation<R, BI>, BU extends BulkUpdateOperation<R, BU>, BD extends BulkDeleteOperation<R, BD>, Q extends QueryBuilder<Q>> {
 
 	/**
 	 * Refresh a {@link PropertyBox}, updating all its model properties to current value in data store and using given

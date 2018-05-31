@@ -18,9 +18,9 @@ package com.holonplatform.core.datastore.beans;
 import com.holonplatform.core.beans.DataPath;
 import com.holonplatform.core.datastore.DatastoreOperations;
 import com.holonplatform.core.datastore.DatastoreOperations.WriteOption;
-import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
-import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
-import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkDeleteOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkInsertOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperation;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.query.QueryBuilder;
 

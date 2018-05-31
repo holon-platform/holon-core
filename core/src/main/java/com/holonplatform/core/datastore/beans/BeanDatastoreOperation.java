@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.datastore.beans;
 
-import com.holonplatform.core.datastore.operation.DatastoreOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperationConfiguration;
 
 /**
  * Represents a generic bean datastore operation.

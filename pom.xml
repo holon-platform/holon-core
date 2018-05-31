@@ -82,7 +82,7 @@
 
 		<!-- Test -->
 		<holon.json.test.version>5.2.0-SNAPSHOT</holon.json.test.version>
-		<jersey.test.version>2.25</jersey.test.version>
+		<jersey.test.version>2.27</jersey.test.version>
 
 	</properties>
 
@@ -91,6 +91,8 @@
 		<module>http</module>
 		<module>auth</module>
 		<module>auth-jwt</module>
+		<module>async-datastore</module>
+		<module>async-http</module>
 		<module>spring</module>
 		<module>spring-security</module>
 		<module>spring-boot</module>

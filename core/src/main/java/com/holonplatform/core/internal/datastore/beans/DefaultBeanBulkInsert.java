@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.datastore.beans;
 
 import com.holonplatform.core.datastore.beans.BeanBulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
-import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
+import com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration;
 
 /**
  * Default {@link BeanBulkInsert} operation.
@@ -57,7 +57,7 @@ public class DefaultBeanBulkInsert<B> extends AbstractBeanDatastoreOperation<B, 
 	 * @see com.holonplatform.core.datastore.operation.DatastoreOperation#getConfiguration()
 	 */
 	@Override
-	public BulkInsertConfiguration getConfiguration() {
+	public BulkInsertOperationConfiguration getConfiguration() {
 		return getExecutor().getConfiguration();
 	}
 

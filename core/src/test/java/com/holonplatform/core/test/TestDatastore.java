@@ -21,7 +21,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.DataTarget;
+import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.DatastoreCommodityContext;
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
 import com.holonplatform.core.datastore.DatastoreCommodityFactory;
@@ -38,62 +40,10 @@ import com.holonplatform.core.test.data.TestPropertySet;
 
 public class TestDatastore {
 
-	@SuppressWarnings("serial")
 	@Test
 	public void testDatastore() {
 
-		AbstractDatastore<DatastoreCommodityContext> ds = new AbstractDatastore<DatastoreCommodityContext>(null, null) {
-
-			@Override
-			public OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-				assertNotNull(propertyBox);
-				return OperationResult.builder().type(OperationType.INSERT).affectedCount(1).build();
-			}
-
-			@Override
-			public OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-				assertNotNull(propertyBox);
-				return OperationResult.builder().type(OperationType.UPDATE).affectedCount(1).build();
-			}
-
-			@Override
-			public OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-				assertNotNull(propertyBox);
-				return OperationResult.builder().type(OperationType.INSERT).affectedCount(1).build();
-			}
-
-			@Override
-			public PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox) {
-				assertNotNull(propertyBox);
-				return propertyBox;
-			}
-
-			@Override
-			public OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
-				assertNotNull(propertyBox);
-				return OperationResult.builder().type(OperationType.DELETE).affectedCount(1).build();
-			}
-
-			@Override
-			public BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
-				return null;
-			}
-
-			@Override
-			public BulkUpdate bulkUpdate(DataTarget<?> target, WriteOption... options) {
-				return null;
-			}
-
-			@Override
-			public BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options) {
-				return null;
-			}
-
-			@Override
-			protected DatastoreCommodityContext getCommodityContext() throws CommodityConfigurationException {
-				return null;
-			}
-		};
+		DummyDatastore ds = new DummyDatastore();
 
 		ds.registerCommodity(new DummyQueryFactory());
 
@@ -112,6 +62,65 @@ public class TestDatastore {
 		Query q = ds.query();
 		assertNotNull(q);
 		assertTrue(q instanceof DummyQuery);
+
+	}
+
+	@SuppressWarnings("serial")
+	private static class DummyDatastore extends AbstractDatastore<DatastoreCommodityContext> implements Datastore {
+
+		public DummyDatastore() {
+			super(DatastoreCommodityFactory.class, ExpressionResolver.class);
+		}
+
+		@Override
+		public OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+			assertNotNull(propertyBox);
+			return OperationResult.builder().type(OperationType.INSERT).affectedCount(1).build();
+		}
+
+		@Override
+		public OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+			assertNotNull(propertyBox);
+			return OperationResult.builder().type(OperationType.UPDATE).affectedCount(1).build();
+		}
+
+		@Override
+		public OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+			assertNotNull(propertyBox);
+			return OperationResult.builder().type(OperationType.INSERT).affectedCount(1).build();
+		}
+
+		@Override
+		public PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox) {
+			assertNotNull(propertyBox);
+			return propertyBox;
+		}
+
+		@Override
+		public OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
+			assertNotNull(propertyBox);
+			return OperationResult.builder().type(OperationType.DELETE).affectedCount(1).build();
+		}
+
+		@Override
+		public BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
+			return null;
+		}
+
+		@Override
+		public BulkUpdate bulkUpdate(DataTarget<?> target, WriteOption... options) {
+			return null;
+		}
+
+		@Override
+		public BulkDelete bulkDelete(DataTarget<?> target, WriteOption... options) {
+			return null;
+		}
+
+		@Override
+		protected DatastoreCommodityContext getCommodityContext() throws CommodityConfigurationException {
+			return null;
+		}
 
 	}
 

@@ -17,7 +17,7 @@ package com.holonplatform.core.internal.datastore.beans;
 
 import com.holonplatform.core.datastore.beans.BeanBulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
-import com.holonplatform.core.datastore.bulk.BulkDeleteConfiguration;
+import com.holonplatform.core.datastore.operation.commons.BulkDeleteOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 
 /**
@@ -48,7 +48,7 @@ public class DefaultBeanBulkDelete<B> extends AbstractBeanDatastoreOperation<B, 
 	 * @see com.holonplatform.core.datastore.beans.BeanDatastoreOperation#getConfiguration()
 	 */
 	@Override
-	public BulkDeleteConfiguration getConfiguration() {
+	public BulkDeleteOperationConfiguration getConfiguration() {
 		return getExecutor().getConfiguration();
 	}
 

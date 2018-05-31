@@ -19,7 +19,7 @@ import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.datastore.beans.BeanBulkUpdate;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
-import com.holonplatform.core.datastore.bulk.BulkUpdateConfiguration;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperationConfiguration;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
@@ -104,7 +104,7 @@ public class DefaultBeanBulkUpdate<B> extends AbstractBeanDatastoreOperation<B, 
 	 * @see com.holonplatform.core.datastore.operation.DatastoreOperation#getConfiguration()
 	 */
 	@Override
-	public BulkUpdateConfiguration getConfiguration() {
+	public BulkUpdateOperationConfiguration getConfiguration() {
 		return getExecutor().getConfiguration();
 	}
 

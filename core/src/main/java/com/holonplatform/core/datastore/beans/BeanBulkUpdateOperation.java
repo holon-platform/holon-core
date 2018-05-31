@@ -18,8 +18,8 @@ package com.holonplatform.core.datastore.beans;
 import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.datastore.bulk.BulkUpdateConfiguration;
-import com.holonplatform.core.datastore.operation.DatastoreOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperation;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
 import com.holonplatform.core.query.ConstantExpression;
@@ -34,7 +34,7 @@ import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
  * @since 5.1.0
  */
 public interface BeanBulkUpdateOperation<B, O extends BeanBulkUpdateOperation<B, O>>
-		extends BeanDatastoreOperation<O, BulkUpdateConfiguration>, QueryFilterSupport<O> {
+		extends BeanDatastoreOperation<O, BulkUpdateOperationConfiguration>, QueryFilterSupport<O> {
 
 	/**
 	 * Set the bean property with given <code>propertyName</code> to given value.

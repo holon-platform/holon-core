@@ -35,12 +35,14 @@ import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler;
 import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 import com.holonplatform.core.ExpressionResolverRegistry;
+import com.holonplatform.core.datastore.DataContextBound;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.DatastoreCommodityContext;
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityNotAvailableException;
 import com.holonplatform.core.datastore.DatastoreCommodityFactory;
+import com.holonplatform.core.datastore.DatastoreCommodityHandler;
 import com.holonplatform.core.datastore.DatastoreCommodityRegistrar;
 import com.holonplatform.core.datastore.DatastoreExpressionResolverRegistrar;
 import com.holonplatform.core.internal.Logger;
@@ -54,10 +56,9 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * 
  * @since 5.0.0
  */
-public abstract class AbstractDatastore<X extends DatastoreCommodityContext> implements Datastore,
-		ExpressionResolverHandler, DatastoreCommodityRegistrar<X>, DatastoreExpressionResolverRegistrar {
-
-	private static final long serialVersionUID = 8163804295646169319L;
+public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
+		implements ExpressionResolverHandler, DatastoreCommodityRegistrar<X>, DatastoreExpressionResolverRegistrar,
+		DatastoreCommodityHandler, DataContextBound {
 
 	/**
 	 * Logger
@@ -92,9 +93,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext> imp
 	private final Class<? extends DatastoreCommodityFactory> commodityFactoryType;
 
 	@SuppressWarnings("rawtypes")
-	private static final Comparator<DatastoreCommodityFactory> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : DatastoreCommodityFactory.DEFAULT_PRIORITY);
+	private static final Comparator<DatastoreCommodityFactory> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: DatastoreCommodityFactory.DEFAULT_PRIORITY);
 
 	/**
 	 * Constructor
