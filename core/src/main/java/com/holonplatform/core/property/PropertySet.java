@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -119,7 +120,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	 * @return List of set properties
 	 */
 	default List<P> asList() {
-		return ConversionUtils.iterableAsList(this);
+		return Collections.unmodifiableList(ConversionUtils.iterableAsList(this));
 	}
 
 	/**
