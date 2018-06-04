@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathPropertyBoxAdapter;
 import com.holonplatform.core.property.PathPropertySetAdapter;
@@ -136,9 +137,10 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 
 		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
 
-		propertyBoxAdapter.paths().forEach(path -> {
-			propertyBoxAdapter.getValue(path).ifPresent(val -> {
-				values.put(path, ConstantExpression.create((Path) path, val));
+		propertyBoxAdapter.propertyPaths().forEach(propertyPath -> {
+			propertyBoxAdapter.getValue(propertyPath.getPath()).ifPresent(val -> {
+				values.put(propertyPath.getPath(),
+						ConstantExpression.create((TypedExpression) propertyPath.getProperty(), val));
 			});
 		});
 
