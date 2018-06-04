@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import com.holonplatform.core.internal.property.DefaultSetPathProperty;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.CollectionProperty.SetProperty;
 
 /**
@@ -47,6 +48,20 @@ public interface SetPathProperty<T> extends CollectionPathProperty<T, Set<T>>, S
 	 */
 	static <T> SetPathPropertyBuilder<T> create(String name, Class<? extends T> elementType) {
 		return new DefaultSetPathProperty<>(name, elementType);
+	}
+
+	/**
+	 * Create a new {@link PropertyBox} type {@link SetPathProperty}, using given <code>properties</code> as property
+	 * set.
+	 * @param name Property (and path) name (not null)
+	 * @param properties Property set (not null)
+	 * @return a new {@link SetPathProperty} instance
+	 */
+	@SuppressWarnings("rawtypes")
+	static <P extends Property> SetPathPropertyBuilder<PropertyBox> propertyBox(String name, Iterable<P> properties) {
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		return create(name, PropertyBox.class).configuration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE,
+				(properties instanceof PropertySet) ? (PropertySet<?>) properties : PropertySet.of(properties));
 	}
 
 	/**

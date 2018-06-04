@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import com.holonplatform.core.internal.property.DefaultListPathProperty;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.CollectionProperty.ListProperty;
 
 /**
@@ -47,6 +48,20 @@ public interface ListPathProperty<T> extends CollectionPathProperty<T, List<T>>,
 	 */
 	static <T> ListPathPropertyBuilder<T> create(String name, Class<? extends T> elementType) {
 		return new DefaultListPathProperty<>(name, elementType);
+	}
+
+	/**
+	 * Create a new {@link PropertyBox} type {@link ListPathProperty}, using given <code>properties</code> as property
+	 * set.
+	 * @param name Property (and path) name (not null)
+	 * @param properties Property set (not null)
+	 * @return a new {@link ListPathProperty} instance
+	 */
+	@SuppressWarnings("rawtypes")
+	static <P extends Property> ListPathPropertyBuilder<PropertyBox> propertyBox(String name, Iterable<P> properties) {
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		return create(name, PropertyBox.class).configuration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE,
+				(properties instanceof PropertySet) ? (PropertySet<?>) properties : PropertySet.of(properties));
 	}
 
 	/**
