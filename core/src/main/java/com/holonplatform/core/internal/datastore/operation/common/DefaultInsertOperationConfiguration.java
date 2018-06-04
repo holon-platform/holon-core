@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.datastore.operation.commons.InsertOperationConfiguration;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PropertySet;

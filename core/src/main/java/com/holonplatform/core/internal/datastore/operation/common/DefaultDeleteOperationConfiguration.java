@@ -15,7 +15,6 @@
  */
 package com.holonplatform.core.internal.datastore.operation.common;
 
-import com.holonplatform.core.datastore.operation.commons.DeleteOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 
 /**

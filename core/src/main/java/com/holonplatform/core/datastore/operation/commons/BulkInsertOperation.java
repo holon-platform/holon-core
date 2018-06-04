@@ -18,6 +18,7 @@ package com.holonplatform.core.datastore.operation.commons;
 import java.util.Map;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.ConstantExpression;
@@ -34,11 +35,24 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 		extends ExecutableBulkOperation<R, BulkInsertOperationConfiguration, O> {
 
 	/**
-	 * Add a path - value expression map to insert.
-	 * @param values Value map to add to the bulk insert operation (not null)
+	 * Set the operation property set, i.e. the properties which must be included in the bulk insert operation.
+	 * @param <P> Property type
+	 * @param properties Property set (not null)
 	 * @return this
 	 */
-	O add(Map<Path<?>, ConstantExpression<?>> values);
+	@SuppressWarnings("rawtypes")
+	<P extends Property> O propertySet(Iterable<P> properties);
+
+	/**
+	 * Set the operation property set, i.e. the properties which must be included in the bulk insert operation.
+	 * @param <P> Property type
+	 * @param properties Property set (not null)
+	 * @return this
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	default <P extends Property> O propertySet(P... properties) {
+		return propertySet(PropertySet.of(properties));
+	}
 
 	/**
 	 * Add a {@link PropertyBox} to insert.
@@ -48,10 +62,21 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 	O add(PropertyBox propertyBox);
 
 	/**
+	 * Add a path - value expression map to insert.
+	 * @param values Value map to add to the bulk insert operation (not null)
+	 * @return this
+	 * @deprecated Use {@link #add(PropertyBox)}
+	 */
+	@Deprecated
+	O add(Map<Path<?>, ConstantExpression<?>> values);
+
+	/**
 	 * Set the paths to be used for operation values.
 	 * @param paths Operation value paths
 	 * @return this
+	 * @deprecated Use {@link #propertySet(Iterable)}
 	 */
+	@Deprecated
 	O operationPaths(Path<?>[] paths);
 
 	/**
@@ -61,7 +86,9 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 	 * </p>
 	 * @param propertySet The property set to set (not null)
 	 * @return this
+	 * @deprecated Use {@link #propertySet(Iterable)}
 	 */
+	@Deprecated
 	O operationPaths(PropertySet<?> propertySet);
 
 }

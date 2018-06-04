@@ -15,11 +15,16 @@
  */
 package com.holonplatform.core.internal.datastore.operation.common;
 
+import java.util.Arrays;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.operation.commons.BulkInsertOperation;
 import com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration;
+import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.property.PathPropertySetAdapter;
+import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.query.ConstantExpression;
@@ -53,11 +58,14 @@ public abstract class AbstractBulkInsertOperation<R, O extends BulkInsertOperati
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(java.util.Map)
+	 * @see com.holonplatform.core.datastore.operation.commons.BulkInsertOperation#propertySet(java.lang.Iterable)
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
-	public O add(Map<Path<?>, ConstantExpression<?>> values) {
-		getDefinition().addValue(values);
+	public <P extends Property> O propertySet(Iterable<P> properties) {
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		getDefinition().setPropertySet(
+				(properties instanceof PropertySet) ? (PropertySet) properties : PropertySet.of(properties));
 		return getActualOperation();
 	}
 
@@ -73,11 +81,27 @@ public abstract class AbstractBulkInsertOperation<R, O extends BulkInsertOperati
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#operationPaths(com.holonplatform.core.Path[])
+	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(java.util.Map)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public O operationPaths(Path<?>[] paths) {
-		getDefinition().setOperationPaths(paths);
+	@Deprecated
+	public O add(Map<Path<?>, ConstantExpression<?>> values) {
+		if (values != null && !values.isEmpty()) {
+			final PropertySet<?> propertySet = getDefinition().getPropertySet().orElse(asPropertySet(values.keySet()));
+			final PropertyBox propertyBox = PropertyBox.builder(propertySet).invalidAllowed(true).build();
+			final PathPropertySetAdapter adapter = PathPropertySetAdapter.create(propertySet);
+			for (Entry<Path<?>, ConstantExpression<?>> entry : values.entrySet()) {
+				adapter.getProperty(entry.getKey()).ifPresent(p -> {
+					ConstantExpression<?> value = entry.getValue();
+					if (value != null) {
+						propertyBox.setValue((Property<Object>) p, value.getValue());
+					}
+				});
+			}
+			getDefinition().addValue(propertyBox);
+			return getActualOperation();
+		}
 		return getActualOperation();
 	}
 
@@ -87,9 +111,38 @@ public abstract class AbstractBulkInsertOperation<R, O extends BulkInsertOperati
 	 * PropertySet)
 	 */
 	@Override
+	@Deprecated
 	public O operationPaths(PropertySet<?> propertySet) {
-		getDefinition().setOperationPaths(propertySet);
+		getDefinition().setPropertySet(propertySet);
 		return getActualOperation();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#operationPaths(com.holonplatform.core.Path[])
+	 */
+	@Override
+	@Deprecated
+	public O operationPaths(Path<?>[] paths) {
+		ObjectUtils.argumentNotNull(paths, "Paths must be not null");
+		getDefinition().setPropertySet(asPropertySet(Arrays.asList(paths)));
+		return getActualOperation();
+	}
+
+	/**
+	 * Convert given {@link Path} set to a {@link PropertySet}, including only {@link Property} type paths.
+	 * @param paths Path collection
+	 * @return A {@link PropertySet} which includes the {@link Property} type paths, in the given order
+	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static PropertySet<?> asPropertySet(Iterable<Path<?>> paths) {
+		final PropertySet.Builder builder = PropertySet.builder();
+		for (Path<?> path : paths) {
+			if (path != null && Property.class.isAssignableFrom(path.getClass())) {
+				builder.add((Property) path);
+			}
+		}
+		return builder.build();
 	}
 
 }

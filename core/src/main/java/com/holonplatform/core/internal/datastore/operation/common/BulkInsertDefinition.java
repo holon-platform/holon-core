@@ -15,13 +15,9 @@
  */
 package com.holonplatform.core.internal.datastore.operation.common;
 
-import java.util.Map;
-
-import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Bulk <code>INSERT</code> operation definition.
@@ -31,30 +27,15 @@ import com.holonplatform.core.query.ConstantExpression;
 public interface BulkInsertDefinition extends DatastoreOperationDefinition, BulkInsertOperationConfiguration {
 
 	/**
-	 * Add an operation value.
-	 * @param value The value to add (not null)
-	 */
-	void addValue(Map<Path<?>, ConstantExpression<?>> value);
-
-	/**
-	 * Add an operation value using a {@link PropertyBox}.
+	 * Add a value to insert.
 	 * @param value The value to add (not null)
 	 */
 	void addValue(PropertyBox value);
 
 	/**
-	 * Set the paths to be used for operation values.
-	 * @param paths Operation value paths
-	 */
-	void setOperationPaths(Path<?>[] paths);
-
-	/**
-	 * Set the paths to be used for operation values using a {@link PropertySet}.
-	 * <p>
-	 * Each property of the property set which corresponds to a {@link Path} will be used as operation path.
-	 * </p>
+	 * Set the {@link PropertySet} to be used for the operation values to include.
 	 * @param propertySet The property set to set (not null)
 	 */
-	void setOperationPaths(PropertySet<?> propertySet);
+	void setPropertySet(PropertySet<?> propertySet);
 
 }

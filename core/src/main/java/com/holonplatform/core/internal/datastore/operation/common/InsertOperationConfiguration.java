@@ -13,14 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.operation.commons;
+package com.holonplatform.core.internal.datastore.operation.common;
 
 import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.internal.datastore.operation.common.DefaultInsertOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperationConfiguration;
 import com.holonplatform.core.property.PropertySet;
 
 /**

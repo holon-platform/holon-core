@@ -13,20 +13,29 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.operation.commons;
+package com.holonplatform.core.internal.datastore.operation.common;
 
+import java.util.Map;
 import java.util.Optional;
 
-import com.holonplatform.core.internal.datastore.operation.common.DefaultDeleteOperationConfiguration;
+import com.holonplatform.core.Path;
+import com.holonplatform.core.TypedExpression;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
- * Delete operation configuration.
+ * Update operation configuration.
  *
  * @since 5.1.0
  */
-public interface DeleteOperationConfiguration extends DatastoreOperationConfiguration {
+public interface UpdateOperationConfiguration extends DatastoreOperationConfiguration {
+
+	/**
+	 * Get the values to update as a {@link Path} - {@link TypedExpression} map.
+	 * @return Map of the values to update associated with their paths, empty if none
+	 */
+	Map<Path<?>, TypedExpression<?>> getValues();
 
 	/**
 	 * Get the optional operation restrictions, expressed as a {@link QueryFilter}.
@@ -35,23 +44,30 @@ public interface DeleteOperationConfiguration extends DatastoreOperationConfigur
 	Optional<QueryFilter> getFilter();
 
 	/**
-	 * Get a builder to create {@link DeleteOperationConfiguration} instances.
-	 * @return A {@link DeleteOperationConfiguration} builder
+	 * Get a builder to create {@link UpdateOperationConfiguration} instances.
+	 * @return A {@link UpdateOperationConfiguration} builder
 	 */
 	static Builder builder() {
-		return new DefaultDeleteOperationConfiguration.DefaultBuilder();
+		return new DefaultUpdateOperationConfiguration.DefaultBuilder();
 	}
 
 	/**
-	 * {@link DeleteOperationConfiguration} builder.
+	 * {@link UpdateOperationConfiguration} builder.
 	 */
 	public interface Builder extends DatastoreOperationConfiguration.Builder<Builder>, QueryFilterSupport<Builder> {
+
+		/**
+		 * Set the operation values.
+		 * @param values The values to set (not null)
+		 * @return this
+		 */
+		Builder values(Map<Path<?>, TypedExpression<?>> values);
 
 		/**
 		 * Build the configuration instance.
 		 * @return the configuration instance
 		 */
-		DeleteOperationConfiguration build();
+		UpdateOperationConfiguration build();
 
 	}
 

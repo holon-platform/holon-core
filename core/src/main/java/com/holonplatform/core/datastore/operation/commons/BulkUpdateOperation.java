@@ -43,6 +43,28 @@ public interface BulkUpdateOperation<R, O extends BulkUpdateOperation<R, O>>
 	<T> O set(Path<T> path, TypedExpression<? super T> expression);
 
 	/**
+	 * Set given <code>path</code> to given constant value.
+	 * @param <T> Path type
+	 * @param path Path to be updated (not null)
+	 * @param value value to set
+	 * @return this
+	 * @see #setNull(Path)
+	 */
+	default <T> O set(Path<T> path, T value) {
+		return set(path, ConstantExpression.create(path, value));
+	}
+
+	/**
+	 * Set the given {@link Path} to <code>null</code> value.
+	 * @param <P> Path type
+	 * @param path Path to be updated (not null)
+	 * @return this
+	 */
+	default <P> O setNull(Path<P> path) {
+		return set(path, NullExpression.create(path));
+	}
+
+	/**
 	 * Set update operation values using given {@link PropertyBox}.
 	 * <p>
 	 * Each {@link Path} type property of the PropertyBox property set will be setted to its corresponding value in the
@@ -70,28 +92,6 @@ public interface BulkUpdateOperation<R, O extends BulkUpdateOperation<R, O>>
 	 */
 	default O set(PropertyBox propertyBox) {
 		return set(propertyBox, true);
-	}
-
-	/**
-	 * Set given <code>path</code> to given constant value.
-	 * @param <T> Path type
-	 * @param path Path to be updated (not null)
-	 * @param value value to set
-	 * @return this
-	 * @see #setNull(Path)
-	 */
-	default <T> O set(Path<T> path, T value) {
-		return set(path, ConstantExpression.create(path, value));
-	}
-
-	/**
-	 * Set the given {@link Path} to <code>null</code> value.
-	 * @param <P> Path type
-	 * @param path Path to be updated (not null)
-	 * @return this
-	 */
-	default <P> O setNull(Path<P> path) {
-		return set(path, NullExpression.create(path));
 	}
 
 }

@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.datastore.operation.commons.UpdateOperationConfiguration;
 import com.holonplatform.core.query.QueryFilter;
 
 /**

@@ -16,11 +16,10 @@
 package com.holonplatform.core.datastore.operation.commons;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import com.holonplatform.core.Path;
-import com.holonplatform.core.query.ConstantExpression;
+import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
 
 /**
  * Bulk <code>INSERT</code> operation configuration.
@@ -30,15 +29,15 @@ import com.holonplatform.core.query.ConstantExpression;
 public interface BulkInsertOperationConfiguration extends DatastoreOperationConfiguration {
 
 	/**
-	 * Get the operation values, expressed as a List of {@link Path} - {@link ConstantExpression} maps.
-	 * @return The path-value expression map list, empty if none
+	 * Get the values to insert.
+	 * @return The operation values, an empty List if none
 	 */
-	List<Map<Path<?>, ConstantExpression<?>>> getValues();
+	List<PropertyBox> getValues();
 
 	/**
-	 * Get the optional {@link Path}s which has to be used when configuring operation values.
-	 * @return Optional operation value paths
+	 * Get the operation property set.
+	 * @return Optional operation property set
 	 */
-	Optional<Path<?>[]> getOperationPaths();
+	Optional<PropertySet<?>> getPropertySet();
 
 }

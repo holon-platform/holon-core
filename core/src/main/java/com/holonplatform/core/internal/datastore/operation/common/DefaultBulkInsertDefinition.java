@@ -16,21 +16,13 @@
 package com.holonplatform.core.internal.datastore.operation.common;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.holonplatform.core.Path;
-import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.property.PathPropertyBoxAdapter;
-import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Default {@link BulkInsertDefinition}.
@@ -42,37 +34,39 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	/*
 	 * Operation values
 	 */
-	private final List<Map<Path<?>, ConstantExpression<?>>> values = new LinkedList<>();
+	private final List<PropertyBox> values = new LinkedList<>();
 
 	/*
-	 * Operation paths
+	 * Operation property set
 	 */
-	private Path<?>[] operationPaths;
+	private PropertySet<?> propertySet;
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkInsertConfiguration#getValues()
+	 * @see com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration#getValues()
 	 */
 	@Override
-	public List<Map<Path<?>, ConstantExpression<?>>> getValues() {
+	public List<PropertyBox> getValues() {
 		return Collections.unmodifiableList(values);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkInsertConfiguration#getOperationPaths()
+	 * @see com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration#getPropertySet()
 	 */
 	@Override
-	public Optional<Path<?>[]> getOperationPaths() {
-		return Optional.ofNullable(operationPaths);
+	public Optional<PropertySet<?>> getPropertySet() {
+		return Optional.ofNullable(propertySet);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.internal.datastore.bulk.BulkInsertDefinition#addValue(java.util.Map)
+	 * @see
+	 * com.holonplatform.core.internal.datastore.operation.common.BulkInsertDefinition#addValue(com.holonplatform.core.
+	 * property.PropertyBox)
 	 */
 	@Override
-	public void addValue(Map<Path<?>, ConstantExpression<?>> value) {
+	public void addValue(PropertyBox value) {
 		ObjectUtils.argumentNotNull(value, "Value must be not null");
 		values.add(value);
 	}
@@ -80,36 +74,12 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 	/*
 	 * (non-Javadoc)
 	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkInsertDefinition#addValue(com.holonplatform.core.property.
-	 * PropertyBox, boolean)
+	 * com.holonplatform.core.internal.datastore.operation.common.BulkInsertDefinition#setPropertySet(com.holonplatform.
+	 * core.property.PropertySet)
 	 */
 	@Override
-	public void addValue(PropertyBox value) {
-		values.add(asPathConstantValues(value));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkInsertDefinition#setOperationPaths(com.holonplatform.core.Path
-	 * [])
-	 */
-	@Override
-	public void setOperationPaths(Path<?>[] paths) {
-		this.operationPaths = paths;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.internal.datastore.bulk.BulkInsertDefinition#setOperationPaths(com.holonplatform.core.
-	 * property.PropertySet)
-	 */
-	@Override
-	public void setOperationPaths(PropertySet<?> propertySet) {
-		ObjectUtils.argumentNotNull(propertySet, "Operation path property set must be not nulll");
-		setOperationPaths(PathPropertySetAdapter.create(propertySet).paths().collect(Collectors.toList())
-				.toArray(new Path<?>[0]));
+	public void setPropertySet(PropertySet<?> propertySet) {
+		this.propertySet = propertySet;
 	}
 
 	/*
@@ -123,28 +93,4 @@ public class DefaultBulkInsertDefinition extends AbstractDatastoreOperationDefin
 			throw new InvalidExpressionException("No values to insert");
 		}
 	}
-
-	/**
-	 * Get given {@link PropertyBox} as a map of {@link Path} and {@link ConstantExpression} values.
-	 * @param value The property box value (not null)
-	 * @return Values map
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected Map<Path<?>, ConstantExpression<?>> asPathConstantValues(PropertyBox value) {
-		ObjectUtils.argumentNotNull(value, "PropertyBox must be not null");
-
-		final Map<Path<?>, ConstantExpression<?>> values = new HashMap<>(value.size());
-
-		final PathPropertyBoxAdapter propertyBoxAdapter = PathPropertyBoxAdapter.create(value);
-
-		propertyBoxAdapter.propertyPaths().forEach(propertyPath -> {
-			propertyBoxAdapter.getValue(propertyPath.getPath()).ifPresent(val -> {
-				values.put(propertyPath.getPath(),
-						ConstantExpression.create((TypedExpression) propertyPath.getProperty(), val));
-			});
-		});
-
-		return values;
-	}
-
 }

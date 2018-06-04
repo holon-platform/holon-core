@@ -63,7 +63,8 @@ import com.holonplatform.core.query.Query;
  * 
  * @see DatastoreCommodityFactory
  */
-public interface Datastore extends DatastoreOperations<OperationResult, PropertyBox, BulkInsert, BulkUpdate, BulkDelete, Query>,
+public interface Datastore
+		extends DatastoreOperations<OperationResult, PropertyBox, BulkInsert, BulkUpdate, BulkDelete, Query>,
 		DatastoreCommodityHandler, ExpressionResolverSupport, DataContextBound, Serializable {
 
 	/*
@@ -148,7 +149,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, Property
 	 */
 	@Override
 	default BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
-		return create(BulkInsert.class).target(target).operationPaths(propertySet).withWriteOptions(options);
+		return create(BulkInsert.class).target(target).propertySet(propertySet).withWriteOptions(options);
 	}
 
 	/**

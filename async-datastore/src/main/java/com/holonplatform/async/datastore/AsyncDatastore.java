@@ -32,8 +32,8 @@ import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.datastore.DataContextBound;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore;
-import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.datastore.DatastoreCommodityHandler;
 import com.holonplatform.core.datastore.DatastoreOperations;
 import com.holonplatform.core.exceptions.DataAccessException;
@@ -83,8 +83,7 @@ public interface AsyncDatastore extends
 	default CompletionStage<OperationResult> insert(DataTarget<?> target, PropertyBox propertyBox,
 			WriteOption... options) {
 		try {
-			return create(AsyncInsert.class).target(target).value(propertyBox).withWriteOptions(options)
-					.execute();
+			return create(AsyncInsert.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("INSERT operation failed", e);
 		}
@@ -99,8 +98,7 @@ public interface AsyncDatastore extends
 	default CompletionStage<OperationResult> update(DataTarget<?> target, PropertyBox propertyBox,
 			WriteOption... options) {
 		try {
-			return create(AsyncUpdate.class).target(target).value(propertyBox).withWriteOptions(options)
-					.execute();
+			return create(AsyncUpdate.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("UPDATE operation failed", e);
 		}
@@ -115,8 +113,7 @@ public interface AsyncDatastore extends
 	default CompletionStage<OperationResult> save(DataTarget<?> target, PropertyBox propertyBox,
 			WriteOption... options) {
 		try {
-			return create(AsyncSave.class).target(target).value(propertyBox).withWriteOptions(options)
-					.execute();
+			return create(AsyncSave.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("SAVE operation failed", e);
 		}
@@ -131,8 +128,7 @@ public interface AsyncDatastore extends
 	default CompletionStage<OperationResult> delete(DataTarget<?> target, PropertyBox propertyBox,
 			WriteOption... options) {
 		try {
-			return create(AsyncDelete.class).target(target).value(propertyBox).withWriteOptions(options)
-					.execute();
+			return create(AsyncDelete.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("DELETE operation failed", e);
 		}
@@ -145,7 +141,7 @@ public interface AsyncDatastore extends
 	 */
 	@Override
 	default AsyncBulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
-		return create(AsyncBulkInsert.class).target(target).operationPaths(propertySet).withWriteOptions(options);
+		return create(AsyncBulkInsert.class).target(target).propertySet(propertySet).withWriteOptions(options);
 	}
 
 	/*
