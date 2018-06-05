@@ -19,7 +19,7 @@ import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.internal.datastore.relational.DefaultSubQuery;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.query.ConstantExpressionProjection;
+import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryBuilder;
 import com.holonplatform.core.query.QueryExpression;
 import com.holonplatform.core.query.QueryFilter;
@@ -95,7 +95,7 @@ public interface SubQuery<T> extends QueryBuilder<SubQuery<T>>, QueryExpression<
 	 * @return Sub query instance
 	 */
 	static SubQuery<Integer> create() {
-		return create(Integer.class).select(ConstantExpressionProjection.create(Integer.valueOf(1)));
+		return create(Integer.class).select(ConstantExpression.create(Integer.valueOf(1)));
 	}
 
 	/**

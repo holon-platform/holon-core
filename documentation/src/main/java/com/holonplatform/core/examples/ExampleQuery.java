@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore;
@@ -34,11 +33,10 @@ import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.query.BeanProjection;
-import com.holonplatform.core.query.ConstantExpressionProjection;
+import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.Query;
 import com.holonplatform.core.query.QueryAggregation;
 import com.holonplatform.core.query.QueryFilter;
-import com.holonplatform.core.query.QueryFilter.QueryFilterResolver;
 import com.holonplatform.core.query.QueryFunction;
 import com.holonplatform.core.query.QueryFunction.Avg;
 import com.holonplatform.core.query.QueryFunction.Count;
@@ -46,7 +44,6 @@ import com.holonplatform.core.query.QueryFunction.Max;
 import com.holonplatform.core.query.QueryFunction.Min;
 import com.holonplatform.core.query.QueryFunction.Sum;
 import com.holonplatform.core.query.QuerySort;
-import com.holonplatform.core.query.QuerySort.QuerySortResolver;
 import com.holonplatform.core.query.QuerySort.SortDirection;
 import com.holonplatform.core.query.StringFunction.Lower;
 import com.holonplatform.core.query.StringFunction.Upper;
@@ -332,7 +329,7 @@ public class ExampleQuery {
 
 		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
 
-		Optional<String> result = datastore.query(TARGET).findOne(ConstantExpressionProjection.create("TEST")); // <1>
+		Optional<String> result = datastore.query(TARGET).findOne(ConstantExpression.create("TEST")); // <1>
 		// end::projection3[]
 	}
 

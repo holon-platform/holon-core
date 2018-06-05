@@ -15,9 +15,9 @@
  */
 package com.holonplatform.core.internal.query.filter;
 
+import com.holonplatform.core.CollectionConstantExpression;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.QueryFilterVisitor;
-import com.holonplatform.core.query.CollectionConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
 
 /**

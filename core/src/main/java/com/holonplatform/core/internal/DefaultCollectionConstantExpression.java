@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.query;
+package com.holonplatform.core.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,10 +23,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import com.holonplatform.core.CollectionConstantExpression;
 import com.holonplatform.core.ConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.query.CollectionConstantExpression;
 import com.holonplatform.core.temporal.TemporalType;
 
 /**

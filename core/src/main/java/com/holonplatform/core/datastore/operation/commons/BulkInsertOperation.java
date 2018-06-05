@@ -21,7 +21,6 @@ import com.holonplatform.core.Path;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Bulk <code>INSERT</code> {@link ExecutableBulkOperation}.
@@ -62,13 +61,13 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 	O add(PropertyBox propertyBox);
 
 	/**
-	 * Add a path - value expression map to insert.
+	 * Add a path - value map to insert.
 	 * @param values Value map to add to the bulk insert operation (not null)
 	 * @return this
 	 * @deprecated Use {@link #add(PropertyBox)}
 	 */
 	@Deprecated
-	O add(Map<Path<?>, ConstantExpression<?>> values);
+	O add(Map<Path<?>, Object> values);
 
 	/**
 	 * Set the paths to be used for operation values.

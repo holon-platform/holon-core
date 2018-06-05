@@ -27,7 +27,6 @@ import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Abstract {@link BulkInsertOperation} implementation.
@@ -86,16 +85,15 @@ public abstract class AbstractBulkInsertOperation<R, O extends BulkInsertOperati
 	@SuppressWarnings("unchecked")
 	@Override
 	@Deprecated
-	public O add(Map<Path<?>, ConstantExpression<?>> values) {
+	public O add(Map<Path<?>, Object> values) {
 		if (values != null && !values.isEmpty()) {
 			final PropertySet<?> propertySet = getDefinition().getPropertySet().orElse(asPropertySet(values.keySet()));
 			final PropertyBox propertyBox = PropertyBox.builder(propertySet).invalidAllowed(true).build();
 			final PathPropertySetAdapter adapter = PathPropertySetAdapter.create(propertySet);
-			for (Entry<Path<?>, ConstantExpression<?>> entry : values.entrySet()) {
+			for (Entry<Path<?>, Object> entry : values.entrySet()) {
 				adapter.getProperty(entry.getKey()).ifPresent(p -> {
-					ConstantExpression<?> value = entry.getValue();
-					if (value != null) {
-						propertyBox.setValue((Property<Object>) p, value.getValue());
+					if (entry.getValue() != null) {
+						propertyBox.setValue((Property<Object>) p, entry.getValue());
 					}
 				});
 			}

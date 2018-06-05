@@ -15,11 +15,11 @@
  */
 package com.holonplatform.core.datastore.operation.commons;
 
+import com.holonplatform.core.ConstantConverterExpression;
 import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
@@ -51,7 +51,7 @@ public interface BulkUpdateOperation<R, O extends BulkUpdateOperation<R, O>>
 	 * @see #setNull(Path)
 	 */
 	default <T> O set(Path<T> path, T value) {
-		return set(path, ConstantExpression.create(path, value));
+		return set(path, ConstantConverterExpression.create(path, value));
 	}
 
 	/**

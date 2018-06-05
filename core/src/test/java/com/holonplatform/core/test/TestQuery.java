@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.datastore.DataTarget;
-import com.holonplatform.core.internal.query.DefaultCollectionConstantExpression;
+import com.holonplatform.core.internal.DefaultCollectionConstantExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
 import com.holonplatform.core.internal.query.DefaultQueryDefinition;
 import com.holonplatform.core.internal.query.QueryDefinition;

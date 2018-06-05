@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.holonplatform.core.ConstantConverterExpression;
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.NullExpression;
@@ -36,7 +37,6 @@ import com.holonplatform.core.internal.MutableParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathPropertyBoxAdapter;
 import com.holonplatform.core.property.PropertyBox;
-import com.holonplatform.core.query.ConstantExpression;
 
 /**
  * Base {@link DatastoreOperationDefinition} implementation.
@@ -209,7 +209,7 @@ public abstract class AbstractDatastoreOperationDefinition implements DatastoreO
 				}
 			}).ifPresent(val -> {
 				values.put(path, (val instanceof TypedExpression) ? (TypedExpression<?>) val
-						: ConstantExpression.create((Path) path, val));
+						: ConstantConverterExpression.create((Path) path, val));
 			});
 		});
 

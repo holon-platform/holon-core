@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.datastore.beans;
 
+import com.holonplatform.core.ConstantConverterExpression;
 import com.holonplatform.core.NullExpression;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.TypedExpression;
@@ -22,7 +23,6 @@ import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperationCon
 import com.holonplatform.core.datastore.operation.commons.DatastoreOperation;
 import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
-import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter.QueryFilterSupport;
 
 /**
@@ -80,7 +80,7 @@ public interface BeanBulkUpdateOperation<B, O extends BeanBulkUpdateOperation<B,
 	 * @see #setNull(Path)
 	 */
 	default <T> O set(Path<T> path, T value) {
-		return set(path, ConstantExpression.create(path, value));
+		return set(path, ConstantConverterExpression.create(path, value));
 	}
 
 	/**

@@ -13,16 +13,14 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.query;
+package com.holonplatform.core;
 
 import java.util.Collection;
 
-import com.holonplatform.core.ExpressionValueConverter;
-import com.holonplatform.core.TypedExpression;
-import com.holonplatform.core.internal.query.DefaultCollectionConstantExpression;
+import com.holonplatform.core.internal.DefaultCollectionConstantExpression;
 
 /**
- * A {@link ConstantExpression} with a {@link Collection} value type.
+ * A {@link ConstantConverterExpression} with a {@link Collection} value type.
  *
  * @param <T> Collection elements type
  *
@@ -46,7 +44,7 @@ public interface CollectionConstantExpression<T> extends ConstantConverterExpres
 	Collection<?> getModelValue();
 
 	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values.
+	 * Create a {@link CollectionConstantExpression} which represents a collection of constant values.
 	 * @param <T> Expression type
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
@@ -56,7 +54,7 @@ public interface CollectionConstantExpression<T> extends ConstantConverterExpres
 	}
 
 	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values.
+	 * Create a {@link CollectionConstantExpression} which represents a collection of constant values.
 	 * @param <T> Expression type
 	 * @param values Expression values (not null)
 	 * @return A new collection expression
@@ -67,7 +65,7 @@ public interface CollectionConstantExpression<T> extends ConstantConverterExpres
 	}
 
 	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values, using given
+	 * Create a {@link CollectionConstantExpression} which represents a collection of constant values, using given
 	 * <code>expression</code> to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param <T> Expression type
 	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available
@@ -79,7 +77,7 @@ public interface CollectionConstantExpression<T> extends ConstantConverterExpres
 	}
 
 	/**
-	 * Create a {@link ConstantExpression} which represents a collection of constant values, using given
+	 * Create a {@link CollectionConstantExpression} which represents a collection of constant values, using given
 	 * <code>expression</code> to inherit an {@link ExpressionValueConverter}, if available.
 	 * @param <T> Expression type
 	 * @param expression Expression form which to inherit an {@link ExpressionValueConverter}, if available
