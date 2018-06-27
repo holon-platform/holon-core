@@ -152,6 +152,16 @@ public interface QuerySort extends Serializable, Expression {
 		 */
 		C sort(QuerySort sort);
 
+		/**
+		 * Add a list of sorts. The sort clauses will be added in the order they are provided.
+		 * @param sorts Sort clauses to add
+		 * @return the QuerySortSupport which contains the added sort clause (usually the same instance)
+		 * @since 5.2.0
+		 */
+		default C sort(QuerySort... sorts) {
+			return sort(QuerySort.of(sorts));
+		}
+
 	}
 
 	/**
