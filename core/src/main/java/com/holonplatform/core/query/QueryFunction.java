@@ -77,9 +77,6 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	/**
 	 * A {@link QueryFunction} which is also a {@link Property}, allowing the function to be used within a property set
 	 * query projection and the function value to be collected in a {@link PropertyBox}.
-	 * <p>
-	 * The property is always read-only.
-	 * </p>
 	 * 
 	 * @param <T> Function result type
 	 * @param <A> Function arguments type
@@ -87,15 +84,6 @@ public interface QueryFunction<T, A> extends QueryExpression<T>, QueryProjection
 	 * @since 5.1.0
 	 */
 	public interface PropertyQueryFunction<T, A> extends QueryFunction<T, A>, Property<T> {
-
-		/*
-		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.Property#isReadOnly()
-		 */
-		@Override
-		default boolean isReadOnly() {
-			return true;
-		}
 
 	}
 

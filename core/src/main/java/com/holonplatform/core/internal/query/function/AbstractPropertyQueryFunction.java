@@ -116,6 +116,15 @@ public abstract class AbstractPropertyQueryFunction<T, A> extends AbstractQueryF
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.Property#isReadOnly()
+	 */
+	@Override
+	public boolean isReadOnly() {
+		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.Validator.Validatable#getValidators()
 	 */
 	@Override
