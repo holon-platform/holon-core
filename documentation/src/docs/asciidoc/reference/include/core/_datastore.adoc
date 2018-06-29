@@ -466,6 +466,18 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=bea
 <2> The same operation but expecting a unique result, which will be returned as an `Optional` `MyBean` instance
 <3> Use `MyBean` class as query projection and specify the query projection paths. In this example, only the `code` bean property is declared as projection paths, so only the `code` property values will be retrieved from query execution and setted in the `MyBean` result instances
 
+*3. Select all projection:*
+
+The link:{apidir}/com/holonplatform/core/query/SelectAllProjection.html[SelectAllProjection^] interface can be used to obtain all the values of a persistent data entity instance as a `Map` with the entity attribute _names_ as keys and the corresponding entity attribute _values_ as values.
+
+The concrete result can be highly dependent on the specific `Datastore` implementation, both regarding the entity attribute names and the entity attribute values representations.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=allprojection,indent=0]
+----
+<1> Obtain all the values of the data entity represented by the `test` name as a `Map` with the entity attribute names and their values
+
 [[DatastoreConfiguration]]
 ==== Configuration
 
