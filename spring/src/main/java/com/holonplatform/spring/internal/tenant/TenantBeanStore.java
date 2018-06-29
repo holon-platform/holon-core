@@ -7,7 +7,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.beans.factory.ObjectFactory;
 
 import com.holonplatform.core.internal.Logger;
-import com.holonplatform.core.internal.Logger.Level;
 import com.holonplatform.spring.internal.SpringLogger;
 
 /**
@@ -84,17 +83,7 @@ class TenantBeanStore implements Serializable {
 	public Object get(String beanName, ObjectFactory<?> objectFactory) {
 		LOGGER.debug(() -> "Getting bean with name [" + beanName + "] from: " + this);
 
-		Object bean = objectMap.get(beanName);
-		if (bean == null) {
-			bean = create(beanName, objectFactory);
-			objectMap.put(beanName, bean);
-
-			if (LOGGER.isEnabled(Level.DEBUG)) {
-				final Object b = bean;
-				LOGGER.debug(() -> "Added bean [" + b + "] with name [" + beanName + "] to: " + this);
-			}
-		}
-		return bean;
+		return objectMap.computeIfAbsent(beanName, name -> create(name, objectFactory));
 	}
 
 	/**
@@ -107,6 +96,8 @@ class TenantBeanStore implements Serializable {
 		final Object bean = objectFactory.getObject();
 		if (!(bean instanceof Serializable)) {
 			LOGGER.warn("Storing non-serializable bean [" + bean + "] with name [" + beanName + "] in: " + this);
+		} else {
+			LOGGER.debug(() -> "Added bean [" + bean + "] with name [" + beanName + "] to: " + this);
 		}
 		return bean;
 	}
