@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.holonplatform.core.Expression;
@@ -41,6 +42,7 @@ import com.holonplatform.core.internal.query.filter.OrFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter.MatchMode;
 import com.holonplatform.core.internal.utils.ConversionUtils;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * A {@link Query} expression representing a filter (query restriction) condition.
@@ -497,11 +499,32 @@ public interface QueryFilter extends Expression, Serializable {
 	public interface QueryFilterSupport<C extends QueryFilterSupport<C>> {
 
 		/**
-		 * Add a filter clause
+		 * Add a filter clause.
 		 * @param filter Filter clause to add. If <code>null</code>, the filter clause is ignored.
-		 * @return the QueryFilterSupport which contains the added filter clause (usually the same instance)
+		 * @return the {@link QueryFilterSupport} which contains the added filter clause (usually the same instance)
 		 */
 		C filter(QueryFilter filter);
+
+		/**
+		 * Add multiple filter clauses using the <em>AND</em> semantic.
+		 * @param filters Filters to add. If empty, no filter will be added.
+		 * @return the {@link QueryFilterSupport} which contains the added filters clause (usually the same instance)
+		 * @since 5.1.2
+		 */
+		default C filter(QueryFilter... filters) {
+			return filter(QueryFilter.allOf(filters).orElse(null));
+		}
+
+		/**
+		 * Add a filter clause using a {@link Supplier}.
+		 * @param filterSupplier The {@link QueryFilter} clause {@link Supplier} (not null)
+		 * @return the {@link QueryFilterSupport} which contains the added filter clause (usually the same instance)
+		 * @since 5.1.2
+		 */
+		default C filter(Supplier<QueryFilter> filterSupplier) {
+			ObjectUtils.argumentNotNull(filterSupplier, "QueryFilter supplier must be not null");
+			return filter(filterSupplier.get());
+		}
 
 	}
 

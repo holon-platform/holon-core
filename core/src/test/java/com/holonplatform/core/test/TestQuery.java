@@ -119,6 +119,9 @@ public class TestQuery {
 		assertTrue(qd.getFilter().isPresent());
 
 		q.filter(TestPropertySet.NAME.isNotNull());
+		
+		q.filter(() -> null);
+		q.sort(() -> null);
 
 		QuerySort qs = TestPropertySet.NAME.asc();
 		q.sort(qs);
