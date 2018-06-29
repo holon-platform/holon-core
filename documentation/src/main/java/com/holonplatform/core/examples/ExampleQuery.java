@@ -17,6 +17,7 @@ package com.holonplatform.core.examples;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -45,6 +46,7 @@ import com.holonplatform.core.query.QueryFunction.Min;
 import com.holonplatform.core.query.QueryFunction.Sum;
 import com.holonplatform.core.query.QuerySort;
 import com.holonplatform.core.query.QuerySort.SortDirection;
+import com.holonplatform.core.query.SelectAllProjection;
 import com.holonplatform.core.query.StringFunction.Lower;
 import com.holonplatform.core.query.StringFunction.Upper;
 import com.holonplatform.core.query.TemporalFunction.CurrentDate;
@@ -370,6 +372,14 @@ public class ExampleQuery {
 		results = datastore.query(TARGET).stream(BeanProjection.of(MyBean.class, PROPERTIES.property("code"))); // <3>
 	}
 	// end::beanprojection[]
+
+	public void selectAllProjection() {
+		// tag::allprojection[]
+		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
+
+		List<Map<String, Object>> values = datastore.query(DataTarget.named("test")).list(SelectAllProjection.create()); // <1>
+		// end::allprojection[]
+	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void subquery1() {
