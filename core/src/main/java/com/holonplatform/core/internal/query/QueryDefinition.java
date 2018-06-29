@@ -16,7 +16,9 @@
 package com.holonplatform.core.internal.query;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryAggregation;
 import com.holonplatform.core.query.QueryConfiguration;
 import com.holonplatform.core.query.QueryFilter;
@@ -82,6 +84,17 @@ public interface QueryDefinition extends QueryConfiguration, ExpressionResolverS
 	 * @param value Parameter value
 	 */
 	void addParameter(String name, Object value);
+
+	/**
+	 * Add a parameter using a {@link ConfigProperty}, with {@link ConfigProperty#getKey()} as parameter name.
+	 * @param <T> Configuration property type
+	 * @param property Configuration property (not null)
+	 * @param value Property value
+	 */
+	default <T> void addParameter(ConfigProperty<T> property, T value) {
+		ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+		addParameter(property.getKey(), value);
+	}
 
 	/**
 	 * Create a new {@link QueryDefinition}.
