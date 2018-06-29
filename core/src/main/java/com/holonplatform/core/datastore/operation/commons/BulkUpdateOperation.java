@@ -51,7 +51,8 @@ public interface BulkUpdateOperation<R, O extends BulkUpdateOperation<R, O>>
 	 * @see #setNull(Path)
 	 */
 	default <T> O set(Path<T> path, T value) {
-		return set(path, ConstantConverterExpression.create(path, value));
+		return set(path,
+				(value == null) ? NullExpression.create(path) : ConstantConverterExpression.create(path, value));
 	}
 
 	/**
