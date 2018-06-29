@@ -266,6 +266,28 @@ public interface LocalizationContext {
 	}
 
 	/**
+	 * Format given {@link LocalDate} according to current Context {@link Locale} using given date format style.
+	 * @param temporal Date to format (may be null)
+	 * @param dateFormat Date format style
+	 * @return Formatted temporal, or <code>null</code> if given temporal was null
+	 * @throws LocalizationException If context is not localized
+	 */
+	default String format(LocalDate temporal, TemporalFormat dateFormat) {
+		return format(temporal, dateFormat, TemporalFormat.DEFAULT);
+	}
+
+	/**
+	 * Format given {@link LocalTime} according to current Context {@link Locale} using given time format style.
+	 * @param temporal Time to format (may be null)
+	 * @param timeFormat Time format style
+	 * @return Formatted temporal, or <code>null</code> if given temporal was null
+	 * @throws LocalizationException If context is not localized
+	 */
+	default String format(LocalTime temporal, TemporalFormat timeFormat) {
+		return format(temporal, TemporalFormat.DEFAULT, timeFormat);
+	}
+
+	/**
 	 * Get a {@link DateTimeFormatter} for javax.time.* types formatting and set it up according to context
 	 * {@link Locale} and {@link Localization} settings.
 	 * @param type Temporal type

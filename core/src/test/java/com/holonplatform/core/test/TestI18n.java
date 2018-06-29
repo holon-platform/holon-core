@@ -289,9 +289,9 @@ public class TestI18n {
 		LocalDateTime dt = LocalDateTime.of(1979, Month.MARCH, 9, 18, 30, 15);
 
 		assertEquals("09/03/79", ctx.format(date));
-		assertEquals("09/03/79", ctx.format(date, TemporalFormat.SHORT, null));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.MEDIUM, null));
-		assertEquals("9 marzo 1979", ctx.format(date, TemporalFormat.LONG, null));
+		assertEquals("09/03/79", ctx.format(date, TemporalFormat.SHORT));
+		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.MEDIUM));
+		assertEquals("9 marzo 1979", ctx.format(date, TemporalFormat.LONG));
 		assertEquals("venerdì 9 marzo 1979", ctx.format(date, TemporalFormat.FULL, null));
 
 		assertEquals("18.30", ctx.format(time));
@@ -310,11 +310,14 @@ public class TestI18n {
 
 		assertEquals("9-mar-1979", ctx.format(date));
 		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT, null));
+		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT));
 
 		ctx.localize(Localization.builder(Locale.ITALY).defaultDateTemporalFormat(TemporalFormat.SHORT)
 				.defaultTimeTemporalFormat(TemporalFormat.MEDIUM).build());
 
 		assertEquals("18.30.15", ctx.format(time));
+		
+		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
 
 	}
 
