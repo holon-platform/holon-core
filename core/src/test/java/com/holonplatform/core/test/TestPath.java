@@ -61,6 +61,18 @@ public class TestPath {
 		assertTrue(ppath.isRootPath());
 
 	}
+	
+	@Test
+	public void testPathNameMapper() {
+		
+		Path<String> ppath = Path.of("parent", String.class);
+		Path<String> path = Path.of("test", String.class).parent(ppath);
+		
+		assertEquals("test", path.getName());
+		assertEquals("!parent.!test", path.relativeName(p -> "!" + p.getName()));
+		assertEquals("$parent.$test", path.fullName(p -> "$" + p.getName()));
+		
+	}
 
 	@Test
 	public void testFinalPath() {
