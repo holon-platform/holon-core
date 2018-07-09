@@ -15,8 +15,13 @@
  */
 package com.holonplatform.core.query.lock;
 
+import java.util.stream.Stream;
+
 import com.holonplatform.core.datastore.DatastoreCommodity;
+import com.holonplatform.core.exceptions.DataAccessException;
+import com.holonplatform.core.internal.query.lock.LockAcquisitionException;
 import com.holonplatform.core.query.QueryBuilder;
+import com.holonplatform.core.query.QueryProjection;
 import com.holonplatform.core.query.QueryResults;
 
 /**
@@ -27,5 +32,17 @@ import com.holonplatform.core.query.QueryResults;
  * @see LockSupport
  */
 public interface LockQuery extends QueryBuilder<LockQuery>, QueryResults, DatastoreCommodity, LockSupport<LockQuery> {
+
+	/**
+	 * Execute query and get a {@link Stream} of query results using given <code>projection</code> to map results to
+	 * required type.
+	 * @param <R> Results type
+	 * @param projection Query projection (not null)
+	 * @return Query results stream, an empty Stream if none
+	 * @throws LockAcquisitionException If a lock mode was configured and the lock can't be acquired
+	 * @throws DataAccessException Error in query execution
+	 */
+	@Override
+	<R> Stream<R> stream(QueryProjection<R> projection);
 
 }
