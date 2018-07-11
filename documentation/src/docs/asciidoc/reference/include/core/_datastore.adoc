@@ -665,6 +665,23 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag
 ----
 <1> Configure the transaction disabling the _rollback on error_ behaviour and the auto-commit mode
 
+===== Obtain a Transaction reference
+
+When using the `withTransaction` methods, the transaction lifecycle is managed by the `Datastore`, ensuring transaction finalization at the end of the transactional operation.
+
+A `Transaction` can also be obtained using the `getTransaction` method of the `Transactional` API. This method starts a transaction and returns it to the caller, but the `Transaction` lifecycle is now delegated to the caller itself, which *must ensure to finalize the transaction calling either the `commit` or `rollback` transaction methods*.
+
+The `Transaction` obtained this way is bound to the current Thread, and any `Datastore` operation executed in the same Thread after the transaction is started will use such transaction.
+
+IMPORTANT: The *auto-commit* mode which can be configured through the `TransactionalConfiguration` API *has no effect* when a `Transaction` is obtained using the `getTransaction` methods, because the transaction lifecycle management is delegated to the caller.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleDatastore.java[tag=transactional6,indent=0]
+----
+<1> Obtain and start a `Transaction`
+<2> Commit the transaction
+
 [[DatastoreExtension]]
 ==== Datastore API extensions
 

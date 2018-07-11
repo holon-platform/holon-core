@@ -84,6 +84,7 @@ public interface QueryBuilder<Q extends QueryBuilder<Q>> extends QueryFilterSupp
 
 	/**
 	 * Configure the query to return <em>distinct</em> query projection result values.
+	 * @return this
 	 * @since 5.2.0
 	 */
 	Q distinct();

@@ -53,6 +53,7 @@ public interface ListPathProperty<T> extends CollectionPathProperty<T, List<T>>,
 	/**
 	 * Create a new {@link PropertyBox} type {@link ListPathProperty}, using given <code>properties</code> as property
 	 * set.
+	 * @param <P> Property type
 	 * @param name Property (and path) name (not null)
 	 * @param properties Property set (not null)
 	 * @return a new {@link ListPathProperty} instance

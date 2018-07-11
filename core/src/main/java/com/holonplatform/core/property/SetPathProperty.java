@@ -53,6 +53,7 @@ public interface SetPathProperty<T> extends CollectionPathProperty<T, Set<T>>, S
 	/**
 	 * Create a new {@link PropertyBox} type {@link SetPathProperty}, using given <code>properties</code> as property
 	 * set.
+	 * @param <P> Property type
 	 * @param name Property (and path) name (not null)
 	 * @param properties Property set (not null)
 	 * @return a new {@link SetPathProperty} instance
