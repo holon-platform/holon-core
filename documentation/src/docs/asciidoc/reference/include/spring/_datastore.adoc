@@ -36,3 +36,20 @@ The `Datastore` bean *instance* and the `Datastore` bean *name* are provided as 
 For example, the post processor can be used to register additional `ExpressionResolver` or `DatastoreCommodityFactory`.
 
 NOTE: The `DatastorePostProcessor` type beans must be registered using the `singleton` scope.
+
+[[EnableDatastoreConfiguration]]
+==== Automatic `Datastore` beans configuration using `@EnableDatastoreConfiguration`
+
+The link:{apidir}/com/holonplatform/spring/EnableDatastoreConfiguration.html[EnableDatastoreConfiguration^] annotation can be used on Spring configuration classes to *automatically detect and configure* the `Datastore` configuration beans listed above.
+
+When the `@EnableDatastoreConfiguration` is present, the following beans will be auto-detected in Spring context and automatically registered/applied to any `Datastore` type Spring bean:
+
+* <<DatastoreResolver>> annotated beans to automatically register _expression resolvers_.
+* <<DatastoreCommodityFactory>> annotated beans to automatically register _commodity factories_.
+* <<DatastorePostProcessor>> type beans to configure a `Datastore` bean right after it is initialized in the Spring application context.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleSpring.java[tag=datastoreconfig1,indent=0]
+----
+<1> Use the `@EnableDatastoreConfiguration` to automatically register suitable `Datastore` configuration beans into the `Datastore` bean definition

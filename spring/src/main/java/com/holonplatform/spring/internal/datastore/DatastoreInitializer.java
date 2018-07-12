@@ -16,6 +16,9 @@
 package com.holonplatform.spring.internal.datastore;
 
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
@@ -54,21 +57,27 @@ public final class DatastoreInitializer implements Serializable {
 	 * @param datastore Datastore
 	 * @param datastoreBeanName Datastore bean name
 	 * @param factory BeanFactory
+	 * @return A message for log purposes which resumes the registered resolvers
 	 */
-	public static void configureDatastore(Datastore datastore, String datastoreBeanName, BeanFactory factory) {
+	public static String configureDatastore(Datastore datastore, String datastoreBeanName, BeanFactory factory) {
 		ObjectUtils.argumentNotNull(datastore, "Null Datastore");
 		ObjectUtils.argumentNotNull(datastoreBeanName, "Null Datastore bean name");
 		ObjectUtils.argumentNotNull(factory, "Null BeanFactory");
 
+		List<String> messages = new LinkedList<>();
+
 		if (factory instanceof ListableBeanFactory) {
-			configureDatastoreResolvers(datastore, datastoreBeanName, (ListableBeanFactory) factory);
-			configureDatastoreCommodityFactories(datastore, datastoreBeanName, (ListableBeanFactory) factory);
-			configureDatastorePostProcessors(datastore, datastoreBeanName, (ListableBeanFactory) factory);
+			messages.add(configureDatastoreResolvers(datastore, datastoreBeanName, (ListableBeanFactory) factory));
+			messages.add(
+					configureDatastoreCommodityFactories(datastore, datastoreBeanName, (ListableBeanFactory) factory));
+			messages.add(configureDatastorePostProcessors(datastore, datastoreBeanName, (ListableBeanFactory) factory));
 		} else {
+			messages.add("Skip Datastore configuration: The BeanFactory is not a ListableBeanFactory");
 			LOGGER.warn(
 					"The BeanFactory [" + factory + "] is not a ListableBeanFactory: skipping Datastore configuration");
 		}
 
+		return messages.stream().filter(m -> m != null).collect(Collectors.joining(", "));
 	}
 
 	/**
@@ -76,9 +85,11 @@ public final class DatastoreInitializer implements Serializable {
 	 * @param datastore Datastore to configure
 	 * @param datastoreBeanName Datastore bean name to configure
 	 * @param beanFactory Bean factory
+	 * @return A message for log purposes which resumes the registered resolvers
 	 */
-	private static void configureDatastoreResolvers(Datastore datastore, String datastoreBeanName,
+	private static String configureDatastoreResolvers(Datastore datastore, String datastoreBeanName,
 			ListableBeanFactory beanFactory) {
+		int count = 0;
 		final String[] beanNames = beanFactory.getBeanNamesForAnnotation(DatastoreResolver.class);
 		if (beanNames != null && beanNames.length > 0) {
 			for (String beanName : beanNames) {
@@ -92,11 +103,13 @@ public final class DatastoreInitializer implements Serializable {
 					// register resolver
 					ExpressionResolver<?, ?> resolver = (ExpressionResolver<?, ?>) beanFactory.getBean(beanName);
 					datastore.addExpressionResolver(resolver);
+					count++;
 					LOGGER.debug(() -> "Registered expression resolver [" + resolver.getClass().getName()
 							+ "] into Datastore with bean name [" + datastoreBeanName + "]");
 				}
 			}
 		}
+		return "Registered DatastoreResolvers: " + count;
 	}
 
 	/**
@@ -105,10 +118,12 @@ public final class DatastoreInitializer implements Serializable {
 	 * @param datastore Datastore to configure
 	 * @param datastoreBeanName Datastore bean name to configure
 	 * @param beanFactory Bean factory
+	 * @return A message for log purposes which resumes the registered resolvers
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static void configureDatastoreCommodityFactories(Datastore datastore, String datastoreBeanName,
+	private static String configureDatastoreCommodityFactories(Datastore datastore, String datastoreBeanName,
 			ListableBeanFactory beanFactory) {
+		int count = 0;
 		if (datastore instanceof DatastoreCommodityRegistrar) {
 			final Class<? extends DatastoreCommodityFactory> baseType = ((DatastoreCommodityRegistrar<?>) datastore)
 					.getCommodityFactoryType();
@@ -129,6 +144,7 @@ public final class DatastoreInitializer implements Serializable {
 							DatastoreCommodityFactory datastoreCommodityFactory = (DatastoreCommodityFactory) beanFactory
 									.getBean(beanName);
 							((DatastoreCommodityRegistrar) datastore).registerCommodity(datastoreCommodityFactory);
+							count++;
 							LOGGER.debug(() -> "Registered factory [" + datastoreCommodityFactory.getClass().getName()
 									+ "] into Datastore with bean name [" + datastoreBeanName + "]");
 						}
@@ -143,6 +159,7 @@ public final class DatastoreInitializer implements Serializable {
 			LOGGER.debug(() -> "Datastore [" + datastore
 					+ "] is not a DatastoreCommodityRegistrar: skipping DatastoreCommodityFactory beans configuration");
 		}
+		return "Registered DatastoreCommodityFactories: " + count;
 	}
 
 	/**
@@ -150,16 +167,20 @@ public final class DatastoreInitializer implements Serializable {
 	 * @param datastore Datastore to configure
 	 * @param datastoreBeanName Datastore bean name to configure
 	 * @param beanFactory Bean factory
+	 * @return A message for log purposes which resumes the registered resolvers
 	 */
-	private static void configureDatastorePostProcessors(Datastore datastore, String datastoreBeanName,
+	private static String configureDatastorePostProcessors(Datastore datastore, String datastoreBeanName,
 			ListableBeanFactory beanFactory) {
+		int count = 0;
 		final String[] beanNames = beanFactory.getBeanNamesForType(DatastorePostProcessor.class, false, true);
 		if (beanNames != null && beanNames.length > 0) {
 			for (String beanName : beanNames) {
 				beanFactory.getBean(beanName, DatastorePostProcessor.class).postProcessDatastore(datastore,
 						datastoreBeanName);
+				count++;
 			}
 		}
+		return "Applied DatastorePostProcessors: " + count;
 	}
 
 }
