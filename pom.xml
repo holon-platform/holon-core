@@ -78,7 +78,7 @@
 		<spring.security.version>5.0.5.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+		<spring.boot.version>2.0.3.RELEASE</spring.boot.version>
 
 		<!-- Test -->
 		<holon.json.test.version>5.2.0-SNAPSHOT</holon.json.test.version>
