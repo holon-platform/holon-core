@@ -47,7 +47,7 @@ public class OnPropertyPrefixCondition extends SpringBootCondition {
 	@Override
 	public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
 		Map<String, Object> attributes = metadata.getAnnotationAttributes(ConditionalOnPropertyPrefix.class.getName());
-		if (attributes.containsKey("value")) {
+		if (attributes != null && attributes.containsKey("value")) {
 			String prefix = (String) attributes.get("value");
 			if (prefix != null && !prefix.trim().equals("")) {
 				final String propertyPrefix = !prefix.endsWith(".") ? prefix + "." : prefix;
