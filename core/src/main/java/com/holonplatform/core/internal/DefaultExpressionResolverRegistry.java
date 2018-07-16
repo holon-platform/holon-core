@@ -55,9 +55,9 @@ public class DefaultExpressionResolverRegistry implements ExpressionResolverRegi
 	/**
 	 * {@link ExpressionResolver} comparator using {@link Priority} annotation.
 	 */
-	private static final Comparator<ExpressionResolver> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : ExpressionResolver.DEFAULT_PRIORITY);
+	private static final Comparator<ExpressionResolver> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: ExpressionResolver.DEFAULT_PRIORITY);
 
 	/**
 	 * Registered resolvers.

@@ -41,7 +41,7 @@ public class TestTenantScopeConfigProperty {
 				}
 			};
 		}
-		
+
 		@Bean(name = "anotherTenantResolver")
 		public TenantResolver anotherTenantResolver() {
 			return () -> Optional.of("ANOTHER");

@@ -80,9 +80,9 @@ public class DefaultPropertyRendererRegistry implements PropertyRendererRegistry
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static final Comparator<PropertyRenderer> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : PropertyRenderer.DEFAULT_PRIORITY);
+	private static final Comparator<PropertyRenderer> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: PropertyRenderer.DEFAULT_PRIORITY);
 
 	/**
 	 * Renderers

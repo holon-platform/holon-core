@@ -48,9 +48,9 @@ public enum RestClientFactoryRegistry {
 	/**
 	 * {@link Priority} based comparator.
 	 */
-	private static final Comparator<RestClientFactory> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : RestClientFactory.DEFAULT_PRIORITY);
+	private static final Comparator<RestClientFactory> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: RestClientFactory.DEFAULT_PRIORITY);
 
 	/**
 	 * The {@link RestClientFactory}s by class name organized by the {@link ClassLoader} was used to load them.
@@ -75,9 +75,10 @@ public enum RestClientFactoryRegistry {
 		ClassLoader cl = classLoader == null ? ClassUtils.getDefaultClassLoader() : classLoader;
 		List<RestClientFactory> restClientFactories = getRestClientFactories(fullyQualifiedClassName, cl);
 		if (restClientFactories.isEmpty()) {
-			throw new RestClientCreationException(
-					"No RestClientFactory available for ClassLoader [" + cl + "]" + ((fullyQualifiedClassName != null)
-							? " and RestClient implementation class name [" + fullyQualifiedClassName + "]" : ""));
+			throw new RestClientCreationException("No RestClientFactory available for ClassLoader [" + cl + "]"
+					+ ((fullyQualifiedClassName != null)
+							? " and RestClient implementation class name [" + fullyQualifiedClassName + "]"
+							: ""));
 		}
 		RestClient restClient = null;
 		for (RestClientFactory factory : restClientFactories) {
@@ -87,9 +88,10 @@ public enum RestClientFactoryRegistry {
 			}
 		}
 		if (restClient == null) {
-			throw new RestClientCreationException(
-					"No RestClient available for ClassLoader [" + cl + "]" + ((fullyQualifiedClassName != null)
-							? " and RestClient implementation class name [" + fullyQualifiedClassName + "]" : ""));
+			throw new RestClientCreationException("No RestClient available for ClassLoader [" + cl + "]"
+					+ ((fullyQualifiedClassName != null)
+							? " and RestClient implementation class name [" + fullyQualifiedClassName + "]"
+							: ""));
 		}
 		return restClient;
 	}

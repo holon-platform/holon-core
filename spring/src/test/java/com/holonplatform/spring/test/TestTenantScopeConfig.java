@@ -25,7 +25,7 @@ public class TestTenantScopeConfig {
 	private static final ThreadLocal<String> CURRENT_TENANT_ID = new ThreadLocal<>();
 
 	@Configuration
-	@EnableTenantScope(tenantResolver="myTenantResolver")
+	@EnableTenantScope(tenantResolver = "myTenantResolver")
 	protected static class Config {
 
 		@Primary
@@ -39,7 +39,7 @@ public class TestTenantScopeConfig {
 				}
 			};
 		}
-		
+
 		@Bean(name = "anotherTenantResolver")
 		public TenantResolver anotherTenantResolver() {
 			return () -> Optional.of("ANOTHER");

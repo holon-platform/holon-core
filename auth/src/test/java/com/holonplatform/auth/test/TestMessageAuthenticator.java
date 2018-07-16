@@ -47,23 +47,23 @@ public class TestMessageAuthenticator {
 		AuthenticationTokenResolver<TestMessage> r1 = AuthenticationTokenResolver.create(TestMessage.class, msg -> {
 			return msg.getHeader("MY_HDR1").map(h -> new MyHeaderAuthenticationToken(h));
 		});
-		
+
 		assertFalse(r1.getScheme().isPresent());
 		assertEquals(TestMessage.class, r1.getMessageType());
-		
+
 		TestMessage m = new TestMessage("content");
 		assertFalse(r1.getAuthenticationToken(m).isPresent());
-		
+
 		m.setHeader("MY_HDR1", "usr");
 		AuthenticationToken token = r1.getAuthenticationToken(m).orElse(null);
 		assertNotNull(token);
-		
+
 		assertEquals("usr", token.getPrincipal());
-		
+
 		r1 = AuthenticationTokenResolver.create(TestMessage.class, msg -> {
 			return msg.getHeader("MY_HDR1").map(h -> new MyHeaderAuthenticationToken(h));
 		}, "myscheme");
-		
+
 		assertTrue(r1.getScheme().isPresent());
 		assertEquals("myscheme", r1.getScheme().get());
 	}

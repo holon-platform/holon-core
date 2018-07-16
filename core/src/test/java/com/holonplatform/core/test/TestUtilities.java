@@ -367,7 +367,7 @@ public class TestUtilities {
 		bigint = BigInteger.valueOf(-3);
 		ig = ConversionUtils.parseNumber("-0x3", BigInteger.class);
 		assertEquals(bigint, ig);
-		
+
 		BigDecimal bdn = ConversionUtils.parseNumber("12.35", BigDecimal.class);
 		assertEquals(BigDecimal.valueOf(12.35), bdn);
 

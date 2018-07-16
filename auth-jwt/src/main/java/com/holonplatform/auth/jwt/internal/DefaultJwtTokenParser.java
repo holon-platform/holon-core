@@ -48,7 +48,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
  * @since 5.1.1
  */
 public enum DefaultJwtTokenParser implements JwtTokenParser {
-	
+
 	INSTANCE;
 
 	/*

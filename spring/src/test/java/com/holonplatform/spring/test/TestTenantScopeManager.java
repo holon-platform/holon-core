@@ -81,9 +81,9 @@ public class TestTenantScopeManager {
 		}
 
 		Assert.assertFalse(i1 == i2);
-		
+
 		TenantManagedBeanTest i3 = null;
-		
+
 		try {
 			CURRENT_TENANT_ID.set("T1");
 			i3 = applicationContext.getBean(TenantManagedBeanTest.class);
@@ -91,11 +91,11 @@ public class TestTenantScopeManager {
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
-		
+
 		Assert.assertTrue(i1 == i3);
-		
+
 		manager.discardTenantBeanStore("T1");
-		
+
 		try {
 			CURRENT_TENANT_ID.set("T1");
 			i3 = applicationContext.getBean(TenantManagedBeanTest.class);
@@ -103,9 +103,9 @@ public class TestTenantScopeManager {
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
-		
+
 		Assert.assertFalse(i1 == i3);
-		
+
 		Assert.assertTrue(i1.isDestroyed());
 	}
 

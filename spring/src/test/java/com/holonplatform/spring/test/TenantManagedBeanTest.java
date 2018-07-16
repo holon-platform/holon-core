@@ -22,9 +22,9 @@ import javax.annotation.PreDestroy;
 public class TenantManagedBeanTest implements Serializable {
 
 	private static final long serialVersionUID = -3226380157091323902L;
-	
+
 	private boolean destroyed;
-	
+
 	public boolean isDestroyed() {
 		return destroyed;
 	}

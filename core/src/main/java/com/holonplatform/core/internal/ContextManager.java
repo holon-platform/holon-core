@@ -402,7 +402,7 @@ public final class ContextManager {
 		 * @return The {@link ContextScope} with given name, or <code>null</code> if not found
 		 */
 		private ContextScope getScopeForClassLoader(String name, ClassLoader cl) {
-			if (cl != null) {			
+			if (cl != null) {
 				LinkedHashMap<String, ContextScope> contextScopes = ensureInited(cl);
 				return contextScopes.get(name);
 			}
@@ -444,7 +444,7 @@ public final class ContextManager {
 						});
 				scopes.put(classLoader, contextScopes);
 			}
-			
+
 			return contextScopes;
 		}
 

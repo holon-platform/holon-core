@@ -25,12 +25,12 @@ public class TestLogger {
 
 		Logger logger = Logger.create(TEST_LOGGER_NAME);
 		assertNotNull(logger);
-		
+
 		// test wrong logger name
 		Logger logger2 = Logger.create("com.acme.core.test.boh");
 		assertNotNull(logger2);
 		logger2.info("test logger2");
-		
+
 		Logger logger3 = Logger.create("com.acme.core.test.boh");
 		assertNotNull(logger3);
 		logger3.info("test logger3_");
@@ -49,13 +49,12 @@ public class TestLogger {
 		logger.error("test logger");
 
 		logger.debug(() -> "test" + " logger");
-		
 
 		TestUtils.expectedException(IllegalArgumentException.class, () -> {
 			logger.debug(null);
 			logger.debug(null, new Exception());
-			
-			logger.debug(() -> "hello" , new IllegalArgumentException());
+
+			logger.debug(() -> "hello", new IllegalArgumentException());
 		});
 
 	}

@@ -43,7 +43,7 @@ public class TestMessages {
 		assertEquals(1, mh.getHeaders().size());
 		assertTrue(mh.getHeader("a").isPresent());
 		assertEquals("b", mh.getHeader("a").orElse(null));
-		
+
 	}
 
 	@Test(expected = IllegalArgumentException.class)

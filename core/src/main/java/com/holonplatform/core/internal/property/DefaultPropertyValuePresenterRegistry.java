@@ -78,9 +78,9 @@ public class DefaultPropertyValuePresenterRegistry implements PropertyValuePrese
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static final Comparator<PropertyValuePresenter> PRIORITY_COMPARATOR = Comparator
-			.comparingInt(p -> p.getClass().isAnnotationPresent(Priority.class)
-					? p.getClass().getAnnotation(Priority.class).value() : PropertyValuePresenter.DEFAULT_PRIORITY);
+	private static final Comparator<PropertyValuePresenter> PRIORITY_COMPARATOR = Comparator.comparingInt(
+			p -> p.getClass().isAnnotationPresent(Priority.class) ? p.getClass().getAnnotation(Priority.class).value()
+					: PropertyValuePresenter.DEFAULT_PRIORITY);
 
 	/**
 	 * Presenters

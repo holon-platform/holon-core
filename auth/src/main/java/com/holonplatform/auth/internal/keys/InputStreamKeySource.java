@@ -50,7 +50,8 @@ public class InputStreamKeySource implements KeySource {
 		return ConversionUtils.convertInputStreamToBytes(source);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

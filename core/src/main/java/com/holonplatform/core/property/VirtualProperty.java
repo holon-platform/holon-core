@@ -92,7 +92,8 @@ public interface VirtualProperty<T> extends Property<T> {
 	 * @param <P> Property type
 	 * @param <B> Concrete builder type
 	 */
-	public interface Builder<T, P extends VirtualProperty<T>, B extends Builder<T, P, B>> extends Property.Builder<T, P, B>, VirtualProperty<T> {
+	public interface Builder<T, P extends VirtualProperty<T>, B extends Builder<T, P, B>>
+			extends Property.Builder<T, P, B>, VirtualProperty<T> {
 
 		/**
 		 * Set the property name.
@@ -109,13 +110,13 @@ public interface VirtualProperty<T> extends Property<T> {
 		B valueProvider(PropertyValueProvider<T> valueProvider);
 
 	}
-	
+
 	/**
 	 * Default {@link VirtualProperty} builder.
 	 * @param <T> Property value type
 	 */
 	public interface VirtualPropertyBuilder<T> extends Builder<T, VirtualProperty<T>, VirtualPropertyBuilder<T>> {
-		
+
 	}
 
 }

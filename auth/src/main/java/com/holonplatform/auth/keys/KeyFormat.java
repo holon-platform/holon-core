@@ -23,23 +23,23 @@ package com.holonplatform.auth.keys;
 public enum KeyFormat {
 
 	/**
-	 * X.509  public key encoding
+	 * X.509 public key encoding
 	 */
 	X509,
-	
+
 	/**
 	 * PKCS #8 private key encoding
 	 */
 	PKCS8,
-	
+
 	/**
 	 * PKCS #11 format
 	 */
 	PKCS11,
-	
+
 	/**
 	 * PKCS #12 key store format
 	 */
 	PKCS12
-	
+
 }

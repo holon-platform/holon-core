@@ -91,7 +91,8 @@ public class DefaultCollectionConstantExpression<E> extends ArrayList<E> impleme
 	public DefaultCollectionConstantExpression(TypedExpression<E> expression, Collection<? extends E> values) {
 		super((values != null) ? values : Collections.emptySet());
 		this.expressionValueConverter = (expression instanceof ConverterExpression)
-				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null) : null;
+				? ((ConverterExpression<E>) expression).getExpressionValueConverter().orElse(null)
+				: null;
 		this.type = (expression != null) ? expression.getType()
 				: ((values != null && !values.isEmpty()) ? (Class<? extends E>) values.iterator().next().getClass()
 						: (Class<? extends E>) Void.class);

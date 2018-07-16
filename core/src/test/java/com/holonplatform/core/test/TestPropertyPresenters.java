@@ -130,7 +130,7 @@ public class TestPropertyPresenters {
 
 		assertEquals("p1", box.present(P1));
 	}
-	
+
 	@Test
 	public void testPropertyPresenter() {
 

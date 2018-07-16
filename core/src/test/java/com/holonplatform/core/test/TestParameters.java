@@ -35,7 +35,7 @@ public class TestParameters {
 
 	@Test
 	public void testParameterSet() {
-		
+
 		DefaultParameterSet ps = new DefaultParameterSet();
 
 		assertFalse(ps.hasParameters());
@@ -62,7 +62,7 @@ public class TestParameters {
 		String sv = ps.getParameter("test", String.class).orElse(null);
 		assertNotNull(sv);
 		assertEquals("TEST", sv);
-		
+
 		sv = ps.getParameter("test", String.class, "DFT");
 		assertNotNull(sv);
 		assertEquals("TEST", sv);
@@ -70,30 +70,30 @@ public class TestParameters {
 		String dv = ps.getParameter("notExist", String.class, "DFT");
 		assertNotNull(dv);
 		assertEquals("DFT", dv);
-		
+
 		assertFalse(ps.getParameterIf("test", String.class, v -> v == null).isPresent());
-		
+
 		assertTrue(ps.getParameterIf("test", String.class, v -> v.length() > 3).isPresent());
-		
+
 		assertTrue(ps.hasParameterValue("test", "TEST"));
 		assertFalse(ps.hasParameterValue("test", null));
 		assertFalse(ps.hasParameterValue("test", "TESTX"));
 		assertFalse(ps.hasParameterValue("testx", "TEST"));
 		assertFalse(ps.hasParameterValue("testx", null));
-		
+
 		ps.addParameter("testx", null);
-		
+
 		assertTrue(ps.hasParameterValue("testx", null));
 	}
-	
+
 	@Test
 	public void testParameterSetConfigProperty() {
-		
+
 		final ConfigProperty<String> TEST = ConfigProperty.create("test", String.class);
 		final ConfigProperty<String> TEST2 = ConfigProperty.create("x", String.class);
 		final ConfigProperty<String> TEST3 = ConfigProperty.create("testx", String.class);
 		final ConfigProperty<String> TEST4 = ConfigProperty.create("notExist", String.class);
-		
+
 		DefaultParameterSet ps = new DefaultParameterSet();
 
 		assertFalse(ps.hasParameters());
@@ -120,7 +120,7 @@ public class TestParameters {
 		String sv = ps.getParameter(TEST).orElse(null);
 		assertNotNull(sv);
 		assertEquals("TEST", sv);
-		
+
 		sv = ps.getParameter(TEST, "DFT");
 		assertNotNull(sv);
 		assertEquals("TEST", sv);
@@ -128,33 +128,31 @@ public class TestParameters {
 		String dv = ps.getParameter(TEST4, "DFT");
 		assertNotNull(dv);
 		assertEquals("DFT", dv);
-		
+
 		assertFalse(ps.getParameterIf(TEST, v -> v == null).isPresent());
-		
+
 		assertTrue(ps.getParameterIf(TEST, v -> v.length() > 3).isPresent());
-		
+
 		assertTrue(ps.hasParameterValue(TEST, "TEST"));
 		assertFalse(ps.hasParameterValue(TEST, null));
 		assertFalse(ps.hasParameterValue(TEST, "TESTX"));
 		assertFalse(ps.hasParameterValue(TEST3, "TEST"));
 		assertFalse(ps.hasParameterValue(TEST3, null));
-		
+
 		ps.addParameter(TEST3.getKey(), null);
-		
+
 		assertTrue(ps.hasParameterValue(TEST3, null));
 	}
 
 	@Test(expected = TypeMismatchException.class)
 	public void testParameterType() {
-		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3))
-				.build();
+		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
 		ps.getParameter("test2", String.class);
 	}
-	
+
 	@Test(expected = TypeMismatchException.class)
 	public void testParameterTypeDft() {
-		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3))
-				.build();
+		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
 		ps.getParameter("test2", String.class, "dft");
 	}
 

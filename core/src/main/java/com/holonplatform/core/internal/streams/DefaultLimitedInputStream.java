@@ -52,7 +52,8 @@ public class DefaultLimitedInputStream extends LimitedInputStream {
 		return length;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.holonplatform.core.streams.LimitedInputStream#getActualStream()
 	 */
 	@Override
@@ -60,7 +61,8 @@ public class DefaultLimitedInputStream extends LimitedInputStream {
 		return stream;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see java.io.InputStream#read()
 	 */
 	@Override

@@ -71,7 +71,8 @@ public class DefaultConstantExpression<T> extends AbstractConverterExpression<T>
 	 */
 	public DefaultConstantExpression(TypedExpression<T> expression, T value) {
 		super((expression instanceof ConverterExpression)
-				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null) : null);
+				? ((ConverterExpression<T>) expression).getExpressionValueConverter().orElse(null)
+				: null);
 		this.value = value;
 		this.type = expression.getType();
 		expression.getTemporalType().ifPresent(t -> setTemporalType(t));

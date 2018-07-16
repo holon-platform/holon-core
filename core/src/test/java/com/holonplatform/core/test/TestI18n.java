@@ -316,7 +316,7 @@ public class TestI18n {
 				.defaultTimeTemporalFormat(TemporalFormat.MEDIUM).build());
 
 		assertEquals("18.30.15", ctx.format(time));
-		
+
 		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
 
 		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));

@@ -29,22 +29,22 @@ public class TestLimitedInputStream {
 	@SuppressWarnings("resource")
 	@Test
 	public void testLimitedInputStream() throws IOException {
-		
+
 		final InputStream stream = new InputStream() {
-			
+
 			@Override
 			public int read() throws IOException {
 				return 1;
 			}
 		};
-		
+
 		LimitedInputStream lis = LimitedInputStream.create(stream, 1);
-		
+
 		assertNotNull(lis);
 		assertEquals(stream, lis.getActualStream());
 		assertEquals(1, lis.getLength());
 		assertEquals(1, lis.read());
-		
+
 	}
-	
+
 }

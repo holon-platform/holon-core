@@ -119,7 +119,7 @@ public class TestQuery {
 		assertTrue(qd.getFilter().isPresent());
 
 		q.filter(TestPropertySet.NAME.isNotNull());
-		
+
 		q.filter(() -> null);
 		q.sort(() -> null);
 

@@ -26,15 +26,15 @@ public enum KeyEncoding {
 	 * Not encoded
 	 */
 	NONE,
-	
+
 	/**
 	 * Encoded using Base64
 	 */
 	BASE64,
-	
+
 	/**
 	 * Encoded using PEM format
 	 */
 	PEM
-	
+
 }
