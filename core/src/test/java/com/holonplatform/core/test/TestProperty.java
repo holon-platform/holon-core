@@ -448,6 +448,11 @@ public class TestProperty {
 		assertNotNull(cloned);
 		assertEquals("test", cloned.getValue(TestPropertySet.NAME));
 		assertFalse(cloned.containsValue(TestPropertySet.SEQUENCE));
+		
+		cloned = pb4.cloneBox(TestPropertySet.NAME, TestPropertySet.SEQUENCE);
+		assertNotNull(cloned);
+		assertEquals("test", cloned.getValue(TestPropertySet.NAME));
+		assertTrue(cloned.containsValue(TestPropertySet.SEQUENCE));
 
 		PropertyBox pb5 = PropertyBox.builder(TestPropertySet.NAME).set(TestPropertySet.NAME, "tn").build();
 		assertNotNull(pb5);

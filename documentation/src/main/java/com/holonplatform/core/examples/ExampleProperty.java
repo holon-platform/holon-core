@@ -250,7 +250,6 @@ public class ExampleProperty {
 		// end::propertyset3[]
 	}
 
-	@SuppressWarnings("unchecked")
 	public void propertyBox() {
 		// tag::propertybox[]
 		final PathProperty<Long> ID = PathProperty.create("id", Long.class);

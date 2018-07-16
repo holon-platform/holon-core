@@ -179,12 +179,10 @@ public interface PropertyBox extends PropertySet<Property> {
 	/**
 	 * Clone this PropertyBox using given <code>propertySet</code>, i.e. create a new PropertyBox and copy all given set
 	 * property values from this box to the newly created box.
-	 * @param <P> Actual property type
 	 * @param propertySet Property set of the cloned PropertyBox (not null)
 	 * @return A new, cloned, PropertyBox instance with given property set
 	 */
-	@SuppressWarnings("unchecked")
-	default <P extends Property> PropertyBox cloneBox(P... propertySet) {
+	default PropertyBox cloneBox(Property<?>... propertySet) {
 		ObjectUtils.argumentNotNull(propertySet, "Property set must be not null");
 		return cloneBox(PropertySet.of(propertySet));
 	}
