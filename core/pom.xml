@@ -102,6 +102,9 @@
 						<exclude>**/holonplatform/core/exceptions/**</exclude>
 						<exclude>**/holonplatform/core/datastore/DatastoreCommodityContext$**</exclude>
 						<exclude>**/holonplatform/core/config/ConfigPropertySet$**</exclude>
+						<exclude>**/holonplatform/core/property/Property$**Exception**</exclude>
+						<exclude>**/holonplatform/core/property/PropertyRendererRegistry$**Exception**</exclude>
+						<exclude>**/holonplatform/core/property/PropertyValueConverter$**Exception**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

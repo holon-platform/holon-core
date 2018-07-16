@@ -27,10 +27,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -45,6 +47,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.Path;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.config.ConfigProperty;
@@ -58,17 +61,21 @@ import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.objects.EqualsHandler;
 import com.holonplatform.core.objects.HashCodeProvider;
 import com.holonplatform.core.presentation.StringValuePresenter;
+import com.holonplatform.core.property.BooleanProperty;
+import com.holonplatform.core.property.NumericProperty;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
 import com.holonplatform.core.property.Property.PropertyReadException;
 import com.holonplatform.core.property.Property.PropertyReadOnlyException;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertyBoxProperty;
 import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValuePresenterRegistry;
 import com.holonplatform.core.property.PropertyValueProvider;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.property.VirtualProperty;
 import com.holonplatform.core.property.VirtualProperty.VirtualPropertyBuilder;
 import com.holonplatform.core.query.QueryFilter;
@@ -448,7 +455,7 @@ public class TestProperty {
 		assertNotNull(cloned);
 		assertEquals("test", cloned.getValue(TestPropertySet.NAME));
 		assertFalse(cloned.containsValue(TestPropertySet.SEQUENCE));
-		
+
 		cloned = pb4.cloneBox(TestPropertySet.NAME, TestPropertySet.SEQUENCE);
 		assertNotNull(cloned);
 		assertEquals("test", cloned.getValue(TestPropertySet.NAME));
@@ -935,6 +942,18 @@ public class TestProperty {
 
 		ap.toString();
 
+		final Path<String> sp = Path.of("testp", String.class);
+
+		property = StringProperty.create(sp);
+		assertEquals("testp", property.getName());
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> StringProperty.create((Path<String>) null));
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> PathProperty.create(null));
+
+		property2 = PathProperty.create(sp);
+		assertEquals("testp", property.getName());
+
 		// sorts
 
 		QuerySort sort = property.asc();
@@ -1090,6 +1109,93 @@ public class TestProperty {
 		assertThat(flt, instanceOf(OperationQueryFilter.class));
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
+
+	}
+
+	@Test
+	public void testBooleanProperty() {
+
+		BooleanProperty bp = BooleanProperty.create("test");
+		assertEquals(Boolean.class, bp.getType());
+
+		bp = BooleanProperty.create(Path.of("test", boolean.class));
+		assertEquals(Boolean.class, bp.getType());
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> BooleanProperty.create((Path<Boolean>) null));
+
+		bp = BooleanProperty.create("test", Integer.class);
+		assertTrue(bp.getConverter().isPresent());
+		Object model = bp.getConvertedValue(Boolean.TRUE);
+		assertNotNull(model);
+		assertTrue(model instanceof Number);
+		assertEquals(1, ((Number) model).intValue());
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testNumericProperty() {
+
+		NumericProperty<Integer> ip = NumericProperty.create(Path.of("test", Integer.class));
+		assertEquals(Integer.class, ip.getType());
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> NumericProperty.create((Path) null));
+
+		NumericProperty<?> np = NumericProperty.integerType("test");
+		assertEquals(Integer.class, np.getType());
+		np = NumericProperty.longType("test");
+		assertEquals(Long.class, np.getType());
+		np = NumericProperty.floatType("test");
+		assertEquals(Float.class, np.getType());
+		np = NumericProperty.doubleType("test");
+		assertEquals(Double.class, np.getType());
+		np = NumericProperty.shortType("test");
+		assertEquals(Short.class, np.getType());
+		np = NumericProperty.floatType("test");
+		assertEquals(Float.class, np.getType());
+		np = NumericProperty.bigIntegerType("test");
+		assertEquals(BigInteger.class, np.getType());
+		np = NumericProperty.bigDecimalType("test");
+		assertEquals(BigDecimal.class, np.getType());
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testTemporalProperty() {
+
+		TemporalProperty<Date> dp = TemporalProperty.create(Path.of("test", Date.class));
+		assertEquals(Date.class, dp.getType());
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> TemporalProperty.create((Path) null));
+
+		TemporalProperty<?> tp = TemporalProperty.date("test");
+		assertEquals(Date.class, tp.getType());
+		tp = TemporalProperty.localDate("test");
+		assertEquals(LocalDate.class, tp.getType());
+		tp = TemporalProperty.localTime("test");
+		assertEquals(LocalTime.class, tp.getType());
+		tp = TemporalProperty.localDateTime("test");
+		assertEquals(LocalDateTime.class, tp.getType());
+		tp = TemporalProperty.offsetDateTime("test");
+		assertEquals(OffsetDateTime.class, tp.getType());
+		
+	}
+
+	@Test
+	public void testPropertyBoxProperty() {
+
+		final PropertyBoxProperty p1 = PropertyBoxProperty.create("test", TestPropertySet.PROPERTIES);
+		assertNotNull(p1);
+		assertEquals(PropertyBox.class, p1.getType());
+		assertEquals(TestPropertySet.PROPERTIES,
+				p1.getConfiguration().getParameter(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE).orElse(null));
+
+		final PropertyBoxProperty p2 = PropertyBoxProperty.create("test", TestPropertySet.NAME,
+				TestPropertySet.SEQUENCE);
+		assertNotNull(p2);
+		assertEquals(PropertyBox.class, p2.getType());
+		assertNotNull(p2.getConfiguration().getParameter(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE).orElse(null));
 
 	}
 

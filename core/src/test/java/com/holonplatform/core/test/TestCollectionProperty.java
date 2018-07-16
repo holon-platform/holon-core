@@ -30,13 +30,16 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.holonplatform.core.i18n.Caption;
+import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.ListPathProperty;
 import com.holonplatform.core.property.ListVirtualProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.core.property.PropertySet;
 import com.holonplatform.core.property.SetPathProperty;
 import com.holonplatform.core.property.SetVirtualProperty;
 import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.test.data.TestPropertySet;
 
 public class TestCollectionProperty {
 
@@ -59,6 +62,12 @@ public class TestCollectionProperty {
 		assertNotNull(v);
 		assertEquals(list, v);
 
+		final ListPathProperty<PropertyBox> p2 = ListPathProperty.propertyBox("test", TestPropertySet.PROPERTIES);
+		assertNotNull(p2);
+		assertEquals(PropertyBox.class, p2.getElementType());
+		assertEquals(TestPropertySet.PROPERTIES,
+				p2.getConfiguration().getParameter(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE).orElse(null));
+
 	}
 
 	@Test
@@ -79,6 +88,14 @@ public class TestCollectionProperty {
 		Set<String> v = pb.getValue(p);
 		assertNotNull(v);
 		assertEquals(list, v);
+
+		TestUtils.expectedException(IllegalArgumentException.class, () -> SetPathProperty.propertyBox("test", null));
+
+		final SetPathProperty<PropertyBox> p2 = SetPathProperty.propertyBox("test", TestPropertySet.PROPERTIES);
+		assertNotNull(p2);
+		assertEquals(PropertyBox.class, p2.getElementType());
+		assertEquals(TestPropertySet.PROPERTIES,
+				p2.getConfiguration().getParameter(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE).orElse(null));
 
 	}
 
