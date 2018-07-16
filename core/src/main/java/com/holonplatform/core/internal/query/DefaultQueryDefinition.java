@@ -67,6 +67,11 @@ public class DefaultQueryDefinition extends DefaultParameterSet implements Query
 	protected QueryAggregation aggregation;
 
 	/*
+	 * Distinct
+	 */
+	protected boolean distinct = false;
+
+	/*
 	 * Expression resolvers
 	 */
 	@SuppressWarnings("rawtypes")
@@ -191,6 +196,24 @@ public class DefaultQueryDefinition extends DefaultParameterSet implements Query
 	@Override
 	public void setAggregation(QueryAggregation aggregation) {
 		this.aggregation = aggregation;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.QueryConfiguration#isDistinct()
+	 */
+	@Override
+	public boolean isDistinct() {
+		return distinct;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.internal.query.QueryDefinition#setDistinct(boolean)
+	 */
+	@Override
+	public void setDistinct(boolean distinct) {
+		this.distinct = distinct;
 	}
 
 	/*

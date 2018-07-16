@@ -15,11 +15,15 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import javax.annotation.Priority;
 
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.presentation.StringValuePresenter;
+import com.holonplatform.core.property.CollectionProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyConfiguration;
 import com.holonplatform.core.property.PropertyValuePresenter;
@@ -28,25 +32,49 @@ import com.holonplatform.core.property.PropertyValuePresenter;
  * Default {@link PropertyValuePresenter}, using default {@link StringValuePresenter#getDefault()} and
  * {@link PropertyConfiguration} as presentation parameters source.
  *
+ * @param <T> Property value type
+ *
  * @since 5.0.0
  */
 @Priority(Integer.MAX_VALUE)
-@SuppressWarnings("rawtypes")
-public class DefaultPropertyValuePresenter implements PropertyValuePresenter {
+public class DefaultPropertyValuePresenter<T> implements PropertyValuePresenter<T> {
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.property.PropertyValuePresenter#present(com.holonplatform.core.property.Property,
 	 * java.lang.Object)
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public String present(Property property, Object value) {
+	public String present(Property<T> property, T value) {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
-		ParameterSet.Builder<?> parameters = ParameterSet.builder().parameters(property.getConfiguration());
+
+		// check TemporalType
+		ParameterSet.Builder<?> builder = ParameterSet.builder().parameters(property.getConfiguration());
 		property.getConfiguration().getTemporalType()
-				.ifPresent(t -> parameters.parameter(StringValuePresenter.TEMPORAL_TYPE, t));
-		return StringValuePresenter.getDefault().present(property.getType(), value, parameters.build());
+				.ifPresent(t -> builder.parameter(StringValuePresenter.TEMPORAL_TYPE, t));
+		final ParameterSet parameters = builder.build();
+
+		// check collection property
+		if (value != null && CollectionProperty.class.isAssignableFrom(property.getClass())
+				&& Collection.class.isAssignableFrom(value.getClass())) {
+			final Class<?> elementType = ((CollectionProperty<?, ?>) property).getElementType();
+			return ((Collection<?>) value).stream().map(v -> presentValue(elementType, v, parameters))
+					.collect(Collectors.joining(","));
+		}
+		// default presentation
+		return presentValue(property.getType(), value, parameters);
+	}
+
+	/**
+	 * Present a value as a {@link String} using the default {@link StringValuePresenter}.
+	 * @param <V> Value type
+	 * @param type Value type
+	 * @param value Value to present
+	 * @param parameters Presentation parameters
+	 * @return Value as {@link String}
+	 */
+	private static <V> String presentValue(Class<? extends V> type, V value, ParameterSet parameters) {
+		return StringValuePresenter.getDefault().present(type, value, parameters);
 	}
 
 }

@@ -15,34 +15,44 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import com.holonplatform.core.Context;
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertyRenderer;
 import com.holonplatform.core.property.PropertyRendererRegistry;
-import com.holonplatform.core.property.PropertyValuePresenter;
-import com.holonplatform.core.property.PropertyValuePresenterRegistry;
+import com.holonplatform.core.property.PropertyRendererRegistry.NoSuitableRendererAvailableException;
 import com.holonplatform.core.test.data.TestPropertySet;
 
 public class TestPropertyRenderers {
 
 	@Test
-	public void testPropertyPresenter() {
+	public void testPropertyRendererRegistry() {
 
-		final PropertyValuePresenter<String> np = (p, v) -> p.getMessage() + ":" + v;
+		PropertyRendererRegistry r = PropertyRendererRegistry.getDefault();
+		assertNotNull(r);
 
-		PropertyValuePresenterRegistry.get().register(p -> TestPropertySet.NAME.equals(p), np);
+		PropertyRendererRegistry r2 = PropertyRendererRegistry.getDefault(ClassUtils.getDefaultClassLoader());
+		assertNotNull(r2);
+		assertEquals(r, r2);
 
-		String pv = np.present(TestPropertySet.NAME, "v");
+		PropertyRendererRegistry r3 = PropertyRendererRegistry.get();
+		assertNotNull(r3);
 
-		assertEquals("Name:v", pv);
 	}
 
 	@Test
 	public void testPropertyRenderer() {
+
+		final PropertyRendererRegistry r1 = PropertyRendererRegistry.create(true);
+		assertNotNull(r1);
 
 		final PropertyBox box = PropertyBox.create(TestPropertySet.PROPERTIES);
 		box.setValue(TestPropertySet.NAME, "test");
@@ -60,15 +70,47 @@ public class TestPropertyRenderers {
 			}
 		};
 
-		PropertyRendererRegistry.get().register(p -> String.class.isAssignableFrom(p.getType()), rnd);
+		r1.register(p -> String.class.isAssignableFrom(p.getType()), rnd);
 
-		RenderTest rt = TestPropertySet.NAME.render(RenderTest.class);
+		RenderTest rt = Context.get().executeThreadBound(PropertyRendererRegistry.CONTEXT_KEY, r1, () -> {
+			return TestPropertySet.NAME.render(RenderTest.class);
+		});
+
 		assertNotNull(rt);
 		assertEquals("test", rt.getValue());
 
-		assertTrue(TestPropertySet.NAME.renderIfAvailable(RenderTest.class).isPresent());
+		Context.get().executeThreadBound(PropertyRendererRegistry.CONTEXT_KEY, r1, () -> {
+			assertTrue(TestPropertySet.NAME.renderIfAvailable(RenderTest.class).isPresent());
+			assertFalse(TestPropertySet.NAME.renderIfAvailable(Number.class).isPresent());
+		});
 
-		assertFalse(TestPropertySet.NAME.renderIfAvailable(Number.class).isPresent());
+		PropertyRenderer<RenderTest, String> rnd2 = PropertyRenderer.create(RenderTest.class,
+				p -> new RenderTest(p.getName()));
+
+		assertNotNull(rnd2);
+
+		rt = rnd2.render(TestPropertySet.NAME);
+		assertNotNull(rt);
+		assertEquals("name", rt.getValue());
+
+		final PropertyRendererRegistry r2 = PropertyRendererRegistry.create(false);
+		assertNotNull(r2);
+
+		r2.register(p -> TestPropertySet.NAME.equals(p), rnd2);
+
+		rt = Context.get().executeThreadBound(PropertyRendererRegistry.CONTEXT_KEY, r2, () -> {
+			return TestPropertySet.NAME.render(RenderTest.class);
+		});
+
+		assertNotNull(rt);
+		assertEquals("name", rt.getValue());
+
+	}
+
+	@Test(expected = NoSuitableRendererAvailableException.class)
+	public void testPropertyRendererNotAvailable() {
+
+		TestPropertySet.NAME.render(NotAvailableRenderTest.class);
 
 	}
 
@@ -84,6 +126,10 @@ public class TestPropertyRenderers {
 		public String getValue() {
 			return value;
 		}
+
+	}
+
+	private static class NotAvailableRenderTest {
 
 	}
 

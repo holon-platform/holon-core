@@ -27,35 +27,34 @@ import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * Provide operations to get results from a {@link Query} execution.
- * <p>
- * Query results are obtained through a projection using {@link QueryProjection}, allowing results type specification.
- * </p>
+ * Provide operations to get the results of a {@link Query} operation using a {@link QueryProjection}.
  * 
  * @since 5.0.0
  * 
  * @see Query
  */
 @SuppressWarnings("rawtypes")
-public interface QueryResults {
+public interface QueryResults extends QueryProjectionOperations<Stream, List, Optional, Long> {
 
 	/**
 	 * Execute query and get a {@link Stream} of query results using given <code>projection</code> to map results to
 	 * required type.
 	 * @param <R> Results type
-	 * @param projection Query projection
-	 * @return Query results stream
+	 * @param projection Query projection (not null)
+	 * @return Query results stream, an empty Stream if none
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	<R> Stream<R> stream(QueryProjection<R> projection);
 
 	/**
 	 * Convenience method to obtain the query results {@link #stream(QueryProjection)} as a {@link List}
 	 * @param <R> Results type
-	 * @param projection Query projection
-	 * @return Query results list
+	 * @param projection Query projection (not null)
+	 * @return Query results list, an empty List if none
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default <R> List<R> list(QueryProjection<R> projection) {
 		return stream(projection).collect(Collectors.toList());
 	}
@@ -66,22 +65,37 @@ public interface QueryResults {
 	 * If more than one result is returned by the query, a {@link QueryNonUniqueResultException} is thrown.
 	 * </p>
 	 * @param <R> Result type
-	 * @param projection Query projection
+	 * @param projection Query projection (not null)
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default <R> Optional<R> findOne(QueryProjection<R> projection) throws QueryNonUniqueResultException {
 		return stream(projection).collect(Collectors.collectingAndThen(Collectors.toList(), QueryUtils.uniqueResult()));
 	}
 
 	/**
 	 * Count all the results of a query.
+	 * @return Total results count, an empty Optional if none
+	 * @throws DataAccessException Error in query execution
+	 */
+	@Override
+	default Long countAll() {
+		return findOne(CountAllProjection.create()).orElse(0L);
+	}
+
+	/**
+	 * Count all the results of a query.
+	 * <p>
+	 * This is {@link #countAll()} alternative convenience method to provide a primitive long type result.
+	 * </p>
 	 * @return Total results count
 	 * @throws DataAccessException Error in query execution
 	 */
 	default long count() {
-		return findOne(CountAllProjection.create()).orElse(0L);
+		final Long count = countAll();
+		return (count != null) ? count : 0L;
 	}
 
 	/**
@@ -92,10 +106,11 @@ public interface QueryResults {
 	 * <code>properties</code> set.
 	 * </p>
 	 * @param <P> Property type
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Query results {@link PropertyBox} stream
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default <P extends Property> Stream<PropertyBox> stream(Iterable<P> properties) {
 		return stream(PropertySetProjection.of(properties));
 	}
@@ -108,11 +123,12 @@ public interface QueryResults {
 	 * <code>properties</code> set.
 	 * </p>
 	 * @param <P> Property type
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default <P extends Property> Optional<PropertyBox> findOne(Iterable<P> properties)
 			throws QueryNonUniqueResultException {
 		return findOne(PropertySetProjection.of(properties));
@@ -126,10 +142,11 @@ public interface QueryResults {
 	 * <code>properties</code> set.
 	 * </p>
 	 * @param <P> Property type
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Query results {@link PropertyBox} list
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default <P extends Property> List<PropertyBox> list(Iterable<P> properties) {
 		return list(PropertySetProjection.of(properties));
 	}
@@ -141,10 +158,11 @@ public interface QueryResults {
 	 * Returned {@link PropertyBox} instances will contain the values of the properties specified in given
 	 * <code>properties</code> set.
 	 * </p>
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Query results {@link PropertyBox} stream
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default Stream<PropertyBox> stream(Property... properties) {
 		return stream(PropertySet.of(properties));
 	}
@@ -156,11 +174,12 @@ public interface QueryResults {
 	 * Returned {@link PropertyBox} instance will contain the values of the properties specified in given
 	 * <code>properties</code> set.
 	 * </p>
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Optional unique query result (an empty Optional if no results was returned from query execution)
 	 * @throws QueryNonUniqueResultException Only one result expected but more than one was found
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default Optional<PropertyBox> findOne(Property... properties) throws QueryNonUniqueResultException {
 		return findOne(PropertySet.of(properties));
 	}
@@ -172,10 +191,11 @@ public interface QueryResults {
 	 * Returned {@link PropertyBox} instances will contain the values of the properties specified in given
 	 * <code>properties</code> set.
 	 * </p>
-	 * @param properties Property set to fetch
+	 * @param properties Property set to use as projection (not null)
 	 * @return Query results {@link PropertyBox} list
 	 * @throws DataAccessException Error in query execution
 	 */
+	@Override
 	default List<PropertyBox> list(Property... properties) {
 		return list(PropertySet.of(properties));
 	}

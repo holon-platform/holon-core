@@ -16,14 +16,13 @@
 package com.holonplatform.core.internal.property;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import com.holonplatform.core.DataMappable;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PathProperty.Builder;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
 
 /**
  * Abstract {@link PathProperty} implementation and builder.
@@ -57,24 +56,14 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 * @param type Property value type (not null)
 	 */
 	public AbstractPathProperty(String name, Class<? extends T> type) {
-		this(name, type, null);
-	}
-
-	/**
-	 * Constructor.
-	 * @param name Property path name (not null)
-	 * @param type Property value type (not null)
-	 * @param configuration Optional {@link PropertyConfiguration}
-	 */
-	public AbstractPathProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
-		super(type, configuration);
+		super(type);
 		ObjectUtils.argumentNotNull(name, "Property name must be not null");
 		this.name = name;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryProperty#getQueryPath()
+	 * @see com.holonplatform.core.property.Property#getName()
 	 */
 	@Override
 	public String getName() {
@@ -129,26 +118,31 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public void validate() throws InvalidExpressionException {
+		super.validate();
 		if (getName() == null) {
 			throw new InvalidExpressionException("Null path name");
 		}
 	}
 
-	@Override
-	public PathPropertyBuilder<T> clone() {
-		PathPropertyBuilder<T> builder = PathProperty.create(getName(), getType());
+	/**
+	 * Clone a concrete path property.
+	 * @param <I> Actual property type
+	 * @param property The property instance to clone
+	 * @param builder Property builder reference
+	 * @return Cloned property
+	 */
+	@SuppressWarnings("unchecked")
+	protected <I extends AbstractPathProperty<T, P, B>> I clonePathProperty(I property,
+			Consumer<PathProperty.Builder<T, PathProperty<T>, ?>> builder) {
+		// clone property
+		cloneProperty(property);
 		// parent
-		getParent().ifPresent(p -> builder.parent(p));
-		// localizable
-		builder.localization(this);
-		// converter
-		getConverter().ifPresent(c -> builder.converter(c));
-		// validators
-		getValidators().forEach(v -> builder.validator(v));
-		// configuration
-		getConfiguration().getTemporalType().ifPresent(t -> builder.temporalType(t));
-		getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
-		return builder;
+		getParent().ifPresent(p -> property.parent(p));
+		// consumer
+		if (builder != null) {
+			builder.accept((PathProperty.Builder<T, PathProperty<T>, ?>) property);
+		}
+		return property;
 	}
 
 	/*
@@ -157,7 +151,7 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public String toString() {
-		return "PathProperty [name=" + name + ", getType()=" + getType() + "]";
+		return "PathProperty [name=" + name + ", type=" + getType() + "]";
 	}
 
 }

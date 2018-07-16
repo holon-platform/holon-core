@@ -17,6 +17,7 @@ package com.holonplatform.core.property;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.function.Consumer;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultNumericProperty;
@@ -34,6 +35,14 @@ import com.holonplatform.core.query.NumericQueryExpression;
  * @since 5.1.0
  */
 public interface NumericProperty<N extends Number> extends PathProperty<N>, NumericQueryExpression<N> {
+
+	/**
+	 * Clone this property.
+	 * @param builder A property builder which can be used to perform additional property configuration
+	 * @return The cloned property
+	 */
+	@Override
+	NumericProperty<N> clone(Consumer<Builder<N, PathProperty<N>, ?>> builder);
 
 	/**
 	 * Create a new {@link NumericProperty} with given <code>name</code> and <code>type</code>.

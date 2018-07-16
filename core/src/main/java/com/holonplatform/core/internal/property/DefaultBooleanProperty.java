@@ -15,8 +15,11 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.property.BooleanProperty;
 import com.holonplatform.core.property.BooleanProperty.BooleanPropertyBuilder;
+import com.holonplatform.core.property.PathProperty;
 
 /**
  * Default {@link BooleanProperty} implementation.
@@ -52,6 +55,15 @@ public class DefaultBooleanProperty extends AbstractPathProperty<Boolean, Boolea
 	@Override
 	protected BooleanPropertyBuilder getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.BooleanProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public BooleanProperty clone(Consumer<PathProperty.Builder<Boolean, PathProperty<Boolean>, ?>> builder) {
+		return clonePathProperty(new DefaultBooleanProperty(getName()), builder);
 	}
 
 }

@@ -21,12 +21,14 @@ import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import com.holonplatform.core.internal.DefaultFinalPath;
 import com.holonplatform.core.internal.DefaultPath;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * Represents a generic, typed path for a data structure attribute which can be identified by a {@link String} name.
@@ -96,7 +98,17 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 	 * @return Path full name
 	 */
 	default String fullName() {
-		return getParent().map(pr -> stream().map(p -> p.getName())
+		return fullName(p -> p.getName());
+	}
+
+	/**
+	 * Gets the path full name, including any parent path, separated by a dot <code>.</code> character.
+	 * @param nameMapper The function to use to obtain the path name (not null)
+	 * @return Path full name
+	 */
+	default String fullName(Function<Path<?>, String> nameMapper) {
+		ObjectUtils.argumentNotNull(nameMapper, "Path name mapper function must be not null");
+		return getParent().map(pr -> stream().map(p -> nameMapper.apply(p))
 				.collect(LinkedList<String>::new, LinkedList::addFirst, (a, b) -> a.addAll(0, b)).stream()
 				.collect(Collectors.joining("."))).orElse(getName());
 	}
@@ -107,8 +119,20 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 	 * @return Path relative name, en empty String if this Path is a {@link FinalPath} itself.
 	 */
 	default String relativeName() {
+		return relativeName(p -> p.getName());
+	}
+
+	/**
+	 * Gets the <em>relative</em> path name, separated by a dot <code>.</code> character, i.e. exclude any
+	 * {@link FinalPath} path instance from path name composition.
+	 * @param nameMapper The function to use to obtain the path name (not null)
+	 * @return Path relative name, en empty String if this Path is a {@link FinalPath} itself.
+	 */
+	default String relativeName(Function<Path<?>, String> nameMapper) {
+		ObjectUtils.argumentNotNull(nameMapper, "Path name mapper function must be not null");
 		return getParent()
-				.map(pr -> stream().filter(p -> !FinalPath.class.isAssignableFrom(p.getClass())).map(p -> p.getName())
+				.map(pr -> stream().filter(p -> !FinalPath.class.isAssignableFrom(p.getClass()))
+						.map(p -> nameMapper.apply(p))
 						.collect(LinkedList<String>::new, LinkedList::addFirst, (a, b) -> a.addAll(0, b)).stream()
 						.collect(Collectors.joining(".")))
 				.orElse(FinalPath.class.isAssignableFrom(this.getClass()) ? "" : getName());

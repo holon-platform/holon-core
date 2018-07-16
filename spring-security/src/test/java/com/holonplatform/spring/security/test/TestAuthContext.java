@@ -37,6 +37,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -60,6 +61,11 @@ public class TestAuthContext {
 		public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
 			return auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER").and()
 					.withUser("admin").password("pwd2").authorities("USER", "ADMIN").and().and().build();
+		}
+
+		@Bean
+		public static PasswordEncoder passwordEncoder() {
+			return NoOpPasswordEncoder.INSTANCE;
 		}
 
 	}
@@ -86,7 +92,7 @@ public class TestAuthContext {
 		assertEquals("user", a.getName());
 		assertEquals(1, a.getPermissions().size());
 		assertEquals("role1", a.getPermissions().iterator().next().getPermission().orElse(null));
-		
+
 		assertTrue(ac.isPermitted("role1"));
 
 		SecurityContextHolder.getContext().setAuthentication(null);
@@ -97,7 +103,7 @@ public class TestAuthContext {
 
 	@Test
 	public void testAuthContextRealm() {
-		
+
 		// reset context
 		SecurityContextHolder.getContext().setAuthentication(null);
 
@@ -108,23 +114,23 @@ public class TestAuthContext {
 			}
 			return Optional.empty();
 		})).build();
-		
+
 		final AuthContext ac = SpringSecurity.authContext(realm);
-		
+
 		assertNull(SecurityContextHolder.getContext().getAuthentication());
 		assertFalse(ac.isAuthenticated());
-		
+
 		// authenticate using realm
 		ac.authenticate(Account.accountCredentialsToken("usr", "pwd"));
-		
+
 		assertTrue(ac.isAuthenticated());
 		assertNotNull(SecurityContextHolder.getContext().getAuthentication());
-		
+
 		org.springframework.security.core.Authentication authc = SecurityContextHolder.getContext().getAuthentication();
-		
+
 		assertEquals("usr", authc.getName());
 		assertTrue(authc.getAuthorities().size() == 1);
-		
+
 		GrantedAuthority ga = null;
 		for (GrantedAuthority g : authc.getAuthorities()) {
 			if ("role1".equals(g.getAuthority())) {

@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core;
 
+import java.util.Optional;
+
 import com.holonplatform.core.internal.query.DefaultPropertyExpressionValueConverter;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter;
@@ -50,17 +52,14 @@ public interface ExpressionValueConverter<TYPE, MODEL> {
 	Class<MODEL> getModelType();
 
 	/**
-	 * Create a new {@link ExpressionValueConverter} using given <code>property</code> and
-	 * {@link PropertyValueConverter} as conversion strategy.
+	 * Create a new {@link ExpressionValueConverter} using given <code>property</code>.
 	 * @param <TYPE> Expression type
-	 * @param <MODEL> Model type
 	 * @param property Property (not null)
-	 * @param converter Property value converter (not null)
-	 * @return A new {@link ExpressionValueConverter}
+	 * @return If the property provides a {@link PropertyValueConverter}, return an {@link ExpressionValueConverter}
+	 *         which uses the property value converter to perform conversions. Otherwise, an empty Optional is returned.
 	 */
-	static <TYPE, MODEL> ExpressionValueConverter<TYPE, MODEL> fromProperty(Property<TYPE> property,
-			PropertyValueConverter<TYPE, MODEL> converter) {
-		return new DefaultPropertyExpressionValueConverter<>(property, converter);
+	static <TYPE> Optional<ExpressionValueConverter<TYPE, ?>> fromProperty(Property<TYPE> property) {
+		return property.getConverter().map(c -> new DefaultPropertyExpressionValueConverter<>(property, c));
 	}
 
 }

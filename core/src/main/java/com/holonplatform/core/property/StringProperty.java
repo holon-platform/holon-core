@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultStringProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -30,6 +32,14 @@ import com.holonplatform.core.query.StringQueryExpression;
  * @since 5.1.0
  */
 public interface StringProperty extends PathProperty<String>, StringQueryExpression {
+
+	/**
+	 * Clone this property.
+	 * @param builder A property builder which can be used to perform additional property configuration
+	 * @return The cloned property
+	 */
+	@Override
+	StringProperty clone(Consumer<Builder<String, PathProperty<String>, ?>> builder);
 
 	/**
 	 * Create a new {@link StringProperty} with given <code>name</code>.

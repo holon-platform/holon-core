@@ -16,8 +16,8 @@
 package com.holonplatform.core.datastore.beans;
 
 import com.holonplatform.core.datastore.beans.BeanDatastore.BeanOperationResult;
-import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
-import com.holonplatform.core.datastore.operation.ExecutableOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperation;
+import com.holonplatform.core.datastore.operation.commons.ExecutableOperation;
 
 /**
  * Bean {@link BulkUpdateOperation}.

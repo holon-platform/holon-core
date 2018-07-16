@@ -15,9 +15,10 @@
  */
 package com.holonplatform.core.internal.beans;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.beans.BeanProperty;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
+import com.holonplatform.core.property.PathProperty;
 
 /**
  * Default {@link BeanProperty} implementation.
@@ -35,18 +36,17 @@ public class DefaultBeanProperty<T> extends AbstractBeanProperty<T> {
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
 	 */
-	public DefaultBeanProperty(String name, Class<T> type) {
-		this(name, type, null);
+	public DefaultBeanProperty(String name, Class<? extends T> type) {
+		super(name, type);
 	}
 
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
-	 * @param configuration Optional property configuration instance
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.CloneableProperty#clone(java.util.function.Consumer)
 	 */
-	public DefaultBeanProperty(String name, Class<? extends T> type, PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	@Override
+	public PathProperty<T> clone(Consumer<PathProperty.Builder<T, PathProperty<T>, ?>> builder) {
+		return clonePathProperty(new DefaultBeanProperty<>(getName(), getType()), builder);
 	}
 
 }

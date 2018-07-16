@@ -27,6 +27,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -49,6 +50,11 @@ public class TestAuthenticator {
 		public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
 			return auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER").and()
 					.withUser("admin").password("pwd2").authorities("USER", "ADMIN").and().and().build();
+		}
+		
+		@Bean
+		public static PasswordEncoder passwordEncoder() {
+			return NoOpPasswordEncoder.INSTANCE;
 		}
 
 	}

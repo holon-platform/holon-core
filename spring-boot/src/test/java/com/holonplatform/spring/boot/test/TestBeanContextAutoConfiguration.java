@@ -29,7 +29,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.ContextScope;
-import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.spring.internal.context.BeanFactoryScope;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -41,8 +40,8 @@ public class TestBeanContextAutoConfiguration {
 	protected static class Config {
 
 		@Bean
-		public TenantResolver testResolver() {
-			return TenantResolver.staticTenantResolver("test");
+		public ContextResource contextResource() {
+			return new ContextResource();
 		}
 
 	}
@@ -53,7 +52,7 @@ public class TestBeanContextAutoConfiguration {
 		Optional<ContextScope> scope = Context.get().scope(BeanFactoryScope.NAME);
 		assertTrue(scope.isPresent());
 
-		Optional<TenantResolver> tr = Context.get().resource(TenantResolver.CONTEXT_KEY, TenantResolver.class);
+		Optional<ContextResource> tr = Context.get().resource(ContextResource.class);
 		assertTrue(tr.isPresent());
 
 	}

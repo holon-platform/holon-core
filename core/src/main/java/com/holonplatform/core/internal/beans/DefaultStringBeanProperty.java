@@ -15,9 +15,11 @@
  */
 package com.holonplatform.core.internal.beans;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.beans.StringBeanProperty;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
+import com.holonplatform.core.property.PathProperty;
+import com.holonplatform.core.property.StringProperty;
 
 /**
  * Default {@link StringBeanProperty} implementation.
@@ -33,16 +35,16 @@ public class DefaultStringBeanProperty extends AbstractBeanProperty<String> impl
 	 * @param name Property name (not null)
 	 */
 	public DefaultStringBeanProperty(String name) {
-		this(name, null);
+		super(name, String.class);
 	}
 
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param configuration Optional property configuration instance
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.StringProperty#clone(java.util.function.Consumer)
 	 */
-	public DefaultStringBeanProperty(String name, PropertyConfigurationEditor configuration) {
-		super(name, String.class, configuration);
+	@Override
+	public StringProperty clone(Consumer<PathProperty.Builder<String, PathProperty<String>, ?>> builder) {
+		return clonePathProperty(new DefaultStringBeanProperty(getName()), builder);
 	}
 
 }

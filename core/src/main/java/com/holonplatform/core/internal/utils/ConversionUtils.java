@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
+import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -391,13 +392,26 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
-	 * Convert a {@link Date} value into a {@link LocalDate}, using default calendar.
+	 * Convert a {@link Date} value into a {@link LocalDate}, using default calendar and default time zone.
 	 * @param date Date to convert (may be null)
 	 * @return Converted {@link LocalDate}, or <code>null</code> if given date was <code>null</code>
 	 */
 	public static LocalDate toLocalDate(Date date) {
+		return toLocalDate(date, null);
+	}
+
+	/**
+	 * Convert a {@link Date} value into a {@link LocalDate}, using default calendar.
+	 * @param date Date to convert (may be null)
+	 * @param timeZone The time zone to use
+	 * @return Converted {@link LocalDate}, or <code>null</code> if given date was <code>null</code>
+	 */
+	public static LocalDate toLocalDate(Date date, TimeZone timeZone) {
 		if (date != null) {
 			final Calendar c = Calendar.getInstance();
+			if (timeZone != null) {
+				c.setTimeZone(timeZone);
+			}
 			c.setTime(date);
 			return LocalDate.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH));
 		}
@@ -405,13 +419,26 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
-	 * Convert a {@link LocalDate} value into a {@link Date}, using default calendar.
+	 * Convert a {@link LocalDate} value into a {@link Date}, using default calendar and default time zone.
 	 * @param date Date to convert (may be null)
 	 * @return Converted {@link Date}, or <code>null</code> if given date was <code>null</code>
 	 */
 	public static Date fromLocalDate(LocalDate date) {
+		return fromLocalDate(date, null);
+	}
+
+	/**
+	 * Convert a {@link LocalDate} value into a {@link Date}, using default calendar.
+	 * @param date Date to convert (may be null)
+	 * @param timeZone The time zone to use
+	 * @return Converted {@link Date}, or <code>null</code> if given date was <code>null</code>
+	 */
+	public static Date fromLocalDate(LocalDate date, TimeZone timeZone) {
 		if (date != null) {
 			final Calendar c = Calendar.getInstance();
+			if (timeZone != null) {
+				c.setTimeZone(timeZone);
+			}
 			c.set(Calendar.YEAR, date.getYear());
 			c.set(Calendar.MONTH, date.getMonthValue() - 1);
 			c.set(Calendar.DAY_OF_MONTH, date.getDayOfMonth());
@@ -440,13 +467,26 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
-	 * Convert a {@link Date} value into a {@link LocalDateTime}, using default calendar.
+	 * Convert a {@link Date} value into a {@link LocalDateTime}, using default calendar and default time zone.
 	 * @param dateTime Date to convert (may be null)
 	 * @return Converted {@link LocalDateTime}, or <code>null</code> if given date was <code>null</code>
 	 */
 	public static LocalDateTime toLocalDateTime(Date dateTime) {
+		return toLocalDateTime(dateTime, null);
+	}
+
+	/**
+	 * Convert a {@link Date} value into a {@link LocalDateTime}, using default calendar.
+	 * @param dateTime Date to convert (may be null)
+	 * @param timeZone The time zone to use
+	 * @return Converted {@link LocalDateTime}, or <code>null</code> if given date was <code>null</code>
+	 */
+	public static LocalDateTime toLocalDateTime(Date dateTime, TimeZone timeZone) {
 		if (dateTime != null) {
 			Calendar c = Calendar.getInstance();
+			if (timeZone != null) {
+				c.setTimeZone(timeZone);
+			}
 			c.setTime(dateTime);
 			return LocalDateTime.of(c.get(Calendar.YEAR), c.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
 					c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
@@ -456,13 +496,26 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
-	 * Convert a {@link LocalDateTime} value into a {@link Date}, using default calendar.
+	 * Convert a {@link LocalDateTime} value into a {@link Date}, using default calendar and default time zone.
 	 * @param dateTime Date/time to convert (may be null)
 	 * @return Converted {@link Date}, or <code>null</code> if given date was <code>null</code>
 	 */
 	public static Date fromLocalDateTime(LocalDateTime dateTime) {
+		return fromLocalDateTime(dateTime, null);
+	}
+
+	/**
+	 * Convert a {@link LocalDateTime} value into a {@link Date}, using default calendar.
+	 * @param dateTime Date/time to convert (may be null)
+	 * @param timeZone The time zone to use
+	 * @return Converted {@link Date}, or <code>null</code> if given date was <code>null</code>
+	 */
+	public static Date fromLocalDateTime(LocalDateTime dateTime, TimeZone timeZone) {
 		if (dateTime != null) {
 			Calendar c = Calendar.getInstance();
+			if (timeZone != null) {
+				c.setTimeZone(timeZone);
+			}
 			c.set(Calendar.YEAR, dateTime.getYear());
 			c.set(Calendar.MONTH, dateTime.getMonthValue() - 1);
 			c.set(Calendar.DAY_OF_MONTH, dateTime.getDayOfMonth());
@@ -476,13 +529,26 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
-	 * Convert a {@link Date} value into a {@link LocalTime}, using default calendar.
+	 * Convert a {@link Date} value into a {@link LocalTime}, using default calendar and default time zone.
 	 * @param date Date to convert (may be null)
 	 * @return Converted {@link LocalTime}, or <code>null</code> if given date was <code>null</code>
 	 */
 	public static LocalTime toLocalTime(Date date) {
+		return toLocalTime(date, null);
+	}
+
+	/**
+	 * Convert a {@link Date} value into a {@link LocalTime}, using default calendar.
+	 * @param date Date to convert (may be null)
+	 * @param timeZone The time zone to use
+	 * @return Converted {@link LocalTime}, or <code>null</code> if given date was <code>null</code>
+	 */
+	public static LocalTime toLocalTime(Date date, TimeZone timeZone) {
 		if (date != null) {
 			final Calendar c = Calendar.getInstance();
+			if (timeZone != null) {
+				c.setTimeZone(timeZone);
+			}
 			c.setTime(date);
 			return LocalTime.of(c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND),
 					(int) TimeUnit.MILLISECONDS.toNanos(c.get(Calendar.MILLISECOND)));

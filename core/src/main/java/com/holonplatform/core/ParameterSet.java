@@ -23,6 +23,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import com.holonplatform.core.config.ConfigProperty;
+import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.DefaultParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
@@ -75,6 +76,7 @@ public interface ParameterSet extends Serializable {
 	 * @param name Parameter name (not null)
 	 * @param type Expected value type
 	 * @return Parameter value, or an empty Optional if parameter is not present
+	 * @throws TypeMismatchException If the actual parameter value type is not compatible with the expected type
 	 */
 	<T> Optional<T> getParameter(String name, Class<T> type);
 
@@ -86,6 +88,7 @@ public interface ParameterSet extends Serializable {
 	 * @param type Expected value type
 	 * @param defaultValue Default value to return when parameter was not found
 	 * @return Parameter value, or <code>defaultValue</code> if parameter is not present
+	 * @throws TypeMismatchException If the actual parameter value type is not compatible with the expected type
 	 */
 	default <T> T getParameter(String name, Class<T> type, T defaultValue) {
 		return getParameter(name, type).orElse(defaultValue);
@@ -100,8 +103,19 @@ public interface ParameterSet extends Serializable {
 	 * @param condition Condition to check (not null)
 	 * @return Parameter value, or an empty Optional if parameter is not present, or has not a value or its value does
 	 *         not satisfy given <code>condition</code>
+	 * @throws TypeMismatchException If the actual parameter value type is not compatible with the expected type
 	 */
 	<T> Optional<T> getParameterIf(String name, Class<T> type, Predicate<T> condition);
+
+	/**
+	 * Checks if a parameter with given <code>name</code> is present and its value is equal to given <code>value</code>.
+	 * @param name Parameter name (not null)
+	 * @param value Parameter value to check (may be null)
+	 * @return <code>true</code> if a parameter with given <code>name</code> is present and its value is equal to given
+	 *         <code>value</code>, <code>false</code> if a parameter with given <code>name</code> is not present or if
+	 *         its value it's not equal to the expected value
+	 */
+	boolean hasParameterValue(String name, Object value);
 
 	/**
 	 * Check if a parameter is present using given {@link ConfigProperty} property key. <code>null</code> parameter
@@ -125,6 +139,20 @@ public interface ParameterSet extends Serializable {
 	default <T> boolean hasNotNullParameter(ConfigProperty<T> property) {
 		ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
 		return hasNotNullParameter(property.getKey());
+	}
+
+	/**
+	 * Checks if a parameter named with given <code>property</code> key is present and its value is equal to given
+	 * <code>value</code>.
+	 * @param <T> Parameter value type
+	 * @param property Configuration property (not null)
+	 * @param value Parameter value to check (may be null)
+	 * @return <code>true</code> if the property is present and its value is equal to given <code>value</code>,
+	 *         <code>false</code> if the property is not present or if its value it's not equal to the expected value
+	 */
+	default <T> boolean hasParameterValue(ConfigProperty<T> property, T value) {
+		ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+		return hasParameterValue(property.getKey(), value);
 	}
 
 	/**

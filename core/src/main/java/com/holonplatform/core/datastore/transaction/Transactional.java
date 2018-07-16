@@ -70,4 +70,24 @@ public interface Transactional {
 		withTransaction((TransactionalOperation<?>) operation);
 	}
 
+	/**
+	 * Obtain a new {@link Transaction}. The transaction lifecycle must be managed by the caller, ensuring transaction
+	 * finalization using the {@link Transaction#commit()} or {@link Transaction#rollback()} methods.
+	 * @param transactionConfiguration Transaction configuration
+	 * @return A new {@link Transaction}
+	 * @since 5.2.0
+	 */
+	Transaction getTransaction(TransactionConfiguration transactionConfiguration);
+
+	/**
+	 * Obtain a new {@link Transaction} using the default transaction configuration. The transaction lifecycle must be
+	 * managed by the caller, ensuring transaction finalization using the {@link Transaction#commit()} or
+	 * {@link Transaction#rollback()} methods.
+	 * @return A new {@link Transaction}
+	 * @since 5.2.0
+	 */
+	default Transaction getTransaction() {
+		return getTransaction(TransactionConfiguration.getDefault());
+	}
+
 }

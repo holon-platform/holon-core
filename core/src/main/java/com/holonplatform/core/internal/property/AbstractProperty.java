@@ -97,23 +97,13 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 
 	/**
 	 * Constructor
-	 * @param type Property value type (not null)
+	 * @param type Property type (not null)
 	 */
 	public AbstractProperty(Class<? extends T> type) {
-		this(type, null);
-	}
-
-	/**
-	 * Constructor with custom property configuration editor
-	 * @param type Property value type (not null)
-	 * @param configuration Property configuration editor. If <code>null</code>, a default
-	 *        {@link PropertyConfigurationEditor} instance will be used
-	 */
-	public AbstractProperty(Class<? extends T> type, PropertyConfigurationEditor configuration) {
 		super();
 		ObjectUtils.argumentNotNull(type, "Property type must be not null");
 		this.type = type;
-		this.configuration = (configuration != null) ? configuration : PropertyConfiguration.create();
+		this.configuration = PropertyConfiguration.create();
 	}
 
 	/**
@@ -209,6 +199,17 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 	public <MODEL> B converter(Class<MODEL> modelType, Function<MODEL, T> fromModel, Function<T, MODEL> toModel) {
 		this.converter = new CallbackPropertyValueConverter<>(getType(), modelType, fromModel, toModel);
 		return getActualBuilder();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.Expression#validate()
+	 */
+	@Override
+	public void validate() throws InvalidExpressionException {
+		if (getType() == null) {
+			throw new InvalidExpressionException("Null property type");
+		}
 	}
 
 	/*
@@ -412,6 +413,26 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 	@Override
 	public boolean equals(Object obj) {
 		return getEqualsHandler().map(handler -> handler.equals(getActualProperty(), obj)).orElse(super.equals(obj));
+	}
+
+	/**
+	 * Clone this property configuration using given builder.
+	 * @param <CB> Actual property builder
+	 * @param builder The builder to use to clone the property configuration
+	 */
+	protected <CB extends Property.Builder<T, P, B>> void cloneProperty(CB builder) {
+		// localizable
+		builder.localization(this);
+		// converter
+		getConverter().ifPresent(c -> builder.converter(c));
+		// validators
+		getValidators().forEach(v -> builder.validator(v));
+		// identity
+		getHashCodeProvider().ifPresent(h -> builder.hashCodeProvider(h));
+		getEqualsHandler().ifPresent(h -> builder.equalsHandler(h));
+		// configuration
+		getConfiguration().getTemporalType().ifPresent(t -> builder.temporalType(t));
+		getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
 	}
 
 	/*

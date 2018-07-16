@@ -22,6 +22,8 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.ConverterExpression;
+import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
@@ -68,8 +70,8 @@ import com.holonplatform.core.temporal.TemporalType;
  * @see PropertySet
  * @see PropertyBox
  */
-public interface Property<T>
-		extends Validatable<T>, Localizable, HasConfiguration<PropertyConfiguration>, Serializable {
+public interface Property<T> extends Validatable<T>, Localizable, HasConfiguration<PropertyConfiguration>,
+		ConverterExpression<T>, Serializable {
 
 	/**
 	 * Get the name which identifies this property.
@@ -78,9 +80,10 @@ public interface Property<T>
 	String getName();
 
 	/**
-	 * Get the type of values supported by this property
+	 * Get the type of values supported by this property.
 	 * @return Property value type (not null)
 	 */
+	@Override
 	Class<? extends T> getType();
 
 	/**
@@ -106,6 +109,16 @@ public interface Property<T>
 	@Override
 	PropertyConfiguration getConfiguration();
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.TypedExpression#getTemporalType()
+	 */
+	@Override
+	default Optional<TemporalType> getTemporalType() {
+		return Optional.ofNullable(
+				getConfiguration().getTemporalType().orElse(TemporalType.getTemporalType(getType()).orElse(null)));
+	}
+
 	/**
 	 * Get the converter to perform property value conversions between property value and the corresponding data model
 	 * value. The {@link PropertyValueConverter} is supported out-of-the-box when property value is handled using a
@@ -122,6 +135,15 @@ public interface Property<T>
 	 */
 	default Object getConvertedValue(T value) {
 		return getConverter().map((c) -> (Object) c.toModel(value, this)).orElse(value);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.query.ConverterExpression#getExpressionValueConverter()
+	 */
+	@Override
+	default Optional<ExpressionValueConverter<T, ?>> getExpressionValueConverter() {
+		return ExpressionValueConverter.fromProperty(this);
 	}
 
 	/**

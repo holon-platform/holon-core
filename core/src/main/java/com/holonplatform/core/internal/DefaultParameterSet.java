@@ -17,6 +17,7 @@ package com.holonplatform.core.internal;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -148,6 +149,19 @@ public class DefaultParameterSet implements MutableParameterSet {
 		}
 
 		return Optional.empty();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.ParameterSet#hasParameterValue(java.lang.String, java.lang.Object)
+	 */
+	@Override
+	public boolean hasParameterValue(String name, Object value) {
+		ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
+		if (parameters.containsKey(name)) {
+			return Objects.equals(parameters.get(name), value);
+		}
+		return false;
 	}
 
 	/*

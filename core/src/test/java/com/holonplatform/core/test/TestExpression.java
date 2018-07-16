@@ -16,8 +16,14 @@
 package com.holonplatform.core.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.Optional;
 
 import org.junit.Test;
@@ -27,7 +33,13 @@ import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ResolutionContext;
 import com.holonplatform.core.ExpressionResolverRegistry;
+import com.holonplatform.core.NullExpression;
+import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.DefaultExpressionResolverRegistry;
+import com.holonplatform.core.property.ListPathProperty;
+import com.holonplatform.core.property.StringProperty;
+import com.holonplatform.core.query.ConstantExpression;
+import com.holonplatform.core.temporal.TemporalType;
 
 public class TestExpression {
 
@@ -149,13 +161,104 @@ public class TestExpression {
 
 	}
 
-	/*
-	 * @Priority(100) private class Resolver3 implements ExpressionResolver<ExpressionB, ExpressionC> {
-	 * @Override public Class<? extends ExpressionB> getExpressionType() { return ExpressionB.class; }
-	 * @Override public Class<? extends ExpressionC> getResolvedType() { return ExpressionC.class; }
-	 * @Override public Optional<ExpressionC> resolve(ExpressionB expression, ResolutionContext context) throws
-	 * InvalidExpressionException { return Optional.of(new ExpressionCImpl("x" + expression.getId())); } }
-	 */
+	@Test
+	public void testTemporalType() {
+
+		TypedExpression<?> te = new TypedExpression<Date>() {
+
+			@Override
+			public void validate() throws InvalidExpressionException {
+			}
+
+			@Override
+			public Class<? extends Date> getType() {
+				return Date.class;
+			}
+		};
+
+		assertTrue(te.getTemporalType().isPresent());
+		assertEquals(TemporalType.DATE_TIME, te.getTemporalType().get());
+
+		te = new TypedExpression<LocalDate>() {
+
+			@Override
+			public void validate() throws InvalidExpressionException {
+			}
+
+			@Override
+			public Class<? extends LocalDate> getType() {
+				return LocalDate.class;
+			}
+		};
+
+		assertTrue(te.getTemporalType().isPresent());
+		assertEquals(TemporalType.DATE, te.getTemporalType().get());
+
+		te = new TypedExpression<LocalDateTime>() {
+
+			@Override
+			public void validate() throws InvalidExpressionException {
+			}
+
+			@Override
+			public Class<? extends LocalDateTime> getType() {
+				return LocalDateTime.class;
+			}
+		};
+
+		assertTrue(te.getTemporalType().isPresent());
+		assertEquals(TemporalType.DATE_TIME, te.getTemporalType().get());
+
+		te = new TypedExpression<LocalTime>() {
+
+			@Override
+			public void validate() throws InvalidExpressionException {
+			}
+
+			@Override
+			public Class<? extends LocalTime> getType() {
+				return LocalTime.class;
+			}
+		};
+
+		assertTrue(te.getTemporalType().isPresent());
+		assertEquals(TemporalType.TIME, te.getTemporalType().get());
+
+		te = new TypedExpression<String>() {
+
+			@Override
+			public void validate() throws InvalidExpressionException {
+			}
+
+			@Override
+			public Class<? extends String> getType() {
+				return String.class;
+			}
+		};
+
+		assertFalse(te.getTemporalType().isPresent());
+
+	}
+
+	@Test
+	public void testIsers() {
+
+		StringProperty sp = StringProperty.create("test");
+		assertTrue(sp.isConverterExpression().isPresent());
+		assertFalse(sp.isConverterExpression().flatMap(ce -> ce.getExpressionValueConverter()).isPresent());
+
+		sp = StringProperty.create("test").converter(Integer.class, v -> String.valueOf(v), v -> Integer.valueOf(v));
+		assertTrue(sp.isConverterExpression().isPresent());
+		assertTrue(sp.isConverterExpression().flatMap(ce -> ce.getExpressionValueConverter()).isPresent());
+
+		assertFalse(sp.isCollectionExpression().isPresent());
+
+		ListPathProperty<String> lp = ListPathProperty.create("test", String.class);
+		assertTrue(lp.isConverterExpression().isPresent());
+		assertTrue(lp.isCollectionExpression().isPresent());
+		assertEquals(String.class, lp.isCollectionExpression().map(ce -> ce.getElementType()).orElse(null));
+
+	}
 
 	@Test
 	public void testResolvers() {
@@ -192,6 +295,31 @@ public class TestExpression {
 		Optional<ExpressionA> resolved2 = registry.resolve(expb, ExpressionA.class, ctx);
 		assertTrue(resolved2.isPresent());
 		assertEquals(1, resolved2.get().getId());
+
+		ExpressionResolverRegistry registry2 = new DefaultExpressionResolverRegistry();
+
+		registry2.addExpressionResolver(ExpressionResolver.create(ExpressionB.class, ExpressionA.class,
+				(e, c) -> Optional.of(new ExpressionAImpl(e.getId() + 1))));
+
+		expb = new ExpressionBImpl(0);
+		resolved2 = registry2.resolve(expb, ExpressionA.class, ctx);
+		assertTrue(resolved2.isPresent());
+		assertEquals(1, resolved2.get().getId());
+
+	}
+
+	@Test
+	public void testNullExpression() {
+
+		NullExpression<String> ne = NullExpression.create(String.class);
+
+		assertNotNull(ne);
+		assertEquals(String.class, ne.getType());
+
+		ne = NullExpression.create(ConstantExpression.create("A"));
+
+		assertNotNull(ne);
+		assertEquals(String.class, ne.getType());
 
 	}
 

@@ -29,10 +29,13 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @since 5.0.0
+ * 
+ * @deprecated Use the {@link javax.validation.constraints.NotBlank} constraint of the Bean Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 @Documented
+@Deprecated
 public @interface NotBlank {
 
 	/**

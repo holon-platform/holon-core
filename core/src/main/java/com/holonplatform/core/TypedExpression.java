@@ -42,4 +42,24 @@ public interface TypedExpression<T> extends Expression {
 		return TemporalType.getTemporalType(getType());
 	}
 
+	/**
+	 * Checks if this expression is a {@link ConverterExpression}.
+	 * @return If this expression is a {@link ConverterExpression} returns the expression itself as a
+	 *         {@link ConverterExpression}, or an empty Optional otherwise
+	 */
+	default Optional<ConverterExpression<T>> isConverterExpression() {
+		return Optional.ofNullable(
+				ConverterExpression.class.isAssignableFrom(getClass()) ? (ConverterExpression<T>) this : null);
+	}
+
+	/**
+	 * Checks if this expression is a {@link CollectionExpression}.
+	 * @return If this expression is a {@link CollectionExpression} returns the expression itself as a
+	 *         {@link CollectionExpression}, or an empty Optional otherwise
+	 */
+	default Optional<CollectionExpression<?, ?>> isCollectionExpression() {
+		return Optional.ofNullable(
+				CollectionExpression.class.isAssignableFrom(getClass()) ? (CollectionExpression<?, ?>) this : null);
+	}
+
 }

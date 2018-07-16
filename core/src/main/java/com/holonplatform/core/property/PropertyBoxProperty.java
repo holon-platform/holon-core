@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.internal.property.DefaultPropertyBoxProperty;
 
 /**
@@ -27,6 +29,14 @@ import com.holonplatform.core.internal.property.DefaultPropertyBoxProperty;
  * @since 5.1.0
  */
 public interface PropertyBoxProperty extends PathProperty<PropertyBox> {
+
+	/**
+	 * Clone this property.
+	 * @param builder A property builder which can be used to perform additional property configuration
+	 * @return The cloned property
+	 */
+	@Override
+	PropertyBoxProperty clone(Consumer<Builder<PropertyBox, PathProperty<PropertyBox>, ?>> builder);
 
 	/**
 	 * Get the {@link PropertySet} bound to the {@link PropertyBox} type of this property.

@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.Date;
+import java.util.function.Consumer;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultTemporalProperty;
@@ -37,6 +38,14 @@ import com.holonplatform.core.query.TemporalQueryExpression;
  * @since 5.1.0
  */
 public interface TemporalProperty<T> extends PathProperty<T>, TemporalQueryExpression<T> {
+
+	/**
+	 * Clone this property.
+	 * @param builder A property builder which can be used to perform additional property configuration
+	 * @return The cloned property
+	 */
+	@Override
+	TemporalProperty<T> clone(Consumer<Builder<T, PathProperty<T>, ?>> builder);
 
 	/**
 	 * Create a new {@link TemporalProperty} with given <code>name</code> and <code>type</code>.

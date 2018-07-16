@@ -15,9 +15,10 @@
  */
 package com.holonplatform.core.datastore;
 
-import com.holonplatform.core.datastore.bulk.BulkDeleteOperation;
-import com.holonplatform.core.datastore.bulk.BulkInsertOperation;
-import com.holonplatform.core.datastore.bulk.BulkUpdateOperation;
+import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
+import com.holonplatform.core.datastore.operation.commons.BulkDeleteOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkInsertOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkUpdateOperation;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
@@ -34,6 +35,7 @@ import com.holonplatform.core.query.QueryBuilder;
  * </p>
  * 
  * @param <R> Operation result type
+ * @param <REFRESH> Refresh result type
  * @param <BI> Bulk insert operation type
  * @param <BU> Bulk update operation type
  * @param <BD> Bulk delete operation type
@@ -41,17 +43,17 @@ import com.holonplatform.core.query.QueryBuilder;
  *
  * @since 5.1.0
  */
-public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU extends BulkUpdateOperation<BU>, BD extends BulkDeleteOperation<BD>, Q extends QueryBuilder<Q>> {
+public interface DatastoreOperations<R, REFRESH, BI extends BulkInsertOperation<R, BI>, BU extends BulkUpdateOperation<R, BU>, BD extends BulkDeleteOperation<R, BD>, Q extends QueryBuilder<Q>> {
 
 	/**
 	 * Refresh a {@link PropertyBox}, updating all its model properties to current value in data store and using given
 	 * <code>target</code> to denote the data store persistent entity to use.
 	 * @param target {@link DataTarget} to declare the data store persistent entity from which data has to be refreshed
 	 * @param propertyBox The data to refresh, represented using a {@link PropertyBox} (not null)
-	 * @return The refreshed PropertyBox (not null)
+	 * @return The refresh operation result, which should provide the refreshed PropertyBox instance
 	 * @throws DataAccessException If an error occurred during operation execution
 	 */
-	PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox);
+	REFRESH refresh(DataTarget<?> target, PropertyBox propertyBox);
 
 	/**
 	 * Insert a {@link PropertyBox} in the data store, using given <code>target</code> to denote the data store
@@ -155,6 +157,46 @@ public interface DatastoreOperations<R, BI extends BulkInsertOperation<BI>, BU e
 	 */
 	public interface WriteOption {
 		// marker interface
+	}
+
+	// ------- Base builder
+
+	/**
+	 * Base {@link DatastoreOperations} instance builder.
+	 * @param <D> DatastoreOperations type
+	 * @param <B> Concrete builder type
+	 */
+	@SuppressWarnings("rawtypes")
+	public interface Builder<D extends DatastoreOperations, B extends Builder<D, B>>
+			extends ExpressionResolverBuilder<B> {
+
+		/**
+		 * Set the <code>data context id</code> to which the Datastore is bound.
+		 * @param dataContextId The data context id to set
+		 * @return this
+		 */
+		B dataContextId(String dataContextId);
+
+		/**
+		 * Set whether to trace Datastore operations in log.
+		 * @param trace <code>true</code> to enable tracing
+		 * @return this
+		 */
+		B traceEnabled(boolean trace);
+
+		/**
+		 * Set the datastore configuration property source to use.
+		 * @param configuration Datastore configuration properties (not null)
+		 * @return this
+		 */
+		B configuration(DatastoreConfigProperties configuration);
+
+		/**
+		 * Build the Datastore.
+		 * @return Datastore instance
+		 */
+		D build();
+
 	}
 
 }

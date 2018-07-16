@@ -82,4 +82,11 @@ public interface QueryBuilder<Q extends QueryBuilder<Q>> extends QueryFilterSupp
 	 */
 	<T> Q parameter(ConfigProperty<T> property, T value);
 
+	/**
+	 * Configure the query to return <em>distinct</em> query projection result values.
+	 * @return this
+	 * @since 5.2.0
+	 */
+	Q distinct();
+
 }

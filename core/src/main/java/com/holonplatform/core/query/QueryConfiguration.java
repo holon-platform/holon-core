@@ -67,4 +67,12 @@ public interface QueryConfiguration extends ParameterSet, Expression, Expression
 	 */
 	Optional<QueryAggregation> getAggregation();
 
+	/**
+	 * Get whether the query should return <em>distinct</em> query projection result values.
+	 * @return <code>true</code> if the query should return <em>distinct</em> query projection result values,
+	 *         <code>false</code> otherwise
+	 * @since 5.2.0
+	 */
+	boolean isDistinct();
+
 }

@@ -319,6 +319,8 @@ public class TestI18n {
 		
 		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
 
+		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
+
 	}
 
 	@Test

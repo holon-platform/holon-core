@@ -72,7 +72,7 @@ public enum DefaultStringValuePresenter implements StringValuePresenter {
 	 * com.holonplatform.core.parameters.ParameterSet)
 	 */
 	@Override
-	public <T, V extends T> String present(Class<T> valueType, V value, ParameterSet parameters) {
+	public <T, V extends T> String present(Class<? extends T> valueType, V value, ParameterSet parameters) {
 
 		final Object valueToPresent;
 

@@ -22,9 +22,9 @@ import com.holonplatform.core.datastore.DatastoreCommodity;
  * Represents a <em>query</em>, which can be used to configure and execute a query on the data managed by a
  * {@link Datastore}.
  * <p>
- * Query is configured through the {@link QueryBuilder} interface and executed using the {@link QueryResults} interface,
- * which provides method to execute the query and obtain a result using a {@link QueryProjection} to specify the
- * expected result type.
+ * The query is configured through the {@link QueryBuilder} API and executed using the {@link QueryResults} API, which
+ * provides methods to execute the query and obtain the results using a {@link QueryProjection} to specify the expected
+ * result type.
  * </p>
  * <p>
  * Extends {@link DatastoreCommodity} to allow query definition and registration using the {@link Datastore} commodities

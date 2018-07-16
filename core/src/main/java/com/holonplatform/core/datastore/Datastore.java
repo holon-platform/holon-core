@@ -20,18 +20,17 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.Path;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
-import com.holonplatform.core.datastore.operation.DeleteOperation;
-import com.holonplatform.core.datastore.operation.InsertOperation;
-import com.holonplatform.core.datastore.operation.RefreshOperation;
-import com.holonplatform.core.datastore.operation.SaveOperation;
-import com.holonplatform.core.datastore.operation.UpdateOperation;
+import com.holonplatform.core.datastore.operation.Delete;
+import com.holonplatform.core.datastore.operation.Insert;
+import com.holonplatform.core.datastore.operation.Refresh;
+import com.holonplatform.core.datastore.operation.Save;
+import com.holonplatform.core.datastore.operation.Update;
 import com.holonplatform.core.datastore.transaction.Transactional;
 import com.holonplatform.core.exceptions.DataAccessException;
 import com.holonplatform.core.internal.datastore.DefaultOperationResult;
@@ -62,10 +61,10 @@ import com.holonplatform.core.query.Query;
  * 
  * @since 5.0.0
  * 
- * @see Query
  * @see DatastoreCommodityFactory
  */
-public interface Datastore extends DatastoreOperations<OperationResult, BulkInsert, BulkUpdate, BulkDelete, Query>,
+public interface Datastore
+		extends DatastoreOperations<OperationResult, PropertyBox, BulkInsert, BulkUpdate, BulkDelete, Query>,
 		DatastoreCommodityHandler, ExpressionResolverSupport, DataContextBound, Serializable {
 
 	/*
@@ -76,7 +75,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default PropertyBox refresh(DataTarget<?> target, PropertyBox propertyBox) {
 		try {
-			return create(RefreshOperation.class).target(target).value(propertyBox).execute();
+			return create(Refresh.class).target(target).value(propertyBox).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("REFRESH operation failed", e);
 		}
@@ -90,7 +89,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default OperationResult insert(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
 		try {
-			return create(InsertOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+			return create(Insert.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("INSERT operation failed", e);
 		}
@@ -104,7 +103,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default OperationResult update(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
 		try {
-			return create(UpdateOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+			return create(Update.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("UPDATE operation failed", e);
 		}
@@ -118,7 +117,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default OperationResult save(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
 		try {
-			return create(SaveOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+			return create(Save.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("SAVE operation failed", e);
 		}
@@ -132,7 +131,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	@Override
 	default OperationResult delete(DataTarget<?> target, PropertyBox propertyBox, WriteOption... options) {
 		try {
-			return create(DeleteOperation.class).target(target).value(propertyBox).withWriteOptions(options).execute();
+			return create(Delete.class).target(target).value(propertyBox).withWriteOptions(options).execute();
 		} catch (Exception e) {
 			throw new DataAccessException("DELETE operation failed", e);
 		}
@@ -150,7 +149,7 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 	 */
 	@Override
 	default BulkInsert bulkInsert(DataTarget<?> target, PropertySet<?> propertySet, WriteOption... options) {
-		return create(BulkInsert.class).target(target).operationPaths(propertySet).withWriteOptions(options);
+		return create(BulkInsert.class).target(target).propertySet(propertySet).withWriteOptions(options);
 	}
 
 	/**
@@ -353,44 +352,6 @@ public interface Datastore extends DatastoreOperations<OperationResult, BulkInse
 			OperationResult build();
 
 		}
-
-	}
-
-	// Builder
-
-	/**
-	 * Base {@link Datastore} builder.
-	 * @param <D> Datastore type
-	 * @param <B> Concrete builder type
-	 */
-	public interface Builder<D extends Datastore, B extends Builder<D, B>> extends ExpressionResolverBuilder<B> {
-
-		/**
-		 * Set the <code>data context id</code> to which the Datastore is bound.
-		 * @param dataContextId The data context id to set
-		 * @return this
-		 */
-		B dataContextId(String dataContextId);
-
-		/**
-		 * Set whether to trace Datastore operations in log.
-		 * @param trace <code>true</code> to enable tracing
-		 * @return this
-		 */
-		B traceEnabled(boolean trace);
-
-		/**
-		 * Set the datastore configuration property source to use.
-		 * @param configuration Datastore configuration properties (not null)
-		 * @return this
-		 */
-		B configuration(DatastoreConfigProperties configuration);
-
-		/**
-		 * Build the Datastore.
-		 * @return Datastore instance
-		 */
-		D build();
 
 	}
 

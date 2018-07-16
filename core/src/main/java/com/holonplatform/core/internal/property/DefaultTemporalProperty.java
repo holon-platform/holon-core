@@ -15,6 +15,9 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.function.Consumer;
+
+import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.property.TemporalProperty.TemporalPropertyBuilder;
 
@@ -55,6 +58,15 @@ public class DefaultTemporalProperty<T> extends AbstractPathProperty<T, Temporal
 	@Override
 	protected TemporalPropertyBuilder<T> getActualBuilder() {
 		return this;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.TemporalProperty#clone(java.util.function.Consumer)
+	 */
+	@Override
+	public TemporalProperty<T> clone(Consumer<PathProperty.Builder<T, PathProperty<T>, ?>> builder) {
+		return clonePathProperty(new DefaultTemporalProperty<>(getName(), getType()), builder);
 	}
 
 }

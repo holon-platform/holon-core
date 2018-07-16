@@ -25,9 +25,11 @@ import org.springframework.web.client.RestTemplate;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.config.ConfigPropertyProvider;
+import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.EnableBeanContext;
+import com.holonplatform.spring.EnableDatastoreConfiguration;
 import com.holonplatform.spring.EnableTenantScope;
 import com.holonplatform.spring.EnvironmentConfigPropertyProvider;
 import com.holonplatform.spring.ScopeTenant;
@@ -133,6 +135,23 @@ public class ExampleSpring {
 	// end::restclient2[]
 
 	private static RestTemplate getRestTemplate() {
+		return null;
+	}
+
+	// tag::datastoreconfig1[]
+	@Configuration
+	@EnableDatastoreConfiguration // <1>
+	class DatastoreConfig {
+
+		@Bean
+		public Datastore datastore() {
+			return buildDatastore();
+		}
+
+	}
+	// end::datastoreconfig1[]
+
+	private static Datastore buildDatastore() {
 		return null;
 	}
 

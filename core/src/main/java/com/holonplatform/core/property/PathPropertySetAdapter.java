@@ -20,11 +20,25 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.property.DefaultPathPropertySetAdapter.DefaultPathPropertySetAdapterBuilder;
 
 /**
  * Adapter to use {@link Path} expressions to inspect a {@link PropertySet}.
- *
+ * <p>
+ * The {@link Property} definitions of the property set can be inspected and obtained:
+ * <ul>
+ * <li>By {@link Path}, checking if a {@link Property} implements {@link Path} and if its path name corresponds to a
+ * given {@link Path} name.</li>
+ * <li>By name, using the {@link Property} name (see {@link Property#getName()}) to look for a matching property
+ * definition.</li>
+ * </ul>
+ * <p>
+ * A {@link PathConverter} and a {@link PathMatcher} definition can be provided to the builder API to control and
+ * customize how a {@link Property} is converted to a {@link Path} and the path name matching strategy to use. See the
+ * {@link Builder} API for details.
+ * </p>
+ * 
  * @since 5.1.0
  */
 public interface PathPropertySetAdapter {
@@ -68,7 +82,55 @@ public interface PathPropertySetAdapter {
 	 * property set which can be represented as a {@link Path}.
 	 * @return Property set paths stream
 	 */
-	Stream<Path<?>> pathStream();
+	Stream<Path<?>> paths();
+
+	/**
+	 * Returns a stream of the property set {@link Property} definitions which can be represented as a {@link Path},
+	 * providing the corresponding {@link Path} representation, using the {@link PropertyPath} interface to provide the
+	 * Property-Path pairs.
+	 * @return A stream of {@link PropertyPath} elements
+	 */
+	Stream<PropertyPath<?>> propertyPaths();
+
+	// ------- by name
+
+	/**
+	 * Checks if a {@link Property} with given <code>name</code> is present in the property set.
+	 * @param name Property name (not null)
+	 * @return <code>true</code> if a {@link Property} with given <code>name</code> is present, <code>false</code>
+	 *         otherwise
+	 * @since 5.2.0
+	 */
+	boolean contains(String name);
+
+	/**
+	 * Get the {@link Property} with given <code>name</code>, if available in the property set.
+	 * @param <T> Property type
+	 * @param name Property name (not null)
+	 * @param type Expected property type (not null)
+	 * @return The {@link Property} with given <code>name</code>, if available
+	 * @throws TypeMismatchException If a property with given name is present but its type is not compatible with the
+	 *         expected property type
+	 * @since 5.2.0
+	 */
+	<T> Optional<Property<T>> getProperty(String name, Class<T> type);
+
+	/**
+	 * Get the {@link Property} with given <code>name</code>, if available in the property set.
+	 * @param name Property name (not null)
+	 * @return The {@link Property} with given <code>name</code>, if available
+	 * @since 5.2.0
+	 */
+	Optional<Property<?>> getProperty(String name);
+
+	/**
+	 * Returns a stream of the {@link Property} names available in the property set.
+	 * @return Property names stream
+	 * @since 5.2.0
+	 */
+	Stream<String> names();
+
+	// ------- Builders
 
 	/**
 	 * Create a new {@link PathPropertySetAdapter}.
@@ -86,6 +148,29 @@ public interface PathPropertySetAdapter {
 	 */
 	static PathPropertySetAdapterBuilder builder(PropertySet<?> propertySet) {
 		return new DefaultPathPropertySetAdapterBuilder(propertySet);
+	}
+
+	// ------- Related types
+
+	/**
+	 * {@link Property} and corresponding {@link Path} pair representation.
+	 *
+	 * @param <T> Property and path type
+	 */
+	public interface PropertyPath<T> {
+
+		/**
+		 * Get the property definition.
+		 * @return The property
+		 */
+		Property<T> getProperty();
+
+		/**
+		 * Get the path bound the property definition.
+		 * @return The property path
+		 */
+		Path<T> getPath();
+
 	}
 
 	/**
@@ -137,6 +222,10 @@ public interface PathPropertySetAdapter {
 
 		/**
 		 * Set the {@link PathConverter} to use to convert a {@link Property} into a {@link Path} representation.
+		 * <p>
+		 * By default, the {@link Property} path representation is obtained checking if the {@link Property} extends the
+		 * {@link Path} interface and, in this case, using the property definition itself as path representation.
+		 * </p>
 		 * @param pathConverter The path converter to set (not null)
 		 * @return this
 		 */
@@ -144,6 +233,10 @@ public interface PathPropertySetAdapter {
 
 		/**
 		 * Set the {@link PathMatcher} to use for {@link Path} matching strategy.
+		 * <p>
+		 * By default, the {@link Path#relativeName()} method is used to obtain the path names and the names are matched
+		 * using the default <code>equals</code> strategy.
+		 * </p>
 		 * @param pathMatcher The path matcher to set (not null)
 		 * @return this
 		 */

@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.Path;
 import com.holonplatform.core.internal.property.DefaultBooleanProperty;
 import com.holonplatform.core.internal.utils.ObjectUtils;
@@ -25,6 +27,14 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  * @since 5.1.0
  */
 public interface BooleanProperty extends PathProperty<Boolean> {
+
+	/**
+	 * Clone this property.
+	 * @param builder A property builder which can be used to perform additional property configuration
+	 * @return The cloned property
+	 */
+	@Override
+	BooleanProperty clone(Consumer<Builder<Boolean, PathProperty<Boolean>, ?>> builder);
 
 	/**
 	 * Create a new {@link BooleanProperty} with given <code>name</code>.

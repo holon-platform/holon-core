@@ -16,7 +16,9 @@
 package com.holonplatform.core.internal.query;
 
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.datastore.DataTarget;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.query.QueryAggregation;
 import com.holonplatform.core.query.QueryConfiguration;
 import com.holonplatform.core.query.QueryFilter;
@@ -68,12 +70,31 @@ public interface QueryDefinition extends QueryConfiguration, ExpressionResolverS
 	void setAggregation(QueryAggregation aggregation);
 
 	/**
+	 * Set whether the query should return <em>distinct</em> query projection result values.
+	 * @param distinct <code>true</code> if the query should return <em>distinct</em> query projection result values,
+	 *        <code>false</code> otherwise
+	 * @since 5.2.0
+	 */
+	void setDistinct(boolean distinct);
+
+	/**
 	 * Add a parameter. If parameter with <code>name</code> already exists, its value will be replaced by new
 	 * <code>value</code>.
 	 * @param name Parameter name (not null)
 	 * @param value Parameter value
 	 */
 	void addParameter(String name, Object value);
+
+	/**
+	 * Add a parameter using a {@link ConfigProperty}, with {@link ConfigProperty#getKey()} as parameter name.
+	 * @param <T> Configuration property type
+	 * @param property Configuration property (not null)
+	 * @param value Property value
+	 */
+	default <T> void addParameter(ConfigProperty<T> property, T value) {
+		ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
+		addParameter(property.getKey(), value);
+	}
 
 	/**
 	 * Create a new {@link QueryDefinition}.

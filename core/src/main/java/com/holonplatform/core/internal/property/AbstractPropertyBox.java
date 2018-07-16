@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.internal.property;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.objects.EqualsHandler;
 import com.holonplatform.core.objects.HashCodeProvider;
+import com.holonplatform.core.property.CollectionPropertyValueConverter;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.Property.PropertyAccessException;
 import com.holonplatform.core.property.Property.PropertyNotFoundException;
@@ -320,10 +322,50 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	@SuppressWarnings("unchecked")
 	protected <T> T checkupPropertyValue(Property<T> property, T value) throws TypeMismatchException {
 		return validatePropertyValue(property,
-				property.getConverter()
-						.filter(c -> (value == null || TypeUtils.isAssignable(value.getClass(), c.getModelType())))
+				property.getConverter().filter(c -> isModelTypeConvertible(value, c))
 						.map(cv -> ((PropertyValueConverter<T, Object>) cv).fromModel(value, property))
 						.orElseGet(() -> checkValueTypeConsistency(property, value)));
+	}
+
+	/**
+	 * Check if given value is type compatible with the {@link PropertyValueConverter} model type.
+	 * @param property Property
+	 * @param value Value
+	 * @param converter Converter
+	 * @return <code>true</code> if given value is type compatible with the {@link PropertyValueConverter} model type,
+	 *         <code>false</code> otherwise
+	 */
+	private static boolean isModelTypeConvertible(Object value, PropertyValueConverter converter) {
+		if (value == null) {
+			return true;
+		}
+		// check collection type
+		if (CollectionPropertyValueConverter.class.isAssignableFrom(converter.getClass())) {
+			final Class<?> elementType = ((CollectionPropertyValueConverter) converter).getModelElementType();
+			if (!Collection.class.isAssignableFrom(value.getClass())) {
+				return false;
+			}
+			final Collection collection = (Collection) value;
+			if (collection.isEmpty()) {
+				return true;
+			}
+			Object element = getNonNullCollectionElement(collection);
+			if (element == null) {
+				return false;
+			}
+			return TypeUtils.isAssignable(element.getClass(), elementType);
+		}
+		// default type check
+		return TypeUtils.isAssignable(value.getClass(), converter.getModelType());
+	}
+
+	private static Object getNonNullCollectionElement(Collection collection) {
+		for (Object element : collection) {
+			if (element != null) {
+				return element;
+			}
+		}
+		return null;
 	}
 
 	/**

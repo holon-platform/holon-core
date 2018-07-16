@@ -16,6 +16,8 @@
 package com.holonplatform.core.internal.utils;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
+import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -27,6 +29,7 @@ import java.time.temporal.Temporal;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Stack;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -397,6 +400,28 @@ public final class TypeUtils implements Serializable {
 			break;
 		}
 		throw new IllegalArgumentException(currentType + " does not specify a type parameter");
+	}
+
+	/**
+	 * Get the underlying class of a {@link Type}, if available.
+	 * @param type the type for which to obtain the class
+	 * @return the type class
+	 */
+	public static Optional<Class<?>> getRawType(Type type) {
+		if (type instanceof Class) {
+			return Optional.of((Class<?>) type);
+		} else if (type instanceof ParameterizedType) {
+			return Optional.of((Class<?>) ((ParameterizedType) type).getRawType());
+		} else if (type instanceof GenericArrayType) {
+			return getRawType(((GenericArrayType) type).getGenericComponentType())
+					.map(c -> Array.newInstance(c, 0).getClass());
+		} else if (type instanceof TypeVariable) {
+			final TypeVariable<?> typeVar = (TypeVariable<?>) type;
+			if (typeVar.getBounds() != null && typeVar.getBounds().length > 0) {
+				return getRawType(typeVar.getBounds()[0]);
+			}
+		}
+		return Optional.empty();
 	}
 
 }

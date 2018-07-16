@@ -15,9 +15,11 @@
  */
 package com.holonplatform.core.internal.beans;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.beans.TemporalBeanProperty;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
+import com.holonplatform.core.property.PathProperty;
+import com.holonplatform.core.property.TemporalProperty;
 
 /**
  * Default {@link TemporalBeanProperty} implementation.
@@ -35,19 +37,17 @@ public class DefaultTemporalBeanProperty<T> extends AbstractBeanProperty<T> impl
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
 	 */
-	public DefaultTemporalBeanProperty(String name, Class<T> type) {
-		this(name, type, null);
+	public DefaultTemporalBeanProperty(String name, Class<? extends T> type) {
+		super(name, type);
 	}
 
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
-	 * @param configuration Optional property configuration instance
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.TemporalProperty#clone(java.util.function.Consumer)
 	 */
-	public DefaultTemporalBeanProperty(String name, Class<? extends T> type,
-			PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	@Override
+	public TemporalProperty<T> clone(Consumer<PathProperty.Builder<T, PathProperty<T>, ?>> builder) {
+		return clonePathProperty(new DefaultTemporalBeanProperty<>(getName(), getType()), builder);
 	}
 
 }

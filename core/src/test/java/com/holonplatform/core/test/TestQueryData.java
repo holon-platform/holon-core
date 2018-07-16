@@ -32,6 +32,7 @@ import java.util.concurrent.Callable;
 
 import org.junit.Test;
 
+import com.holonplatform.core.CollectionConstantExpression;
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
@@ -60,7 +61,6 @@ import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
-import com.holonplatform.core.query.CollectionExpression;
 import com.holonplatform.core.query.ConstantExpression;
 import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QuerySort;
@@ -345,7 +345,7 @@ public class TestQueryData {
 		Collection<String> vs = new ArrayList<>();
 		vs.add("v1");
 
-		f = new InFilter<>(p, CollectionExpression.create("test", "test2"));
+		f = new InFilter<>(p, CollectionConstantExpression.create("test", "test2"));
 		assertEquals(p, f.getLeftOperand());
 		assertEquals(FilterOperator.IN, f.getOperator());
 		assertNotNull(f.toString());
@@ -359,7 +359,7 @@ public class TestQueryData {
 		f.validate();
 		((VisitableQueryFilter) f).accept(visitor, null);
 
-		f = new NotInFilter<>(p, CollectionExpression.create("test", "test2"));
+		f = new NotInFilter<>(p, CollectionConstantExpression.create("test", "test2"));
 		assertEquals(p, f.getLeftOperand());
 		assertEquals(FilterOperator.NOT_IN, f.getOperator());
 		assertNotNull(f.toString());

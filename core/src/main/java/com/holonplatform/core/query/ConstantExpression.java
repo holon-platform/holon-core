@@ -15,23 +15,20 @@
  */
 package com.holonplatform.core.query;
 
+import com.holonplatform.core.ConstantConverterExpression;
 import com.holonplatform.core.ExpressionValueConverter;
 import com.holonplatform.core.TypedExpression;
 import com.holonplatform.core.internal.query.DefaultConstantExpression;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
- * Constant value expression, with {@link ExpressionValueConverter} support.
+ * Constant value expression which can also act as {@link QueryProjection}.
  * 
  * @param <T> Expression type
  * 
  * @since 5.0.0
- * 
- * @see CollectionExpression
  */
-public interface ConstantExpression<T> extends ConstantConverterExpression<T, T> {
-
-	// builders
+public interface ConstantExpression<T> extends ConstantConverterExpression<T, T>, QueryProjection<T> {
 
 	/**
 	 * Create a {@link ConstantExpression} which represents a constant value.

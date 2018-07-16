@@ -18,17 +18,20 @@ package com.holonplatform.core.test.data;
 import java.time.LocalDate;
 import java.util.Date;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 
 import com.holonplatform.core.beans.Config;
 import com.holonplatform.core.beans.Converter;
-import com.holonplatform.core.beans.Identifier;
 import com.holonplatform.core.beans.Converter.BUILTIN;
+import com.holonplatform.core.beans.Identifier;
 import com.holonplatform.core.beans.Ignore;
-import com.holonplatform.core.beans.NotBlank;
-import com.holonplatform.core.beans.NotNegative;
 import com.holonplatform.core.beans.Temporal;
 import com.holonplatform.core.beans.ValidationMessage;
 import com.holonplatform.core.beans.Validator;
@@ -54,8 +57,18 @@ public class TestBeanPropertyBean {
 	@Caption("TheName")
 	private String name;
 
+	@NotEmpty
+	@Caption("Text")
+	private String text;
+
+	@NotNull
+	private String required;
+
 	@Ignore
 	private String ignore;
+
+	@Email
+	private String email;
 
 	@Min(0)
 	@Max(10)
@@ -82,8 +95,11 @@ public class TestBeanPropertyBean {
 
 	@Config(key = "k1", value = "v1")
 	@Config(key = "k2", value = "v2")
-	@NotNegative
+	@Positive
 	private Integer notneg;
+
+	@PositiveOrZero
+	private Integer notnegzero;
 
 	public String getName() {
 		return name;
@@ -93,12 +109,36 @@ public class TestBeanPropertyBean {
 		this.name = name;
 	}
 
+	public String getRequired() {
+		return required;
+	}
+
+	public void setRequired(String required) {
+		this.required = required;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
 	public String getIgnore() {
 		return ignore;
 	}
 
 	public void setIgnore(String ignore) {
 		this.ignore = ignore;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Integer getIntval() {
@@ -163,6 +203,14 @@ public class TestBeanPropertyBean {
 
 	public void setNotneg(Integer notneg) {
 		this.notneg = notneg;
+	}
+
+	public Integer getNotnegzero() {
+		return notnegzero;
+	}
+
+	public void setNotnegzero(Integer notnegzero) {
+		this.notnegzero = notnegzero;
 	}
 
 }

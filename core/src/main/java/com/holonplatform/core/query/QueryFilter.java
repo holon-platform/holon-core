@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.holonplatform.core.CollectionConstantExpression;
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.TypedExpression;
@@ -335,7 +336,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	static <T> QueryFilter in(TypedExpression<T> expression, T... values) {
-		return in(expression, CollectionExpression.create(expression, values));
+		return in(expression, CollectionConstantExpression.create(expression, values));
 	}
 
 	/**
@@ -347,7 +348,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter in(TypedExpression<T> expression, Collection<T> values) {
-		return in(expression, CollectionExpression.create(expression, values));
+		return in(expression, CollectionConstantExpression.create(expression, values));
 	}
 
 	/**
@@ -372,7 +373,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	static <T> QueryFilter nin(TypedExpression<T> expression, T... values) {
-		return nin(expression, CollectionExpression.create(expression, values));
+		return nin(expression, CollectionConstantExpression.create(expression, values));
 	}
 
 	/**
@@ -384,7 +385,7 @@ public interface QueryFilter extends Expression, Serializable {
 	 * @return QueryFilter
 	 */
 	static <T> QueryFilter nin(TypedExpression<T> expression, Collection<T> values) {
-		return nin(expression, CollectionExpression.create(expression, values));
+		return nin(expression, CollectionConstantExpression.create(expression, values));
 	}
 
 	/**

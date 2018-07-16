@@ -26,7 +26,9 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 import com.holonplatform.core.Path;
+import com.holonplatform.core.exceptions.TypeMismatchException;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.property.PathPropertySetAdapter;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
@@ -39,13 +41,23 @@ import com.holonplatform.core.property.PropertySet;
 @SuppressWarnings("rawtypes")
 public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 
+	/**
+	 * The property set
+	 */
 	private final PropertySet<? extends Property> propertySet;
 
+	/**
+	 * Default {@link PathConverter}
+	 */
 	private PathConverter pathConverter = DefaultPathConverter.INSTANCE;
 
+	/**
+	 * Default {@link PathMatcher}
+	 */
 	private PathMatcher pathMatcher = DefaultPathMatcher.INSTANCE;
 
 	private final Map<Path, Property> pathPropertyCache;
+	private Map<String, Property> namePropertyCache;
 
 	/**
 	 * Constructor.
@@ -106,7 +118,6 @@ public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 	 */
 	@Override
 	public boolean contains(Path<?> path) {
-		ObjectUtils.argumentNotNull(path, "Path must be not null");
 		return getProperty(path).isPresent();
 	}
 
@@ -136,7 +147,7 @@ public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 	@Override
 	public <T> Optional<Path<T>> getPath(Property<T> property) {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
-		return getPathConverter().convert(property);
+		return getPropertySet().contains(property) ? getPathConverter().convert(property) : Optional.empty();
 	}
 
 	/*
@@ -162,13 +173,126 @@ public class DefaultPathPropertySetAdapter implements PathPropertySetAdapter {
 	 * @see com.holonplatform.core.property.PathPropertySetAdapter#pathStream()
 	 */
 	@Override
-	public Stream<Path<?>> pathStream() {
+	public Stream<Path<?>> paths() {
 		List<Path<?>> paths = new ArrayList<>(getPropertySet().size());
 		for (Property<?> property : getPropertySet()) {
 			getPathConverter().convert(property).ifPresent(p -> paths.add(p));
 		}
 		return paths.stream();
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#propertyPaths()
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Stream<PropertyPath<?>> propertyPaths() {
+		final List<PropertyPath<?>> pps = new ArrayList<>(getPropertySet().size());
+		for (Property<?> property : getPropertySet()) {
+			getPathConverter().convert(property).ifPresent(path -> pps.add(new DefaultPropertyPath(property, path)));
+		}
+		return pps.stream();
+	}
+
+	// ------- by name
+
+	/**
+	 * Get the name-property cache.
+	 * @return the the name-property cache
+	 */
+	protected Map<String, Property> getNamePropertyCache() {
+		if (namePropertyCache == null) {
+			namePropertyCache = new HashMap<>(getPropertySet().size());
+		}
+		return namePropertyCache;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#contains(java.lang.String)
+	 */
+	@Override
+	public boolean contains(String name) {
+		return getProperty(name).isPresent();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#getProperty(java.lang.String, java.lang.Class)
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> Optional<Property<T>> getProperty(String name, Class<T> type) {
+		ObjectUtils.argumentNotNull(name, "Property name must be not null");
+		ObjectUtils.argumentNotNull(type, "Property type must be not null");
+		Optional<Property<?>> property = getProperty(name);
+		property.ifPresent(p -> {
+			if (!TypeUtils.isAssignable(p.getType(), type)) {
+				throw new TypeMismatchException("Property type " + p.getType().getName()
+						+ " is not compatible with required type " + type.getName());
+			}
+		});
+		return property.map(p -> (Property<T>) p);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#getProperty(java.lang.String)
+	 */
+	@Override
+	public Optional<Property<?>> getProperty(String name) {
+		ObjectUtils.argumentNotNull(name, "Property name must be not null");
+		return Optional.ofNullable(getNamePropertyCache().computeIfAbsent(name, pn -> {
+			for (Property property : getPropertySet()) {
+				if (pn.equals(property.getName())) {
+					return property;
+				}
+			}
+			return null;
+		}));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.PathPropertySetAdapter#nameStream()
+	 */
+	@Override
+	public Stream<String> names() {
+		return getPropertySet().stream().filter(p -> p.getName() != null).map(p -> p.getName());
+	}
+
+	// ------- Internal types
+
+	/**
+	 * Default {@link PropertyPath} implementation.
+	 * 
+	 * @param <T> Property and path type
+	 */
+	public static class DefaultPropertyPath<T> implements PropertyPath<T> {
+
+		private final Property<T> property;
+		private final Path<T> path;
+
+		public DefaultPropertyPath(Property<T> property, Path<T> path) {
+			super();
+			this.property = property;
+			this.path = path;
+		}
+
+		@Override
+		public Property<T> getProperty() {
+			return property;
+		}
+
+		@Override
+		public Path<T> getPath() {
+			return path;
+		}
+
+	}
+
+	// ------- Builder
 
 	/**
 	 * Default {@link PathPropertySetAdapterBuilder}.

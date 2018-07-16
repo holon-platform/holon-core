@@ -15,9 +15,11 @@
  */
 package com.holonplatform.core.internal.beans;
 
+import java.util.function.Consumer;
+
 import com.holonplatform.core.beans.NumericBeanProperty;
-import com.holonplatform.core.property.PropertyConfiguration;
-import com.holonplatform.core.property.PropertyConfiguration.PropertyConfigurationEditor;
+import com.holonplatform.core.property.NumericProperty;
+import com.holonplatform.core.property.PathProperty;
 
 /**
  * Default {@link NumericBeanProperty} implementation.
@@ -36,18 +38,17 @@ public class DefaultNumericBeanProperty<N extends Number> extends AbstractBeanPr
 	 * @param name Property name (not null)
 	 * @param type Property value type (not null)
 	 */
-	public DefaultNumericBeanProperty(String name, Class<N> type) {
-		this(name, type, null);
+	public DefaultNumericBeanProperty(String name, Class<? extends N> type) {
+		super(name, type);
 	}
 
-	/**
-	 * Constructor with custom {@link PropertyConfiguration}.
-	 * @param name Property name (not null)
-	 * @param type Property value type (not null)
-	 * @param configuration Optional property configuration instance
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.property.NumericProperty#clone(java.util.function.Consumer)
 	 */
-	public DefaultNumericBeanProperty(String name, Class<? extends N> type, PropertyConfigurationEditor configuration) {
-		super(name, type, configuration);
+	@Override
+	public NumericProperty<N> clone(Consumer<PathProperty.Builder<N, PathProperty<N>, ?>> builder) {
+		return clonePathProperty(new DefaultNumericBeanProperty<>(getName(), getType()), builder);
 	}
 
 }

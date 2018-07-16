@@ -56,6 +56,12 @@ public interface Transaction {
 	boolean isRollbackOnly();
 
 	/**
+	 * Get whether the transaction is active, that is, whether it is started and configured.
+	 * @return Whether the transaction is active
+	 */
+	boolean isActive();
+
+	/**
 	 * Get whether this transaction is completed, that is, whether it has already been committed or rolled back.
 	 * @return <code>true</code> if the transaction is completed, <code>false</code> otherwise
 	 */
@@ -93,7 +99,7 @@ public interface Transaction {
 	 * Exception thrown when an operation is performed on a transaction but the transaction is in an illegal status
 	 * according to the transaction semantics.
 	 */
-	public class IllegalTransactionStatusException extends RuntimeException {
+	public class IllegalTransactionStatusException extends TransactionException {
 
 		private static final long serialVersionUID = 955102297447646409L;
 

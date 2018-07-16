@@ -88,7 +88,7 @@ public interface StringValuePresenter {
 	 * @param parameters Optional presentation parameters
 	 * @return String value
 	 */
-	<T, V extends T> String present(Class<T> valueType, V value, ParameterSet parameters);
+	<T, V extends T> String present(Class<? extends T> valueType, V value, ParameterSet parameters);
 
 	/**
 	 * Present given <code>value</code> of given <code>valueType</code> as a String.

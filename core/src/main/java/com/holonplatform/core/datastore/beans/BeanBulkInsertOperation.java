@@ -15,8 +15,8 @@
  */
 package com.holonplatform.core.datastore.beans;
 
-import com.holonplatform.core.datastore.bulk.BulkInsertConfiguration;
-import com.holonplatform.core.datastore.operation.DatastoreOperation;
+import com.holonplatform.core.datastore.operation.commons.BulkInsertOperationConfiguration;
+import com.holonplatform.core.datastore.operation.commons.DatastoreOperation;
 
 /**
  * Bulk <code>INSERT</code> {@link DatastoreOperation} configuration.
@@ -27,7 +27,7 @@ import com.holonplatform.core.datastore.operation.DatastoreOperation;
  * @since 5.1.0
  */
 public interface BeanBulkInsertOperation<B, O extends BeanBulkInsertOperation<B, O>>
-		extends BeanDatastoreOperation<O, BulkInsertConfiguration> {
+		extends BeanDatastoreOperation<O, BulkInsertOperationConfiguration> {
 
 	/**
 	 * Add a bean instance to insert.
