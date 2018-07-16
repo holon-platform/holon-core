@@ -16,17 +16,23 @@
 package com.holonplatform.core.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Optional;
+import java.util.Properties;
 
 import org.junit.Test;
 
 import com.holonplatform.core.ExpressionResolver;
+import com.holonplatform.core.config.ConfigPropertyProvider;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.DatastoreCommodityContext;
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
 import com.holonplatform.core.datastore.DatastoreCommodityFactory;
+import com.holonplatform.core.datastore.DatastoreConfigProperties;
 import com.holonplatform.core.datastore.bulk.BulkDelete;
 import com.holonplatform.core.datastore.bulk.BulkInsert;
 import com.holonplatform.core.datastore.bulk.BulkUpdate;
@@ -63,6 +69,42 @@ public class TestDatastore {
 		assertNotNull(q);
 		assertTrue(q instanceof DummyQuery);
 
+	}
+
+	@Test
+	public void testDatastoreConfig() {
+
+		final Properties ps = new Properties();
+		ps.setProperty("holon.datastore.trace", "true");
+
+		final DatastoreConfigProperties cfg = DatastoreConfigProperties.builder()
+				.withPropertySource(ConfigPropertyProvider.using(ps)).build();
+
+		assertEquals(DatastoreConfigProperties.DEFAULT_NAME, cfg.getName());
+
+		assertEquals(DatastoreConfigProperties.DEFAULT_NAME + "." + DatastoreConfigProperties.DIALECT.getKey(),
+				cfg.getConfigPropertyName(DatastoreConfigProperties.DIALECT));
+
+		assertTrue(cfg.getConfigPropertyValue(DatastoreConfigProperties.TRACE).orElse(false));
+		assertTrue(cfg.getConfigPropertyValue(DatastoreConfigProperties.TRACE, Boolean.FALSE));
+
+		assertFalse(cfg.getConfigPropertyValue(DatastoreConfigProperties.DIALECT).isPresent());
+		Optional<String> dlt = cfg.getConfigPropertyValueOrElse(DatastoreConfigProperties.DIALECT,
+				() -> Optional.of("TestDialect"));
+		assertTrue(dlt.isPresent());
+		assertEquals("TestDialect", dlt.get());
+
+		final Properties ps2 = new Properties();
+		ps2.setProperty("holon.datastore.ctx1.dialect", "MyDialect");
+
+		final DatastoreConfigProperties cfg2 = DatastoreConfigProperties.builder("ctx1")
+				.withPropertySource(ConfigPropertyProvider.using(ps2)).build();
+
+		assertEquals("ctx1", cfg2.getDataContextId().orElse(null));
+		assertFalse(cfg2.getConfigPropertyValue(DatastoreConfigProperties.TRACE, Boolean.FALSE));
+		assertEquals("MyDialect",
+				cfg2.getConfigPropertyValueOrElse(DatastoreConfigProperties.DIALECT, () -> Optional.of("TestDialect"))
+						.orElse(null));
 	}
 
 	@SuppressWarnings("serial")

@@ -101,6 +101,7 @@
 						<exclude>**/ClassUtils.*</exclude>
 						<exclude>**/holonplatform/core/exceptions/**</exclude>
 						<exclude>**/holonplatform/core/datastore/DatastoreCommodityContext$**</exclude>
+						<exclude>**/holonplatform/core/config/ConfigPropertySet$**</exclude>
 					</excludes>
 				</configuration>
 			</plugin>

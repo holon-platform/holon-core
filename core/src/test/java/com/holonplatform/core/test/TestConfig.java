@@ -22,6 +22,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
@@ -118,6 +120,18 @@ public class TestConfig {
 			}
 
 		});
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("other", "test");
+		map.put("prop", "testp");
+		map.put("test.prop", "testval");
+
+		cpp = ConfigPropertyProvider.using(map);
+		assertTrue(cpp.containsProperty("other"));
+		assertFalse(cpp.containsProperty("x"));
+
+		val = cpp.getProperty("other", String.class);
+		assertEquals("test", val);
 
 		// prefixed
 
