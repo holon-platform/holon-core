@@ -68,7 +68,8 @@ public abstract class AbstractRepeatableAnnotationRegistrar implements ImportBea
 			// Multiple annotations
 			Map<String, Object> attributes = annotationMetadata
 					.getAnnotationAttributes(repeatableAnnotationContainer.getName());
-			AnnotationAttributes[] repetitions = (AnnotationAttributes[]) attributes.get("value");
+			AnnotationAttributes[] repetitions = (attributes != null) ? (AnnotationAttributes[]) attributes.get("value")
+					: null;
 			if (repetitions != null) {
 				for (AnnotationAttributes repetition : repetitions) {
 					register(repetition, registry, true);

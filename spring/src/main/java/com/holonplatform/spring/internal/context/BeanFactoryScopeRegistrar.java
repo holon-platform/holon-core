@@ -65,7 +65,8 @@ public class BeanFactoryScopeRegistrar implements ImportBeanDefinitionRegistrar,
 
 		// check environment
 		if (environment.containsProperty(EnableBeanContext.LOOKUP_BY_TYPE_PROPERTY_NAME)) {
-			lookupByType = environment.getProperty(EnableBeanContext.LOOKUP_BY_TYPE_PROPERTY_NAME, Boolean.class);
+			lookupByType = environment.getProperty(EnableBeanContext.LOOKUP_BY_TYPE_PROPERTY_NAME, Boolean.class,
+					Boolean.TRUE);
 		}
 
 		// register post processor

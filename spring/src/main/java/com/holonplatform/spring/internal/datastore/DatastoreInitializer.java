@@ -93,19 +93,21 @@ public final class DatastoreInitializer implements Serializable {
 		final String[] beanNames = beanFactory.getBeanNamesForAnnotation(DatastoreResolver.class);
 		if (beanNames != null && beanNames.length > 0) {
 			for (String beanName : beanNames) {
-				if (!ExpressionResolver.class.isAssignableFrom(beanFactory.getType(beanName))) {
-					throw new BeanNotOfRequiredTypeException(beanName, ExpressionResolver.class,
-							beanFactory.getType(beanName));
-				}
-				DatastoreResolver dr = beanFactory.findAnnotationOnBean(beanName, DatastoreResolver.class);
-				String datastoreRef = AnnotationUtils.getStringValue(dr.datastoreBeanName());
-				if (datastoreRef == null || datastoreRef.equals(datastoreBeanName)) {
-					// register resolver
-					ExpressionResolver<?, ?> resolver = (ExpressionResolver<?, ?>) beanFactory.getBean(beanName);
-					datastore.addExpressionResolver(resolver);
-					count++;
-					LOGGER.debug(() -> "Registered expression resolver [" + resolver.getClass().getName()
-							+ "] into Datastore with bean name [" + datastoreBeanName + "]");
+				final Class<?> beanType = beanFactory.getType(beanName);
+				if (beanType != null) {
+					if (!ExpressionResolver.class.isAssignableFrom(beanType)) {
+						throw new BeanNotOfRequiredTypeException(beanName, ExpressionResolver.class, beanType);
+					}
+					DatastoreResolver dr = beanFactory.findAnnotationOnBean(beanName, DatastoreResolver.class);
+					String datastoreRef = (dr != null) ? AnnotationUtils.getStringValue(dr.datastoreBeanName()) : null;
+					if (datastoreRef == null || datastoreRef.equals(datastoreBeanName)) {
+						// register resolver
+						ExpressionResolver<?, ?> resolver = (ExpressionResolver<?, ?>) beanFactory.getBean(beanName);
+						datastore.addExpressionResolver(resolver);
+						count++;
+						LOGGER.debug(() -> "Registered expression resolver [" + resolver.getClass().getName()
+								+ "] into Datastore with bean name [" + datastoreBeanName + "]");
+					}
 				}
 			}
 		}
@@ -132,21 +134,25 @@ public final class DatastoreInitializer implements Serializable {
 						.getBeanNamesForAnnotation(com.holonplatform.spring.DatastoreCommodityFactory.class);
 				if (beanNames != null && beanNames.length > 0) {
 					for (String beanName : beanNames) {
-						com.holonplatform.spring.DatastoreCommodityFactory dr = beanFactory.findAnnotationOnBean(
-								beanName, com.holonplatform.spring.DatastoreCommodityFactory.class);
-						String datastoreRef = AnnotationUtils.getStringValue(dr.datastoreBeanName());
-						if (datastoreRef == null || datastoreRef.equals(datastoreBeanName)) {
-							if (!baseType.isAssignableFrom(beanFactory.getType(beanName))) {
-								throw new BeanNotOfRequiredTypeException(beanName, baseType,
-										beanFactory.getType(beanName));
+						final Class<?> beanType = beanFactory.getType(beanName);
+						if (beanType != null) {
+							com.holonplatform.spring.DatastoreCommodityFactory dr = beanFactory.findAnnotationOnBean(
+									beanName, com.holonplatform.spring.DatastoreCommodityFactory.class);
+							String datastoreRef = (dr != null) ? AnnotationUtils.getStringValue(dr.datastoreBeanName())
+									: null;
+							if (datastoreRef == null || datastoreRef.equals(datastoreBeanName)) {
+								if (!baseType.isAssignableFrom(beanType)) {
+									throw new BeanNotOfRequiredTypeException(beanName, baseType, beanType);
+								}
+								// register resolver
+								DatastoreCommodityFactory datastoreCommodityFactory = (DatastoreCommodityFactory) beanFactory
+										.getBean(beanName);
+								((DatastoreCommodityRegistrar) datastore).registerCommodity(datastoreCommodityFactory);
+								count++;
+								LOGGER.debug(
+										() -> "Registered factory [" + datastoreCommodityFactory.getClass().getName()
+												+ "] into Datastore with bean name [" + datastoreBeanName + "]");
 							}
-							// register resolver
-							DatastoreCommodityFactory datastoreCommodityFactory = (DatastoreCommodityFactory) beanFactory
-									.getBean(beanName);
-							((DatastoreCommodityRegistrar) datastore).registerCommodity(datastoreCommodityFactory);
-							count++;
-							LOGGER.debug(() -> "Registered factory [" + datastoreCommodityFactory.getClass().getName()
-									+ "] into Datastore with bean name [" + datastoreBeanName + "]");
 						}
 					}
 				}

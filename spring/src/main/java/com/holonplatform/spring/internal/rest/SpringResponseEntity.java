@@ -184,7 +184,10 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		try {
 			// check InputStream
 			if (InputStream.class == responseType) {
-				return (Optional<E>) Optional.ofNullable(response.getBody().getInputStream());
+				final Resource body = response.getBody();
+				if (body != null) {
+					return (Optional<E>) Optional.ofNullable(body.getInputStream());
+				}
 			}
 
 			if (Void.class != responseType) {
@@ -213,7 +216,11 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		 */
 		@Override
 		public InputStream getBody() throws IOException {
-			return responseEntity.getBody().getInputStream();
+			final Resource body = responseEntity.getBody();
+			if (body != null) {
+				return body.getInputStream();
+			}
+			return new EmptyStreamHttpResponse();
 		}
 
 		/*
@@ -259,6 +266,19 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		@Override
 		public void close() {
 			// noop
+		}
+
+	}
+
+	static class EmptyStreamHttpResponse extends InputStream {
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.io.InputStream#read()
+		 */
+		@Override
+		public int read() throws IOException {
+			return -1;
 		}
 
 	}
