@@ -500,9 +500,9 @@ public interface QueryFilter extends Expression, Serializable {
 	public interface QueryFilterSupport<C extends QueryFilterSupport<C>> {
 
 		/**
-		 * Add a filter clause
+		 * Add a filter clause.
 		 * @param filter Filter clause to add. If <code>null</code>, the filter clause is ignored.
-		 * @return the QueryFilterSupport which contains the added filter clause (usually the same instance)
+		 * @return the {@link QueryFilterSupport} which contains the added filter clause (usually the same instance)
 		 */
 		C filter(QueryFilter filter);
 

@@ -17,6 +17,7 @@ package com.holonplatform.core.query;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.function.Supplier;
 
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.ExpressionResolver;
@@ -146,20 +147,31 @@ public interface QuerySort extends Serializable, Expression {
 	public interface QuerySortSupport<C extends QuerySortSupport<C>> {
 
 		/**
-		 * Add a sort clause
+		 * Add a sort clause.
 		 * @param sort Sort clause to add. If <code>null</code>, the sort clause is ignored.
-		 * @return the QuerySortSupport which contains the added sort clause (usually the same instance)
+		 * @return the {@link QuerySortSupport} which contains the added sort clause (usually the same instance)
 		 */
 		C sort(QuerySort sort);
 
 		/**
 		 * Add a list of sorts. The sort clauses will be added in the order they are provided.
 		 * @param sorts Sort clauses to add
-		 * @return the QuerySortSupport which contains the added sort clause (usually the same instance)
+		 * @return the {@link QuerySortSupport} which contains the added sort clause (usually the same instance)
 		 * @since 5.1.2
 		 */
 		default C sort(QuerySort... sorts) {
 			return sort(QuerySort.of(sorts));
+		}
+
+		/**
+		 * Add a sort clause using a {@link Supplier}.
+		 * @param sortSupplier The {@link QuerySort} clause {@link Supplier} (not null)
+		 * @return the {@link QuerySortSupport} which contains the added sort clause (usually the same instance)
+		 * @since 5.1.2
+		 */
+		default C sort(Supplier<QuerySort> sortSupplier) {
+			ObjectUtils.argumentNotNull(sortSupplier, "QuerySort supplier must be not null");
+			return sort(sortSupplier.get());
 		}
 
 	}

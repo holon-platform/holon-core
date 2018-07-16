@@ -255,6 +255,17 @@ public interface LocalizationContext {
 	String format(Temporal temporal, TemporalFormat dateFormat, TemporalFormat timeFormat);
 
 	/**
+	 * Format given <code>temporal</code> (for example a {@link LocalDate}, a {@link LocalTime} or a
+	 * {@link LocalDateTime}) according to current Context {@link Locale} using default format styles.
+	 * @param temporal Temporal to format (may be null)
+	 * @return Formatted temporal, or <code>null</code> if given temporal was null
+	 * @throws LocalizationException If context is not localized
+	 */
+	default String format(Temporal temporal) {
+		return format(temporal, TemporalFormat.DEFAULT, TemporalFormat.DEFAULT);
+	}
+
+	/**
 	 * Format given {@link LocalDate} according to current Context {@link Locale} using given date format style.
 	 * @param temporal Date to format (may be null)
 	 * @param dateFormat Date format style
@@ -274,17 +285,6 @@ public interface LocalizationContext {
 	 */
 	default String format(LocalTime temporal, TemporalFormat timeFormat) {
 		return format(temporal, TemporalFormat.DEFAULT, timeFormat);
-	}
-
-	/**
-	 * Format given <code>temporal</code> (for example a {@link LocalDate}, a {@link LocalTime} or a
-	 * {@link LocalDateTime}) according to current Context {@link Locale} using default format styles.
-	 * @param temporal Temporal to format (may be null)
-	 * @return Formatted temporal, or <code>null</code> if given temporal was null
-	 * @throws LocalizationException If context is not localized
-	 */
-	default String format(Temporal temporal) {
-		return format(temporal, TemporalFormat.DEFAULT, TemporalFormat.DEFAULT);
 	}
 
 	/**

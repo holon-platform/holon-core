@@ -310,11 +310,14 @@ public class TestI18n {
 
 		assertEquals("9-mar-1979", ctx.format(date));
 		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT, null));
+		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT));
 
 		ctx.localize(Localization.builder(Locale.ITALY).defaultDateTemporalFormat(TemporalFormat.SHORT)
 				.defaultTimeTemporalFormat(TemporalFormat.MEDIUM).build());
 
 		assertEquals("18.30.15", ctx.format(time));
+		
+		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
 
 		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
 
