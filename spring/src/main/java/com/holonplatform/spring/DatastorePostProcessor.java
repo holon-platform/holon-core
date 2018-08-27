@@ -16,14 +16,14 @@
 package com.holonplatform.spring;
 
 import com.holonplatform.core.ExpressionResolver;
-import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.ConfigurableDatastore;
 
 /**
- * A post processor to configure a {@link Datastore} bean right after its initialization. Can be used, for example, to
- * register {@link ExpressionResolver}s.
+ * A post processor to configure a {@link ConfigurableDatastore} bean right after its initialization. Can be used, for
+ * example, to register {@link ExpressionResolver}s.
  * <p>
  * A class implementing this interface declared as Spring bean is automatically detected by Datastores and the method
- * {@link #postProcessDatastore(Datastore, String)} is called at Datastore bean initialization. The
+ * {@link #postProcessDatastore(ConfigurableDatastore, String)} is called at Datastore bean initialization. The
  * DatastorePostProcessor class must be registered with singleton scope in context.
  * </p>
  * 
@@ -36,6 +36,6 @@ public interface DatastorePostProcessor {
 	 * @param datastore Datastore instance
 	 * @param datastoreBeanName Datastore bean name
 	 */
-	void postProcessDatastore(Datastore datastore, String datastoreBeanName);
+	void postProcessDatastore(ConfigurableDatastore datastore, String datastoreBeanName);
 
 }

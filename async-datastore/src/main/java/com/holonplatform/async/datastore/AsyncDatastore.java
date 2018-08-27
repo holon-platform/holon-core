@@ -29,7 +29,7 @@ import com.holonplatform.async.datastore.operation.AsyncSave;
 import com.holonplatform.async.datastore.operation.AsyncUpdate;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
-import com.holonplatform.core.datastore.DataContextBound;
+import com.holonplatform.core.datastore.ConfigurableDatastore;
 import com.holonplatform.core.datastore.DataTarget;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
@@ -58,7 +58,7 @@ import com.holonplatform.core.property.PropertySet;
  */
 public interface AsyncDatastore extends
 		DatastoreOperations<CompletionStage<OperationResult>, CompletionStage<PropertyBox>, AsyncBulkInsert, AsyncBulkUpdate, AsyncBulkDelete, AsyncQuery>,
-		DatastoreCommodityHandler, ExpressionResolverSupport, DataContextBound, Serializable {
+		ConfigurableDatastore, Serializable {
 
 	/*
 	 * (non-Javadoc)

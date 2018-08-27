@@ -20,12 +20,12 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 
-import com.holonplatform.core.datastore.Datastore;
+import com.holonplatform.core.datastore.ConfigurableDatastore;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.spring.internal.SpringLogger;
 
 /**
- * A {@link BeanPostProcessor} for {@link Datastore} type beans to configure the Datastore instance using the Spring
+ * A {@link BeanPostProcessor} for {@link ConfigurableDatastore} type beans to configure the Datastore instance using the Spring
  * context.
  *
  * @since 5.2.0
@@ -61,8 +61,9 @@ public class DatastoreConfigurationBeanPostProcessor implements BeanPostProcesso
 	 */
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof Datastore) {
-			String message = DatastoreInitializer.configureDatastore((Datastore) bean, beanName, beanFactory);
+		if (bean instanceof ConfigurableDatastore) {
+			String message = DatastoreInitializer.configureDatastore((ConfigurableDatastore) bean, beanName,
+					beanFactory);
 			LOGGER.info("Datastore bean [" + beanName + "] configured - " + message);
 		}
 		return bean;
