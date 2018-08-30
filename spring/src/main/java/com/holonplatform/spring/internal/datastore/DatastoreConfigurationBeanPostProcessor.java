@@ -25,8 +25,8 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.spring.internal.SpringLogger;
 
 /**
- * A {@link BeanPostProcessor} for {@link ConfigurableDatastore} type beans to configure the Datastore instance using the Spring
- * context.
+ * A {@link BeanPostProcessor} for {@link ConfigurableDatastore} type beans to configure the Datastore instance using
+ * the Spring context.
  *
  * @since 5.2.0
  * 
@@ -61,7 +61,7 @@ public class DatastoreConfigurationBeanPostProcessor implements BeanPostProcesso
 	 */
 	@Override
 	public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-		if (bean instanceof ConfigurableDatastore) {
+		if (ConfigurableDatastore.class.isAssignableFrom(bean.getClass())) {
 			String message = DatastoreInitializer.configureDatastore((ConfigurableDatastore) bean, beanName,
 					beanFactory);
 			LOGGER.info("Datastore bean [" + beanName + "] configured - " + message);
