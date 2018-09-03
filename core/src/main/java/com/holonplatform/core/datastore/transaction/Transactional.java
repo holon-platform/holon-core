@@ -90,4 +90,23 @@ public interface Transactional {
 		return getTransaction(TransactionConfiguration.getDefault());
 	}
 
+	// ------- Exceptions
+
+	/**
+	 * Exception throws when transaction are not actually supported by current implementation and/or driver.
+	 */
+	public class TransactionNotSupportedException extends RuntimeException {
+
+		private static final long serialVersionUID = 2584187367144720449L;
+
+		/**
+		 * Constructor with error message.
+		 * @param message Error message
+		 */
+		public TransactionNotSupportedException(String message) {
+			super(message);
+		}
+
+	}
+
 }
