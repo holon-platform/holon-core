@@ -47,10 +47,10 @@ public interface TransactionConfiguration {
 	boolean isAutoCommit();
 
 	/**
-	 * Get the transaction isolation level to use.
-	 * @return Optional transaction isolation level
+	 * Get the transaction configuration options, if any.
+	 * @return Optional transaction configuration options
 	 */
-	Optional<TransactionIsolation> getTransactionIsolation();
+	Optional<TransactionOptions> getTransactionOptions();
 
 	/**
 	 * Create a default {@link TransactionConfiguration} setting transaction rollback on errors to <code>true</code>.
@@ -83,11 +83,11 @@ public interface TransactionConfiguration {
 
 	/**
 	 * Create a {@link TransactionConfiguration}.
-	 * @param transactionIsolation The transation isolation level
+	 * @param transactionOptions The transation configuration options
 	 * @return A new transaction configuration
 	 */
-	static TransactionConfiguration create(TransactionIsolation transactionIsolation) {
-		return new DefaultTransactionConfiguration(true, false, transactionIsolation);
+	static TransactionConfiguration create(TransactionOptions transactionOptions) {
+		return new DefaultTransactionConfiguration(true, false, transactionOptions);
 	}
 
 	/**
@@ -96,12 +96,12 @@ public interface TransactionConfiguration {
 	 *        transactional operation execution.
 	 * @param autoCommit whether the transaction must be committed when a transactional operation ends and no error
 	 *        occurred
-	 * @param transactionIsolation The transation isolation level
+	 * @param transactionOptions The transation configuration options
 	 * @return A new transaction configuration
 	 */
 	static TransactionConfiguration create(boolean rollbackOnError, boolean autoCommit,
-			TransactionIsolation transactionIsolation) {
-		return new DefaultTransactionConfiguration(rollbackOnError, autoCommit, transactionIsolation);
+			TransactionOptions transactionOptions) {
+		return new DefaultTransactionConfiguration(rollbackOnError, autoCommit, transactionOptions);
 	}
 
 }

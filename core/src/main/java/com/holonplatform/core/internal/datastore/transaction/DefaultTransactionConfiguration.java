@@ -18,7 +18,7 @@ package com.holonplatform.core.internal.datastore.transaction;
 import java.util.Optional;
 
 import com.holonplatform.core.datastore.transaction.TransactionConfiguration;
-import com.holonplatform.core.datastore.transaction.TransactionIsolation;
+import com.holonplatform.core.datastore.transaction.TransactionOptions;
 
 /**
  * Default {@link TransactionConfiguration} implementation.
@@ -31,14 +31,14 @@ public class DefaultTransactionConfiguration implements TransactionConfiguration
 
 	private final boolean autoCommit;
 
-	private final TransactionIsolation transactionIsolation;
+	private final TransactionOptions transactionOptions;
 
 	public DefaultTransactionConfiguration(boolean rollbackOnError, boolean autoCommit,
-			TransactionIsolation transactionIsolation) {
+			TransactionOptions transactionOptions) {
 		super();
 		this.rollbackOnError = rollbackOnError;
 		this.autoCommit = autoCommit;
-		this.transactionIsolation = transactionIsolation;
+		this.transactionOptions = transactionOptions;
 	}
 
 	/*
@@ -61,11 +61,11 @@ public class DefaultTransactionConfiguration implements TransactionConfiguration
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.transaction.TransactionConfiguration#getTransactionIsolation()
+	 * @see com.holonplatform.core.datastore.transaction.TransactionConfiguration#getTransactionOptions()
 	 */
 	@Override
-	public Optional<TransactionIsolation> getTransactionIsolation() {
-		return Optional.ofNullable(transactionIsolation);
+	public Optional<TransactionOptions> getTransactionOptions() {
+		return Optional.ofNullable(transactionOptions);
 	}
 
 }

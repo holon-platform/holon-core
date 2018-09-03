@@ -651,7 +651,7 @@ The transaction configuration options are:
 
 * Set the *auto-commit* mode: whether the transaction must be committed when a transactional operation ends and no error occurred. Default is `false`.
 * Set the *rollback on error* mode: whether the transaction must be rolled back when an exception is thrown during a transactional operation execution. Default is `true`.
-* Configure the *transaction isolation* level, if supported by the concrete `Datastore` implementation
+* Configure the *transaction options*, if supported by the concrete `Datastore` implementation
 
 [source, java]
 ----

@@ -67,6 +67,22 @@ The Holon Platform provides an *overall Maven BOM (Bill of Materials)* to easily
 
 See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts] for details.
 
+[[WhatsNew52x]]
+== What's new in version 5.2.x
+
+=== Datastore
+
+TDB
+
+[[MigratingFrom51x]]
+=== Migrating from version 5.1.x
+
+==== API changes
+
+* *Transaction API*: 
+The link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionConfiguration.html[TransactionConfiguration^] API was made more abstract and implementation independent, using the link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionOptions.html[TransactionOptions^] interface to represent transaction configuration options. The `TransactionOptions` has to be extended by concrete implementations to represent and provide the supported transaction configuration attributes.
+For this reason, the `com.holonplatform.core.datastore.transaction.TransactionIsolation` enumeration was moved to the *holon-jdbc* module.
+
 [[WhatsNew51x]]
 == What's new in version 5.1.x
 
