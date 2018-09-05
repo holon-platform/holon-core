@@ -16,7 +16,6 @@
 package com.holonplatform.core.datastore.transaction;
 
 import com.holonplatform.core.datastore.transaction.TransactionalOperation.TransactionalInvocation;
-import com.holonplatform.core.exceptions.DataAccessException;
 
 /**
  * Represents an object which is capable to manage transactions, providing methods to execute an operation
@@ -33,7 +32,6 @@ public interface Transactional {
 	 * @param operation Operation to execute (not null)
 	 * @param transactionConfiguration Transaction configuration
 	 * @return The operation result
-	 * @throws DataAccessException If an error occurred during transaction management or operation execution
 	 */
 	<R> R withTransaction(TransactionalOperation<R> operation, TransactionConfiguration transactionConfiguration);
 
@@ -43,7 +41,6 @@ public interface Transactional {
 	 * @param <R> Operation result type
 	 * @param operation Operation to execute (not null)
 	 * @return The operation result
-	 * @throws DataAccessException If an error occurred during transaction management or operation execution
 	 */
 	default <R> R withTransaction(TransactionalOperation<R> operation) {
 		return withTransaction(operation, TransactionConfiguration.getDefault());
@@ -54,7 +51,6 @@ public interface Transactional {
 	 * <code>commit</code> and <code>rollback</code> operations.
 	 * @param operation Operation to execute (not null)
 	 * @param transactionConfiguration Transaction configuration
-	 * @throws DataAccessException If an error occurred during transaction management or operation execution
 	 */
 	default void withTransaction(TransactionalInvocation operation, TransactionConfiguration transactionConfiguration) {
 		withTransaction((TransactionalOperation<?>) operation, transactionConfiguration);
@@ -64,49 +60,9 @@ public interface Transactional {
 	 * Execute given operation within a transaction. A {@link Transaction} reference is provided to perform
 	 * <code>commit</code> and <code>rollback</code> operations.
 	 * @param operation Operation to execute (not null)
-	 * @throws DataAccessException If an error occurred during transaction management or operation execution
 	 */
 	default void withTransaction(TransactionalInvocation operation) {
 		withTransaction((TransactionalOperation<?>) operation);
-	}
-
-	/**
-	 * Obtain a new {@link Transaction}. The transaction lifecycle must be managed by the caller, ensuring transaction
-	 * finalization using the {@link Transaction#commit()} or {@link Transaction#rollback()} methods.
-	 * @param transactionConfiguration Transaction configuration
-	 * @return A new {@link Transaction}
-	 * @since 5.2.0
-	 */
-	Transaction getTransaction(TransactionConfiguration transactionConfiguration);
-
-	/**
-	 * Obtain a new {@link Transaction} using the default transaction configuration. The transaction lifecycle must be
-	 * managed by the caller, ensuring transaction finalization using the {@link Transaction#commit()} or
-	 * {@link Transaction#rollback()} methods.
-	 * @return A new {@link Transaction}
-	 * @since 5.2.0
-	 */
-	default Transaction getTransaction() {
-		return getTransaction(TransactionConfiguration.getDefault());
-	}
-
-	// ------- Exceptions
-
-	/**
-	 * Exception throws when transaction are not actually supported by current implementation and/or driver.
-	 */
-	public class TransactionNotSupportedException extends RuntimeException {
-
-		private static final long serialVersionUID = 2584187367144720449L;
-
-		/**
-		 * Constructor with error message.
-		 * @param message Error message
-		 */
-		public TransactionNotSupportedException(String message) {
-			super(message);
-		}
-
 	}
 
 }

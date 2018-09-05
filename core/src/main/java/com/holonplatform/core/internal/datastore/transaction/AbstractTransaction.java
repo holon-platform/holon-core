@@ -16,17 +16,34 @@
 package com.holonplatform.core.internal.datastore.transaction;
 
 import com.holonplatform.core.datastore.transaction.Transaction;
+import com.holonplatform.core.datastore.transaction.TransactionStatus;
 
 /**
  * Abstract {@link Transaction} implementation.
  *
  * @since 5.0.1
  */
-public abstract class AbstractTransaction implements Transaction {
+public abstract class AbstractTransaction implements TransactionStatus {
 
 	private boolean rollbackOnly = false;
 
 	private boolean completed = false;
+
+	private final boolean newTransaction;
+
+	public AbstractTransaction(boolean newTransaction) {
+		super();
+		this.newTransaction = newTransaction;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.datastore.transaction.TransactionStatus#isNew()
+	 */
+	@Override
+	public boolean isNew() {
+		return newTransaction;
+	}
 
 	/*
 	 * (non-Javadoc)

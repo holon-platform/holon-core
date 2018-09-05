@@ -216,7 +216,7 @@ public interface Datastore
 	 * @throws IllegalStateException If this Datastore is not transactional
 	 */
 	default Transactional requireTransactional() {
-		return isTransactional().orElseThrow(() -> new IllegalStateException("The Datastore is not not transactional"));
+		return isTransactional().orElseThrow(() -> new IllegalStateException("The Datastore is not transactional"));
 	}
 
 	// Operations

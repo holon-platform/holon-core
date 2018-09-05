@@ -16,6 +16,7 @@
 package com.holonplatform.async.datastore;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import com.holonplatform.async.datastore.operation.AsyncBulkDelete;
@@ -27,6 +28,7 @@ import com.holonplatform.async.datastore.operation.AsyncQuery;
 import com.holonplatform.async.datastore.operation.AsyncRefresh;
 import com.holonplatform.async.datastore.operation.AsyncSave;
 import com.holonplatform.async.datastore.operation.AsyncUpdate;
+import com.holonplatform.async.datastore.transaction.AsyncTransactional;
 import com.holonplatform.core.ExpressionResolver;
 import com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport;
 import com.holonplatform.core.datastore.ConfigurableDatastore;
@@ -181,6 +183,27 @@ public interface AsyncDatastore extends
 	default AsyncQuery query(DataTarget<?> target) {
 		ObjectUtils.argumentNotNull(target, "Query target must be not null");
 		return query().target(target);
+	}
+
+	// Transactions
+
+	/**
+	 * Check if this Datastore is {@link AsyncTransactional}, i.e. supports execution of transactional operations.
+	 * @return If this Datastore is transactional, return the Datastore as {@link AsyncTransactional}, or an empty
+	 *         Optional otherwise
+	 */
+	default Optional<AsyncTransactional> isTransactional() {
+		return Optional.ofNullable((this instanceof AsyncTransactional) ? (AsyncTransactional) this : null);
+	}
+
+	/**
+	 * Requires this Datastore to be {@link AsyncTransactional}, i.e. to support execution of transactional operations,
+	 * throwing an {@link IllegalStateException} if this Datastore is not transactional.
+	 * @return the Datastore as {@link AsyncTransactional}
+	 * @throws IllegalStateException If this Datastore is not transactional
+	 */
+	default AsyncTransactional requireTransactional() {
+		return isTransactional().orElseThrow(() -> new IllegalStateException("The Datastore is not transactional"));
 	}
 
 }

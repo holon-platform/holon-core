@@ -28,7 +28,6 @@ import com.holonplatform.core.datastore.DataTarget.DataTargetResolver;
 import com.holonplatform.core.datastore.Datastore;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.datastore.DatastoreConfigProperties;
-import com.holonplatform.core.datastore.transaction.Transaction;
 import com.holonplatform.core.datastore.transaction.TransactionConfiguration;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
@@ -160,14 +159,6 @@ public class ExampleDatastore {
 			// ...
 		}, TransactionConfiguration.create(false, false)); // <1>
 		// end::transactional5[]
-	}
-
-	public void transactional6() throws IOException {
-		// tag::transactional6[]
-		Transaction tx = getDatastore().requireTransactional().getTransaction(); // <1>
-		// Datastore operations execution...
-		tx.commit(); // <2>
-		// end::transactional6[]
 	}
 
 	// tag::resolver[]

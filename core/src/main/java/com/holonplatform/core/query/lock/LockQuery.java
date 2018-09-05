@@ -19,7 +19,6 @@ import java.util.stream.Stream;
 
 import com.holonplatform.core.datastore.DatastoreCommodity;
 import com.holonplatform.core.exceptions.DataAccessException;
-import com.holonplatform.core.internal.query.lock.LockAcquisitionException;
 import com.holonplatform.core.query.QueryBuilder;
 import com.holonplatform.core.query.QueryProjection;
 import com.holonplatform.core.query.QueryResults;

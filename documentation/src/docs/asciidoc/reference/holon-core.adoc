@@ -83,6 +83,8 @@ TDB
 The link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionConfiguration.html[TransactionConfiguration^] API was made more abstract and implementation independent, using the link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionOptions.html[TransactionOptions^] interface to represent transaction configuration options. The `TransactionOptions` has to be extended by concrete implementations to represent and provide the supported transaction configuration attributes.
 For this reason, the `com.holonplatform.core.datastore.transaction.TransactionIsolation` enumeration was moved to the *holon-jdbc* module.
 
+Furthermore, the `TransactionException` class hierarchy was moved from the  link:{apidir}/com/holonplatform/core/datastore/transaction/Transaction.html[Transaction^] interface to the new {apidir}/com/holonplatform/core/datastore/transaction/TransactionStatus.html[TransactionStatus^] interface, which represents a base transaction definition, shared with the asynchronous Datastore implementations.
+
 [[WhatsNew51x]]
 == What's new in version 5.1.x
 

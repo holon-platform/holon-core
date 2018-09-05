@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Axioma srl.
+ * Copyright 2016-2018 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,35 +13,42 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.datastore.transaction;
+package com.holonplatform.async.datastore.transaction;
+
+import java.util.concurrent.CompletionStage;
+
+import com.holonplatform.core.datastore.transaction.TransactionStatus;
 
 /**
- * Represents a Datastore <em>transaction</em>, providing methods to <em>commit</em> and <em>rollback</em> the
- * transaction.
+ * Represents an asynchronous Datastore <em>transaction</em>, providing methods to <em>commit</em> and <em>rollback</em>
+ * the transaction.
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
-public interface Transaction extends TransactionStatus {
+public interface AsyncTransaction extends TransactionStatus {
 
 	/**
 	 * Commit the transaction.
 	 * <p>
 	 * If the transaction has been marked as rollback-only, a rollback action is performed.
 	 * </p>
-	 * @return <code>true</code> if the transaction was actually committed, or <code>false</code> if it was rolled back
-	 *         because the the transaction has been marked as rollback-only
+	 * @return A {@link CompletionStage} which can be used to handle the asynchronous operation outcome. The stage
+	 *         result will be <code>true</code> if the transaction was actually committed, or <code>false</code> if it
+	 *         was rolled back because the the transaction has been marked as rollback-only
 	 * @throws IllegalTransactionStatusException If the transaction is already completed (that is, committed or rolled
 	 *         back)
 	 * @throws TransactionException If an error occurred during transaction commit
 	 */
-	boolean commit() throws TransactionException;
+	CompletionStage<Boolean> commit();
 
 	/**
 	 * Rollback the transaction.
+	 * @return A {@link CompletionStage} which can be used to handle the asynchronous operation outcome. No stage result
+	 *         value is expected.
 	 * @throws IllegalTransactionStatusException If the transaction is already completed (that is, committed or rolled
 	 *         back)
 	 * @throws TransactionException If an error occurred during transaction rollback
 	 */
-	void rollback() throws TransactionException;
+	CompletionStage<Void> rollback();
 
 }

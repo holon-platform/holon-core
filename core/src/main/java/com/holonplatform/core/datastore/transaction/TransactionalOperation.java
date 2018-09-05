@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.datastore.transaction;
 
+import com.holonplatform.core.datastore.transaction.TransactionStatus.TransactionException;
+
 /**
  * Represents a transactional operation execution.
  * <p>
@@ -33,9 +35,9 @@ public interface TransactionalOperation<R> {
 	 * @param transaction The transaction reference, which can be used to perform {@link Transaction#commit()} and
 	 *        {@link Transaction#rollback()} operations
 	 * @return The result of the operation
-	 * @throws Exception If an execution error occurred
+	 * @throws TransactionException If an execution error occurred
 	 */
-	R execute(Transaction transaction) throws Exception;
+	R execute(Transaction transaction);
 
 	/**
 	 * Represents a transactional operation execution which do not return a result.
@@ -46,9 +48,9 @@ public interface TransactionalOperation<R> {
 		 * Execute a transactional operation using given {@link Transaction}.
 		 * @param transaction The transaction reference, which can be used to perform {@link Transaction#commit()} and
 		 *        {@link Transaction#rollback()} operations
-		 * @throws Exception If an execution error occurred
+		 * @throws TransactionException If an execution error occurred
 		 */
-		void executeInTransaction(Transaction transaction) throws Exception;
+		void executeInTransaction(Transaction transaction);
 
 		/*
 		 * (non-Javadoc)
@@ -57,7 +59,7 @@ public interface TransactionalOperation<R> {
 		 * transaction.Transaction)
 		 */
 		@Override
-		default Void execute(Transaction transaction) throws Exception {
+		default Void execute(Transaction transaction) {
 			executeInTransaction(transaction);
 			return null;
 		}

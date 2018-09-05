@@ -68,4 +68,14 @@ public class DefaultTransactionConfiguration implements TransactionConfiguration
 		return Optional.ofNullable(transactionOptions);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "TransactionConfiguration [rollbackOnError=" + rollbackOnError + ", autoCommit=" + autoCommit
+				+ ", transactionOptions=" + transactionOptions + "]";
+	}
+
 }
