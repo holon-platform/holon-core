@@ -15,14 +15,10 @@
  */
 package com.holonplatform.async.datastore.transaction;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
 /**
  * Represents an asynchronous transactional operation execution.
- * <p>
- * The operation execution can return a result.
- * <p>
  * 
  * @param <R> Operation result type
  *
@@ -39,33 +35,5 @@ public interface AsyncTransactionalOperation<R> {
 	 *         operation result
 	 */
 	CompletionStage<R> execute(AsyncTransaction transaction);
-
-	/**
-	 * Represents a asynchronous transactional operation execution which do not return a result.
-	 */
-	@FunctionalInterface
-	public interface AsyncTransactionalInvocation extends AsyncTransactionalOperation<Void> {
-
-		/**
-		 * Execute a transactional operation using given {@link AsyncTransaction}.
-		 * @param transaction The transaction reference, which can be used to perform {@link AsyncTransaction#commit()}
-		 *        and {@link AsyncTransaction#rollback()} operations
-		 * @return A {@link CompletionStage} which can be used to handle the asynchronous operation outcome
-		 */
-		void executeInTransaction(AsyncTransaction transaction);
-
-		/*
-		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.async.datastore.transaction.AsyncTransactionalOperation#execute(com.holonplatform.async.
-		 * datastore.transaction.AsyncTransaction)
-		 */
-		@Override
-		default CompletionStage<Void> execute(AsyncTransaction transaction) {
-			executeInTransaction(transaction);
-			return CompletableFuture.completedFuture(null);
-		}
-
-	}
 
 }

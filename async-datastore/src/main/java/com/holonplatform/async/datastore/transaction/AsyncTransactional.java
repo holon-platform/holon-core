@@ -17,7 +17,6 @@ package com.holonplatform.async.datastore.transaction;
 
 import java.util.concurrent.CompletionStage;
 
-import com.holonplatform.async.datastore.transaction.AsyncTransactionalOperation.AsyncTransactionalInvocation;
 import com.holonplatform.core.datastore.transaction.TransactionConfiguration;
 
 /**
@@ -50,26 +49,6 @@ public interface AsyncTransactional {
 	 */
 	default <R> CompletionStage<R> withTransaction(AsyncTransactionalOperation<R> operation) {
 		return withTransaction(operation, TransactionConfiguration.getDefault());
-	}
-
-	/**
-	 * Execute given operation within a transaction. An {@link AsyncTransaction} reference is provided to perform
-	 * <code>commit</code> and <code>rollback</code> operations.
-	 * @param operation Operation to execute (not null)
-	 * @param transactionConfiguration Transaction configuration
-	 */
-	default void withTransaction(AsyncTransactionalInvocation operation,
-			TransactionConfiguration transactionConfiguration) {
-		withTransaction((AsyncTransactionalOperation<?>) operation, transactionConfiguration);
-	}
-
-	/**
-	 * Execute given operation within a transaction. An {@link AsyncTransaction} reference is provided to perform
-	 * <code>commit</code> and <code>rollback</code> operations.
-	 * @param operation Operation to execute (not null)
-	 */
-	default void withTransaction(AsyncTransactionalInvocation operation) {
-		withTransaction((AsyncTransactionalOperation<?>) operation);
 	}
 
 }
