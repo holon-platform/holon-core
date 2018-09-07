@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.async.internal.datastore.operation;
+package com.holonplatform.async.datastore.internal.operation;
 
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;

@@ -13,30 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.async.internal.datastore.operation;
+package com.holonplatform.async.datastore.internal.operation;
 
 import java.util.concurrent.CompletionStage;
 
-import com.holonplatform.async.datastore.operation.AsyncUpdate;
+import com.holonplatform.async.datastore.operation.AsyncSave;
 import com.holonplatform.core.datastore.Datastore.OperationResult;
 import com.holonplatform.core.internal.datastore.operation.common.AbstractExecutableDatastoreOperation;
 
 /**
- * Abstract {@link AsyncUpdate}.
+ * Abstract {@link AsyncSave}.
  *
- * @since 5.1.0
+ * @since 5.2.0
  */
-public abstract class AbstractAsyncUpdate extends
-		AbstractExecutableDatastoreOperation<CompletionStage<OperationResult>, AsyncUpdate> implements AsyncUpdate {
+public abstract class AbstractAsyncSave
+		extends AbstractExecutableDatastoreOperation<CompletionStage<OperationResult>, AsyncSave> implements AsyncSave {
 
-	private static final long serialVersionUID = 3573634627921565432L;
+	private static final long serialVersionUID = -5709701666957437146L;
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation#getActualOperation()
 	 */
 	@Override
-	protected AsyncUpdate getActualOperation() {
+	protected AsyncSave getActualOperation() {
 		return this;
 	}
 

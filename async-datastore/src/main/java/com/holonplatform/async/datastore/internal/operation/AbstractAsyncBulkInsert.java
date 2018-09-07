@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Axioma srl.
+ * Copyright 2016-2018 Axioma srl.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,30 +13,31 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.async.internal.datastore.operation;
+package com.holonplatform.async.datastore.internal.operation;
 
 import java.util.concurrent.CompletionStage;
 
-import com.holonplatform.async.datastore.operation.AsyncRefresh;
-import com.holonplatform.core.internal.datastore.operation.common.AbstractExecutableDatastoreOperation;
-import com.holonplatform.core.property.PropertyBox;
+import com.holonplatform.async.datastore.operation.AsyncBulkDelete;
+import com.holonplatform.async.datastore.operation.AsyncBulkInsert;
+import com.holonplatform.core.datastore.Datastore.OperationResult;
+import com.holonplatform.core.internal.datastore.operation.common.AbstractBulkInsertOperation;
 
 /**
- * Abstract {@link AsyncRefresh}.
+ * Abstract {@link AsyncBulkDelete} implementation.
  *
  * @since 5.2.0
  */
-public abstract class AbstractAsyncRefresh extends
-		AbstractExecutableDatastoreOperation<CompletionStage<PropertyBox>, AsyncRefresh> implements AsyncRefresh {
+public abstract class AbstractAsyncBulkInsert extends
+		AbstractBulkInsertOperation<CompletionStage<OperationResult>, AsyncBulkInsert> implements AsyncBulkInsert {
 
-	private static final long serialVersionUID = -8905264822507783362L;
+	private static final long serialVersionUID = -3638770372614988042L;
 
 	/*
 	 * (non-Javadoc)
 	 * @see com.holonplatform.core.internal.datastore.operation.AbstractDatastoreOperation#getActualOperation()
 	 */
 	@Override
-	protected AsyncRefresh getActualOperation() {
+	protected AsyncBulkInsert getActualOperation() {
 		return this;
 	}
 
