@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http.internal;
+package com.holonplatform.http.internal.rest;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -37,10 +37,10 @@ import com.holonplatform.http.HttpHeaders;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.MediaType;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.internal.HttpLogger;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.ResponseType;
-import com.holonplatform.http.rest.RestClient.Invoker;
 import com.holonplatform.http.rest.RestClient.RequestDefinition;
 
 /**
@@ -49,8 +49,6 @@ import com.holonplatform.http.rest.RestClient.RequestDefinition;
  * @since 5.0.0
  */
 public class DefaultRequestDefinition implements RequestDefinition {
-
-	private static final long serialVersionUID = 1100967972240536993L;
 
 	private final static Logger LOGGER = HttpLogger.create();
 

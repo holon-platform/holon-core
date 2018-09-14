@@ -24,7 +24,6 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.internal.HttpLogger;
 import com.holonplatform.http.rest.RestClient;
-import com.holonplatform.http.rest.RestClient.Invoker;
 
 /**
  * Abstract {@link RestClient} implementation.
