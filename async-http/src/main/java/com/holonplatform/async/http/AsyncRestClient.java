@@ -24,8 +24,11 @@ import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 import com.holonplatform.async.http.AsyncRestClient.AsyncRequestDefinition;
+import com.holonplatform.async.http.internal.AsyncRestClientFactoryRegistry;
+import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
+import com.holonplatform.http.exceptions.RestClientCreationException;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
 import com.holonplatform.http.rest.RequestEntity;
 import com.holonplatform.http.rest.ResponseEntity;
@@ -35,7 +38,10 @@ import com.holonplatform.http.rest.RestClientOperations.InvocationOperations;
 import com.holonplatform.http.rest.RestClientOperations.RequestConfiguration;
 
 /**
- * TODO
+ * Async HTTP REST client to build and execute client requests in order to asynchronously consume the responses
+ * returned.
+ *
+ * @since 5.2.0
  */
 public interface AsyncRestClient extends RestClientOperations<AsyncRestClient, AsyncRequestDefinition> {
 
@@ -761,6 +767,78 @@ public interface AsyncRestClient extends RestClientOperations<AsyncRestClient, A
 
 	// Builders
 
-	// TODO
+	/**
+	 * Create a new {@link AsyncRestClient} instance using default {@link ClassLoader} and default implementation,
+	 * setting given <code>baseUri</code> as default {@link AsyncRestClient} target, which will be used as base URI for
+	 * every request configured using {@link #request()}, if not overridden using
+	 * {@link AsyncRequestDefinition#target(URI)}.
+	 * @param baseUri The base target URI of the returned {@link AsyncRestClient}
+	 * @return A new {@link AsyncRestClient} instance
+	 */
+	static AsyncRestClient forTarget(String baseUri) {
+		return create().defaultTarget(URI.create(baseUri));
+	}
+
+	/**
+	 * Create a new {@link AsyncRestClient} instance using default {@link ClassLoader} and default implementation,
+	 * setting given <code>baseUri</code> as default {@link AsyncRestClient} target, which will be used as base URI for
+	 * every request configured using {@link #request()}, if not overridden using
+	 * {@link AsyncRequestDefinition#target(URI)}.
+	 * @param baseUri The base target URI of the returned {@link AsyncRestClient}
+	 * @return A new {@link AsyncRestClient} instance
+	 */
+	static AsyncRestClient forTarget(URI baseUri) {
+		return create().defaultTarget(baseUri);
+	}
+
+	/**
+	 * Create a new {@link AsyncRestClient} instance using default {@link ClassLoader} and default implementation, if
+	 * available. If more than one {@link AsyncRestClient} implementation is found using given ClassLoader, the one
+	 * returned by the {@link AsyncRestClientFactory} with the higher priority is returned.
+	 * @return A new {@link AsyncRestClient} instance
+	 * @throws RestClientCreationException If a {@link AsyncRestClient} implementation is not available or a instance
+	 *         creation error occurred
+	 */
+	static AsyncRestClient create() {
+		return create(null, ClassUtils.getDefaultClassLoader());
+	}
+
+	/**
+	 * Create a new {@link AsyncRestClient} instance using given <code>classLoder</code> and default implementation, if
+	 * available. If more than one {@link AsyncRestClient} implementation is found using given ClassLoader, the one
+	 * returned by the {@link AsyncRestClientFactory} with the higher priority is returned.
+	 * @param classLoader The {@link ClassLoader} to use
+	 * @return A new {@link AsyncRestClient} instance
+	 * @throws RestClientCreationException If a {@link AsyncRestClient} implementation is not available or a instance
+	 *         creation error occurred
+	 */
+	static AsyncRestClient create(ClassLoader classLoader) {
+		return create(null, classLoader);
+	}
+
+	/**
+	 * Create a new {@link AsyncRestClient} instance using default {@link ClassLoader} and the implementation whith
+	 * given fully qualified class name.
+	 * @param fullyQualifiedClassName The {@link AsyncRestClient} implementation fully qualified class name to obtain
+	 * @return A new {@link AsyncRestClient} instance
+	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
+	 *         is not available or a instance creation error occurred
+	 */
+	static AsyncRestClient create(String fullyQualifiedClassName) {
+		return create(fullyQualifiedClassName, ClassUtils.getDefaultClassLoader());
+	}
+
+	/**
+	 * Create a new {@link AsyncRestClient} instance using given <code>classLoder</code> and the implementation whith
+	 * given fully qualified class name.
+	 * @param fullyQualifiedClassName The {@link AsyncRestClient} implementation fully qualified class name to obtain
+	 * @param classLoader The {@link ClassLoader} to use
+	 * @return A new {@link AsyncRestClient} instance
+	 * @throws RestClientCreationException If the implementation which corresponds to given fully qualified class name
+	 *         is not available or a instance creation error occurred
+	 */
+	static AsyncRestClient create(String fullyQualifiedClassName, ClassLoader classLoader) {
+		return AsyncRestClientFactoryRegistry.INSTANCE.createRestClient(fullyQualifiedClassName, classLoader);
+	}
 
 }

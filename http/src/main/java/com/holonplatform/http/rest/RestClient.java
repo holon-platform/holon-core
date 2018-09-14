@@ -33,7 +33,7 @@ import com.holonplatform.http.rest.RestClientOperations.InvocationOperations;
 import com.holonplatform.http.rest.RestClientOperations.RequestConfiguration;
 
 /**
- * HTTP REST client to build and execute client requests in order to consume responses returned.
+ * HTTP REST client to build and execute client requests in order to consume the responses returned.
  *
  * @since 5.0.0
  */

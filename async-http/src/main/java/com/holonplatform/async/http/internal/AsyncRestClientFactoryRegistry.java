@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.async.http;
+package com.holonplatform.async.http.internal;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -26,6 +26,8 @@ import java.util.WeakHashMap;
 
 import javax.annotation.Priority;
 
+import com.holonplatform.async.http.AsyncRestClient;
+import com.holonplatform.async.http.AsyncRestClientFactory;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.http.exceptions.RestClientCreationException;

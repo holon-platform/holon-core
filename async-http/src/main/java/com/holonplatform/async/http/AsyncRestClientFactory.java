@@ -19,6 +19,7 @@ import java.util.ServiceLoader;
 
 import javax.annotation.Priority;
 
+import com.holonplatform.async.http.internal.AsyncRestClientFactoryRegistry;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 
 /**
