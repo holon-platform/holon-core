@@ -27,6 +27,7 @@ import com.holonplatform.http.HttpMethod;
 import com.holonplatform.http.exceptions.HttpClientInvocationException;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
+import com.holonplatform.http.internal.rest.RestClientFactoryRegistry;
 import com.holonplatform.http.rest.RestClient.RequestDefinition;
 import com.holonplatform.http.rest.RestClientOperations.InvocationOperations;
 import com.holonplatform.http.rest.RestClientOperations.RequestConfiguration;

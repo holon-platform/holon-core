@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http.rest;
+package com.holonplatform.async.http;
 
 import java.util.ServiceLoader;
 
@@ -22,22 +22,24 @@ import javax.annotation.Priority;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 
 /**
- * Factory to create {@link RestClient} instances.
+ * Factory to create {@link AsyncRestClient} instances.
  * 
  * <p>
- * RestClientFactory registration can be performed using default Java extension through {@link ServiceLoader}, providing
- * a <code>com.holonplatform.http.rest.RestClientFactory</code> file in <code>META-INF/services</code> containing the
- * RestClientFactory concrete class names to register.
+ * {@link AsyncRestClientFactory} registration can be performed using default Java extension through
+ * {@link ServiceLoader}, providing a <code>com.holonplatform.async.http.AsyncRestClientFactory</code> file in
+ * <code>META-INF/services</code> containing the AsyncRestClientFactory concrete class names to register.
  * </p>
  * 
  * <p>
- * The {@link RestClientFactory}s priority declaration is supported using the {@link Priority} annotation on factory
- * class (where less priority value means higher priority order).
+ * The {@link AsyncRestClientFactoryRegistry} supports {@link AsyncRestClientFactory}s priority declaration using the
+ * {@link Priority} annotation on factory class (where less priority value means higher priority order).
  * </p>
  * 
- * @since 5.0.0
+ * @since 5.2.0
+ * 
+ * @see AsyncRestClientFactoryRegistry
  */
-public interface RestClientFactory {
+public interface AsyncRestClientFactory {
 
 	/**
 	 * Default factory priority
@@ -45,17 +47,17 @@ public interface RestClientFactory {
 	public static final int DEFAULT_PRIORITY = 100;
 
 	/**
-	 * Get the {@link RestClient} implementation class returned by this factory.
-	 * @return the {@link RestClient} implementation class
+	 * Get the {@link AsyncRestClient} implementation class returned by this factory.
+	 * @return the {@link AsyncRestClient} implementation class
 	 */
 	Class<?> getRestClientImplementationClass();
 
 	/**
-	 * Create a new {@link RestClient} instance.
+	 * Create a new {@link AsyncRestClient} instance.
 	 * @param classLoader The {@link ClassLoader} for which the instance creation is requested
-	 * @return A new {@link RestClient} instance
+	 * @return A new {@link AsyncRestClient} instance
 	 * @throws RestClientCreationException If an error occurred
 	 */
-	RestClient create(ClassLoader classLoader) throws RestClientCreationException;
+	AsyncRestClient create(ClassLoader classLoader) throws RestClientCreationException;
 
 }

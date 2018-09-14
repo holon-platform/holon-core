@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.http.rest;
+package com.holonplatform.http.internal.rest;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -30,6 +30,8 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 import com.holonplatform.http.internal.HttpLogger;
+import com.holonplatform.http.rest.RestClient;
+import com.holonplatform.http.rest.RestClientFactory;
 
 /**
  * {@link RestClientFactory} registry.
