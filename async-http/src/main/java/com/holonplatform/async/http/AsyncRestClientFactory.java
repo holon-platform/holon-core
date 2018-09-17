@@ -19,7 +19,6 @@ import java.util.ServiceLoader;
 
 import javax.annotation.Priority;
 
-import com.holonplatform.async.http.internal.AsyncRestClientFactoryRegistry;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 
 /**
@@ -32,13 +31,11 @@ import com.holonplatform.http.exceptions.RestClientCreationException;
  * </p>
  * 
  * <p>
- * The {@link AsyncRestClientFactoryRegistry} supports {@link AsyncRestClientFactory}s priority declaration using the
- * {@link Priority} annotation on factory class (where less priority value means higher priority order).
+ * The {@link AsyncRestClientFactory} priority declaration is supported using the {@link Priority} annotation on factory
+ * class (where less priority value means higher priority order).
  * </p>
  * 
  * @since 5.2.0
- * 
- * @see AsyncRestClientFactoryRegistry
  */
 public interface AsyncRestClientFactory {
 
