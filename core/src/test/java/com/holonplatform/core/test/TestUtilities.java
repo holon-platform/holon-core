@@ -15,11 +15,11 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.Set;
 import java.util.Vector;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Initializer;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
@@ -419,34 +419,14 @@ public class TestUtilities {
 		assertNotNull(bd);
 		assertEquals(1, bd.intValue());
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(new Integer(Short.MAX_VALUE + 1), short.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(new Integer(Short.MIN_VALUE - 1), short.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MAX_VALUE + 1), byte.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MIN_VALUE - 1), byte.class);
-			}
-		});
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MAX_VALUE + 1), short.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MIN_VALUE - 1), short.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MAX_VALUE + 1), byte.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MIN_VALUE - 1), byte.class));
 
 		// stream
 
@@ -460,76 +440,25 @@ public class TestUtilities {
 
 	@Test
 	public void testConversionUtilsErrors() {
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertStringValue("test", null);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertStringValue("aa", char.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertStringValue("xxx", boolean.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertEnumValue(null, TestEnum.ONE);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertEnumValue(TestEnum.class, Boolean.TRUE);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(new Integer(3), null);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertNumberToTargetClass(null, long.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.convertStringValue("invalid", TestNested.class);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.parseNumber("invalid", null);
-			}
-		});
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ConversionUtils.parseNumber(null, Integer.class);
-			}
-		});
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertStringValue("test", null));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertStringValue("aa", char.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertStringValue("xxx", boolean.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertEnumValue(null, TestEnum.ONE));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertEnumValue(TestEnum.class, Boolean.TRUE));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(new Integer(3), null));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertNumberToTargetClass(null, long.class));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.convertStringValue("invalid", TestNested.class));
+		TestUtils.expectedException(IllegalArgumentException.class, () -> ConversionUtils.parseNumber("invalid", null));
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> ConversionUtils.parseNumber(null, Integer.class));
 	}
 
 	@SuppressWarnings("boxing")

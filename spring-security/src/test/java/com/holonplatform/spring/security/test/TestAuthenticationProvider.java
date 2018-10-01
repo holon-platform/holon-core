@@ -15,13 +15,13 @@
  */
 package com.holonplatform.spring.security.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +36,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
@@ -45,7 +45,7 @@ import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.spring.security.SpringSecurity;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestAuthenticationProvider.Config.class)
 public class TestAuthenticationProvider {
 
@@ -115,13 +115,13 @@ public class TestAuthenticationProvider {
 
 		TestUtils.expectedException(UsernameNotFoundException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("ux", "ux")));
-		
+
 		TestUtils.expectedException(BadCredentialsException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u1", "xxx")));
-		
+
 		TestUtils.expectedException(LockedException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u3", "u3")));
-		
+
 		TestUtils.expectedException(DisabledException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u4", "u4")));
 

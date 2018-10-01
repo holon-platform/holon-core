@@ -15,23 +15,20 @@
  */
 package com.holonplatform.spring.boot.test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.ContextScope;
 import com.holonplatform.spring.internal.context.BeanFactoryScope;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class TestBeanContextAutoConfiguration {
 

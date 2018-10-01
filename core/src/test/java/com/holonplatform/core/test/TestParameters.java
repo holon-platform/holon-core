@@ -15,13 +15,14 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.config.ConfigProperty;
@@ -144,16 +145,20 @@ public class TestParameters {
 		assertTrue(ps.hasParameterValue(TEST3, null));
 	}
 
-	@Test(expected = TypeMismatchException.class)
+	@Test
 	public void testParameterType() {
-		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
-		ps.getParameter("test2", String.class);
+		Assertions.assertThrows(TypeMismatchException.class, () -> {
+			ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
+			ps.getParameter("test2", String.class);
+		});
 	}
 
-	@Test(expected = TypeMismatchException.class)
+	@Test
 	public void testParameterTypeDft() {
-		ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
-		ps.getParameter("test2", String.class, "dft");
+		Assertions.assertThrows(TypeMismatchException.class, () -> {
+			ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
+			ps.getParameter("test2", String.class, "dft");
+		});
 	}
 
 	@Test

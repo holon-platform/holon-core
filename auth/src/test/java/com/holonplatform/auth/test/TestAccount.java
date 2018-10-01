@@ -15,12 +15,12 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Base64;
 import java.util.Collections;
@@ -31,7 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
@@ -185,31 +185,16 @@ public class TestAccount {
 		Authentication authc = resolver.authenticate(new AccountCredentialsToken("test", "testpwd"));
 		assertNotNull(authc);
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service);
-				resolver.authenticate(null);
-			}
+		TestUtils.expectedException(UnexpectedAuthenticationException.class, () -> {
+			new AccountAuthenticator(service).authenticate(null);
 		});
 
-		TestUtils.expectedException(UnknownAccountException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service);
-				resolver.authenticate(new AccountCredentialsToken("testx", "testpwd"));
-			}
+		TestUtils.expectedException(UnknownAccountException.class, () -> {
+			new AccountAuthenticator(service).authenticate(new AccountCredentialsToken("testx", "testpwd"));
 		});
 
-		TestUtils.expectedException(InvalidCredentialsException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service);
-				resolver.authenticate(new AccountCredentialsToken(null, "testpwd"));
-			}
+		TestUtils.expectedException(InvalidCredentialsException.class, () -> {
+			new AccountAuthenticator(service).authenticate(new AccountCredentialsToken(null, "testpwd"));
 		});
 
 		final AccountProvider service2 = new AccountProvider() {
@@ -229,29 +214,14 @@ public class TestAccount {
 			}
 		};
 
-		TestUtils.expectedException(DisabledAccountException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service2);
-				resolver.authenticate(new AccountCredentialsToken("enb", "testpwd"));
-			}
+		TestUtils.expectedException(DisabledAccountException.class, () -> {
+			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("enb", "testpwd"));
 		});
-		TestUtils.expectedException(LockedAccountException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service2);
-				resolver.authenticate(new AccountCredentialsToken("lck", "testpwd"));
-			}
+		TestUtils.expectedException(LockedAccountException.class, () -> {
+			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("lck", "testpwd"));
 		});
-		TestUtils.expectedException(ExpiredCredentialsException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service2);
-				resolver.authenticate(new AccountCredentialsToken("exp", "testpwd"));
-			}
+		TestUtils.expectedException(ExpiredCredentialsException.class, () -> {
+			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("exp", "testpwd"));
 		});
 
 		final AccountProvider service4 = new AccountProvider() {
@@ -261,13 +231,8 @@ public class TestAccount {
 				throw new RuntimeException("test");
 			}
 		};
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AccountAuthenticator resolver = new AccountAuthenticator(service4);
-				resolver.authenticate(new AccountCredentialsToken("test", "testpwd"));
-			}
+		TestUtils.expectedException(UnexpectedAuthenticationException.class, () -> {
+			new AccountAuthenticator(service4).authenticate(new AccountCredentialsToken("test", "testpwd"));
 		});
 
 		Authenticator<AccountCredentialsToken> aa = Account.authenticator(service);

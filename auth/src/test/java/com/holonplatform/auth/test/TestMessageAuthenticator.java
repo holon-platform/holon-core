@@ -15,17 +15,17 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
@@ -73,13 +73,8 @@ public class TestMessageAuthenticator {
 
 		final Realm realmx = Realm.builder().build();
 
-		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realmx.authenticate(new TestMessage("myself"));
-			}
-		});
+		TestUtils.expectedException(UnsupportedMessageException.class,
+				() -> realmx.authenticate(new TestMessage("myself")));
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
@@ -109,14 +104,8 @@ public class TestMessageAuthenticator {
 			throw new UnknownAccountException("" + token.getPrincipal());
 		})).listener(authc -> counter.incrementAndGet()).build();
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
-
-			@SuppressWarnings("rawtypes")
-			@Override
-			public void run() {
-				realm.authenticate((Message) null);
-			}
-		});
+		TestUtils.expectedException(UnexpectedAuthenticationException.class,
+				() -> realm.authenticate((Message<?, ?>) null));
 
 		assertTrue(realm.supportsMessage(TestMessage.class));
 
@@ -130,13 +119,8 @@ public class TestMessageAuthenticator {
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
 
-		TestUtils.expectedException(UnsupportedMessageException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realm.authenticate(new TestMessage("myself"), "xxx");
-			}
-		});
+		TestUtils.expectedException(UnsupportedMessageException.class,
+				() -> realm.authenticate(new TestMessage("myself"), "xxx"));
 
 	}
 

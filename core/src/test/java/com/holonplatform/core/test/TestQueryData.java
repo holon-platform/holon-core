@@ -15,22 +15,19 @@
  */
 package com.holonplatform.core.test;
 
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.CollectionConstantExpression;
 import com.holonplatform.core.Expression.InvalidExpressionException;
@@ -97,12 +94,12 @@ public class TestQueryData {
 		assertNotNull(ps.toString());
 
 		QuerySort sort = TestPropertySet.NAME.asc();
-		assertThat(sort, instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(sort, PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME, ((PathQuerySort<?>) sort).getPath());
 		assertEquals(SortDirection.ASCENDING, ((PathQuerySort<?>) sort).getDirection());
 
 		sort = TestPropertySet.NAME.desc();
-		assertThat(sort, instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(sort, PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME, ((PathQuerySort<?>) sort).getPath());
 		assertEquals(SortDirection.DESCENDING, ((PathQuerySort<?>) sort).getDirection());
 
@@ -123,21 +120,16 @@ public class TestQueryData {
 
 		final MultiSort m = new MultiSort((QuerySort[]) null);
 
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				m.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			m.validate();
 		});
 
 		QuerySort ms = QuerySort.of(TestPropertySet.NAME.asc(), TestPropertySet.SEQUENCE.asc());
-		assertThat(ms, instanceOf(CompositeQuerySort.class));
+		TestUtils.assertInstanceOf(ms, CompositeQuerySort.class);
 		assertNotNull(((CompositeQuerySort) ms).getComposition());
 		assertEquals(2, ((CompositeQuerySort) ms).getComposition().size());
-		assertThat(((CompositeQuerySort) ms).getComposition().get(0), instanceOf(PathQuerySort.class));
-		assertThat(((CompositeQuerySort) ms).getComposition().get(1), instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(0), PathQuerySort.class);
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(1), PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME,
 				((PathQuerySort<?>) ((CompositeQuerySort) ms).getComposition().get(0)).getPath());
 		assertEquals(SortDirection.ASCENDING,
@@ -148,11 +140,11 @@ public class TestQueryData {
 				((PathQuerySort<?>) ((CompositeQuerySort) ms).getComposition().get(1)).getDirection());
 
 		ms = TestPropertySet.NAME.desc().and(TestPropertySet.SEQUENCE.desc());
-		assertThat(ms, instanceOf(CompositeQuerySort.class));
+		TestUtils.assertInstanceOf(ms, CompositeQuerySort.class);
 		assertNotNull(((CompositeQuerySort) ms).getComposition());
 		assertEquals(2, ((CompositeQuerySort) ms).getComposition().size());
-		assertThat(((CompositeQuerySort) ms).getComposition().get(0), instanceOf(PathQuerySort.class));
-		assertThat(((CompositeQuerySort) ms).getComposition().get(1), instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(0), PathQuerySort.class);
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(1), PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME,
 				((PathQuerySort<?>) ((CompositeQuerySort) ms).getComposition().get(0)).getPath());
 		assertEquals(SortDirection.DESCENDING,
@@ -165,11 +157,11 @@ public class TestQueryData {
 		ms.validate();
 
 		ms = QuerySort.of(TestPropertySet.NAME.asc(), TestPropertySet.SEQUENCE.desc());
-		assertThat(ms, instanceOf(CompositeQuerySort.class));
+		TestUtils.assertInstanceOf(ms, CompositeQuerySort.class);
 		assertNotNull(((CompositeQuerySort) ms).getComposition());
 		assertEquals(2, ((CompositeQuerySort) ms).getComposition().size());
-		assertThat(((CompositeQuerySort) ms).getComposition().get(0), instanceOf(PathQuerySort.class));
-		assertThat(((CompositeQuerySort) ms).getComposition().get(1), instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(0), PathQuerySort.class);
+		TestUtils.assertInstanceOf(((CompositeQuerySort) ms).getComposition().get(1), PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME,
 				((PathQuerySort<?>) ((CompositeQuerySort) ms).getComposition().get(0)).getPath());
 		assertEquals(SortDirection.ASCENDING,
@@ -198,12 +190,12 @@ public class TestQueryData {
 		// query property expression
 
 		QuerySort qs = TestPropertySet.NAME.asc();
-		assertThat(qs, instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(qs, PathQuerySort.class);
 		assertEquals(TestPropertySet.NAME, ((PathQuerySort<?>) qs).getPath());
 		assertEquals(SortDirection.ASCENDING, ((PathQuerySort<?>) qs).getDirection());
 
 		qs = TestPropertySet.SEQUENCE.desc();
-		assertThat(qs, instanceOf(PathQuerySort.class));
+		TestUtils.assertInstanceOf(qs, PathQuerySort.class);
 		assertEquals(TestPropertySet.SEQUENCE, ((PathQuerySort<?>) qs).getPath());
 		assertEquals(SortDirection.DESCENDING, ((PathQuerySort<?>) qs).getDirection());
 
@@ -212,7 +204,7 @@ public class TestQueryData {
 		QuerySort bs = QuerySort.of(TestPropertySet.NAME.asc());
 
 		bs = QuerySort.of(TestPropertySet.NAME.asc(), TestPropertySet.SEQUENCE.desc());
-		assertThat(bs, instanceOf(MultiSort.class));
+		TestUtils.assertInstanceOf(bs, MultiSort.class);
 
 		bs = QuerySort.of(Collections.singletonList(TestPropertySet.NAME.asc()));
 
@@ -220,7 +212,7 @@ public class TestQueryData {
 		sts.add(TestPropertySet.NAME.asc());
 		sts.add(TestPropertySet.SEQUENCE.desc());
 		bs = QuerySort.of(sts);
-		assertThat(bs, instanceOf(MultiSort.class));
+		TestUtils.assertInstanceOf(bs, MultiSort.class);
 
 	}
 
@@ -382,44 +374,28 @@ public class TestQueryData {
 		f.validate();
 		((VisitableQueryFilter) f).accept(visitor, null);
 
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@SuppressWarnings({ "rawtypes", "unchecked" })
-			@Override
-			public Void call() throws Exception {
-				EqualFilter f = new EqualFilter(TestPropertySet.NAME, null);
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			EqualFilter<?> fz = new EqualFilter<>(TestPropertySet.NAME, null);
+			fz.validate();
 		});
 
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				BetweenFilter<String> f = new BetweenFilter<>(TestPropertySet.NAME, null, "test2");
-				f.getFromValue();
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			BetweenFilter<String> fb = new BetweenFilter<>(TestPropertySet.NAME, null, "test2");
+			fb.getFromValue();
+			fb.validate();
 		});
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				BetweenFilter<String> f = new BetweenFilter<>(TestPropertySet.NAME, "test", null);
-				f.getToValue();
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			BetweenFilter<String> fs = new BetweenFilter<>(TestPropertySet.NAME, "test", null);
+			fs.getToValue();
+			fs.validate();
 		});
 
 		QueryFilter filter = TestPropertySet.NAME.eq("testValue");
-		assertThat(filter, instanceOf(OperationQueryFilter.class));
+		TestUtils.assertInstanceOf(filter, OperationQueryFilter.class);
 		assertEquals(TestPropertySet.NAME, ((OperationQueryFilter<?>) filter).getLeftOperand());
 
 		filter = TestPropertySet.NAME.neq("testValue");
-		assertThat(filter, instanceOf(OperationQueryFilter.class));
+		TestUtils.assertInstanceOf(filter, OperationQueryFilter.class);
 		assertEquals(TestPropertySet.NAME, ((OperationQueryFilter<?>) filter).getLeftOperand());
 		assertEquals(FilterOperator.NOT_EQUAL, ((OperationQueryFilter<?>) filter).getOperator());
 
@@ -428,22 +404,12 @@ public class TestQueryData {
 		nf.validate();
 		nf.accept(visitor, null);
 
-		TestUtils.expectedException(UnsupportedOperationException.class, new Runnable() {
+		TestUtils.expectedException(UnsupportedOperationException.class,
+				() -> nf.addFilter(new NullFilter(TestPropertySet.NAME)));
 
-			@Override
-			public void run() {
-				nf.addFilter(new NullFilter(TestPropertySet.NAME));
-			}
-		});
-
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				NotFilter f = new NotFilter(null);
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			NotFilter ntf = new NotFilter(null);
+			ntf.validate();
 		});
 
 		AndFilter af = new AndFilter(TestPropertySet.NAME.eq("test"), TestPropertySet.SEQUENCE.gt(1));
@@ -483,23 +449,13 @@ public class TestQueryData {
 		af3.accept(visitor, null);
 		of3.accept(visitor, null);
 
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				AndFilter f = new AndFilter(new ArrayList<QueryFilter>());
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			AndFilter anf = new AndFilter(new ArrayList<QueryFilter>());
+			anf.validate();
 		});
-		TestUtils.expectedException(InvalidExpressionException.class, new Callable<Void>() {
-
-			@Override
-			public Void call() throws Exception {
-				OrFilter f = new OrFilter(new ArrayList<QueryFilter>());
-				f.validate();
-				return null;
-			}
+		TestUtils.expectedException(InvalidExpressionException.class, () -> {
+			OrFilter orf = new OrFilter(new ArrayList<QueryFilter>());
+			orf.validate();
 		});
 
 		AndFilter af5 = new AndFilter();
@@ -517,17 +473,17 @@ public class TestQueryData {
 
 		QueryFilter qf = flt1.not();
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(NotFilter.class));
+		TestUtils.assertInstanceOf(qf, NotFilter.class);
 		assertEquals(flt1, ((NotFilter) qf).getComposition().get(0));
 
 		qf = flt1.or(flt2);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(OrFilter.class));
+		TestUtils.assertInstanceOf(qf, OrFilter.class);
 		assertEquals(2, ((OrFilter) qf).getComposition().size());
 
 		qf = QueryFilter.anyOf(flt1, flt2).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(OrFilter.class));
+		TestUtils.assertInstanceOf(qf, OrFilter.class);
 		assertEquals(2, ((OrFilter) qf).getComposition().size());
 
 		List<QueryFilter> li = new LinkedList<>();
@@ -535,27 +491,27 @@ public class TestQueryData {
 		li.add(flt2);
 		qf = QueryFilter.anyOf(li).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(OrFilter.class));
+		TestUtils.assertInstanceOf(qf, OrFilter.class);
 		assertEquals(2, ((OrFilter) qf).getComposition().size());
 
 		qf = QueryFilter.allOf(flt1, flt2).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(AndFilter.class));
+		TestUtils.assertInstanceOf(qf, AndFilter.class);
 		assertEquals(2, ((AndFilter) qf).getComposition().size());
 
 		qf = QueryFilter.allOf(li).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(AndFilter.class));
+		TestUtils.assertInstanceOf(qf, AndFilter.class);
 		assertEquals(2, ((AndFilter) qf).getComposition().size());
 
 		qf = QueryFilter.allOf(flt1, null, flt2).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(AndFilter.class));
+		TestUtils.assertInstanceOf(qf, AndFilter.class);
 		assertEquals(2, ((AndFilter) qf).getComposition().size());
 
 		qf = QueryFilter.anyOf(flt1, null, flt2, null).orElse(null);
 		assertNotNull(qf);
-		assertThat(qf, instanceOf(OrFilter.class));
+		TestUtils.assertInstanceOf(qf, OrFilter.class);
 		assertEquals(2, ((OrFilter) qf).getComposition().size());
 	}
 

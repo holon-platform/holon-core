@@ -15,14 +15,15 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collections;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.messaging.MessageHeaders;
 
@@ -46,10 +47,10 @@ public class TestMessages {
 
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testMessageHeadersNullHeader() {
 
-		MessageHeaders<String> mh = new MessageHeaders<String>() {
+		final MessageHeaders<String> mh = new MessageHeaders<String>() {
 
 			@Override
 			public Map<String, String> getHeaders() {
@@ -57,7 +58,7 @@ public class TestMessages {
 			}
 		};
 
-		mh.getHeader(null);
+		Assertions.assertThrows(IllegalArgumentException.class, () -> mh.getHeader(null));
 	}
 
 }

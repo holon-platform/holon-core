@@ -15,13 +15,14 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.tenancy.TenantResolver;
@@ -73,26 +74,25 @@ public class TestTenantResolver {
 	}
 
 	@SuppressWarnings("unused")
-	@Test(expected = RuntimeException.class)
 	public void testTenantResolverCallable() {
-
-		String value = TenantResolver.execute("x", () -> {
-			throw new NullPointerException("test");
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			String value = TenantResolver.execute("x", () -> {
+				throw new NullPointerException("test");
+			});
 		});
-
 	}
 
-	@Test(expected = RuntimeException.class)
+	@Test
 	public void testTenantResolverRunnable() {
+		Assertions.assertThrows(RuntimeException.class, () -> {
+			TenantResolver.execute("x", new Runnable() {
 
-		TenantResolver.execute("x", new Runnable() {
-
-			@Override
-			public void run() {
-				throw new NullPointerException("test");
-			}
+				@Override
+				public void run() {
+					throw new NullPointerException("test");
+				}
+			});
 		});
-
 	}
 
 }

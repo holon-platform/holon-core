@@ -15,12 +15,12 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,7 +33,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.i18n.Localizable;
@@ -83,34 +83,10 @@ public class TestI18n {
 		assertFalse(ctx.isLocalized());
 		assertFalse(ctx.getLocale().isPresent());
 
-		TestUtils.expectedException(LocalizationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ctx.format(1);
-			}
-		});
-		TestUtils.expectedException(LocalizationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ctx.format(new Date(), TemporalType.DATE);
-			}
-		});
-		TestUtils.expectedException(LocalizationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ctx.format(LocalDate.now());
-			}
-		});
-		TestUtils.expectedException(LocalizationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ctx.getMessage("xxx", null);
-			}
-		});
+		TestUtils.expectedException(LocalizationException.class, () -> ctx.format(1));
+		TestUtils.expectedException(LocalizationException.class, () -> ctx.format(new Date(), TemporalType.DATE));
+		TestUtils.expectedException(LocalizationException.class, () -> ctx.format(LocalDate.now()));
+		TestUtils.expectedException(LocalizationException.class, () -> ctx.getMessage("xxx", null));
 
 		LocalizationContext ctx2 = LocalizationContext.builder().withInitialLocale(Locale.US).build();
 		assertTrue(ctx2.isLocalized());
@@ -135,13 +111,7 @@ public class TestI18n {
 		ctx3.setUseDateTimeFormatsCache(false);
 		ctx3.setMessageArgumentsPlaceholder("*");
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ctx3.localize(new DefaultLocalization(null));
-			}
-		});
+		TestUtils.expectedException(IllegalArgumentException.class, () -> ctx3.localize(new DefaultLocalization(null)));
 
 		Context.get().threadScope().map((s) -> s.put(LocalizationContext.CONTEXT_KEY, ctx));
 
@@ -417,13 +387,8 @@ public class TestI18n {
 
 		final Localizable msg = Localizable.builder().message("dft").messageCode("test-mc").build();
 
-		TestUtils.expectedException(LocalizationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				LocalizationContext.builder().build().getMessage(msg, false);
-			}
-		});
+		TestUtils.expectedException(LocalizationException.class,
+				() -> LocalizationContext.builder().build().getMessage(msg, false));
 
 		assertEquals("dft", LocalizationContext.builder().build().getMessage(msg, true));
 

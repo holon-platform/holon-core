@@ -15,9 +15,9 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.CredentialsContainer;
@@ -43,21 +43,10 @@ public class TestCredentials {
 	@Test
 	public void testUtils() throws IOException {
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
+		TestUtils.expectedException(IllegalArgumentException.class, () -> DefaultCredentialsMatcher.toBytes(null));
 
-			@Override
-			public void run() {
-				DefaultCredentialsMatcher.toBytes(null);
-			}
-		});
-
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				DefaultCredentialsMatcher.toBytes(Calendar.getInstance());
-			}
-		});
+		TestUtils.expectedException(IllegalArgumentException.class,
+				() -> DefaultCredentialsMatcher.toBytes(Calendar.getInstance()));
 
 		byte[] bytes = new byte[] { 1, 2, 3 };
 		assertTrue(Arrays.equals(bytes, DefaultCredentialsMatcher.toBytes(bytes)));
@@ -82,13 +71,8 @@ public class TestCredentials {
 
 		file.delete();
 
-		TestUtils.expectedException(RuntimeException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				DefaultCredentialsMatcher.toBytes(new File("xxxxxxxxxxxxxxxxxx.yyyy"));
-			}
-		});
+		TestUtils.expectedException(RuntimeException.class,
+				() -> DefaultCredentialsMatcher.toBytes(new File("xxxxxxxxxxxxxxxxxx.yyyy")));
 
 		crd = Credentials.builder().secret("test").secret(ConversionUtils.toBytes("test")).salt((byte[]) null)
 				.hexEncoded().build();
@@ -126,13 +110,7 @@ public class TestCredentials {
 	@Test
 	public void testCredentialsEncoder() throws UnsupportedEncodingException {
 
-		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				Credentials.encoder().build();
-			}
-		});
+		TestUtils.expectedException(IllegalStateException.class, () -> Credentials.encoder().build());
 
 		final String secret = "test";
 		final byte[] secretBytes = ConversionUtils.toBytes(secret);
@@ -154,13 +132,8 @@ public class TestCredentials {
 		bytes = Credentials.encoder().secret(secret).hashSHA512().charset("UTF-8").build();
 		assertNotNull(bytes);
 
-		TestUtils.expectedException(RuntimeException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				Credentials.encoder().secret("test").hashAlgorithm("xxx").build();
-			}
-		});
+		TestUtils.expectedException(RuntimeException.class,
+				() -> Credentials.encoder().secret("test").hashAlgorithm("xxx").build());
 
 	}
 
@@ -185,27 +158,9 @@ public class TestCredentials {
 			}
 		};
 
-		TestUtils.expectedException(UnexpectedCredentialsException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				matcher.credentialsMatch(nc, cc);
-			}
-		});
-		TestUtils.expectedException(UnexpectedCredentialsException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				matcher.credentialsMatch(cc, nc);
-			}
-		});
-		TestUtils.expectedException(UnexpectedCredentialsException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				matcher.credentialsMatch(null, null);
-			}
-		});
+		TestUtils.expectedException(UnexpectedCredentialsException.class, () -> matcher.credentialsMatch(nc, cc));
+		TestUtils.expectedException(UnexpectedCredentialsException.class, () -> matcher.credentialsMatch(cc, nc));
+		TestUtils.expectedException(UnexpectedCredentialsException.class, () -> matcher.credentialsMatch(null, null));
 
 		final CredentialsContainer cc2 = new CredentialsContainer() {
 

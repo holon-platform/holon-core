@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.12</version>
+		<version>1.1.0</version>
 	</parent>
 
 	<groupId>com.holon-platform.core</groupId>
@@ -64,23 +66,24 @@
 		<slf4j.version>1.7.25</slf4j.version>
 
 		<!-- Apache commons lang -->
-		<commons.lang.version>3.7</commons.lang.version>
+		<commons.lang.version>3.8.1</commons.lang.version>
 
 		<!-- Bean validation -->
 		<bean.validation.version>2.0.1.Final</bean.validation.version>
 
 		<!-- Spring -->
-		<spring.version>5.0.8.RELEASE</spring.version>
+		<spring.version>5.1.0.RELEASE</spring.version>
 
 		<!-- Spring Security -->
-		<spring.security.version>5.0.5.RELEASE</spring.security.version>
+		<spring.security.version>5.1.0.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.0.3.RELEASE</spring.boot.version>
+		<spring.boot.version>2.1.0.M4</spring.boot.version>
 
 		<!-- Test -->
 		<jackson.test.version>2.9.6</jackson.test.version>
 		<jersey.test.version>2.27</jersey.test.version>
+		<mockito.version>2.22.0</mockito.version>
 
 	</properties>
 
@@ -101,6 +104,26 @@
 		<module>bom-platform</module>
 		<module>documentation</module>
 	</modules>
+
+	<dependencies>
+		<!-- JUnit 5 tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Logback for tests -->
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
 	<build>
 		<plugins>

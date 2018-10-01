@@ -15,6 +15,10 @@
  */
 package com.holonplatform.auth.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -25,8 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.AuthenticationToken;
 import com.holonplatform.auth.AuthenticationToken.AuthenticationTokenResolver;
@@ -45,48 +48,48 @@ public class TestTokens {
 	public void testAccountCredentialsToken() {
 
 		AccountCredentialsToken tkn = new AccountCredentialsToken();
-		Assert.assertNull(tkn.getPrincipal());
-		Assert.assertNull(tkn.getCredentials());
+		assertNull(tkn.getPrincipal());
+		assertNull(tkn.getCredentials());
 
 		tkn = new AccountCredentialsToken("usr", "pwd");
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		tkn = AccountCredentialsToken.create("usr", "pwd");
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		byte[] cb = ConversionUtils.toBytes("pwd");
 
 		tkn = new AccountCredentialsToken("usr", cb);
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		tkn = AccountCredentialsToken.create("usr", cb);
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		tkn = new AccountCredentialsToken();
 		tkn.setAccountId("usr");
 		tkn.setSecret("pwd");
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		tkn = new AccountCredentialsToken();
 		tkn.setAccountId("usr");
 		tkn.setSecret(cb);
-		Assert.assertEquals("usr", tkn.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
+		assertEquals("usr", tkn.getPrincipal());
+		assertEquals("pwd", new String((byte[]) tkn.getCredentials()));
 
 		AuthenticationTokenResolver<HttpRequest> resolver = AuthenticationToken.httpBasicResolver();
 
-		Assert.assertEquals("Basic", resolver.getScheme().orElse(null));
-		Assert.assertEquals(HttpRequest.class, resolver.getMessageType());
+		assertEquals("Basic", resolver.getScheme().orElse(null));
+		assertEquals(HttpRequest.class, resolver.getMessageType());
 
 		AuthenticationToken bt = resolver.getAuthenticationToken(new TestHttpRequest("usr", "pwd")).orElse(null);
-		Assert.assertNotNull(bt);
-		Assert.assertEquals("usr", bt.getPrincipal());
-		Assert.assertEquals("pwd", new String((byte[]) bt.getCredentials()));
+		assertNotNull(bt);
+		assertEquals("usr", bt.getPrincipal());
+		assertEquals("pwd", new String((byte[]) bt.getCredentials()));
 
 	}
 
@@ -96,25 +99,25 @@ public class TestTokens {
 		final String bearer = "abc";
 
 		BearerAuthenticationToken tkn = new BearerAuthenticationToken(bearer);
-		Assert.assertEquals(bearer, tkn.getCredentials());
-		Assert.assertNull(tkn.getPrincipal());
+		assertEquals(bearer, tkn.getCredentials());
+		assertNull(tkn.getPrincipal());
 
 		tkn = BearerAuthenticationToken.create(bearer);
-		Assert.assertEquals(bearer, tkn.getCredentials());
-		Assert.assertNull(tkn.getPrincipal());
+		assertEquals(bearer, tkn.getCredentials());
+		assertNull(tkn.getPrincipal());
 
 		AuthenticationToken tkn2 = AuthenticationToken.bearer(bearer);
-		Assert.assertEquals(bearer, tkn2.getCredentials());
-		Assert.assertNull(tkn2.getPrincipal());
+		assertEquals(bearer, tkn2.getCredentials());
+		assertNull(tkn2.getPrincipal());
 
 		AuthenticationTokenResolver<HttpRequest> resolver = AuthenticationToken.httpBearerResolver();
 
-		Assert.assertEquals("Bearer", resolver.getScheme().orElse(null));
-		Assert.assertEquals(HttpRequest.class, resolver.getMessageType());
+		assertEquals("Bearer", resolver.getScheme().orElse(null));
+		assertEquals(HttpRequest.class, resolver.getMessageType());
 
 		AuthenticationToken bt = resolver.getAuthenticationToken(new TestHttpRequest(bearer)).orElse(null);
-		Assert.assertNotNull(bt);
-		Assert.assertEquals(bearer, tkn.getCredentials());
+		assertNotNull(bt);
+		assertEquals(bearer, tkn.getCredentials());
 
 	}
 

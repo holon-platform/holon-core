@@ -1,23 +1,26 @@
 package com.holonplatform.spring.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.spring.EnableTenantScope;
 import com.holonplatform.spring.ScopeTenant;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestTenantScopeProxyMode.Config.class)
 public class TestTenantScopeProxyMode {
 
@@ -54,9 +57,10 @@ public class TestTenantScopeProxyMode {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testInvalidTenantScope() {
-		applicationContext.getBean(TenantScopedServiceTest.class);
+		Assertions.assertThrows(BeanCreationException.class,
+				() -> applicationContext.getBean(TenantScopedServiceTest.class));
 	}
 
 	@Test
@@ -64,18 +68,18 @@ public class TestTenantScopeProxyMode {
 		try {
 			CURRENT_TENANT_ID.set("T1");
 			SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);
-			Assert.assertNotNull(sc);
+			assertNotNull(sc);
 
-			Assert.assertEquals("T1", sc.getTenantId());
+			assertEquals("T1", sc.getTenantId());
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
 	}
 
-	@Test(expected = BeanCreationException.class)
+	@Test
 	public void testTenantScopeProxyFail() {
-		SingletonComponent sc = applicationContext.getBean(SingletonComponent.class);
-		sc.getTenantId();
+		Assertions.assertThrows(BeanCreationException.class,
+				() -> applicationContext.getBean(SingletonComponent.class).getTenantId());
 	}
 
 }

@@ -30,8 +30,8 @@ import static com.holonplatform.core.test.TestProperty.P6;
 import static com.holonplatform.core.test.TestProperty.P7;
 import static com.holonplatform.core.test.TestProperty.P8;
 import static com.holonplatform.core.test.TestProperty.P9;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,7 +40,7 @@ import java.time.Month;
 import java.util.Calendar;
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.i18n.Localizable;

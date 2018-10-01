@@ -22,7 +22,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.Callable;
 
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * Utility methods for test purposes.
@@ -42,18 +43,18 @@ public final class TestUtils implements Serializable {
 	 */
 	public static void checkUtilityClass(final Class<?> clazz) {
 		try {
-			Assert.assertTrue("class must be final", Modifier.isFinal(clazz.getModifiers()));
-			Assert.assertEquals("There must be only one constructor", 1, clazz.getDeclaredConstructors().length);
+			Assertions.assertTrue(Modifier.isFinal(clazz.getModifiers()), "class must be final");
+			Assertions.assertEquals(1, clazz.getDeclaredConstructors().length, "There must be only one constructor");
 			final Constructor<?> constructor = clazz.getDeclaredConstructor();
 			if (constructor.isAccessible() || !Modifier.isPrivate(constructor.getModifiers())) {
-				Assert.fail("constructor is not private");
+				Assertions.fail("constructor is not private");
 			}
 			constructor.setAccessible(true);
 			constructor.newInstance();
 			constructor.setAccessible(false);
 			for (final Method method : clazz.getMethods()) {
 				if (!Modifier.isStatic(method.getModifiers()) && method.getDeclaringClass().equals(clazz)) {
-					Assert.fail("there exists a non-static method:" + method);
+					Assertions.fail("there exists a non-static method:" + method);
 				}
 			}
 		} catch (SecurityException | NoSuchMethodException | InstantiationException | IllegalAccessException
@@ -72,7 +73,7 @@ public final class TestUtils implements Serializable {
 		E[] es = enm.getEnumConstants();
 
 		if (es == null || es.length == 0) {
-			Assert.fail("enum class has no constants: " + enm);
+			Assertions.fail("enum class has no constants: " + enm);
 			return;
 		}
 
@@ -93,45 +94,19 @@ public final class TestUtils implements Serializable {
 	}
 
 	/**
-	 * Test an expected exception is thrown
+	 * Test an expected exception is thrown using a {@link Callable} operation
 	 * @param exceptionClass Expected exception
 	 * @param operation Operation to execute
 	 */
-	public static void expectedException(Class<? extends Throwable> exceptionClass, Runnable operation) {
-		try {
-			operation.run();
-			Assert.fail("Expected exception was not thrown");
-		} catch (Exception e) {
-			Assert.assertNotNull(e);
-			if (!exceptionClass.isAssignableFrom(e.getClass())) {
-				e.printStackTrace();
-				Assert.fail("Expected exception: " + exceptionClass.getName() + " but was thrown: "
-						+ e.getClass().getName());
-			}
-		}
+	public static void expectedException(Class<? extends Throwable> exceptionClass, Executable operation) {
+		Assertions.assertThrows(exceptionClass, operation);
 	}
 
-	/**
-	 * Test an expected exception is thrown using a {@link Callable} operation
-	 * @param <T> Operation result type
-	 * @param exceptionClass Expected exception
-	 * @param operation Operation to execute
-	 * @return Operation result
-	 */
-	public static <T> T expectedException(Class<? extends Throwable> exceptionClass, Callable<T> operation) {
-		try {
-			T result = operation.call();
-			Assert.fail("Expected exception was not thrown");
-			return result;
-		} catch (Exception e) {
-			Assert.assertNotNull(e);
-			if (!exceptionClass.isAssignableFrom(e.getClass())) {
-				e.printStackTrace();
-				Assert.fail("Expected exception: " + exceptionClass.getName() + " but was thrown: "
-						+ e.getClass().getName());
-			}
+	public static void assertInstanceOf(Object object, Class<?> type) {
+		if (!type.isInstance(object)) {
+			Assertions.fail("Expected object type [" + type + "] but got type ["
+					+ ((object == null) ? "NULL" : object.getClass().getName() + "]"));
 		}
-		return null;
 	}
 
 }

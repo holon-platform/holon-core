@@ -15,20 +15,18 @@
  */
 package com.holonplatform.spring.boot.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.SpringRestClient;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class TestRestClientConfiguration {
 
@@ -43,13 +41,13 @@ public class TestRestClientConfiguration {
 
 	@Test
 	public void testConfig() {
-		Assert.assertNotNull(restTemplateBuilder);
+		assertNotNull(restTemplateBuilder);
 
 		RestClient rc = RestClient.create();
-		Assert.assertNotNull(rc);
+		assertNotNull(rc);
 
 		rc = RestClient.create(SpringRestClient.class.getName());
-		Assert.assertNotNull(rc);
+		assertNotNull(rc);
 	}
 
 }

@@ -15,11 +15,11 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.lang.annotation.Annotation;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanProperty.Builder;

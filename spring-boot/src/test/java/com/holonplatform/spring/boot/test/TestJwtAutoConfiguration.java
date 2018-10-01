@@ -15,19 +15,19 @@
  */
 package com.holonplatform.spring.boot.test;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.auth.jwt.JwtConfiguration;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @ActiveProfiles("jwt")
 public class TestJwtAutoConfiguration {
@@ -43,10 +43,10 @@ public class TestJwtAutoConfiguration {
 
 	@Test
 	public void testConfig() {
-		Assert.assertNotNull(jwtConfiguration);
+		assertNotNull(jwtConfiguration);
 
-		Assert.assertTrue("TestIssuer", jwtConfiguration.getIssuer().isPresent());
-		Assert.assertEquals("TestIssuer", jwtConfiguration.getIssuer().get());
+		assertTrue(jwtConfiguration.getIssuer().isPresent());
+		assertEquals("TestIssuer", jwtConfiguration.getIssuer().get());
 	}
 
 }

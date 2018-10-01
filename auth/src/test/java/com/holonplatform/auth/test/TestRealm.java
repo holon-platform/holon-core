@@ -15,10 +15,10 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -30,7 +30,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.AuthenticationToken;
@@ -119,13 +119,8 @@ public class TestRealm {
 		assertTrue(realm.isPermitted(authc, "p1", "p2"));
 		assertTrue(realm.isPermittedAny(authc, "p1", "p3"));
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realm.authenticate((AuthenticationToken) null);
-			}
-		});
+		TestUtils.expectedException(UnexpectedAuthenticationException.class,
+				() -> realm.authenticate((AuthenticationToken) null));
 
 		Realm xrealm = Realm.builder().build();
 
@@ -144,26 +139,14 @@ public class TestRealm {
 			}
 		};
 
-		TestUtils.expectedException(UnsupportedTokenException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				realm.authenticate(at);
-			}
-		});
+		TestUtils.expectedException(UnsupportedTokenException.class, () -> realm.authenticate(at));
 
 	}
 
 	@Test
 	public void testRealmContext() {
 
-		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				Realm.require();
-			}
-		});
+		TestUtils.expectedException(IllegalStateException.class, () -> Realm.require());
 
 		String name = Context.get().executeThreadBound(Realm.CONTEXT_KEY,
 				Realm.builder().name("rlm").withDefaultAuthorizer().build(), () -> {

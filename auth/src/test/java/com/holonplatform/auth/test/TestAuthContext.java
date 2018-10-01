@@ -15,18 +15,18 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.AuthContext;
 import com.holonplatform.auth.AuthContext.AuthenticationHolder;
@@ -207,23 +207,11 @@ public class TestAuthContext {
 	@Test
 	public void testAuthContextResource() {
 
-		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				AuthContext.require();
-			}
-		});
+		TestUtils.expectedException(IllegalStateException.class, () -> AuthContext.require());
 
 		final AuthContext ac = AuthContext.create(Realm.builder().build());
 
-		TestUtils.expectedException(IllegalStateException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				ac.requireAuthentication();
-			}
-		});
+		TestUtils.expectedException(IllegalStateException.class, () -> ac.requireAuthentication());
 
 		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
 				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {

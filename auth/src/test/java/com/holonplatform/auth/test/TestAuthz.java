@@ -15,17 +15,17 @@
  */
 package com.holonplatform.auth.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Authorizer;
@@ -65,13 +65,7 @@ public class TestAuthz {
 		assertTrue(Arrays.equals(permissions.toArray(new Permission[0]),
 				auth.getPermissions().toArray(new Permission[0])));
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				Permission.create(null);
-			}
-		});
+		TestUtils.expectedException(IllegalArgumentException.class, () -> Permission.create(null));
 
 	}
 

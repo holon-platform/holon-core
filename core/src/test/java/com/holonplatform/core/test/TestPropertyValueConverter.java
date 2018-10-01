@@ -15,9 +15,9 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +25,7 @@ import java.time.Month;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.internal.property.NumericBooleanConverter;
 import com.holonplatform.core.internal.utils.TestUtils;
@@ -240,14 +240,9 @@ public class TestPropertyValueConverter {
 
 	@Test
 	public void testPropertyConverterErrors() {
-		TestUtils.expectedException(PropertyConversionException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				NumericBooleanConverter<InvalidNumberClass> pc = new NumericBooleanConverter<>(
-						InvalidNumberClass.class);
-				pc.toModel(Boolean.TRUE, null);
-			}
+		TestUtils.expectedException(PropertyConversionException.class, () -> {
+			NumericBooleanConverter<InvalidNumberClass> pc = new NumericBooleanConverter<>(InvalidNumberClass.class);
+			pc.toModel(Boolean.TRUE, null);
 		});
 	}
 

@@ -15,11 +15,11 @@
  */
 package com.holonplatform.spring.security.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +29,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Authenticator;
@@ -37,7 +37,7 @@ import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.spring.security.SpringSecurity;
 import com.holonplatform.spring.security.SpringSecurityAuthenticationToken;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestAuthenticator.Config.class)
 public class TestAuthenticator {
 
@@ -51,7 +51,7 @@ public class TestAuthenticator {
 			return auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER").and()
 					.withUser("admin").password("pwd2").authorities("USER", "ADMIN").and().and().build();
 		}
-		
+
 		@Bean
 		public static PasswordEncoder passwordEncoder() {
 			return NoOpPasswordEncoder.INSTANCE;

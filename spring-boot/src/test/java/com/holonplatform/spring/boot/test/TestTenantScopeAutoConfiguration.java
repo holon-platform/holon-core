@@ -15,24 +15,24 @@
  */
 package com.holonplatform.spring.boot.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.Serializable;
 import java.util.Optional;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.holonplatform.core.tenancy.TenantResolver;
 import com.holonplatform.spring.ScopeTenant;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 public class TestTenantScopeAutoConfiguration {
 
@@ -68,7 +68,7 @@ public class TestTenantScopeAutoConfiguration {
 		try {
 			CURRENT_TENANT_ID.set("T1");
 			srv1 = applicationContext.getBean(TestResource.class);
-			Assert.assertNotNull(srv1);
+			assertNotNull(srv1);
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
@@ -77,23 +77,23 @@ public class TestTenantScopeAutoConfiguration {
 		try {
 			CURRENT_TENANT_ID.set("T2");
 			srv2 = applicationContext.getBean(TestResource.class);
-			Assert.assertNotNull(srv2);
+			assertNotNull(srv2);
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
 
-		Assert.assertNotEquals(srv1, srv2);
+		assertNotEquals(srv1, srv2);
 
 		TestResource srv3;
 		try {
 			CURRENT_TENANT_ID.set("T1");
 			srv3 = applicationContext.getBean(TestResource.class);
-			Assert.assertNotNull(srv3);
+			assertNotNull(srv3);
 		} finally {
 			CURRENT_TENANT_ID.remove();
 		}
 
-		Assert.assertEquals(srv1, srv3);
+		assertEquals(srv1, srv3);
 	}
 
 }

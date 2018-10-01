@@ -15,19 +15,18 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Callable;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.beans.BeanConfigProperties;
 import com.holonplatform.core.config.ConfigPropertyProvider;
@@ -62,21 +61,9 @@ public class TestConfig {
 		assertNotNull(props);
 		assertEquals("test", props.getProperty("holon.test.property"));
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Callable<Properties>() {
+		TestUtils.expectedException(IllegalArgumentException.class, () -> ClassUtils.loadProperties(null, false));
 
-			@Override
-			public Properties call() throws Exception {
-				return ClassUtils.loadProperties(null, false);
-			}
-		});
-
-		TestUtils.expectedException(IOException.class, new Callable<Properties>() {
-
-			@Override
-			public Properties call() throws Exception {
-				return ClassUtils.loadProperties("notexists.properties", false);
-			}
-		});
+		TestUtils.expectedException(IOException.class, () -> ClassUtils.loadProperties("notexists.properties", false));
 
 		cpp = ConfigPropertyProvider.using("holon.properties", ClassUtils.getDefaultClassLoader());
 		assertEquals("test", cpp.getProperty("holon.test.property", String.class));
@@ -112,14 +99,7 @@ public class TestConfig {
 		val = cfg.getProperty("z", String.class);
 		assertNull(val);
 
-		TestUtils.expectedException(IllegalArgumentException.class, new Runnable() {
-
-			@Override
-			public void run() {
-				cfg.getProperty(null, null);
-			}
-
-		});
+		TestUtils.expectedException(IllegalArgumentException.class, () -> cfg.getProperty(null, null));
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("other", "test");

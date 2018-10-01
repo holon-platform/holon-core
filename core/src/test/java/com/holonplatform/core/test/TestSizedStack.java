@@ -15,11 +15,11 @@
  */
 package com.holonplatform.core.test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.utils.SizedStack;
-
-import static org.junit.Assert.*;
 
 public class TestSizedStack {
 

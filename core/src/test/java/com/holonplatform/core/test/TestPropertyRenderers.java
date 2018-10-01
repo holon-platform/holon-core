@@ -15,12 +15,13 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.internal.utils.ClassUtils;
@@ -107,11 +108,11 @@ public class TestPropertyRenderers {
 
 	}
 
-	@Test(expected = NoSuitableRendererAvailableException.class)
+	@Test
 	public void testPropertyRendererNotAvailable() {
-
-		TestPropertySet.NAME.render(NotAvailableRenderTest.class);
-
+		Assertions.assertThrows(NoSuitableRendererAvailableException.class, () -> {
+			TestPropertySet.NAME.render(NotAvailableRenderTest.class);
+		});
 	}
 
 	private static class RenderTest {

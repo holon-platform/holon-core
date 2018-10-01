@@ -15,16 +15,17 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.exceptions.TypeMismatchException;
@@ -157,10 +158,12 @@ public class TestPathPropertySetAdapter {
 
 	}
 
-	@Test(expected = TypeMismatchException.class)
+	@Test
 	public void testByNameType() {
-		final PathPropertySetAdapter adapter = PathPropertySetAdapter.create(SET);
-		adapter.getProperty("p2", String.class);
+		Assertions.assertThrows(TypeMismatchException.class, () -> {
+			final PathPropertySetAdapter adapter = PathPropertySetAdapter.create(SET);
+			adapter.getProperty("p2", String.class);
+		});
 	}
 
 	@Test

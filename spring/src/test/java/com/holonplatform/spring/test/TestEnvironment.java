@@ -15,12 +15,15 @@
  */
 package com.holonplatform.spring.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,12 +31,12 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.holonplatform.core.config.ConfigPropertyProvider;
 import com.holonplatform.spring.EnvironmentConfigPropertyProvider;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestEnvironment.Config.class)
 @DirtiesContext
 public class TestEnvironment {
@@ -57,12 +60,12 @@ public class TestEnvironment {
 
 	@Test
 	public void testEnv() {
-		Assert.assertEquals("Test", provider.getProperty("test.env.str", String.class));
-		Assert.assertTrue(provider.containsProperty("test.env.str"));
-		Assert.assertFalse(provider.containsProperty("xxx"));
+		assertEquals("Test", provider.getProperty("test.env.str", String.class));
+		assertTrue(provider.containsProperty("test.env.str"));
+		assertFalse(provider.containsProperty("xxx"));
 		final List<String> pns = provider.getPropertyNames().collect(Collectors.toList());
-		Assert.assertTrue(pns.size() > 0);
-		Assert.assertTrue(pns.contains("test.env.str"));
+		assertTrue(pns.size() > 0);
+		assertTrue(pns.contains("test.env.str"));
 	}
 
 }

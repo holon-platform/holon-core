@@ -15,14 +15,15 @@
  */
 package com.holonplatform.core.test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.streams.LimitedInputStream;
-
-import static org.junit.Assert.*;
 
 public class TestLimitedInputStream {
 
