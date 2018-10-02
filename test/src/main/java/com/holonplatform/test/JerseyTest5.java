@@ -98,7 +98,7 @@ import org.junit.jupiter.api.BeforeEach;
  * </p>
  * <p>
  * If a test container factory is not explicitly declared using the appropriate constructor (see
- * {@link #JerseyTest(TestContainerFactory)}) or by overriding the {@link #getTestContainerFactory()} method, then a
+ * {@link #JerseyTest5(TestContainerFactory)}) or by overriding the {@link #getTestContainerFactory()} method, then a
  * default test container factory will be obtained as follows:
  * <ol>
  * <li>If a system property <tt>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</tt> is set and the
@@ -115,7 +115,7 @@ import org.junit.jupiter.api.BeforeEach;
  * <tt>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</tt>) directly. A
  * {@link TestContainerException} will be thrown if this class cannot be loaded or instantiated.</li>
  * </ol>
- * </p>
+ * 
  * <p>
  * The test container is configured by a {@link DeploymentContext} that is either provided by subclass or automatically
  * created by {@code JerseyTest} based on the provided JAX-RS / Jersey {@code Application} class or instance to be
@@ -127,7 +127,7 @@ import org.junit.jupiter.api.BeforeEach;
  * <li>A Servlet-based deployment context, of type {@link ServletDeploymentContext}, compatible with Servlet-based test
  * containers.</li>
  * </ol>
- * </p>
+ * 
  */
 public abstract class JerseyTest5 {
 
