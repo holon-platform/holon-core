@@ -31,7 +31,7 @@ import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.UnsupportedValidationTypeException;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.internal.BuiltinValidator;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestValidators {
 

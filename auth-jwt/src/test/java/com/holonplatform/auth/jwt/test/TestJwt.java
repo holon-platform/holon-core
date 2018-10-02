@@ -54,7 +54,7 @@ import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.auth.jwt.JwtTokenParser;
 import com.holonplatform.auth.jwt.internal.AuthenticationClaimsImpl;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;

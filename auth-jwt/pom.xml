@@ -63,6 +63,14 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<!-- Test -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

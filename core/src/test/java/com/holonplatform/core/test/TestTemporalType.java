@@ -30,8 +30,8 @@ import java.util.Date;
 
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.temporal.TemporalType;
+import com.holonplatform.test.TestUtils;
 
 public class TestTemporalType {
 

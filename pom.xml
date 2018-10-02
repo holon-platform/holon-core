@@ -100,6 +100,7 @@
 		<module>starter</module>
 		<module>starter-security</module>
 		<module>starter-test</module>
+		<module>test</module>
 		<module>bom</module>
 		<module>bom-platform</module>
 		<module>documentation</module>

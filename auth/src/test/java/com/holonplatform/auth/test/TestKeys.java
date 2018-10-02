@@ -31,7 +31,7 @@ import com.holonplatform.auth.keys.KeyEncoding;
 import com.holonplatform.auth.keys.KeyFormat;
 import com.holonplatform.auth.keys.KeyReader;
 import com.holonplatform.auth.keys.KeySource;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestKeys {
 

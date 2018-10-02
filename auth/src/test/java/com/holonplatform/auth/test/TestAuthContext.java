@@ -40,7 +40,7 @@ import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestAuthContext {
 

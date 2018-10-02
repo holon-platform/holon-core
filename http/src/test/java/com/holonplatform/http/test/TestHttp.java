@@ -27,8 +27,8 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.http.internal.HttpUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestHttp {
 

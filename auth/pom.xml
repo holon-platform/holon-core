@@ -18,12 +18,22 @@
 	<url>https://holon-platform.com</url>
 
 	<dependencies>
+
 		<!-- Holon http -->
 		<dependency>
 			<groupId>com.holon-platform.core</groupId>
 			<artifactId>holon-http</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<!-- Test -->
+		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>

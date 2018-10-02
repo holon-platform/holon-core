@@ -50,7 +50,7 @@ import com.holonplatform.auth.internal.AccountAuthenticator;
 import com.holonplatform.auth.internal.DefaultAccount;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.internal.utils.Hash;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestAccount {
 

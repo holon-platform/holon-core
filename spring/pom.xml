@@ -48,6 +48,13 @@
 
 		<!-- Test -->
 		<dependency>
+			<groupId>com.holon-platform.core</groupId>
+			<artifactId>holon-test</artifactId>
+			<version>${project.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
 			<version>${spring.version}</version>
@@ -55,14 +62,6 @@
 		</dependency>
 
 		<!-- Jersey for test -->
-
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<version>${junit.jupiter.engine.version}</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.glassfish.jersey.test-framework.providers</groupId>
 			<artifactId>jersey-test-framework-provider-grizzly2</artifactId>

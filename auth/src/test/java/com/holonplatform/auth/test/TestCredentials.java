@@ -36,7 +36,7 @@ import com.holonplatform.auth.CredentialsContainer.CredentialsMatcher;
 import com.holonplatform.auth.exceptions.UnexpectedCredentialsException;
 import com.holonplatform.auth.internal.DefaultCredentialsMatcher;
 import com.holonplatform.core.internal.utils.ConversionUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestCredentials {
 

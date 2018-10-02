@@ -15,8 +15,9 @@
  */
 package com.holonplatform.spring.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,21 +42,18 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.StreamingOutput;
 
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
 import com.holonplatform.core.internal.utils.ConversionUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.http.HttpResponse;
 import com.holonplatform.http.HttpStatus;
 import com.holonplatform.http.exceptions.UnsuccessfulResponseException;
@@ -64,10 +62,12 @@ import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.EnableBeanContext;
 import com.holonplatform.spring.SpringRestClient;
+import com.holonplatform.test.JerseyTest5;
+import com.holonplatform.test.TestUtils;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRestClient.Config.class)
-public class TestRestClient extends JerseyTest {
+public class TestRestClient extends JerseyTest5 {
 
 	@Configuration
 	@EnableBeanContext
@@ -382,7 +382,7 @@ public class TestRestClient extends JerseyTest {
 
 		byte[] bytes = ConversionUtils.convertInputStreamToBytes(s);
 		assertNotNull(s);
-		Assert.assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
+		assertTrue(Arrays.equals(new byte[] { 1, 2, 3 }, bytes));
 	}
 
 	@Test

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestAuthz {
 

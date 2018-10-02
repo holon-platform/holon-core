@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.holonplatform.core.internal.utils;
+package com.holonplatform.test;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.function.Executable;
 /**
  * Utility methods for test purposes.
  * 
- * @since 5.0.0
+ * @since 5.2.0
  */
 public final class TestUtils implements Serializable {
 
@@ -102,6 +102,11 @@ public final class TestUtils implements Serializable {
 		Assertions.assertThrows(exceptionClass, operation);
 	}
 
+	/**
+	 * Test that givne object is an instance of given type.
+	 * @param object Object to test
+	 * @param type Type to test
+	 */
 	public static void assertInstanceOf(Object object, Class<?> type) {
 		if (!type.isInstance(object)) {
 			Assertions.fail("Expected object type [" + type + "] but got type ["

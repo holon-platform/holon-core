@@ -28,7 +28,6 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.internal.property.NumericBooleanConverter;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyBox;
@@ -36,6 +35,7 @@ import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.test.TestProperty.TestEnum;
+import com.holonplatform.test.TestUtils;
 
 public class TestPropertyValueConverter {
 

@@ -45,8 +45,8 @@ import com.holonplatform.core.i18n.NumberFormatFeature;
 import com.holonplatform.core.i18n.TemporalFormat;
 import com.holonplatform.core.internal.i18n.DefaultLocalization;
 import com.holonplatform.core.internal.i18n.DefaultLocalizationContext;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.temporal.TemporalType;
+import com.holonplatform.test.TestUtils;
 
 public class TestI18n {
 

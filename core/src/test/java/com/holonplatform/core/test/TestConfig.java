@@ -34,7 +34,7 @@ import com.holonplatform.core.internal.config.DefaultConfig;
 import com.holonplatform.core.internal.config.PrefixedConfigPropertyProvider;
 import com.holonplatform.core.internal.config.PropertiesConfigProvider;
 import com.holonplatform.core.internal.utils.ClassUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestConfig {
 

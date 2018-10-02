@@ -48,7 +48,6 @@ import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.FormatUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.test.data.TestClass;
 import com.holonplatform.core.test.data.TestEnum;
@@ -56,6 +55,7 @@ import com.holonplatform.core.test.data.TestMetaAnnotated;
 import com.holonplatform.core.test.data.TestMetaAnnotated2;
 import com.holonplatform.core.test.data.TestMetaAnnotation;
 import com.holonplatform.core.test.data.TestNested;
+import com.holonplatform.test.TestUtils;
 
 /**
  * Utility classes test

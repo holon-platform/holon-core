@@ -37,8 +37,8 @@ import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.exceptions.UnsupportedMessageException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.messaging.Message;
+import com.holonplatform.test.TestUtils;
 
 public class TestMessageAuthenticator {
 

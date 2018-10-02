@@ -15,7 +15,9 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +30,6 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.i18n.Caption;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.ListPathProperty;
 import com.holonplatform.core.property.ListVirtualProperty;
 import com.holonplatform.core.property.Property;
@@ -38,6 +39,7 @@ import com.holonplatform.core.property.SetPathProperty;
 import com.holonplatform.core.property.SetVirtualProperty;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.test.data.TestPropertySet;
+import com.holonplatform.test.TestUtils;
 
 public class TestCollectionProperty {
 

@@ -42,8 +42,8 @@ import com.holonplatform.auth.Account;
 import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.token.AccountCredentialsToken;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.spring.security.SpringSecurity;
+import com.holonplatform.test.TestUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestAuthenticationProvider.Config.class)

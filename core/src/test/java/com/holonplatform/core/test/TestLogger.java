@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.Logger.Level;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 /**
  * {@link Logger} unit tests.

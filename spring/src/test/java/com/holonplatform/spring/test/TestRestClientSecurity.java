@@ -15,7 +15,7 @@
  */
 package com.holonplatform.spring.test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
@@ -27,16 +27,15 @@ import javax.ws.rs.core.Response;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import org.glassfish.jersey.test.JerseyTest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
 
 import com.holonplatform.http.HttpStatus;
@@ -44,10 +43,11 @@ import com.holonplatform.http.rest.ResponseEntity;
 import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.EnableBeanContext;
 import com.holonplatform.spring.SpringRestClient;
+import com.holonplatform.test.JerseyTest5;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRestClientSecurity.Config.class)
-public class TestRestClientSecurity extends JerseyTest {
+public class TestRestClientSecurity extends JerseyTest5 {
 
 	@Configuration
 	@EnableBeanContext

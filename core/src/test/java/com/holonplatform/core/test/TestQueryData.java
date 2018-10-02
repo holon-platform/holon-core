@@ -54,7 +54,6 @@ import com.holonplatform.core.internal.query.filter.StringMatchFilter;
 import com.holonplatform.core.internal.query.filter.StringMatchFilter.MatchMode;
 import com.holonplatform.core.internal.query.sort.MultiSort;
 import com.holonplatform.core.internal.query.sort.Sort;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.property.PathProperty;
 import com.holonplatform.core.property.PropertyBox;
 import com.holonplatform.core.property.PropertySet;
@@ -68,6 +67,7 @@ import com.holonplatform.core.test.data.TestBoxBean;
 import com.holonplatform.core.test.data.TestBoxBeanPk;
 import com.holonplatform.core.test.data.TestFilterVisitor;
 import com.holonplatform.core.test.data.TestPropertySet;
+import com.holonplatform.test.TestUtils;
 
 public class TestQueryData {
 

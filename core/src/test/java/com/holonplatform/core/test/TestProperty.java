@@ -54,7 +54,6 @@ import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.internal.beans.DefaultBeanIntrospector;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter;
 import com.holonplatform.core.internal.query.filter.OperationQueryFilter.FilterOperator;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.objects.EqualsHandler;
 import com.holonplatform.core.objects.HashCodeProvider;
@@ -87,6 +86,7 @@ import com.holonplatform.core.test.data.TestBean3;
 import com.holonplatform.core.test.data.TestIdentifiablePropertySet;
 import com.holonplatform.core.test.data.TestNested;
 import com.holonplatform.core.test.data.TestPropertySet;
+import com.holonplatform.test.TestUtils;
 
 /**
  * Property architecture test

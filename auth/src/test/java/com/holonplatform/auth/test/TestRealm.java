@@ -45,7 +45,7 @@ import com.holonplatform.auth.exceptions.UnsupportedTokenException;
 import com.holonplatform.auth.internal.DefaultPermission;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
-import com.holonplatform.core.internal.utils.TestUtils;
+import com.holonplatform.test.TestUtils;
 
 public class TestRealm {
 

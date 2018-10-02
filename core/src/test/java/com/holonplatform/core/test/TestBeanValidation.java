@@ -15,15 +15,16 @@
  */
 package com.holonplatform.core.test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
-import com.holonplatform.core.internal.utils.TestUtils;
 import com.holonplatform.core.test.data.TestBeanPropertyBean;
+import com.holonplatform.test.TestUtils;
 
 public class TestBeanValidation {
 
