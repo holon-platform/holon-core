@@ -54,7 +54,7 @@ public interface Localizable {
 		return null;
 	}
 
-	// Builder
+	// Builders
 
 	/**
 	 * Get a builder to create a {@link Localizable} instance
@@ -62,6 +62,26 @@ public interface Localizable {
 	 */
 	static LocalizableBuilder builder() {
 		return new MessageBuilder();
+	}
+
+	/**
+	 * Create a new {@link Localizable}.
+	 * @param message Default message
+	 * @param messageCode Message translation code
+	 * @param arguments Optional message translation arguments
+	 * @return A new {@link Localizable}
+	 */
+	static Localizable of(String message, String messageCode, Object... arguments) {
+		return Localizable.builder().message(message).messageCode(messageCode).messageArguments(arguments).build();
+	}
+
+	/**
+	 * Create a new {@link Localizable} with the default message only.
+	 * @param message Default message
+	 * @return A new {@link Localizable}
+	 */
+	static Localizable of(String message) {
+		return Localizable.builder().message(message).build();
 	}
 
 	/**
