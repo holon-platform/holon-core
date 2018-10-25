@@ -103,6 +103,24 @@ public final class ConversionUtils implements Serializable {
 	}
 
 	/**
+	 * Convert an {@link Iterable} to a {@link Set} which contains all Iterable elements.
+	 * @param <T> Type of the elements in the set
+	 * @param iterable Iterable to convert
+	 * @return Set of Iterable elements. If given <code>iterable</code> is <code>null</code>, an empty set is returned
+	 */
+	public static <T> Set<T> iterableAsSet(Iterable<T> iterable) {
+		if (iterable != null) {
+			if (iterable instanceof Set) {
+				return (Set<T>) iterable;
+			}
+			Set<T> set = new HashSet<>();
+			iterable.forEach(set::add);
+			return set;
+		}
+		return Collections.emptySet();
+	}
+
+	/**
 	 * Convert given {@link Enumeration} into a {@link Stream}.
 	 * @param <T> Enumeration elements type
 	 * @param e Enumeration to convert
