@@ -15,13 +15,16 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.annotation.Priority;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.internal.property.DefaultPropertyValuePresenterRegistry;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
  * A registry to register {@link PropertyValuePresenter}s bound to a condition and provide a suitable
@@ -44,10 +47,39 @@ public interface PropertyValuePresenterRegistry {
 	/**
 	 * Bind a {@link PropertyValuePresenter} to a property {@link Predicate} <code>condition</code>
 	 * @param <T> Property base type
-	 * @param condition Condition which has to be satisfied to provide the presenter (not null)
-	 * @param presenter PropertyPresenter to register (not null)
+	 * @param condition The condition which has to be satisfied to provide the presenter (not null)
+	 * @param presenter The PropertyPresenter to register (not null)
 	 */
 	<T> void register(Predicate<Property<? extends T>> condition, PropertyValuePresenter<? super T> presenter);
+
+	/**
+	 * Bind a {@link PropertyValuePresenter} to the given property. The presenter will be provided when the property to
+	 * render is the same as the given property.
+	 * @param <T> Property base type
+	 * @param property The property to present (not null)
+	 * @param presenter The PropertyPresenter to register (not null)
+	 */
+	default <T> void forProperty(Property<? extends T> property, PropertyValuePresenter<? super T> presenter) {
+		ObjectUtils.argumentNotNull(property, "Property must be not null");
+		register(p -> property.equals(p), presenter);
+	}
+
+	/**
+	 * Bind a {@link PropertyValuePresenter} to the given property configuration value. The presenter will be provided
+	 * when the property has the given <code>configurationProperty</code> and its value equals to given
+	 * <code>value</code>.
+	 * @param <T> Property base type
+	 * @param <C> Configuration property type
+	 * @param configurationProperty The configuration property to check (not null)
+	 * @param value The configuration property value to check (may be null)
+	 * @param presenter The PropertyPresenter to register (not null)
+	 */
+	default <T, C> void forPropertyConfiguration(ConfigProperty<C> configurationProperty, C value,
+			PropertyValuePresenter<? super T> presenter) {
+		ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+		register(p -> p.getConfiguration().getParameter(configurationProperty).map(v -> Objects.equals(v, value))
+				.orElse(Boolean.FALSE), presenter);
+	}
 
 	/**
 	 * Gets the {@link PropertyValuePresenter} to use with given <code>property</code> according to registered
