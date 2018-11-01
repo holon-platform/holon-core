@@ -54,7 +54,7 @@ public interface PropertyRenderer<R, T> {
 	 * @param property Property to render
 	 * @return Rendered property object according to render type
 	 */
-	R render(Property<T> property);
+	R render(Property<? extends T> property);
 
 	/**
 	 * Create a {@link PropertyRenderer} for given <code>renderingType</code> using given <code>renderer</code>
@@ -65,7 +65,7 @@ public interface PropertyRenderer<R, T> {
 	 * @param renderer Rendering function (not null)
 	 * @return The {@link PropertyRenderer} instance
 	 */
-	static <R, T> PropertyRenderer<R, T> create(Class<? extends R> renderingType, Function<Property<T>, R> renderer) {
+	static <R, T> PropertyRenderer<R, T> create(Class<? extends R> renderingType, Function<Property<? extends T>, R> renderer) {
 		return new CallbackPropertyRenderer<>(renderingType, renderer);
 	}
 

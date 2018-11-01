@@ -32,14 +32,14 @@ import com.holonplatform.core.property.PropertyRenderer;
 public class CallbackPropertyRenderer<R, T> implements PropertyRenderer<R, T> {
 
 	private final Class<? extends R> renderingType;
-	private final Function<Property<T>, R> renderer;
+	private final Function<Property<? extends T>, R> renderer;
 
 	/**
 	 * Constructor
 	 * @param renderingType Rendering type (not null)
 	 * @param renderer Rendering function (not null)
 	 */
-	public CallbackPropertyRenderer(Class<? extends R> renderingType, Function<Property<T>, R> renderer) {
+	public CallbackPropertyRenderer(Class<? extends R> renderingType, Function<Property<? extends T>, R> renderer) {
 		super();
 		ObjectUtils.argumentNotNull(renderingType, "Rendering type must be not null");
 		ObjectUtils.argumentNotNull(renderer, "Renderer function must be not null");
@@ -61,7 +61,7 @@ public class CallbackPropertyRenderer<R, T> implements PropertyRenderer<R, T> {
 	 * @see com.holonplatform.core.property.PropertyRenderer#render(com.holonplatform.core.property.Property)
 	 */
 	@Override
-	public R render(Property<T> property) {
+	public R render(Property<? extends T> property) {
 		return renderer.apply(property);
 	}
 

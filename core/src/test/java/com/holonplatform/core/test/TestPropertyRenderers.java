@@ -66,7 +66,7 @@ public class TestPropertyRenderers {
 			}
 
 			@Override
-			public RenderTest render(Property<String> property) {
+			public RenderTest render(Property<? extends String> property) {
 				return new RenderTest(box.getValue(property));
 			}
 		};

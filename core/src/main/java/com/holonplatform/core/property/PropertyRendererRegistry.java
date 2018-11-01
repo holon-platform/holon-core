@@ -51,7 +51,7 @@ public interface PropertyRendererRegistry {
 	 * @param condition The condition which has to be satisfied to provide the renderer (not null)
 	 * @param renderer The PropertyRenderer to register (not null)
 	 */
-	<R, T> void register(Predicate<Property<? extends T>> condition, PropertyRenderer<R, ? super T> renderer);
+	<R, T> void register(Predicate<Property<? extends T>> condition, PropertyRenderer<R, T> renderer);
 
 	/**
 	 * Bind a {@link PropertyRenderer} to the given property. The renderer will be provided when the property to render
@@ -61,7 +61,7 @@ public interface PropertyRendererRegistry {
 	 * @param property The property to render (not null)
 	 * @param renderer The PropertyRenderer to register (not null)
 	 */
-	default <R, T> void forProperty(Property<? extends T> property, PropertyRenderer<R, ? super T> renderer) {
+	default <R, T> void forProperty(Property<? extends T> property, PropertyRenderer<R, T> renderer) {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
 		register(p -> property.equals(p), renderer);
 	}
@@ -77,7 +77,7 @@ public interface PropertyRendererRegistry {
 	 * @param renderer The PropertyRenderer to register (not null)
 	 */
 	default <R, T, C> void forPropertyConfiguration(ConfigProperty<C> configurationProperty, C value,
-			PropertyRenderer<R, ? super T> renderer) {
+			PropertyRenderer<R, T> renderer) {
 		ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
 		register(p -> p.getConfiguration().getParameter(configurationProperty).map(v -> Objects.equals(v, value))
 				.orElse(Boolean.FALSE), renderer);
@@ -93,7 +93,7 @@ public interface PropertyRendererRegistry {
 	 * @return The {@link PropertyRenderer} to render given property as given rendering type, or an empty Optional if a
 	 *         suitable renderer is not available
 	 */
-	<R, T> Optional<PropertyRenderer<R, T>> getRenderer(Class<R> renderingType, Property<T> property);
+	<R, T> Optional<PropertyRenderer<R, T>> getRenderer(Class<R> renderingType, Property<? extends T> property);
 
 	// Builder
 

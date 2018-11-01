@@ -123,7 +123,7 @@ public class DefaultPropertyRendererRegistry implements PropertyRendererRegistry
 	 * com.holonplatform.core.property.PropertyRenderer)
 	 */
 	@Override
-	public <R, T> void register(Predicate<Property<? extends T>> condition, PropertyRenderer<R, ? super T> renderer) {
+	public <R, T> void register(Predicate<Property<? extends T>> condition, PropertyRenderer<R, T> renderer) {
 		ObjectUtils.argumentNotNull(condition, "Condition must be not null");
 		ObjectUtils.argumentNotNull(renderer, "PropertyRenderer must be not null");
 		ObjectUtils.argumentNotNull(renderer.getRenderType(), "PropertyRenderer rendering type must be not null");
@@ -142,7 +142,7 @@ public class DefaultPropertyRendererRegistry implements PropertyRendererRegistry
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	public <R, T> Optional<PropertyRenderer<R, T>> getRenderer(Class<R> renderingType, Property<T> property) {
+	public <R, T> Optional<PropertyRenderer<R, T>> getRenderer(Class<R> renderingType, Property<? extends T> property) {
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
 		ObjectUtils.argumentNotNull(renderingType, "Rendering type must be not null");
 
