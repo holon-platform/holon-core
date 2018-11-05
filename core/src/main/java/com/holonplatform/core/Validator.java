@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.LocalizationContext;
@@ -1942,6 +1943,19 @@ public interface Validator<T> extends Serializable {
 			List<String> ls = new LinkedList<>();
 			getValidationMessages().forEach(m -> ls.add(LocalizationContext.translate(m, true)));
 			return ls;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Throwable#getLocalizedMessage()
+		 */
+		@Override
+		public String getLocalizedMessage() {
+			List<Localizable> messages = getValidationMessages();
+			if (messages.size() == 1) {
+				return LocalizationContext.translate(messages.get(0), true);
+			}
+			return messages.stream().map(m -> LocalizationContext.translate(m, true)).collect(Collectors.joining(";"));
 		}
 
 	}
