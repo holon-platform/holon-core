@@ -19,7 +19,7 @@
 
 	<properties>
 		<!-- JWT -->
-		<jsonwebtoken.version>0.9.0</jsonwebtoken.version>
+		<jsonwebtoken.version>0.9.1</jsonwebtoken.version>
 
 		<!-- Jackson (provided) -->
 		<jackson.version>2.9.7</jackson.version>
