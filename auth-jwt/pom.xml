@@ -22,7 +22,7 @@
 		<jsonwebtoken.version>0.9.0</jsonwebtoken.version>
 
 		<!-- Jackson (provided) -->
-		<jackson.version>2.9.1</jackson.version>
+		<jackson.version>2.9.7</jackson.version>
 	</properties>
 
 	<dependencies>
