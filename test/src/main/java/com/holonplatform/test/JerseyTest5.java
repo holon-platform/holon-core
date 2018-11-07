@@ -383,7 +383,7 @@ public abstract class JerseyTest5 {
 	 * method must not depend on any subclass fields as those will not be initialized yet when the method is invoked.
 	 * </p>
 	 * <p>
-	 * Also note that in case the {@link #JerseyTest(javax.ws.rs.core.Application)} constructor is used, the method is
+	 * Also note that in case the {@link #JerseyTest5(javax.ws.rs.core.Application)} constructor is used, the method is
 	 * never invoked.
 	 * </p>
 	 *
@@ -409,7 +409,7 @@ public abstract class JerseyTest5 {
 	 * method must not depend on any subclass fields as those will not be initialized yet when the method is invoked.
 	 * </p>
 	 * <p>
-	 * Also note that in case the {@link #JerseyTest(javax.ws.rs.core.Application)} constructor is used, the method is
+	 * Also note that in case the {@link #JerseyTest5(javax.ws.rs.core.Application)} constructor is used, the method is
 	 * never invoked.
 	 * </p>
 	 *
@@ -423,14 +423,13 @@ public abstract class JerseyTest5 {
 	/**
 	 * Return an instance of {@link TestContainerFactory} class.
 	 * <p>
-	 * <p>
-	 * This method is used only once during {@code JerseyTest} instance construction to retrieve the factory responsible
-	 * for providing {@link org.glassfish.jersey.test.spi.TestContainer} that will be used to deploy the tested
-	 * application.
+	 * This method is used only once during {@code JerseyTest5} instance construction to retrieve the factory
+	 * responsible for providing {@link org.glassfish.jersey.test.spi.TestContainer} that will be used to deploy the
+	 * tested application.
 	 * </p>
 	 * <p>
 	 * A default implementation first searches for the {@code TestContainerFactory} set via
-	 * {@link #JerseyTest(org.glassfish.jersey.test.spi.TestContainerFactory) constructor}, then it looks for a
+	 * {@link #JerseyTest5(org.glassfish.jersey.test.spi.TestContainerFactory) constructor}, then it looks for a
 	 * {@code TestContainerFactory} implementation class name set via
 	 * <tt>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</tt> system property with a fallback to
 	 * searching for {@code TestContainerFactory} service providers on the class path. At last, if no
