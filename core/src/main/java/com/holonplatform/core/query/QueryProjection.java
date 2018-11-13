@@ -82,7 +82,7 @@ public interface QueryProjection<T> extends TypedExpression<T> {
 	 * @param selection Optional selection paths. If not provided, all valid bean property paths will be used.
 	 * @return A new bean projection
 	 */
-	static <T> QueryProjection<T> of(Class<? extends T> beanClass, Path<?>... selection) {
+	static <T> QueryProjection<T> bean(Class<? extends T> beanClass, Path<?>... selection) {
 		return new DefaultBeanProjection<>(beanClass, selection);
 	}
 
@@ -90,7 +90,7 @@ public interface QueryProjection<T> extends TypedExpression<T> {
 	 * Create a query projection to count all the query results.
 	 * @return A new <em>count all</em> query projection of {@link Long} type
 	 */
-	static QueryProjection<Long> create() {
+	static QueryProjection<Long> countAll() {
 		return new DefaultCountAllProjection();
 	}
 
