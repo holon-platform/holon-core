@@ -41,7 +41,7 @@ public interface QueryProjection<T> extends TypedExpression<T> {
 	 * @param value Constant value
 	 * @return A new constant expression projection
 	 */
-	static <T> QueryProjection<T> create(T value) {
+	static <T> QueryProjection<T> constant(T value) {
 		return new DefaultConstantExpression<>(value);
 	}
 
@@ -51,7 +51,7 @@ public interface QueryProjection<T> extends TypedExpression<T> {
 	 * @param path The {@link Path} expression (not null)
 	 * @return A new path expression projection
 	 */
-	static <T> QueryProjection<T> create(Path<T> path) {
+	static <T> QueryProjection<T> path(Path<T> path) {
 		return PathExpression.from(path);
 	}
 
