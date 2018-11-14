@@ -18,7 +18,7 @@ package com.holonplatform.core;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
@@ -1807,26 +1807,21 @@ public interface Validator<T> extends Serializable {
 		private static final long serialVersionUID = -6564869827469114206L;
 
 		/**
-		 * Localization message code
+		 * Localizable message (may be null)
 		 */
-		private final String messageCode;
-
-		/**
-		 * Localization message arguments
-		 */
-		private final Object[] messageArguments;
+		private final Localizable message;
 
 		/**
 		 * ValidationExceptions that caused this exception
 		 */
-		private ValidationException[] causes;
+		private final Collection<ValidationException> causes;
 
 		/**
 		 * Constructor with message
 		 * @param message Validation error message
 		 */
 		public ValidationException(String message) {
-			this(message, null, (Object[]) null);
+			this(Localizable.of(message), Collections.emptySet());
 		}
 
 		/**
@@ -1836,47 +1831,82 @@ public interface Validator<T> extends Serializable {
 		 * @param messageArguments Optional message localization arguments
 		 */
 		public ValidationException(String message, String messageCode, Object... messageArguments) {
-			super(message);
-			this.messageCode = messageCode;
-			this.messageArguments = messageArguments;
+			this(Localizable.builder().message(message).messageCode(messageCode).messageArguments(messageArguments)
+					.build(), Collections.emptySet());
 		}
 
 		/**
 		 * Constructor with {@link Localizable} message
-		 * @param message Validation error message (not null)
+		 * @param message Validation error message
 		 */
 		public ValidationException(Localizable message) {
-			super((message != null) ? message.getMessage() : null);
-			ObjectUtils.argumentNotNull(message, "Localizable message must be not null");
-			this.messageCode = (message != null) ? message.getMessageCode() : null;
-			this.messageArguments = (message != null) ? message.getMessageArguments() : null;
+			this(message, Collections.emptySet());
 		}
 
 		/**
-		 * Constructor with causes
+		 * Constructor with causes.
 		 * @param causes One or more {@link ValidationException}s that caused this exception
 		 */
 		public ValidationException(ValidationException... causes) {
-			super(buildMultipleMessage(causes));
-			this.messageCode = null;
-			this.messageArguments = null;
-			this.causes = causes;
+			this((Localizable) null, Arrays.asList(causes));
 		}
 
-		private static String buildMultipleMessage(ValidationException... causes) {
-			if (causes != null) {
-				StringBuilder sb = new StringBuilder();
-				for (ValidationException cause : causes) {
-					if (cause.getMessage() != null) {
-						if (sb.length() > 0) {
-							sb.append("; ");
-						}
-						sb.append(cause.getMessage());
-					}
-				}
-				return sb.toString();
+		/**
+		 * Constructor with causes.
+		 * @param causes One or more {@link ValidationException}s that caused this exception
+		 */
+		public ValidationException(Collection<ValidationException> causes) {
+			this((Localizable) null, causes);
+		}
+
+		/**
+		 * Constructor with message and causes.
+		 * @param message The validation error message
+		 * @param causes One or more {@link ValidationException}s that caused this exception
+		 */
+		public ValidationException(String message, ValidationException... causes) {
+			this(Localizable.of(message), causes);
+		}
+
+		/**
+		 * Constructor with message and causes.
+		 * @param message The validation error message
+		 * @param causes One or more {@link ValidationException}s that caused this exception
+		 */
+		public ValidationException(String message, Collection<ValidationException> causes) {
+			this(Localizable.of(message), causes);
+		}
+
+		/**
+		 * Constructor with message and causes.
+		 * @param message The validation error message
+		 * @param causes One or more {@link ValidationException}s that caused this exception
+		 */
+		public ValidationException(Localizable message, ValidationException... causes) {
+			this(message, Arrays.asList(causes));
+		}
+
+		/**
+		 * Constructor with message and causes.
+		 * @param message The validation error message
+		 * @param causes One or more {@link ValidationException}s that caused this exception
+		 */
+		public ValidationException(Localizable message, Collection<ValidationException> causes) {
+			super((message != null) ? message.getMessage() : null);
+			this.message = message;
+			this.causes = (causes != null) ? causes : Collections.emptySet();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see java.lang.Throwable#getMessage()
+		 */
+		@Override
+		public String getMessage() {
+			if (message != null) {
+				return message.getMessage();
 			}
-			return null;
+			return getCauses().stream().map(c -> c.getMessage()).collect(Collectors.joining(";"));
 		}
 
 		/*
@@ -1885,7 +1915,7 @@ public interface Validator<T> extends Serializable {
 		 */
 		@Override
 		public String getMessageCode() {
-			return messageCode;
+			return (message != null) ? message.getMessageCode() : null;
 		}
 
 		/*
@@ -1894,23 +1924,15 @@ public interface Validator<T> extends Serializable {
 		 */
 		@Override
 		public Object[] getMessageArguments() {
-			return messageArguments;
+			return (message != null) ? message.getMessageArguments() : null;
 		}
 
 		/**
 		 * Get the {@link ValidationException}s that caused this exception.
-		 * @return Array of causes, <code>null</code> if none
+		 * @return A collection of causes, empty if none
 		 */
-		public ValidationException[] getCauses() {
+		public Collection<ValidationException> getCauses() {
 			return causes;
-		}
-
-		/**
-		 * Set the {@link ValidationException}s that caused this exception
-		 * @param causes the causes to set
-		 */
-		public void setCauses(ValidationException[] causes) {
-			this.causes = causes;
 		}
 
 		/**
@@ -1919,15 +1941,7 @@ public interface Validator<T> extends Serializable {
 		 *         list with only one element which corresponds to the validation exception itself.
 		 */
 		public List<Localizable> getValidationMessages() {
-			if (causes == null || causes.length == 0) {
-				return Collections.singletonList(this);
-			} else {
-				List<Localizable> ls = new ArrayList<>(causes.length);
-				for (ValidationException cause : causes) {
-					ls.add(cause);
-				}
-				return ls;
-			}
+			return getCauses().stream().map(c -> c).collect(Collectors.toList());
 		}
 
 		/**
@@ -1940,9 +1954,7 @@ public interface Validator<T> extends Serializable {
 		 *         list with only one element which corresponds to the validation exception itself.
 		 */
 		public List<String> getLocalizedValidationMessages() {
-			List<String> ls = new LinkedList<>();
-			getValidationMessages().forEach(m -> ls.add(LocalizationContext.translate(m, true)));
-			return ls;
+			return getCauses().stream().map(c -> LocalizationContext.translate(c, true)).collect(Collectors.toList());
 		}
 
 		/*
@@ -1951,11 +1963,11 @@ public interface Validator<T> extends Serializable {
 		 */
 		@Override
 		public String getLocalizedMessage() {
-			List<Localizable> messages = getValidationMessages();
-			if (messages.size() == 1) {
-				return LocalizationContext.translate(messages.get(0), true);
+			if (message != null) {
+				return LocalizationContext.translate(message, true);
 			}
-			return messages.stream().map(m -> LocalizationContext.translate(m, true)).collect(Collectors.joining(";"));
+			return getCauses().stream().map(c -> LocalizationContext.translate(c, true))
+					.collect(Collectors.joining(";"));
 		}
 
 	}

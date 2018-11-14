@@ -56,7 +56,7 @@ public class TestBeanValidation {
 		try {
 			set.property("name").validate(null);
 		} catch (ValidationException e) {
-			assertEquals("Name is required; Name is empty", e.getMessage());
+			assertEquals("Name is required;Name is empty", e.getMessage());
 		}
 
 		set.property("text").validate("x");
