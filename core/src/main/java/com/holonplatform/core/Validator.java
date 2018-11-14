@@ -1897,6 +1897,14 @@ public interface Validator<T> extends Serializable {
 			this.causes = (causes != null) ? causes : Collections.emptySet();
 		}
 
+		/**
+		 * Get the exception localizable message, if available.
+		 * @return Optional exception localizable message
+		 */
+		public Optional<Localizable> getLocalizableMessage() {
+			return Optional.ofNullable(message);
+		}
+
 		/*
 		 * (non-Javadoc)
 		 * @see java.lang.Throwable#getMessage()
