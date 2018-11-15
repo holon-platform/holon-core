@@ -1949,19 +1949,29 @@ public interface Validator<T> extends Serializable {
 		 *         list with only one element which corresponds to the validation exception itself.
 		 */
 		public List<Localizable> getValidationMessages() {
+			if (message != null) {
+				return Collections.singletonList(message);
+			}
 			return getCauses().stream().map(c -> c).collect(Collectors.toList());
 		}
 
 		/**
-		 * Get all the localized validation error messages carried by this validation exception.
+		 * Get all the validation error messages of the validation causes, if any.
+		 * @return A list of validation error messages which correspond to inner validation exceptions, if any
+		 */
+		public List<Localizable> getCausesMessages() {
+			return getCauses().stream().map(c -> c).collect(Collectors.toList());
+		}
+
+		/**
+		 * Get all the localized validation error messages of the validation causes, if any.
 		 * <p>
 		 * For successfull localization, a {@link LocalizationContext} must be available as context resource using
 		 * {@link LocalizationContext#getCurrent()} and must be localized.
 		 * </p>
-		 * @return A list of validation error messages which correspond to inner validation exceptions, if any, or a
-		 *         list with only one element which corresponds to the validation exception itself.
+		 * @return A list of validation error messages which correspond to inner validation exceptions
 		 */
-		public List<String> getLocalizedValidationMessages() {
+		public List<String> getLocalizedCausesMessages() {
 			return getCauses().stream().map(c -> LocalizationContext.translate(c, true)).collect(Collectors.toList());
 		}
 
