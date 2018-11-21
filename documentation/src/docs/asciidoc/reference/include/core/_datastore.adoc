@@ -478,6 +478,17 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=all
 ----
 <1> Obtain all the values of the data entity represented by the `test` name as a `Map` with the entity attribute names and their values
 
+[[QueryDistinct]]
+==== Distinct query projection results
+
+The `distinct()` query builder method can be used to obtain _distinct_ query projection result values.
+
+[source, java]
+----
+include::{examplesdir}/com/holonplatform/core/examples/ExampleQuery.java[tag=distinct,indent=0]
+----
+<1> Configure the query to obtain distinct query results
+
 [[DatastoreConfiguration]]
 ==== Configuration
 
@@ -770,9 +781,11 @@ A `DatastoreCommodity` can be obtained from a `Datastore` using the `create(Clas
 
 See each concrete `Datastore` implementations documentation for further details and examples.
 
+[[AvailableDatastores]]
 ==== Available Datastores
 
 By now, the holon platform provides two default `Datastore` implementations:
 
-* link:../../holon-jdbc/overview.html[JDBC Datastore]: using the *Java Database Connectivity (JDBC)* specification to access a relational database
-* link:../../holon-jpa/overview.html[JPA Datastore]: using the *Java Persistence API* specification to access a relational database
+* link:holon-datastore-jdbc.html[JDBC Datastore]: using the *Java Database Connectivity (JDBC)* specification to access a relational database.
+* link:holon-datastore-jpa.html[JPA Datastore]: using the *Java Persistence API* specification to access a relational database.
+* link:holon-datastore-mongo.html[MongoDB Datastore]: the *MongoDB* `Datastore` implementation, providing synchronous, asynchronous and reactive programming models.

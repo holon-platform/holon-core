@@ -381,6 +381,18 @@ public class ExampleQuery {
 		// end::allprojection[]
 	}
 
+	public void distinctProjection() {
+		// tag::distinct[]
+		final StringProperty PROPERTY = StringProperty.create("test");
+
+		Datastore datastore = getDatastore(); // build or obtain a concrete Datastore implementation
+
+		Stream<String> results = datastore.query(DataTarget.named("test")) //
+				.distinct() // <1>
+				.stream(PROPERTY);
+		// end::distinct[]
+	}
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public void subquery1() {
 		// tag::subquery1[]

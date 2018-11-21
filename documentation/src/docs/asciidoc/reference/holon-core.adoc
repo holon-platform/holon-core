@@ -70,9 +70,31 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 [[WhatsNew52x]]
 == What's new in version 5.2.x
 
-=== Datastore
+*  *AsyncDatastore*:
+The new `holon-async-datastore` artifact was introduced to provide a core link:{apidir}/com/holonplatform/async/datastore/AsyncDatastore.html[AsyncDatastore^] API. The `AsyncDatastore` API provides asynchronous Datastore API operations, using the standard JVN `CompletionStage` type to provide the operations result. See <<AvailableDatastores>> to check the specific `AsyncDatastore` support.
 
-TDB
+*  *AsyncRestClient*:
+The new `holon-async-http` artifact was introduced to provide a core link:{apidir}/com/holonplatform/async/http/AsyncRestClient.html[AsyncRestClient^] API. The `AsyncRestClient` API provides asynchronous REST client API operations, using the standard JVN `CompletionStage` type to provide the operations result.
+
+* *Property model*:
+The new link:{apidir}/com/holonplatform/core/property/CollectionProperty.html[CollectionProperty^] interface was introduced to provide specific `Collection` type `Property` values, specifically using the standard `Set` and `List` collection types. See <<CollectionProperties>>.
+
+* *QueryConfigurationProvider builder*:
+A fluent builder is now available for the link:{apidir}/com/holonplatform/core/query/QueryConfigurationProvider.html[QueryConfigurationProvider^] API. The builder can be obtained using the `builder()` static method.
+
+* *Datastore Query distinct support*:
+The new `distinct()` link:{apidir}/com/holonplatform/core/query/QueryBuilder.html[QueryBuilder^] method can be used to obtain _distinct_ query projection result values. See <<QueryDistinct>>.
+
+* *Datastore Query select all projection*:
+A new link:{apidir}/com/holonplatform/core/query/SelectAllProjection.html[SelectAllProjection^] is now available to obtain all the values af a persistent data entity instance using the `Datastore` query API. See <<BuiltinQueryProjections>>.
+
+* *Datastore Query locks*:
+The new link:{apidir}/com/holonplatform/core/query/lock/LockQuery.html[LockQuery^] API is a `Datastore` query extension to provide database lock support, through the link:{apidir}/com/holonplatform/core/query/lock/LockSupport.html[LockSupport^]. Currently, only the _pessimistic_ lock mode is supported. For the query lock support availability, see the specific `Datastore` implementations documentation.
+
+* *@EnableDatastoreConfiguration annotation*:
+The link:{apidir}/com/holonplatform/spring/EnableDatastoreConfiguration.html[EnableDatastoreConfiguration^] annotation can be used on Spring configuration classes to enable a post processor for automatic `Datastore` Spring bean types configuration. See <<EnableDatastoreConfiguration>>.
+
+* The Holon Platform *Spring* and *Spring Boot* support is now targeted on the version *5.x* and *2.1.x* respectively.
 
 [[MigratingFrom51x]]
 === Migrating from version 5.1.x
@@ -83,7 +105,7 @@ TDB
 The link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionConfiguration.html[TransactionConfiguration^] API was made more abstract and implementation independent, using the link:{apidir}/com/holonplatform/core/datastore/transaction/TransactionOptions.html[TransactionOptions^] interface to represent transaction configuration options. The `TransactionOptions` has to be extended by concrete implementations to represent and provide the supported transaction configuration attributes.
 For this reason, the `com.holonplatform.core.datastore.transaction.TransactionIsolation` enumeration was moved to the *holon-jdbc* module.
 
-Furthermore, the `TransactionException` class hierarchy was moved from the  link:{apidir}/com/holonplatform/core/datastore/transaction/Transaction.html[Transaction^] interface to the new {apidir}/com/holonplatform/core/datastore/transaction/TransactionStatus.html[TransactionStatus^] interface, which represents a base transaction definition, shared with the asynchronous Datastore implementations.
+Furthermore, the `TransactionException` class hierarchy was moved from the link:{apidir}/com/holonplatform/core/datastore/transaction/Transaction.html[Transaction^] interface to the new {apidir}/com/holonplatform/core/datastore/transaction/TransactionStatus.html[TransactionStatus^] interface, which represents a base transaction definition, shared with the asynchronous Datastore implementations.
 
 [[WhatsNew51x]]
 == What's new in version 5.1.x
