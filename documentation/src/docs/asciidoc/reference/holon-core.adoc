@@ -70,6 +70,9 @@ See link:index.html#obtain-the-platform-artifacts[Obtain the platform artifacts]
 [[WhatsNew52x]]
 == What's new in version 5.2.x
 
+* *JDK 9+ module support*:
+Support for JDK 9+ module system using `Automatic-Module-Name`.
+
 *  *AsyncDatastore*:
 The new `holon-async-datastore` artifact was introduced to provide a core link:{apidir}/com/holonplatform/async/datastore/AsyncDatastore.html[AsyncDatastore^] API. The `AsyncDatastore` API provides asynchronous Datastore API operations, using the standard JVN `CompletionStage` type to provide the operations result. See <<AvailableDatastores>> to check the specific `AsyncDatastore` support.
 
