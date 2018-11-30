@@ -120,6 +120,17 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleI18n.java[tag=loca
 <3> Check the `LocalizationContext` is localized
 <4> Localize the `LocalizationContext` using a `Localization`
 
+[[LocalizationChangeListener]]
+==== Listening to localization changes
+
+The link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.LocalizationChangeListener.html[LocalizationChangeListener^] interface can be used to listen to context localization changes.
+
+The `LocalizationContext` localization, and therefore the current context `Locale`, changes when the `localize(...)` method is invoked.
+
+The `addLocalizationChangeListener(LocalizationChangeListener listener)` method, or the corresponding `withLocalizationChangeListener(LocalizationChangeListener listener)` builder method, can be used to be notified of localization changes.
+
+The `LocalizationChangeEvent` provides information about the `LocalizationContext` from which the localization change was triggered and the new `Locale` of the context, if available.
+
 ==== Using the LocalizationContext
 
 The `LocalizationContext` API provides several methods to perform localizations of messages, temporal values and numbers.

@@ -97,6 +97,9 @@ The new link:{apidir}/com/holonplatform/core/query/lock/LockQuery.html[LockQuery
 * *@EnableDatastoreConfiguration annotation*:
 The link:{apidir}/com/holonplatform/spring/EnableDatastoreConfiguration.html[EnableDatastoreConfiguration^] annotation can be used on Spring configuration classes to enable a post processor for automatic `Datastore` Spring bean types configuration. See <<EnableDatastoreConfiguration>>.
 
+* *LocalizationChangeListener*:
+The new link:{apidir}/com/holonplatform/core/i18n/LocalizationContext.LocalizationChangeListener.html[LocalizationChangeListener^] interface can be used to listen to `LocalizationContext` localization changes. See <<LocalizationChangeListener>>.
+
 * The Holon Platform *Spring* and *Spring Boot* support is now targeted on the version *5.x* and *2.1.x* respectively.
 
 [[MigratingFrom51x]]

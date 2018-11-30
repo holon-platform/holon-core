@@ -51,6 +51,8 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
  */
 public class PropertiesMessageProvider implements MessageProvider {
 
+	private static final long serialVersionUID = -3481249503207246736L;
+
 	/**
 	 * Logger
 	 */

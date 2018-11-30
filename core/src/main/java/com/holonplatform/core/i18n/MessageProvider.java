@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.i18n;
 
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -29,7 +30,7 @@ import com.holonplatform.core.internal.i18n.PropertiesMessageProvider;
  * @see LocalizationContext
  */
 @FunctionalInterface
-public interface MessageProvider {
+public interface MessageProvider extends Serializable {
 
 	/**
 	 * Default argument placeholder for message localization

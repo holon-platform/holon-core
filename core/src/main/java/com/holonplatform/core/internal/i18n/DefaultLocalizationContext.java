@@ -29,11 +29,13 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import com.holonplatform.core.Registration;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.i18n.Localization;
 import com.holonplatform.core.i18n.LocalizationContext;
 import com.holonplatform.core.i18n.MessageProvider;
+import com.holonplatform.core.i18n.MessageResolver;
 import com.holonplatform.core.i18n.NumberFormatFeature;
 import com.holonplatform.core.i18n.TemporalFormat;
 import com.holonplatform.core.internal.Logger;
@@ -57,7 +59,9 @@ import com.holonplatform.core.temporal.TemporalType;
  * 
  * @since 5.0.0
  */
-public class DefaultLocalizationContext implements LocalizationContext {
+public class DefaultLocalizationContext implements LocalizationContext, MessageResolver {
+
+	private static final long serialVersionUID = -3794760907595129503L;
 
 	/**
 	 * Logger
@@ -103,6 +107,11 @@ public class DefaultLocalizationContext implements LocalizationContext {
 	private List<MessageProvider> messageProviders = new LinkedList<>();
 
 	/**
+	 * {@link LocalizationChangeListener}s
+	 */
+	private List<LocalizationChangeListener> localizationChangeListeners = new LinkedList<>();
+
+	/**
 	 * {@link MissingMessageLocalizationListener}s
 	 */
 	private List<MissingMessageLocalizationListener> missingMessageLocalizationListeners = new LinkedList<>();
@@ -146,6 +155,15 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#asMessageResolver()
+	 */
+	@Override
+	public MessageResolver asMessageResolver() {
+		return this;
+	}
+
 	/**
 	 * Current Localization
 	 * @return Current localization for context, or <code>null</code> if none
@@ -163,6 +181,16 @@ public class DefaultLocalizationContext implements LocalizationContext {
 
 		LOGGER.debug(() -> "DefaultLocalizationContext "
 				+ ((localization == null) ? "delocalized" : "localized: [" + localization + "]"));
+
+		// fire listeners
+		fireLocalizationChangeListeners();
+	}
+
+	/**
+	 * Fire the registered {@link LocalizationChangeListener}s.
+	 */
+	protected void fireLocalizationChangeListeners() {
+		localizationChangeListeners.forEach(l -> l.onLocalizationChange(new DefaultLocalizationChangeEvent(this)));
 	}
 
 	/**
@@ -239,6 +267,18 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		dateFormatterCache.clear();
 		timeFormatterCache.clear();
 		dateTimeFormatterCache.clear();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#addLocalizationChangeListener(com.holonplatform.core.i18n.
+	 * LocalizationContext.LocalizationChangeListener)
+	 */
+	@Override
+	public Registration addLocalizationChangeListener(LocalizationChangeListener listener) {
+		ObjectUtils.argumentNotNull(listener, "LocalizationChangeListener must be not null");
+		localizationChangeListeners.add(listener);
+		return () -> localizationChangeListeners.remove(listener);
 	}
 
 	/*
@@ -594,17 +634,9 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		return formatter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessage(java.lang.String, java.lang.String,
-	 * java.lang.Object[])
-	 */
-	@Override
-	public String getMessage(String code, String defaultMessage, Object... arguments) {
-
+	protected String getMessageUsingProviders(Locale locale, String code, String defaultMessage, Object... arguments) {
+		ObjectUtils.argumentNotNull(locale, "Locale must be not null");
 		ObjectUtils.argumentNotNull(code, "Message code must be not null");
-
-		Locale locale = checkLocalized();
 
 		LOGGER.debug(
 				() -> "DefaultLocalizationContext: get message with code [" + code + "] for Locale [" + locale + "]");
@@ -626,7 +658,41 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		// fire listeners
 		fireMissingMessageLocalizationListeners(code, defaultMessage);
 
-		return resolveMessageArguments(defaultMessage, arguments);
+		if (defaultMessage != null) {
+			return resolveMessageArguments(defaultMessage, arguments);
+		}
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale, java.lang.String,
+	 * java.lang.Object[])
+	 */
+	@Override
+	public Optional<String> getMessage(Locale locale, String code, Object... arguments) {
+		return Optional.ofNullable(getMessageUsingProviders(locale, code, null, arguments));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale, java.lang.String, java.lang.String,
+	 * java.lang.Object[])
+	 */
+	@Override
+	public String getMessage(Locale locale, String code, String defaultMessage, Object... arguments) {
+		ObjectUtils.argumentNotNull(defaultMessage, "Default message must be not null");
+		return getMessageUsingProviders(locale, code, defaultMessage, arguments);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessage(java.lang.String, java.lang.String,
+	 * java.lang.Object[])
+	 */
+	@Override
+	public String getMessage(String code, String defaultMessage, Object... arguments) {
+		return getMessageUsingProviders(checkLocalized(), code, defaultMessage, arguments);
 	}
 
 	/*
@@ -859,6 +925,18 @@ public class DefaultLocalizationContext implements LocalizationContext {
 		@Override
 		public Builder messageProvider(MessageProvider messageProvider) {
 			context.addMessageProvider(messageProvider);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see
+		 * com.holonplatform.core.i18n.LocalizationContext.Builder#withLocalizationChangeListener(com.holonplatform.core
+		 * .i18n.LocalizationContext.LocalizationChangeListener)
+		 */
+		@Override
+		public Builder withLocalizationChangeListener(LocalizationChangeListener listener) {
+			context.addLocalizationChangeListener(listener);
 			return this;
 		}
 

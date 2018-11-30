@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.Registration;
 import com.holonplatform.core.i18n.Localizable;
 import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.i18n.Localization;
@@ -296,6 +297,7 @@ public class TestI18n {
 	@Test
 	public void testMessages() {
 
+		@SuppressWarnings("serial")
 		final MessageProvider mp = new MessageProvider() {
 
 			@Override
@@ -341,6 +343,7 @@ public class TestI18n {
 		m = ctx.getMessage("testarg", "dft", "ARG");
 		assertEquals("arg is ARG", m);
 
+		@SuppressWarnings("serial")
 		final MessageProvider mp2 = new MessageProvider() {
 
 			@Override
@@ -449,6 +452,55 @@ public class TestI18n {
 		v = mp.getMessage(Locale.ITALIAN, "test.msg");
 		assertTrue(v.isPresent());
 		assertEquals("Test_it", v.get());
+	}
+
+	@Test
+	public void testLocalizationChangeListeners() {
+
+		final LocaleValue lv = new LocaleValue();
+
+		LocalizationContext ctx = LocalizationContext.builder().withLocalizationChangeListener(e -> {
+			lv.locale = e.getLocale().orElse(null);
+		}).build();
+
+		assertNull(lv.locale);
+
+		ctx.localize(Locale.CANADA);
+		assertNotNull(lv.locale);
+		assertEquals(Locale.CANADA, lv.locale);
+
+		ctx.localize(Locale.ITALY);
+		assertNotNull(lv.locale);
+		assertEquals(Locale.ITALY, lv.locale);
+
+		ctx.localize((Locale) null);
+		assertNull(lv.locale);
+
+		ctx = LocalizationContext.builder().build();
+
+		Registration registration = ctx.addLocalizationChangeListener(e -> {
+			lv.locale = e.getLocale().orElse(null);
+		});
+
+		assertNull(lv.locale);
+
+		ctx.localize(Locale.CANADA);
+		assertNotNull(lv.locale);
+		assertEquals(Locale.CANADA, lv.locale);
+
+		lv.locale = null;
+
+		registration.remove();
+
+		ctx.localize(Locale.JAPAN);
+		assertNull(lv.locale);
+
+	}
+
+	static class LocaleValue {
+
+		public Locale locale;
+
 	}
 
 	@Test

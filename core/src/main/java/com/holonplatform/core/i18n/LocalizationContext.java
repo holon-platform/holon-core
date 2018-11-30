@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.i18n;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ import java.util.Locale;
 import java.util.Optional;
 
 import com.holonplatform.core.Context;
+import com.holonplatform.core.Registration;
 import com.holonplatform.core.i18n.Localizable.LocalizationException;
 import com.holonplatform.core.internal.i18n.DefaultLocalizationContext;
 import com.holonplatform.core.internal.utils.FormatUtils;
@@ -66,15 +68,15 @@ public interface LocalizationContext {
 	/**
 	 * Initialize context with given {@link Locale}, using Locale's default settings for numbers and dates formats and
 	 * symbols.
-	 * @param locale Locale
+	 * @param locale The new {@link Locale} to set, may be <code>null</code>
 	 */
 	default void localize(Locale locale) {
 		localize((locale != null) ? Localization.builder(locale).build() : null);
 	}
 
 	/**
-	 * Initialize context with given {@link Localization} informations
-	 * @param localization Localization
+	 * Initialize context with given {@link Localization} informations.
+	 * @param localization The new {@link Localization} to set, may be <code>null</code>
 	 */
 	void localize(Localization localization);
 
@@ -89,6 +91,13 @@ public interface LocalizationContext {
 	 * @return Optional message arguments placeholder
 	 */
 	Optional<String> getMessageArgumentsPlaceholder();
+
+	/**
+	 * Add a {@link LocalizationChangeListener} to listen for localization changes.
+	 * @param listener The listener to add (not null)
+	 * @return this
+	 */
+	Registration addLocalizationChangeListener(LocalizationChangeListener listener);
 
 	/**
 	 * Get a message for given <code>code</code> localized according to current Locale to which context is bound
@@ -309,7 +318,16 @@ public interface LocalizationContext {
 		return getDateTimeFormatter(type, null, null);
 	}
 
-	// Helpers
+	// ------- MessageResolver
+
+	/**
+	 * Get this localization context as a {@link MessageResolver}, which provides messages localization by
+	 * {@link Locale} using the available {@link MessageProvider}s.
+	 * @return this localization context as a {@link MessageResolver}
+	 */
+	MessageResolver asMessageResolver();
+
+	// ------- Helpers
 
 	/**
 	 * Try to translate given <code>localizable</code> using the {@link LocalizationContext} available as
@@ -422,7 +440,46 @@ public interface LocalizationContext {
 		return localizationContext;
 	}
 
-	// Listeners
+	// ------- Listeners
+
+	/**
+	 * A listener to listen for {@link LocalizationContext} localization change events.
+	 * 
+	 * @since 5.2.0
+	 */
+	@FunctionalInterface
+	public interface LocalizationChangeListener extends Serializable {
+
+		/**
+		 * Invoked when the {@link LocalizationContext} localization changes.
+		 * @param event The localization change event
+		 */
+		void onLocalizationChange(LocalizationChangeEvent event);
+
+	}
+
+	/**
+	 * A localization change event.
+	 *
+	 * @since 5.2.0
+	 */
+	public interface LocalizationChangeEvent extends Serializable {
+
+		/**
+		 * Get the {@link LocalizationContext} which triggered the localization change event.
+		 * @return the {@link LocalizationContext}
+		 */
+		LocalizationContext getSource();
+
+		/**
+		 * Get the new {@link LocalizationContext} {@link Locale}, if available.
+		 * @return Optional {@link Locale}
+		 */
+		default Optional<Locale> getLocale() {
+			return getSource().getLocale();
+		}
+
+	}
 
 	/**
 	 * A listener which can be registered to a {@link LocalizationContext} to be notified when a message translation is
@@ -431,7 +488,7 @@ public interface LocalizationContext {
 	 * @since 5.0.4
 	 */
 	@FunctionalInterface
-	public interface MissingMessageLocalizationListener {
+	public interface MissingMessageLocalizationListener extends Serializable {
 
 		/**
 		 * Triggered when a message localization is not provided by any of the {@link MessageProvider}s registered in
@@ -444,7 +501,7 @@ public interface LocalizationContext {
 
 	}
 
-	// Builder
+	// ------- Builder
 
 	/**
 	 * Builder to create LocalizationContext instances
@@ -527,6 +584,13 @@ public interface LocalizationContext {
 		 * @return this
 		 */
 		Builder messageProvider(MessageProvider messageProvider);
+
+		/**
+		 * Add a {@link LocalizationChangeListener} to listen for localization changes.
+		 * @param listener The listener to add (not null)
+		 * @return this
+		 */
+		Builder withLocalizationChangeListener(LocalizationChangeListener listener);
 
 		/**
 		 * Add a {@link MissingMessageLocalizationListener} to be notified when a message localization is not provided
