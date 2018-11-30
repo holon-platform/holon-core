@@ -476,6 +476,9 @@ public class TestI18n {
 		ctx.localize((Locale) null);
 		assertNull(lv.locale);
 
+		ctx.localize(Locale.FRANCE, false);
+		assertNull(lv.locale);
+
 		ctx = LocalizationContext.builder().build();
 
 		Registration registration = ctx.addLocalizationChangeListener(e -> {

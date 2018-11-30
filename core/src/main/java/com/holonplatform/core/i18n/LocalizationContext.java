@@ -71,14 +71,33 @@ public interface LocalizationContext {
 	 * @param locale The new {@link Locale} to set, may be <code>null</code>
 	 */
 	default void localize(Locale locale) {
-		localize((locale != null) ? Localization.builder(locale).build() : null);
+		localize(locale, true);
+	}
+
+	/**
+	 * Initialize context with given {@link Locale}, using Locale's default settings for numbers and dates formats and
+	 * symbols.
+	 * @param locale The new {@link Locale} to set, may be <code>null</code>
+	 * @param fireEvent Whether to fire the localization change event
+	 */
+	default void localize(Locale locale, boolean fireEvent) {
+		localize((locale != null) ? Localization.builder(locale).build() : null, fireEvent);
 	}
 
 	/**
 	 * Initialize context with given {@link Localization} informations.
 	 * @param localization The new {@link Localization} to set, may be <code>null</code>
 	 */
-	void localize(Localization localization);
+	default void localize(Localization localization) {
+		localize(localization, true);
+	}
+
+	/**
+	 * Initialize context with given {@link Localization} informations.
+	 * @param localization The new {@link Localization} to set, may be <code>null</code>
+	 * @param fireEvent Whether to fire the localization change event
+	 */
+	void localize(Localization localization, boolean fireEvent);
 
 	/**
 	 * Get Locale currently bound to this context, if any

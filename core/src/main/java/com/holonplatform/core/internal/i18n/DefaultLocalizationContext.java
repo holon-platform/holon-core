@@ -140,7 +140,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	public DefaultLocalizationContext(Locale locale) {
 		super();
 		if (locale != null) {
-			setLocalization(Localization.builder(locale).build());
+			setLocalization(Localization.builder(locale).build(), false);
 		}
 	}
 
@@ -151,7 +151,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	public DefaultLocalizationContext(Localization localization) {
 		super();
 		if (localization != null) {
-			setLocalization(localization);
+			setLocalization(localization, false);
 		}
 	}
 
@@ -175,15 +175,18 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	/**
 	 * Set current localization
 	 * @param localization the localization to set
+	 * @param fireEvent Whether to fire the localization change event
 	 */
-	protected void setLocalization(Localization localization) {
+	protected void setLocalization(Localization localization, boolean fireEvent) {
 		this.localization = localization;
 
 		LOGGER.debug(() -> "DefaultLocalizationContext "
 				+ ((localization == null) ? "delocalized" : "localized: [" + localization + "]"));
 
-		// fire listeners
-		fireLocalizationChangeListeners();
+		if (fireEvent) {
+			// fire listeners
+			fireLocalizationChangeListeners();
+		}
 	}
 
 	/**
@@ -292,15 +295,15 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#localize(com.holonplatform.core.i18n.Localization)
+	 * @see com.holonplatform.core.i18n.LocalizationContext#localize(com.holonplatform.core.i18n.Localization, boolean)
 	 */
 	@Override
-	public void localize(Localization localization) {
+	public void localize(Localization localization, boolean fireEvent) {
 		clearCaches();
 		if (localization != null && localization.getLocale() == null) {
 			throw new LocalizationException("Invalid Localization: missing Locale");
 		}
-		setLocalization(localization);
+		setLocalization(localization, fireEvent);
 	}
 
 	/*
@@ -841,7 +844,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 		 */
 		@Override
 		public Builder withInitialLocale(Locale locale) {
-			context.setLocalization(Localization.builder(locale).build());
+			context.setLocalization(Localization.builder(locale).build(), false);
 			return this;
 		}
 
@@ -851,7 +854,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 		 */
 		@Override
 		public Builder withInitialLocalization(Localization localization) {
-			context.setLocalization(localization);
+			context.setLocalization(localization, false);
 			return this;
 		}
 
@@ -861,7 +864,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 		 */
 		@Override
 		public Builder withInitialSystemLocale() {
-			context.setLocalization(Localization.builder(Locale.getDefault()).build());
+			context.setLocalization(Localization.builder(Locale.getDefault()).build(), false);
 			return this;
 		}
 
