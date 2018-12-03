@@ -82,7 +82,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a character
 	 */
 	public static boolean isCharacter(Class<?> type) {
-		return type != null && Character.class.isAssignableFrom(type) || char.class == type;
+		return type != null && (Character.class.isAssignableFrom(type) || char.class == type);
 	}
 
 	/**
@@ -148,7 +148,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is an integer
 	 */
 	public static boolean isInteger(Class<?> type) {
-		return type != null && Integer.class.isAssignableFrom(type) || int.class == type;
+		return type != null && (Integer.class.isAssignableFrom(type) || int.class == type);
 	}
 
 	/**
@@ -157,7 +157,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a long
 	 */
 	public static boolean isLong(Class<?> type) {
-		return type != null && Long.class.isAssignableFrom(type) || long.class == type;
+		return type != null && (Long.class.isAssignableFrom(type) || long.class == type);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a short
 	 */
 	public static boolean isShort(Class<?> type) {
-		return type != null && Short.class.isAssignableFrom(type) || short.class == type;
+		return type != null && (Short.class.isAssignableFrom(type) || short.class == type);
 	}
 
 	/**
@@ -175,7 +175,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a byte
 	 */
 	public static boolean isByte(Class<?> type) {
-		return type != null && Byte.class.isAssignableFrom(type) || byte.class == type;
+		return type != null && (Byte.class.isAssignableFrom(type) || byte.class == type);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a double
 	 */
 	public static boolean isDouble(Class<?> type) {
-		return type != null && Double.class.isAssignableFrom(type) || double.class == type;
+		return type != null && (Double.class.isAssignableFrom(type) || double.class == type);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a float
 	 */
 	public static boolean isFloat(Class<?> type) {
-		return type != null && Float.class.isAssignableFrom(type) || float.class == type;
+		return type != null && (Float.class.isAssignableFrom(type) || float.class == type);
 	}
 
 	/**
@@ -211,7 +211,7 @@ public final class TypeUtils implements Serializable {
 	 * @return <code>true</code> if it is a boolean
 	 */
 	public static boolean isBoolean(Class<?> type) {
-		return type != null && Boolean.class.isAssignableFrom(type) || boolean.class == type;
+		return type != null && (Boolean.class.isAssignableFrom(type) || boolean.class == type);
 	}
 
 	/**
