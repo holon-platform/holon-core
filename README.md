@@ -22,7 +22,7 @@ See the module [documentation](https://docs.holon-platform.com/current/reference
 
 Just like any other platform module, this artifact is part of the [Holon Platform](https://holon-platform.com) ecosystem, but can be also used as a _stand-alone_ library.
 
-See the [platform documentation](https://docs.holon-platform.com/current/reference) for further details.
+See [Getting started](#getting-started) and the [platform documentation](https://docs.holon-platform.com/current/reference) for further details.
 
 ## Code structure
 
