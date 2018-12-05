@@ -43,6 +43,31 @@ public interface Subject {
 }
 ```
 
+_Property configuration:_
+```java
+static StringProperty NAME = StringProperty.create("name").message("Name").messageCode("localization.name")
+			.configuration("my-config", "my-value");
+```
+
+_Property value converter:_
+```java
+static StringProperty INTEGER_MODEL = StringProperty.create("integer_value").converter(Integer.class,
+			integer -> String.valueOf(integer), string -> Integer.valueOf(string));
+```
+
+_PropertyBox:_
+```java
+PropertyBox propertyBox = PropertyBox.create(SUBJECT);
+		
+String name = propertyBox.getValue(NAME);
+Optional<String> oname = propertyBox.getValueIfPresent(NAME);
+propertyBox.setValue(NAME, "John");
+propertyBox.propertyValues().forEach(propertyValue -> {
+	Property<?> property = propertyValue.getProperty();
+	Object value = propertyValue.getValue();
+});
+```
+
 
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
 
