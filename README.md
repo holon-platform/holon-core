@@ -86,7 +86,7 @@ DataTarget<?> TARGET = DataTarget.named("subjects");
 Datastore datastore = getDatastore();
 
 Stream<PropertyBox> results = datastore.query().target(TARGET)
-				.filter(NAME.contains("a").and(SURNAME.isNotNull())).sort(BIRTH.desc()).stream(SUBJECT);
+	.filter(NAME.contains("a").and(SURNAME.isNotNull())).sort(BIRTH.desc()).stream(SUBJECT);
 
 Stream<String> names = datastore.query(TARGET).aggregate(SURNAME).stream(NAME.max());
 
