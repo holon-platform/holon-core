@@ -165,6 +165,24 @@ Optional<PropertyBox> propertyBox = client.request().path("test2")
 				.propertySet(PROPERTIES).getForEntity(PropertyBox.class); 
 ```
 
+_LocalizationContext:_
+```java
+LocalizationContext localizationContext = LocalizationContext.builder()
+	.messageProvider(MessageProvider.fromProperties("messages").build())
+	.withDefaultDateTemporalFormat(TemporalFormat.MEDIUM)
+	.withInitialLocale(Locale.US)
+	.build();
+		
+localizationContext.localize(Locale.ITALY);
+		
+String localized = localizationContext.getMessage("message.code", "Default message");
+		
+String formatted = localizationContext.format(LocalDate.now());
+formatted = localizationContext.format(123.4d);
+		
+Optional<LocalizationContext> current = LocalizationContext.getCurrent();
+```
+
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
 
 ## Code structure
