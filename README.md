@@ -98,7 +98,7 @@ datastore.bulkUpdate(TARGET).set(ACTIVE, true).filter(BIRTH.lt(LocalDate.now()))
 datastore.query(TARGET).filter(ID.eq(1L)).findOne(SUBJECT).ifPresent(subject -> datastore.delete(TARGET, subject));
 ```
 
-_Bean PropertySet:_
+_Bean PropertySet and Datastore:_
 ```java
 class MyBean {
 	private @NotNull Long id;
@@ -117,6 +117,28 @@ BeanDatastore datastore = BeanDatastore.of(getDatastore());
 Stream<MyBean> results = datastore.query(MyBean.class).filter(propertySet.property("name").eq("John")).stream();
 		
 datastore.save(new MyBean());
+```
+
+_Realm:_
+```java
+Realm realm = Realm.builder().authenticator(Authenticator.create(MyAuthenticationToken.class, token -> {
+	if ("test".equals(token.getPrincipal())) {
+		return Authentication.builder("test").permission("ROLE1").build();
+	}
+	throw new UnknownAccountException();
+}))
+.withDefaultAuthorizer().build();
+
+Realm.builder().authenticator(Account.authenticator(id -> Optional.of(Account.builder(id).build()))).build();
+```
+
+_AuthContext:_
+```java
+AuthContext context = AuthContext.create(realm);
+context.authenticate(AuthenticationToken.accountCredentials("test", "pwd"));
+		
+Optional<Authentication> authentication = context.getAuthentication();
+boolean permitted = context.isPermitted("ROLE1", "ROLE2");
 ```
 
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
