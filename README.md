@@ -80,6 +80,23 @@ propertyBox.propertyValues().forEach(propertyValue -> {
 });
 ```
 
+_Datastore:_
+```java
+DataTarget<?> TARGET = DataTarget.named("subjects");
+Datastore datastore = getDatastore();
+
+Stream<PropertyBox> results = datastore.query().target(TARGET)
+				.filter(NAME.contains("a").and(SURNAME.isNotNull())).sort(BIRTH.desc()).stream(SUBJECT);
+
+Stream<String> names = datastore.query(TARGET).aggregate(SURNAME).stream(NAME.max());
+
+Optional<String> name = datastore.query(TARGET).filter(ID.eq(1L)).findOne(NAME);
+
+datastore.insert(TARGET, PropertyBox.builder(SUBJECT).set(ID, 1L).set(NAME, "John").set(ACTIVE, true).build());
+datastore.bulkUpdate(TARGET).set(ACTIVE, true).filter(BIRTH.lt(LocalDate.now())).execute();
+
+datastore.query(TARGET).filter(ID.eq(1L)).findOne(SUBJECT).ifPresent(subject -> datastore.delete(TARGET, subject));
+```
 
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
 
