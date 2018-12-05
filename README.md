@@ -24,6 +24,28 @@ Just like any other platform module, this artifact is part of the [Holon Platfor
 
 See [Getting started](#getting-started) and the [platform documentation](https://docs.holon-platform.com/current/reference) for further details.
 
+## At-a-glance overview
+
+_Property model definition:_
+```java
+public interface Subject {
+
+	static NumericProperty<Long> ID = NumericProperty.longType("id");
+	static StringProperty NAME = StringProperty.create("name");
+	static StringProperty SURNAME = StringProperty.create("surname");
+	static TemporalProperty<LocalDate> BIRTH = TemporalProperty.localDate("birth");
+	static BooleanProperty ACTIVE = BooleanProperty.create("active");
+	static VirtualProperty<String> FULL_NAME = VirtualProperty.create(String.class,
+			propertyBox -> propertyBox.getValue(NAME) + " " + propertyBox.getValue(SURNAME));
+	
+	static PropertySet<?> SUBJECT = PropertySet.of(ID, NAME, SURNAME, BIRTH, ACTIVE, FULL_NAME);
+
+}
+```
+
+
+See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
+
 ## Code structure
 
 See [Holon Platform code structure and conventions](https://github.com/holon-platform/platform/blob/master/CODING.md) to learn about the _"real Java API"_ philosophy with which the project codebase is developed and organized.
