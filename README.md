@@ -141,6 +141,30 @@ Optional<Authentication> authentication = context.getAuthentication();
 boolean permitted = context.isPermitted("ROLE1", "ROLE2");
 ```
 
+_RestClient:_
+```java
+RestClient client = RestClient.forTarget("https://rest.api.example");
+		
+ResponseEntity<TestData> response = client.request()
+	.path("test/{id}").resolve("id", 123)
+	.accept(MediaType.APPLICATION_JSON)
+	.header("MY_HEADER", "my-value")
+	.authorizationBearer("An389fz56xsr7")
+	.get(TestData.class);
+HttpStatus status = response.getStatus();
+Optional<TestData> payload = response.getPayload();
+		
+Optional<TestData> data = client.request().path("test/{id}").resolve("id", 123)
+				.getForEntity(TestData.class);
+		
+List<TestData> results = client.request().path("test").getAsList(TestData.class);
+		
+client.request().path("test").post(RequestEntity.json(new TestData()));
+		
+Optional<PropertyBox> propertyBox = client.request().path("test2")
+				.propertySet(PROPERTIES).getForEntity(PropertyBox.class); 
+```
+
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
 
 ## Code structure
