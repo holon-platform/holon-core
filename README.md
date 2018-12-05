@@ -55,6 +55,12 @@ static StringProperty INTEGER_MODEL = StringProperty.create("integer_value").con
 			integer -> String.valueOf(integer), string -> Integer.valueOf(string));
 ```
 
+_Property validators:_
+```java
+static StringProperty NAME = StringProperty.create("name")
+			.validator(Validator.notBlank()).validator(Validator.max(50));
+```
+
 _PropertyBox:_
 ```java
 PropertyBox propertyBox = PropertyBox.create(SUBJECT);
