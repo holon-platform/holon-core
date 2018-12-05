@@ -61,6 +61,12 @@ static StringProperty NAME = StringProperty.create("name")
 			.validator(Validator.notBlank()).validator(Validator.max(50));
 ```
 
+_Property presenters and renderers:_
+```java
+String value = NAME.present("A value");
+MyType myType = NAME.render(MyType.class);
+```
+
 _PropertyBox:_
 ```java
 PropertyBox propertyBox = PropertyBox.create(SUBJECT);
