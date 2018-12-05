@@ -98,6 +98,27 @@ datastore.bulkUpdate(TARGET).set(ACTIVE, true).filter(BIRTH.lt(LocalDate.now()))
 datastore.query(TARGET).filter(ID.eq(1L)).findOne(SUBJECT).ifPresent(subject -> datastore.delete(TARGET, subject));
 ```
 
+_Bean PropertySet:_
+```java
+class MyBean {
+	private @NotNull Long id;
+	private @Caption("The name") String name;
+	private @Caption("The surname") String surname;
+	/* getters and setters omitted */
+}
+
+BeanPropertySet<MyBean> propertySet = BeanPropertySet.create(MyBean.class);
+		
+PathProperty<?> name = propertySet.property("name");
+PathProperty<String> typedName = propertySet.property("name", String.class);
+		
+BeanDatastore datastore = BeanDatastore.of(getDatastore());
+		
+Stream<MyBean> results = datastore.query(MyBean.class).filter(propertySet.property("name").eq("John")).stream();
+		
+datastore.save(new MyBean());
+```
+
 See the [module documentation](https://docs.holon-platform.com/current/reference/holon-core.html) for the user guide and a full set of examples.
 
 ## Code structure
