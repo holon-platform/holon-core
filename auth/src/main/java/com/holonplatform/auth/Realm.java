@@ -192,7 +192,7 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 		 * Add an {@link AuthenticationTokenResolver} to translate {@link Message}s into {@link AuthenticationToken}s.
 		 * @param authenticationTokenResolver The {@link AuthenticationTokenResolver} to add (not null)
 		 * @return this
-		 * @deprecated Use {@link #withResolver(AuthenticationTokenResolver)}
+		 * @deprecated Use withResolver(AuthenticationTokenResolver)
 		 */
 		@Deprecated
 		default Builder resolver(AuthenticationTokenResolver<?> authenticationTokenResolver) {
@@ -247,7 +247,7 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 		 * Register an {@link AuthenticationListener} for authentication events
 		 * @param authenticationListener The AuthenticationListener to register
 		 * @return this
-		 * @deprecated Use {@link #withAuthenticationListener(AuthenticationListener)}
+		 * @deprecated Use withAuthenticationListener(AuthenticationListener)
 		 */
 		@Deprecated
 		default Builder listener(AuthenticationListener authenticationListener) {

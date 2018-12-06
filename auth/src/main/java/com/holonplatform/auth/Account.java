@@ -199,7 +199,7 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @param property ConfigProperty to use as detail key (not null)
 		 * @param value Detail value
 		 * @return this
-		 * @deprecated Use {@link #withdetail(ConfigProperty, Object)}
+		 * @deprecated Use {@link #withDetail(ConfigProperty, Object)}
 		 */
 		@Deprecated
 		default <T> Builder detail(ConfigProperty<T> property, T value) {
