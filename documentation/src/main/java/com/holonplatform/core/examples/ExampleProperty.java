@@ -96,8 +96,8 @@ public class ExampleProperty {
 		Property.Builder<String, Property<String>, ?> builder = getPropertyBuilder();
 
 		builder.temporalType(TemporalType.DATE_TIME) // <1>
-				.configuration("myAttribute", "myValue") // <2>
-				.configuration(EXAMPLE_CFG, 7L); // <3>
+				.withConfiguration("myAttribute", "myValue") // <2>
+				.withConfiguration(EXAMPLE_CFG, 7L); // <3>
 
 		PropertyConfiguration cfg = aProperty().getConfiguration(); // <4>
 		Optional<String> value1 = cfg.getParameter("myAttribute", String.class); // <5>
@@ -166,15 +166,15 @@ public class ExampleProperty {
 		// tag::validators[]
 		Property.Builder<Integer, Property<Integer>, ?> builder = getPropertyBuilder();
 
-		builder.validator(Validator.notNull()) // <1>
-				.validator(Validator.lessThan(10)); // <2>
+		builder.withValidator(Validator.notNull()) // <1>
+				.withValidator(Validator.lessThan(10)); // <2>
 		// end::validators[]
 	}
 
 	// tag::pathproperty[]
 	public final static PathProperty<Long> ID = PathProperty.create("id", Long.class) // <1>
-			.configuration("test", 1) // <2>
-			.validator(Validator.notNull()) // <3>
+			.withConfiguration("test", 1) // <2>
+			.withValidator(Validator.notNull()) // <3>
 			.message("Identifier") // <4>
 			.messageCode("property.id"); // <5>
 
@@ -276,8 +276,8 @@ public class ExampleProperty {
 
 	public void propertyBox2() {
 		// tag::propertybox2[]
-		final PathProperty<Long> ID = PathProperty.create("id", Long.class).validator(Validator.notNull()); // <1>
-		final StringProperty NAME = StringProperty.create("name").validator(Validator.notBlank()); // <2>
+		final PathProperty<Long> ID = PathProperty.create("id", Long.class).withValidator(Validator.notNull()); // <1>
+		final StringProperty NAME = StringProperty.create("name").withValidator(Validator.notBlank()); // <2>
 
 		final PropertySet<?> PROPERTIES = PropertySet.of(ID, NAME);
 

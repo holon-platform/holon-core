@@ -62,13 +62,13 @@ public class TestAuthContext {
 			public Authentication authenticate(AccountCredentialsToken authenticationToken)
 					throws AuthenticationException {
 				if ("usr".equals(authenticationToken.getPrincipal())) {
-					return Authentication.builder("usr").permission(p1).permission(p2).build();
+					return Authentication.builder("usr").withPermission(p1).withPermission(p2).build();
 				}
 				throw new UnknownAccountException("usr");
 			}
 		};
 
-		Realm realm = Realm.builder().name("realm").authenticator(authenticator).withDefaultAuthorizer().build();
+		Realm realm = Realm.builder().name("realm").withAuthenticator(authenticator).withDefaultAuthorizer().build();
 
 		AuthContext ctx = AuthContext.create(realm);
 
@@ -137,7 +137,7 @@ public class TestAuthContext {
 
 		ctx2.removeAuthenticationListener(ls);
 
-		realm = Realm.builder().authenticator(authenticator).build();
+		realm = Realm.builder().withAuthenticator(authenticator).build();
 
 		final AuthContext dctx = AuthContext.create(realm);
 
@@ -171,7 +171,7 @@ public class TestAuthContext {
 		};
 
 		AuthContext ctx = AuthContext.create(
-				Realm.builder().name("realm").authenticator(authenticator).withDefaultAuthorizer().build(),
+				Realm.builder().name("realm").withAuthenticator(authenticator).withDefaultAuthorizer().build(),
 				new AuthenticationHolder() {
 
 					@Override
@@ -236,12 +236,13 @@ public class TestAuthContext {
 		final AtomicInteger counter = new AtomicInteger(0);
 		final AtomicInteger realmCounter = new AtomicInteger(0);
 
-		final Realm realm = Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
-			if ("myself".equals(token.getPrincipal())) {
-				return Authentication.builder("myself").build();
-			}
-			throw new UnknownAccountException("" + token.getPrincipal());
-		})).listener(authc -> realmCounter.incrementAndGet()).build();
+		final Realm realm = Realm.builder()
+				.withAuthenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+					if ("myself".equals(token.getPrincipal())) {
+						return Authentication.builder("myself").build();
+					}
+					throw new UnknownAccountException("" + token.getPrincipal());
+				})).withAuthenticationListener(authc -> realmCounter.incrementAndGet()).build();
 
 		final AuthContext ctx = AuthContext.create(realm);
 
@@ -280,8 +281,8 @@ public class TestAuthContext {
 
 		final Realm realm = Realm.builder().withDefaultAuthorizer().build();
 
-		final Authentication authc = Authentication.builder("myself").permission(new MyPermission("r1"))
-				.permission(new MyPermission("r2")).build();
+		final Authentication authc = Authentication.builder("myself").withPermission(new MyPermission("r1"))
+				.withPermission(new MyPermission("r2")).build();
 
 		final MyPermission mp1 = new MyPermission("r1");
 		final MyPermission mp2 = new MyPermission("r2");
@@ -299,10 +300,10 @@ public class TestAuthContext {
 		assertTrue(realm.isPermittedAny(authc, permissions));
 
 		final AuthContext ctx = AuthContext
-				.create(Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+				.create(Realm.builder().withAuthenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
 					if ("myself".equals(token.getPrincipal())) {
-						return Authentication.builder("myself").permission(new MyPermission("r1"))
-								.permission(new MyPermission("r2")).build();
+						return Authentication.builder("myself").withPermission(new MyPermission("r1"))
+								.withPermission(new MyPermission("r2")).build();
 					}
 					throw new UnknownAccountException("" + token.getPrincipal());
 				})).withDefaultAuthorizer().build());

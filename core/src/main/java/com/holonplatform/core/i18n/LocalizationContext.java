@@ -598,11 +598,22 @@ public interface LocalizationContext {
 		Builder messageArgumentsPlaceholder(String placeholder);
 
 		/**
+		 * Add a {@link MessageProvider} for messages localization.
+		 * @param messageProvider The MessageProvider to add
+		 * @return this
+		 */
+		Builder withMessageProvider(MessageProvider messageProvider);
+
+		/**
 		 * Add a MessageProvider for messages localization
 		 * @param messageProvider MessageProvider to add
 		 * @return this
+		 * @deprecated Use {@link #withMessageProvider(MessageProvider)}
 		 */
-		Builder messageProvider(MessageProvider messageProvider);
+		@Deprecated
+		default Builder messageProvider(MessageProvider messageProvider) {
+			return withMessageProvider(messageProvider);
+		}
 
 		/**
 		 * Add a {@link LocalizationChangeListener} to listen for localization changes.

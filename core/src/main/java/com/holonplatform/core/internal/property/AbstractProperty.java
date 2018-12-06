@@ -160,12 +160,12 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.Property.Builder#configuration(java.lang.String, java.lang.Object)
+	 * @see com.holonplatform.core.property.Property.Builder#withConfiguration(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public B configuration(String name, Object value) {
-		ObjectUtils.argumentNotNull(name, "Configuration parameter name must be not null");
-		configuration.addParameter(name, value);
+	public B withConfiguration(String parameterName, Object value) {
+		ObjectUtils.argumentNotNull(parameterName, "Configuration parameter name must be not null");
+		configuration.addParameter(parameterName, value);
 		return getActualBuilder();
 	}
 
@@ -247,10 +247,10 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.ModelProperty.Builder#validator(com.holonplatform.core.validator.Validator)
+	 * @see com.holonplatform.core.property.Property.Builder#withValidator(com.holonplatform.core.Validator)
 	 */
 	@Override
-	public B validator(Validator<T> validator) {
+	public B withValidator(Validator<T> validator) {
 		addValidator(validator);
 		return getActualBuilder();
 	}
@@ -426,13 +426,13 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 		// converter
 		getConverter().ifPresent(c -> builder.converter(c));
 		// validators
-		getValidators().forEach(v -> builder.validator(v));
+		getValidators().forEach(v -> builder.withValidator(v));
 		// identity
 		getHashCodeProvider().ifPresent(h -> builder.hashCodeProvider(h));
 		getEqualsHandler().ifPresent(h -> builder.equalsHandler(h));
 		// configuration
 		getConfiguration().getTemporalType().ifPresent(t -> builder.temporalType(t));
-		getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
+		getConfiguration().forEachParameter((n, v) -> builder.withConfiguration(n, v));
 	}
 
 	/*

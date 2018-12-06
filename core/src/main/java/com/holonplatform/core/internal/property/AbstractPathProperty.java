@@ -85,7 +85,7 @@ public abstract class AbstractPathProperty<T, P extends PathProperty<T>, B exten
 	 */
 	@Override
 	public B dataPath(String dataPath) {
-		return configuration(DataMappable.PATH, dataPath);
+		return withConfiguration(DataMappable.PATH, dataPath);
 	}
 
 	/*

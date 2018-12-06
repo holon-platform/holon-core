@@ -78,7 +78,7 @@ public class TestJwt {
 		final JwtAuthenticator jwtAuthenticator = JwtAuthenticator.builder()
 				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").build();
 
-		final Realm realm = Realm.builder().authenticator(jwtAuthenticator).build();
+		final Realm realm = Realm.builder().withAuthenticator(jwtAuthenticator).build();
 
 		final Authentication authc = Authentication.builder("testuser").build();
 
@@ -94,14 +94,15 @@ public class TestJwt {
 		});
 
 		final JwtAuthenticator jwtAuthenticator2 = JwtAuthenticator.builder()
-				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").requiredClaim("testReq").build();
+				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").withRequiredClaim("testReq")
+				.build();
 
 		TestUtils.expectedException(InvalidTokenException.class, () -> {
 			String tjwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc);
-			Realm.builder().authenticator(jwtAuthenticator2).build().authenticate(AuthenticationToken.bearer(tjwt));
+			Realm.builder().withAuthenticator(jwtAuthenticator2).build().authenticate(AuthenticationToken.bearer(tjwt));
 		});
 
-		final Authentication authc2 = Authentication.builder("testuser").parameter("testReq", "VAL").build();
+		final Authentication authc2 = Authentication.builder("testuser").withParameter("testReq", "VAL").build();
 		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").includeDetails(true).build(),
 				authc2);
 
@@ -158,7 +159,7 @@ public class TestJwt {
 
 		final JwtConfiguration cfg = JwtConfiguration.builder().includeDetails(true).includePermissions(true).build();
 
-		Authentication authc = Authentication.builder("testuser").parameter("test", "value").permission("rolex")
+		Authentication authc = Authentication.builder("testuser").withParameter("test", "value").withPermission("rolex")
 				.build();
 
 		String jwt = JwtTokenBuilder.get().buildJwt(cfg, authc);
@@ -183,7 +184,7 @@ public class TestJwt {
 	public void testJWTAuthentication_unsigned() throws Exception {
 
 		final Realm realm = Realm.builder()
-				.authenticator(JwtAuthenticator.builder().configuration(JwtConfiguration.builder().build()).build())
+				.withAuthenticator(JwtAuthenticator.builder().configuration(JwtConfiguration.builder().build()).build())
 				.build();
 
 		Authentication authc = Authentication.builder("testuser").build();
@@ -232,7 +233,7 @@ public class TestJwt {
 		permissions.add(p2);
 		permissions.add(p3);
 
-		authc = Authentication.builder("testuser").permission(p1).permission(p2).permission(p3).build();
+		authc = Authentication.builder("testuser").withPermission(p1).withPermission(p2).withPermission(p3).build();
 
 		jwt = JwtTokenBuilder.get().buildJwt(
 				JwtConfiguration.builder().issuer("TestUnit").expireTime(10000L).includePermissions(true).build(),
@@ -249,8 +250,8 @@ public class TestJwt {
 
 		// with details
 
-		authc = Authentication.builder("testuser").parameter("testd", 1).permission(p1).permission(p2).permission(p3)
-				.build();
+		authc = Authentication.builder("testuser").withParameter("testd", 1).withPermission(p1).withPermission(p2)
+				.withPermission(p3).build();
 
 		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").expireTime(10000L)
 				.includeDetails(true).includePermissions(true).build(), authc, id);
@@ -276,7 +277,7 @@ public class TestJwt {
 		JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(key.getEncoded()).build();
 
-		Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
+		Realm realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
 
 		final Authentication authc = Authentication.builder("testuser").root(true).build();
 
@@ -312,7 +313,7 @@ public class TestJwt {
 		cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKeyBase64(Base64.getEncoder().encodeToString(key.getEncoded())).build();
 
-		realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
+		realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
 
 		jwt = JwtTokenBuilder.get().buildJwt(
 				JwtConfiguration.builder().issuer("TestUnit").expireTime(20000L)
@@ -336,7 +337,7 @@ public class TestJwt {
 
 		cfg = JwtConfiguration.build(jcfg);
 
-		realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
+		realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder().configuration(cfg).build()).build();
 
 		jwt = JwtTokenBuilder.get().buildJwt(
 				JwtConfiguration.builder().issuer("TestUnit").expireTime(20000L).includePermissions(true)
@@ -364,7 +365,7 @@ public class TestJwt {
 		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.RS256)
 				.privateKey(privateKey).publicKey(publicKey).build();
 
-		final Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build())
+		final Realm realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder().configuration(cfg).build())
 				.build();
 
 		Authentication authc = Authentication.builder("testuser").root(true).build();
@@ -391,11 +392,11 @@ public class TestJwt {
 		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(sharedKey).build();
 
-		final Realm realm = Realm.builder().authenticator(JwtAuthenticator.builder().configuration(cfg).build())
+		final Realm realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder().configuration(cfg).build())
 				.withDefaultAuthorizer().build();
 
-		Authentication authc = Authentication.builder("testuser").root(true).parameter("language", "it")
-				.permission(Permission.create("RoleX")).build();
+		Authentication authc = Authentication.builder("testuser").root(true).withParameter("language", "it")
+				.withPermission(Permission.create("RoleX")).build();
 
 		String jwt = JwtTokenBuilder.get()
 				.buildJwt(JwtConfiguration.builder().issuer("TestUnit").expireTime(2000000L).includeDetails(true)

@@ -273,21 +273,21 @@ public class DefaultParameterSet implements MutableParameterSet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.parameters.ParameterSetBuilder#addParameter(java.lang.String, java.lang.Object)
+		 * @see com.holonplatform.core.ParameterSet.Builder#withParameter(java.lang.String, java.lang.Object)
 		 */
 		@Override
-		public B parameter(String name, Object value) {
+		public Builder<S> withParameter(String name, Object value) {
 			instance.addParameter(name, value);
 			return builder();
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.parameters.ParameterSet.Builder#parameter(com.holonplatform.core.config.
-		 * ConfigProperty, java.lang.Object)
+		 * @see com.holonplatform.core.ParameterSet.Builder#withParameter(com.holonplatform.core.config.ConfigProperty,
+		 * java.lang.Object)
 		 */
 		@Override
-		public <T> B parameter(ConfigProperty<T> property, T value) {
+		public <T> Builder<S> withParameter(ConfigProperty<T> property, T value) {
 			ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
 			instance.addParameter(property.getKey(), value);
 			return builder();
@@ -295,10 +295,10 @@ public class DefaultParameterSet implements MutableParameterSet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.parameters.ParameterSet.Builder#parameters(java.util.Map)
+		 * @see com.holonplatform.core.ParameterSet.Builder#withParameters(java.util.Map)
 		 */
 		@Override
-		public B parameters(Map<String, Object> parameters) {
+		public Builder<S> withParameters(Map<String, Object> parameters) {
 			if (parameters != null) {
 				parameters.forEach((n, v) -> instance.addParameter(n, v));
 			}
@@ -307,11 +307,10 @@ public class DefaultParameterSet implements MutableParameterSet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.parameters.ParameterSet.Builder#parameters(com.holonplatform.core.parameters.
-		 * ParameterSet)
+		 * @see com.holonplatform.core.ParameterSet.Builder#withParameters(com.holonplatform.core.ParameterSet)
 		 */
 		@Override
-		public B parameters(ParameterSet parameters) {
+		public Builder<S> withParameters(ParameterSet parameters) {
 			if (parameters != null) {
 				parameters.forEachParameter((n, v) -> instance.addParameter(n, v));
 			}

@@ -150,7 +150,7 @@ public class TestPropertyPresenters {
 
 		registry.register(p -> p.getConfiguration().hasNotNullParameter("testpar"), (p, v) -> "TEST_PRS");
 
-		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).configuration("testpar", "x");
+		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).withConfiguration("testpar", "x");
 
 		assertEquals("1", prp.present(1));
 

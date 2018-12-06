@@ -57,8 +57,8 @@ public class TestAuthc {
 
 		assertNotNull(a1.toString());
 
-		Authentication authc = Authentication.builder("test").parameter("d1", "test").parameter("d2", Long.valueOf(1L))
-				.build();
+		Authentication authc = Authentication.builder("test").withParameter("d1", "test")
+				.withParameter("d2", Long.valueOf(1L)).build();
 
 		assertTrue(authc.getParameter("d1", String.class).isPresent());
 		assertEquals("test", authc.getParameter("d1", String.class).get());

@@ -63,7 +63,7 @@ public class TestAccount {
 		details.put("testS", "string");
 
 		Account act = Account.builder("test").enabled(true).expired(false).locked(false).details(details)
-				.detail("testI", Integer.valueOf(1)).permission("p1").permission("p2")
+				.withDetail("testI", Integer.valueOf(1)).withPermission("p1").withPermission("p2")
 				.credentials(Credentials.builder().secret("secret").hashAlgorithm("SHA-256").hashIterations(1).build())
 				.build();
 
@@ -95,7 +95,7 @@ public class TestAccount {
 		Object creds = Credentials.builder().secret("secret").hashAlgorithm("SHA-256").hashIterations(1).build();
 
 		Account actx = Account.builder("test").root(true).credentials(creds).permissions(Collections.singleton(p1))
-				.permission(p2).build();
+				.withPermission(p2).build();
 
 		assertTrue(actx.isRoot());
 		assertTrue(actx.isEnabled());
@@ -112,7 +112,7 @@ public class TestAccount {
 		assertNull(crdx.getSalt());
 		assertEquals(1, crdx.getHashIterations());
 
-		Account act2 = Account.builder("test").detail("test", "val").build();
+		Account act2 = Account.builder("test").withDetail("test", "val").build();
 		assertNotNull(act2.getDetails());
 
 		assertNotNull(act2.toString());

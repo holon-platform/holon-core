@@ -61,8 +61,8 @@ public class ExampleConfig {
 		// tag::params[]
 		final ConfigProperty<String> property = ConfigProperty.create("test", String.class);
 
-		ParameterSet set = ParameterSet.builder().parameter("testParameter", 1L) // <1>
-				.parameter(property, "testValue") // <2>
+		ParameterSet set = ParameterSet.builder().withParameter("testParameter", 1L) // <1>
+				.withParameter(property, "testValue") // <2>
 				.build();
 
 		boolean present = set.hasParameter("testParameter"); // <3>

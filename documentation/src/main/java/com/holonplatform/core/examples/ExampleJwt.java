@@ -68,7 +68,7 @@ public class ExampleJwt {
 		// tag::build2[]
 		JwtConfiguration configuration = JwtConfiguration.builder().includePermissions(true).build(); // <1>
 
-		Authentication authc = Authentication.builder("test").permission("role1").permission("role2").build(); // <2>
+		Authentication authc = Authentication.builder("test").withPermission("role1").withPermission("role2").build(); // <2>
 
 		String jwt = JwtTokenBuilder.get().buildJwt(configuration, authc); // <3>
 		// end::build2[]
@@ -78,7 +78,7 @@ public class ExampleJwt {
 		// tag::build3[]
 		JwtConfiguration configuration = JwtConfiguration.builder().includeDetails(true).build(); // <1>
 
-		Authentication authc = Authentication.builder("test").parameter("name", "John").build(); // <2>
+		Authentication authc = Authentication.builder("test").withParameter("name", "John").build(); // <2>
 
 		String jwt = JwtTokenBuilder.get().buildJwt(configuration, authc); // <3>
 		// end::build3[]
@@ -113,17 +113,17 @@ public class ExampleJwt {
 		// JWT authenticator
 		JwtAuthenticator jwtAuthenticator = JwtAuthenticator.builder().configuration(configuration) // <2>
 				.issuer("allowedIssuer") // <3>
-				.requiredClaim("myClaim") // <4>
+				.withRequiredClaim("myClaim") // <4>
 				.build();
 
 		// Realm
-		Realm realm = Realm.builder().authenticator(jwtAuthenticator) // <5>
+		Realm realm = Realm.builder().withAuthenticator(jwtAuthenticator) // <5>
 				.withDefaultAuthorizer().build();
 
 		Authentication authc = realm.authenticate(AuthenticationToken.bearer("TheJWTtokenHere...")); // <6>
 
-		realm = Realm.builder().authenticator(jwtAuthenticator) //
-				.resolver(AuthenticationToken.httpBearerResolver()) // <7>
+		realm = Realm.builder().withAuthenticator(jwtAuthenticator) //
+				.withResolver(AuthenticationToken.httpBearerResolver()) // <7>
 				.withDefaultAuthorizer().build();
 
 		HttpRequest request = obtainHttpRequest();

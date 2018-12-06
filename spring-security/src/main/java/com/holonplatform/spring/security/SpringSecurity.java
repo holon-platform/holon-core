@@ -114,9 +114,9 @@ public interface SpringSecurity {
 	static AuthContext authContext(AuthenticationManager authenticationManager,
 			boolean accountCredentialsAuthenticator) {
 		final Realm.Builder realm = Realm.builder().withDefaultAuthorizer()
-				.authenticator(authenticator(authenticationManager));
+				.withAuthenticator(authenticator(authenticationManager));
 		if (accountCredentialsAuthenticator) {
-			realm.authenticator(accountCredentialsAuthenticator(authenticationManager));
+			realm.withAuthenticator(accountCredentialsAuthenticator(authenticationManager));
 		}
 		return AuthContext.create(realm.build(), new SpringSecurityAuthenticationHolder());
 	}

@@ -107,10 +107,10 @@ public class TestAuthContext {
 		// reset context
 		SecurityContextHolder.getContext().setAuthentication(null);
 
-		final Realm realm = Realm.builder().withDefaultAuthorizer().authenticator(Account.authenticator(id -> {
+		final Realm realm = Realm.builder().withDefaultAuthorizer().withAuthenticator(Account.authenticator(id -> {
 			if ("usr".equals(id)) {
 				return Optional.of(Account.builder(id).credentials(Credentials.builder().secret("pwd").build())
-						.permission("role1").build());
+						.withPermission("role1").build());
 			}
 			return Optional.empty();
 		})).build();

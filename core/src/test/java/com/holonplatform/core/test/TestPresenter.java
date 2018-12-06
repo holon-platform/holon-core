@@ -51,7 +51,7 @@ public class TestPresenter {
 				() -> {
 
 					final ParameterSet params = ParameterSet.builder()
-							.parameter(StringValuePresenter.DECIMAL_POSITIONS, 2).build();
+							.withParameter(StringValuePresenter.DECIMAL_POSITIONS, 2).build();
 
 					assertEquals("7", presenter.present(7, params));
 					assertEquals("1.300", presenter.present(1300, params));
@@ -65,8 +65,8 @@ public class TestPresenter {
 					assertEquals("isFalse", presenter.present(Boolean.class, (Boolean) null));
 
 					final ParameterSet params2 = ParameterSet.builder()
-							.parameter(StringValuePresenter.DECIMAL_POSITIONS, 2)
-							.parameter(StringValuePresenter.DISABLE_GROUPING, true).build();
+							.withParameter(StringValuePresenter.DECIMAL_POSITIONS, 2)
+							.withParameter(StringValuePresenter.DISABLE_GROUPING, true).build();
 
 					assertEquals("3500,00", presenter.present(3500d, params2));
 					assertEquals("3500,42", presenter.present(3500.42d, params2));
@@ -75,7 +75,7 @@ public class TestPresenter {
 
 		assertNull(presenter.present(null));
 		assertNull(presenter.present((Object) null,
-				ParameterSet.builder().parameter(StringValuePresenter.DECIMAL_POSITIONS, 2).build()));
+				ParameterSet.builder().withParameter(StringValuePresenter.DECIMAL_POSITIONS, 2).build()));
 
 	}
 

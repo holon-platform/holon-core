@@ -49,9 +49,9 @@ public class DefaultPropertyValuePresenter<T> implements PropertyValuePresenter<
 		ObjectUtils.argumentNotNull(property, "Property must be not null");
 
 		// check TemporalType
-		ParameterSet.Builder<?> builder = ParameterSet.builder().parameters(property.getConfiguration());
+		ParameterSet.Builder<?> builder = ParameterSet.builder().withParameters(property.getConfiguration());
 		property.getConfiguration().getTemporalType()
-				.ifPresent(t -> builder.parameter(StringValuePresenter.TEMPORAL_TYPE, t));
+				.ifPresent(t -> builder.withParameter(StringValuePresenter.TEMPORAL_TYPE, t));
 		final ParameterSet parameters = builder.build();
 
 		// check collection property

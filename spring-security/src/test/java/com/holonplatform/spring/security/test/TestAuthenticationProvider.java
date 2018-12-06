@@ -58,11 +58,11 @@ public class TestAuthenticationProvider {
 			return id -> {
 				if ("u1".equals(id)) {
 					return Optional.of(Account.builder(id).credentials(Credentials.builder().secret(id).build())
-							.permission("view").build());
+							.withPermission("view").build());
 				}
 				if ("u2".equals(id)) {
 					return Optional.of(Account.builder(id).credentials(Credentials.builder().secret(id).build())
-							.permission("view").permission("manage").build());
+							.withPermission("view").withPermission("manage").build());
 				}
 				if ("u3".equals(id)) {
 					return Optional.of(Account.builder(id).credentials(Credentials.builder().secret(id).build())

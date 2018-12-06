@@ -34,6 +34,7 @@ import com.holonplatform.auth.exceptions.UnexpectedAuthenticationException;
 import com.holonplatform.auth.exceptions.UnsupportedMessageException;
 import com.holonplatform.auth.exceptions.UnsupportedPermissionException;
 import com.holonplatform.auth.exceptions.UnsupportedTokenException;
+import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.messaging.Message;
 
@@ -166,7 +167,8 @@ public class DefaultRealm implements Realm {
 	 */
 	@Override
 	public <T extends AuthenticationToken> void addAuthenticator(Authenticator<T> authenticator) {
-		if (authenticator != null && !getAuthenticators().contains(authenticator)) {
+		ObjectUtils.argumentNotNull(authenticator, "Authenticator must be not null");
+		if (!getAuthenticators().contains(authenticator)) {
 			getAuthenticators().add(authenticator);
 		}
 	}
@@ -241,8 +243,8 @@ public class DefaultRealm implements Realm {
 	 */
 	@Override
 	public void addAuthenticationTokenResolver(AuthenticationTokenResolver<?> authenticationTokenResolver) {
-		if (authenticationTokenResolver != null
-				&& !getAuthenticationTokenResolvers().contains(authenticationTokenResolver)) {
+		ObjectUtils.argumentNotNull(authenticationTokenResolver, "AuthenticationTokenResolver must be not null");
+		if (!getAuthenticationTokenResolvers().contains(authenticationTokenResolver)) {
 			getAuthenticationTokenResolvers().add(authenticationTokenResolver);
 		}
 	}
@@ -364,7 +366,8 @@ public class DefaultRealm implements Realm {
 	 */
 	@Override
 	public <P extends Permission> void addAuthorizer(Authorizer<P> authorizer) {
-		if (authorizer != null && !getAuthorizers().contains(authorizer)) {
+		ObjectUtils.argumentNotNull(authorizer, "Authorizer must be not null");
+		if (!getAuthorizers().contains(authorizer)) {
 			getAuthorizers().add(authorizer);
 		}
 	}
@@ -493,12 +496,11 @@ public class DefaultRealm implements Realm {
 	 */
 	@Override
 	public void addAuthenticationListener(AuthenticationListener authenticationListener) {
-		if (authenticationListener != null) {
-			if (authenticationListeners == null) {
-				authenticationListeners = new LinkedList<>();
-			}
-			authenticationListeners.add(authenticationListener);
+		ObjectUtils.argumentNotNull(authenticationListener, "AuthenticationListener must be not null");
+		if (authenticationListeners == null) {
+			authenticationListeners = new LinkedList<>();
 		}
+		authenticationListeners.add(authenticationListener);
 	}
 
 	/*
@@ -570,31 +572,31 @@ public class DefaultRealm implements Realm {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.RealmBuilder#authenticator(com.holonplatform.auth.Authenticator)
+		 * @see com.holonplatform.auth.Realm.Builder#withAuthenticator(com.holonplatform.auth.Authenticator)
 		 */
 		@Override
-		public <T extends AuthenticationToken> Builder authenticator(Authenticator<T> authenticator) {
+		public <T extends AuthenticationToken> Builder withAuthenticator(Authenticator<T> authenticator) {
 			this.realm.addAuthenticator(authenticator);
 			return this;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.auth.internal.RealmBuilder#resolver(com.holonplatform.auth.AuthenticationTokenResolver)
+		 * @see com.holonplatform.auth.Realm.Builder#withResolver(com.holonplatform.auth.AuthenticationToken.
+		 * AuthenticationTokenResolver)
 		 */
 		@Override
-		public Builder resolver(AuthenticationTokenResolver<?> authenticationTokenResolver) {
+		public Builder withResolver(AuthenticationTokenResolver<?> authenticationTokenResolver) {
 			this.realm.addAuthenticationTokenResolver(authenticationTokenResolver);
 			return this;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.RealmBuilder#authorizer(com.holonplatform.auth.Authorizer)
+		 * @see com.holonplatform.auth.Realm.Builder#withAuthorizer(com.holonplatform.auth.Authorizer)
 		 */
 		@Override
-		public <P extends Permission> Builder authorizer(Authorizer<P> authorizer) {
+		public <P extends Permission> Builder withAuthorizer(Authorizer<P> authorizer) {
 			this.realm.addAuthorizer(authorizer);
 			return this;
 		}
@@ -611,10 +613,11 @@ public class DefaultRealm implements Realm {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.RealmBuilder#listener(com.holonplatform.auth.AuthenticationListener)
+		 * @see com.holonplatform.auth.Realm.Builder#withAuthenticationListener(com.holonplatform.auth.Authentication.
+		 * AuthenticationListener)
 		 */
 		@Override
-		public Builder listener(AuthenticationListener authenticationListener) {
+		public Builder withAuthenticationListener(AuthenticationListener authenticationListener) {
 			this.realm.addAuthenticationListener(authenticationListener);
 			return this;
 		}

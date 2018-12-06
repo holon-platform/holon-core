@@ -57,8 +57,8 @@ public class ExampleI18n {
 	public void contextbuild() {
 		// tag::ctxbuild[]
 		LocalizationContext localizationContext = LocalizationContext.builder()
-				.messageProvider(MessageProvider.fromProperties("messages").build()) // <1>
-				.messageProvider(MessageProvider.fromProperties("messages2").build()) // <2>
+				.withMessageProvider(MessageProvider.fromProperties("messages").build()) // <1>
+				.withMessageProvider(MessageProvider.fromProperties("messages2").build()) // <2>
 				.messageArgumentsPlaceholder("$") // <3>
 				.withDefaultDateTemporalFormat(TemporalFormat.MEDIUM) // <4>
 				.withDefaultTimeTemporalFormat(TemporalFormat.FULL) // <5>
@@ -87,7 +87,7 @@ public class ExampleI18n {
 	public void localization() {
 		// tag::localization[]
 		LocalizationContext ctx = LocalizationContext.builder()
-				.messageProvider(MessageProvider.fromProperties("messages").build()).withInitialLocale(Locale.US)
+				.withMessageProvider(MessageProvider.fromProperties("messages").build()).withInitialLocale(Locale.US)
 				.build();
 
 		ctx.getLocale().ifPresent(l -> System.out.println(l)); // <1>

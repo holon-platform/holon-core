@@ -93,12 +93,24 @@ public interface Authentication extends Principal, ParameterSet {
 		Builder root(boolean root);
 
 		/**
-		 * Add an authentication parameter
+		 * Add an authentication parameter.
 		 * @param name Parameter name (not null)
 		 * @param value Parameter value
 		 * @return this
 		 */
-		Builder parameter(String name, Object value);
+		Builder withParameter(String name, Object value);
+
+		/**
+		 * Add an authentication parameter
+		 * @param name Parameter name (not null)
+		 * @param value Parameter value
+		 * @return this
+		 * @deprecated Use {@link #withParameter(String, Object)}
+		 */
+		@Deprecated
+		default Builder parameter(String name, Object value) {
+			return withParameter(name, value);
+		}
 
 		/**
 		 * Add an authentication parameter using a {@link ConfigProperty} an {@link ConfigProperty#getKey()} as
@@ -108,21 +120,57 @@ public interface Authentication extends Principal, ParameterSet {
 		 * @param value Parameter value
 		 * @return this
 		 */
-		<T> Builder parameter(ConfigProperty<T> property, T value);
+		<T> Builder withParameter(ConfigProperty<T> property, T value);
+
+		/**
+		 * Add an authentication parameter using a {@link ConfigProperty} an {@link ConfigProperty#getKey()} as
+		 * parameter name
+		 * @param <T> Property type
+		 * @param property ConfigProperty to obtain parameter name (not null)
+		 * @param value Parameter value
+		 * @return this
+		 * @deprecated Use {@link #withParameter(ConfigProperty, Object)}
+		 */
+		@Deprecated
+		default <T> Builder parameter(ConfigProperty<T> property, T value) {
+			return withParameter(property, value);
+		}
 
 		/**
 		 * Add a permission granted to Authentication
 		 * @param permission Permission to add (not null)
 		 * @return this
 		 */
-		Builder permission(Permission permission);
+		Builder withPermission(Permission permission);
+
+		/**
+		 * Add a permission granted to Authentication
+		 * @param permission Permission to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withPermission(Permission)}
+		 */
+		@Deprecated
+		default Builder permission(Permission permission) {
+			return withPermission(permission);
+		}
 
 		/**
 		 * Add a permission granted to Authentication using String representation.
 		 * @param permission Permission string to add (not null)
 		 * @return this
 		 */
-		Builder permission(String permission);
+		Builder withPermission(String permission);
+
+		/**
+		 * Add a permission granted to Authentication using String representation.
+		 * @param permission Permission string to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withPermission(String)}
+		 */
+		@Deprecated
+		default Builder permission(String permission) {
+			return withPermission(permission);
+		}
 
 		/**
 		 * Create Authentication instance
@@ -152,13 +200,13 @@ public interface Authentication extends Principal, ParameterSet {
 	public interface AuthenticationNotifier {
 
 		/**
-		 * Register an AuthenticationListener
-		 * @param authenticationListener Listener to add
+		 * Register an {@link AuthenticationListener}.
+		 * @param authenticationListener The listener to add (not null)
 		 */
 		void addAuthenticationListener(AuthenticationListener authenticationListener);
 
 		/**
-		 * Removes a registered AuthenticationListener
+		 * Removes a registered {@link AuthenticationListener}.
 		 * @param authenticationListener Listener to remove
 		 */
 		void removeAuthenticationListener(AuthenticationListener authenticationListener);

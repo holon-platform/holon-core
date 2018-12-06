@@ -54,17 +54,17 @@ public class ExampleRealm {
 	public void builder() {
 		// tag::builder[]
 		Realm realm = Realm.builder() // <1>
-				.authenticator(AUTHENTICATOR1) // <2>
-				.authenticator(AUTHENTICATOR2) // <3>
-				.authorizer(AUTHORIZER1) // <4>
-				.authorizer(AUTHORIZER2) // <5>
+				.withAuthenticator(AUTHENTICATOR1) // <2>
+				.withAuthenticator(AUTHENTICATOR2) // <3>
+				.withAuthorizer(AUTHORIZER1) // <4>
+				.withAuthorizer(AUTHORIZER2) // <5>
 				.build();
 		// end::builder[]
 	}
 
 	public void builder2() {
 		// tag::builder2[]
-		Realm realm = Realm.builder().authenticator(AUTHENTICATOR1).build(); // <1>
+		Realm realm = Realm.builder().withAuthenticator(AUTHENTICATOR1).build(); // <1>
 
 		realm.addAuthenticator(AUTHENTICATOR2); // <2>
 		// end::builder2[]
@@ -72,7 +72,7 @@ public class ExampleRealm {
 
 	public void builder3() {
 		// tag::builder3[]
-		Realm realm = Realm.builder().authorizer(AUTHORIZER1).build(); // <1>
+		Realm realm = Realm.builder().withAuthorizer(AUTHORIZER1).build(); // <1>
 
 		realm.addAuthorizer(AUTHORIZER2); // <2>
 		// end::builder3[]
@@ -130,7 +130,7 @@ public class ExampleRealm {
 	}
 
 	public void authenticate() {
-		Realm realm = Realm.builder().authenticator(new MyAuthenticator()).build(); // <4>
+		Realm realm = Realm.builder().withAuthenticator(new MyAuthenticator()).build(); // <4>
 
 		try {
 			Authentication authc = realm.authenticate(new MyAuthenticationToken("test")); // <5>
@@ -216,10 +216,10 @@ public class ExampleRealm {
 	public void authentication() {
 		// tag::authentication[]
 		Authentication authc = Authentication.builder("userId") // <1>
-				.permission("VIEW") // <2>
-				.permission(new MyPermission()) // <3>
-				.parameter("name", "John") // <4>
-				.parameter("surname", "Doe") // <5>
+				.withPermission("VIEW") // <2>
+				.withPermission(new MyPermission()) // <3>
+				.withParameter("name", "John") // <4>
+				.withParameter("surname", "Doe") // <5>
 				.scheme("myscheme") // <6>
 				.build();
 		// end::authentication[]
@@ -284,8 +284,8 @@ public class ExampleRealm {
 		// end::tokenresolver[]
 
 		// tag::realmmsg[]
-		Realm realm = Realm.builder().resolver(myResolver) // <1>
-				.authenticator(new MyAuthenticator()) // <2>
+		Realm realm = Realm.builder().withResolver(myResolver) // <1>
+				.withAuthenticator(new MyAuthenticator()) // <2>
 				.build();
 
 		MyMessage message = new MyMessage();
@@ -307,8 +307,8 @@ public class ExampleRealm {
 		// tag::basicresolver[]
 		AccountProvider accountProvider = getAccountProvider();
 
-		Realm realm = Realm.builder().resolver(AuthenticationToken.httpBasicResolver()) // <1>
-				.authenticator(Account.authenticator(accountProvider)) // <2>
+		Realm realm = Realm.builder().withResolver(AuthenticationToken.httpBasicResolver()) // <1>
+				.withAuthenticator(Account.authenticator(accountProvider)) // <2>
 				.build();
 
 		// obtain the HttpRequest message, for example using a servlet request
@@ -342,7 +342,7 @@ public class ExampleRealm {
 		final Permission p1 = Permission.create("role1"); // <1>
 		final Permission p2 = Permission.create("role2"); // <2>
 
-		Authentication authc = Authentication.builder("test").permission(p1).permission(p2).build(); // <3>
+		Authentication authc = Authentication.builder("test").withPermission(p1).withPermission(p2).build(); // <3>
 
 		// Realm with default authorizer
 		Realm realm = Realm.builder().withDefaultAuthorizer().build(); // <4>

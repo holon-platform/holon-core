@@ -181,8 +181,8 @@ public class AccountAuthenticator implements Authenticator<AccountCredentialsTok
 	 * @param account Account data
 	 */
 	protected void processAuthentication(Authentication.Builder authentication, Account account) {
-		account.getDetails().forEach((k, v) -> authentication.parameter(k, v));
-		account.getPermissions().forEach(p -> authentication.permission(p));
+		account.getDetails().forEach((k, v) -> authentication.withParameter(k, v));
+		account.getPermissions().forEach(p -> authentication.withPermission(p));
 	}
 
 }

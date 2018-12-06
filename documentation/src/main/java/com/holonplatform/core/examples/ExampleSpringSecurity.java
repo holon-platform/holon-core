@@ -66,10 +66,10 @@ public class ExampleSpringSecurity {
 	public void authContext2() {
 		// tag::authcontext2[]
 
-		final Realm realm = Realm.builder().withDefaultAuthorizer().authenticator(Account.authenticator(id -> { // <1>
+		final Realm realm = Realm.builder().withDefaultAuthorizer().withAuthenticator(Account.authenticator(id -> { // <1>
 			if ("usr".equals(id)) {
 				return Optional.of(Account.builder(id).credentials(Credentials.builder().secret("pwd").build())
-						.permission("role1").build());
+						.withPermission("role1").build());
 			}
 			return Optional.empty();
 		})).build();
@@ -108,7 +108,7 @@ public class ExampleSpringSecurity {
 		AuthenticationManager authenticationManager = getAuthenticationManager(); // <1>
 
 		Realm realm = Realm.builder().withDefaultAuthorizer()
-				.authenticator(SpringSecurity.authenticator(authenticationManager)) // <2>
+				.withAuthenticator(SpringSecurity.authenticator(authenticationManager)) // <2>
 				.build();
 
 		Authentication authc = realm.authenticate(SpringSecurityAuthenticationToken.account("user", "pwd1")); // <3>
@@ -135,11 +135,11 @@ public class ExampleSpringSecurity {
 			return id -> {
 				if ("usr1".equals(id)) {
 					return Optional.of(Account.builder(id).credentials(Credentials.builder().secret("pwd1").build())
-							.permission("view").build());
+							.withPermission("view").build());
 				}
 				if ("usr2".equals(id)) {
 					return Optional.of(Account.builder(id).credentials(Credentials.builder().secret("pwd2").build())
-							.permission("view").permission("manage").build());
+							.withPermission("view").withPermission("manage").build());
 				}
 				return Optional.empty();
 			};

@@ -87,7 +87,7 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 	/**
 	 * Add a concrete {@link Authenticator} for a specific {@link AuthenticationToken} type to this Realm
 	 * @param <T> Authentication token type
-	 * @param authenticator Authenticator to add
+	 * @param authenticator The {@link Authenticator} to add (not null)
 	 */
 	<T extends AuthenticationToken> void addAuthenticator(Authenticator<T> authenticator);
 
@@ -101,7 +101,7 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 	/**
 	 * Add and {@link Authorizer} to support a specific {@link Permission} type
 	 * @param <P> Permission type
-	 * @param authorizer Authorizer to add
+	 * @param authorizer The {@link Authorizer} to add (not null)
 	 */
 	<P extends Permission> void addAuthorizer(Authorizer<P> authorizer);
 
@@ -159,17 +159,45 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 		 * using {@link Realm#authenticate(AuthenticationToken)}.
 		 * </p>
 		 * @param <T> Authentication token type
-		 * @param authenticator Authenticator to add
+		 * @param authenticator The {@link Authenticator} to add (not null)
 		 * @return this
 		 */
-		<T extends AuthenticationToken> Builder authenticator(Authenticator<T> authenticator);
+		<T extends AuthenticationToken> Builder withAuthenticator(Authenticator<T> authenticator);
+
+		/**
+		 * Register given {@link Authenticator} in Realm.
+		 * <p>
+		 * Registered Authenticators will be inspected in the order they were added to Realm to find the first one which
+		 * is consistent with the {@link AuthenticationToken} type to process during authentication operations performed
+		 * using {@link Realm#authenticate(AuthenticationToken)}.
+		 * </p>
+		 * @param <T> Authentication token type
+		 * @param authenticator Authenticator to add
+		 * @return this
+		 * @deprecated Use {@link #withAuthenticator(Authenticator)}
+		 */
+		@Deprecated
+		default <T extends AuthenticationToken> Builder authenticator(Authenticator<T> authenticator) {
+			return withAuthenticator(authenticator);
+		}
 
 		/**
 		 * Add an {@link AuthenticationTokenResolver} to translate {@link Message}s into {@link AuthenticationToken}s.
 		 * @param authenticationTokenResolver Resolver to add
 		 * @return this
 		 */
-		Builder resolver(AuthenticationTokenResolver<?> authenticationTokenResolver);
+		Builder withResolver(AuthenticationTokenResolver<?> authenticationTokenResolver);
+
+		/**
+		 * Add an {@link AuthenticationTokenResolver} to translate {@link Message}s into {@link AuthenticationToken}s.
+		 * @param authenticationTokenResolver The {@link AuthenticationTokenResolver} to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withResolver(AuthenticationTokenResolver)}
+		 */
+		@Deprecated
+		default Builder resolver(AuthenticationTokenResolver<?> authenticationTokenResolver) {
+			return withResolver(authenticationTokenResolver);
+		}
 
 		/**
 		 * Register given {@link Authorizer} in Realm.
@@ -182,7 +210,24 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 		 * @param authorizer Authorizer to add
 		 * @return this
 		 */
-		<P extends Permission> Builder authorizer(Authorizer<P> authorizer);
+		<P extends Permission> Builder withAuthorizer(Authorizer<P> authorizer);
+
+		/**
+		 * Register given {@link Authorizer} in Realm.
+		 * <p>
+		 * Registered Authorizers will be inspected in the order they were added to Realm to find the first one which is
+		 * consistent with the {@link Permission} type to process during authorization checking performed using
+		 * <code>isPermitted</code> methods.
+		 * </p>
+		 * @param <P> Permission type
+		 * @param authorizer The {@link Authorizer} to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withAuthorizer(Authorizer)}
+		 */
+		@Deprecated
+		default <P extends Permission> Builder authorizer(Authorizer<P> authorizer) {
+			return withAuthorizer(authorizer);
+		}
 
 		/**
 		 * Register the default {@link Authorizer}
@@ -192,11 +237,22 @@ public interface Realm extends Authenticator<AuthenticationToken>, Authorizer<Pe
 		Builder withDefaultAuthorizer();
 
 		/**
-		 * Register an AuthenticationListener for authentication events
-		 * @param authenticationListener AuthenticationListener to register
+		 * Register an {@link AuthenticationListener} for authentication events
+		 * @param authenticationListener The AuthenticationListener to register (not null)
 		 * @return this
 		 */
-		Builder listener(AuthenticationListener authenticationListener);
+		Builder withAuthenticationListener(AuthenticationListener authenticationListener);
+
+		/**
+		 * Register an {@link AuthenticationListener} for authentication events
+		 * @param authenticationListener The AuthenticationListener to register
+		 * @return this
+		 * @deprecated Use {@link #withAuthenticationListener(AuthenticationListener)}
+		 */
+		@Deprecated
+		default Builder listener(AuthenticationListener authenticationListener) {
+			return withAuthenticationListener(authenticationListener);
+		}
 
 		/**
 		 * Build {@link Realm} instance

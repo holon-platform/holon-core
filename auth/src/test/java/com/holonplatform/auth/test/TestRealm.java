@@ -77,7 +77,7 @@ public class TestRealm {
 			public Authentication authenticate(AccountCredentialsToken authenticationToken)
 					throws AuthenticationException {
 				if ("usr".equals(authenticationToken.getPrincipal())) {
-					return Authentication.builder("usr").permission("p1").permission("p2").build();
+					return Authentication.builder("usr").withPermission("p1").withPermission("p2").build();
 				}
 				throw new UnknownAccountException("usr");
 			}
@@ -163,12 +163,13 @@ public class TestRealm {
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
-		final Realm realm = Realm.builder().authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
-			if ("myself".equals(token.getPrincipal())) {
-				return Authentication.builder("myself").build();
-			}
-			throw new UnknownAccountException("" + token.getPrincipal());
-		})).build();
+		final Realm realm = Realm.builder()
+				.withAuthenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+					if ("myself".equals(token.getPrincipal())) {
+						return Authentication.builder("myself").build();
+					}
+					throw new UnknownAccountException("" + token.getPrincipal());
+				})).build();
 
 		realm.addAuthenticationListener(authc -> counter.incrementAndGet());
 
@@ -241,9 +242,9 @@ public class TestRealm {
 			}
 		};
 
-		final Realm realm = Realm.builder().authorizer(atz).build();
+		final Realm realm = Realm.builder().withAuthorizer(atz).build();
 
-		Authentication a = Authentication.builder("test").permission(new TestPermission(1)).build();
+		Authentication a = Authentication.builder("test").withPermission(new TestPermission(1)).build();
 
 		Collection<Permission> toCheck = Collections.singletonList(new TestPermission(1));
 

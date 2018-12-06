@@ -123,12 +123,12 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 					@SuppressWarnings("unchecked")
 					Collection<String> permissions = (Collection<String>) v;
 					if (permissions != null) {
-						permissions.forEach(p -> auth.permission(Permission.create(p)));
+						permissions.forEach(p -> auth.withPermission(Permission.create(p)));
 					}
 				}
 			} else {
 				if (configuration.isIncludeDetails()) {
-					auth.parameter(n, v);
+					auth.withParameter(n, v);
 				}
 			}
 		});

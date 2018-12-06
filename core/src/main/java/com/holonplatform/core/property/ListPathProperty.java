@@ -61,7 +61,7 @@ public interface ListPathProperty<T> extends CollectionPathProperty<T, List<T>>,
 	@SuppressWarnings("rawtypes")
 	static <P extends Property> ListPathPropertyBuilder<PropertyBox> propertyBox(String name, Iterable<P> properties) {
 		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
-		return create(name, PropertyBox.class).configuration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE,
+		return create(name, PropertyBox.class).withConfiguration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE,
 				(properties instanceof PropertySet) ? (PropertySet<?>) properties : PropertySet.of(properties));
 	}
 

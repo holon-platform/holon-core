@@ -99,7 +99,7 @@ public class TestProperty {
 	final static Property<Boolean> P3 = PathProperty.create("test3", boolean.class)
 			.converter(PropertyValueConverter.numericBoolean(Long.class));
 	final static Property<Double> P4 = PathProperty.create("test4", Double.class)
-			.configuration(StringValuePresenter.DECIMAL_POSITIONS, 2);
+			.withConfiguration(StringValuePresenter.DECIMAL_POSITIONS, 2);
 	final static Property<TestEnum> P5 = PathProperty.create("test5", TestEnum.class);
 	final static Property<TestEnum2> P6 = PathProperty.create("test6", TestEnum2.class);
 	final static PathProperty<Date> P7 = PathProperty.create("test7", Date.class).temporalType(TemporalType.DATE_TIME);
@@ -111,7 +111,7 @@ public class TestProperty {
 	final static Property<String> P13 = VirtualProperty.create(String.class, p -> "VRT:" + p.getValue(P1));
 	final static Property<TestCaptionable> P14 = PathProperty.create("test14", TestCaptionable.class);
 	final static Property<Integer> P15 = PathProperty.create("test2", Integer.class)
-			.configuration(StringValuePresenter.DISABLE_GROUPING, true);
+			.withConfiguration(StringValuePresenter.DISABLE_GROUPING, true);
 
 	@Test
 	public void testPaths() {
@@ -275,7 +275,7 @@ public class TestProperty {
 
 		registry.register(p -> p.getConfiguration().hasNotNullParameter("testpar"), (p, v) -> "TEST_PRS");
 
-		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).configuration("testpar", "x");
+		final PathProperty<Integer> prp = PathProperty.create("test", Integer.class).withConfiguration("testpar", "x");
 
 		assertEquals("1", prp.present(1));
 
@@ -814,7 +814,8 @@ public class TestProperty {
 
 		ConfigProperty<Long> cp = ConfigProperty.create("tcfg", Long.class);
 
-		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID).configuration(cp, 7L).build();
+		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID).withConfiguration(cp, 7L)
+				.build();
 		assertEquals(Long.valueOf(7), set.getConfiguration().getParameter(cp, 1L));
 
 		PropertySet<?> set2 = PropertySet.of(set, TestIdentifiablePropertySet.TEXT);

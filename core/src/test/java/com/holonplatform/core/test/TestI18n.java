@@ -403,7 +403,7 @@ public class TestI18n {
 		final AtomicInteger counter = new AtomicInteger();
 
 		final LocalizationContext ctx = LocalizationContext.builder().withInitialLocale(Locale.US)
-				.messageProvider((locale, code) -> {
+				.withMessageProvider((locale, code) -> {
 					if ("test".equals(code)) {
 						return Optional.of("testCode");
 					}
@@ -511,7 +511,7 @@ public class TestI18n {
 
 		LocalizationContext ctx = LocalizationContext.builder().withInitialLocale(Locale.FRANCE)
 				.disableDateTimeFormatsCache()
-				.messageProvider(MessageProvider.fromProperties("messages/messages").build()).build();
+				.withMessageProvider(MessageProvider.fromProperties("messages/messages").build()).build();
 
 		assertTrue(ctx.getLocale().isPresent());
 		assertEquals(Locale.FRANCE, ctx.getLocale().get());
@@ -520,7 +520,7 @@ public class TestI18n {
 		assertEquals("Test", v);
 
 		ctx = LocalizationContext.builder().withInitialSystemLocale().messageArgumentsPlaceholder("*")
-				.messageProvider(MessageProvider.fromProperties("messages/messages").build()).build();
+				.withMessageProvider(MessageProvider.fromProperties("messages/messages").build()).build();
 
 		assertTrue(ctx.getLocale().isPresent());
 		assertEquals(Locale.getDefault(), ctx.getLocale().get());

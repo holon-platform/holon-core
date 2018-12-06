@@ -52,9 +52,9 @@ public class ExampleAccount {
 				.credentials(Credentials.builder().secret("pwd").hashAlgorithm(Credentials.Encoder.HASH_SHA_256)
 						.base64Encoded().build()) // <5>
 				.root(false) // <6>
-				.permission(new MyPermission()) // <7>
-				.permission("role1") // <8>
-				.detail("name", "TheName").detail("surname", "TheSurname") // <9>
+				.withPermission(new MyPermission()) // <7>
+				.withPermission("role1") // <8>
+				.withDetail("name", "TheName").withDetail("surname", "TheSurname") // <9>
 				.build();
 		// end::builder[]
 	}
@@ -114,10 +114,11 @@ public class ExampleAccount {
 	public void auth() {
 		// tag::auth[]
 		AccountProvider provider = id -> Optional.of(Account.builder(id).enabled(true)
-				.credentials(Credentials.builder().secret("pwd").base64Encoded().build()).permission("role1").build()); // <1>
+				.credentials(Credentials.builder().secret("pwd").base64Encoded().build()).withPermission("role1")
+				.build()); // <1>
 
 		Realm realm = Realm.builder() //
-				.authenticator(Account.authenticator(provider)) // <2>
+				.withAuthenticator(Account.authenticator(provider)) // <2>
 				.withDefaultAuthorizer().build();
 
 		try {

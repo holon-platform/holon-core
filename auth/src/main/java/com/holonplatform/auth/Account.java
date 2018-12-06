@@ -167,7 +167,19 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @param value Value
 		 * @return this
 		 */
-		Builder detail(String key, Object value);
+		Builder withDetail(String key, Object value);
+
+		/**
+		 * Add (or replace if given key already exists) an Account detail
+		 * @param key Key
+		 * @param value Value
+		 * @return this
+		 * @deprecated Use {@link #withDetail(String, Object)}
+		 */
+		@Deprecated
+		default Builder detail(String key, Object value) {
+			return withDetail(key, value);
+		}
 
 		/**
 		 * Add (or replace if given key already exists) an Account detail using a {@link ConfigProperty}.
@@ -176,9 +188,23 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @param value Detail value
 		 * @return this
 		 */
+		default <T> Builder withDetail(ConfigProperty<T> property, T value) {
+			ObjectUtils.argumentNotNull(property, "Config property must be not null");
+			return withDetail(property.getKey(), value);
+		}
+
+		/**
+		 * Add (or replace if given key already exists) an Account detail using a {@link ConfigProperty}.
+		 * @param <T> Config property type
+		 * @param property ConfigProperty to use as detail key (not null)
+		 * @param value Detail value
+		 * @return this
+		 * @deprecated Use {@link #withdetail(ConfigProperty, Object)}
+		 */
+		@Deprecated
 		default <T> Builder detail(ConfigProperty<T> property, T value) {
 			ObjectUtils.argumentNotNull(property, "Config property must be not null");
-			return detail(property.getKey(), value);
+			return withDetail(property.getKey(), value);
 		}
 
 		/**
@@ -193,7 +219,18 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @param permission Permission to add
 		 * @return this
 		 */
-		Builder permission(Permission permission);
+		Builder withPermission(Permission permission);
+
+		/**
+		 * Add a permission granted to Account
+		 * @param permission Permission to add
+		 * @return this
+		 * @deprecated Use {@link #withPermission(Permission)}
+		 */
+		@Deprecated
+		default Builder permission(Permission permission) {
+			return withPermission(permission);
+		}
 
 		/**
 		 * Set permissions granted to Account using String representations. Any previously setted Permission will be
@@ -218,7 +255,18 @@ public interface Account extends CredentialsContainer, Serializable {
 		 * @param permission Permission string to add
 		 * @return this
 		 */
-		Builder permission(String permission);
+		Builder withPermission(String permission);
+
+		/**
+		 * Add a permission granted to Account using String representation.
+		 * @param permission Permission string to add
+		 * @return this
+		 * @deprecated Use {@link #withPermission(String)}
+		 */
+		@Deprecated
+		default Builder permission(String permission) {
+			return withPermission(permission);
+		}
 
 		/**
 		 * Set whether is enabled (default is <code>true</code>)

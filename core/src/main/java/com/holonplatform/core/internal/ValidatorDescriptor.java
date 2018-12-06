@@ -64,13 +64,13 @@ public interface ValidatorDescriptor extends Serializable {
 	Number getMax();
 
 	/**
-	 * Get the minimum value is exclusive.
+	 * Get whether the minimum value is exclusive.
 	 * @return Whether the minimum value is exclusive
 	 */
 	boolean isExclusiveMin();
 
 	/**
-	 * Get the maximum value is exclusive.
+	 * Get whether the maximum value is exclusive.
 	 * @return Whether the maximum value is exclusive
 	 */
 	boolean isExclusiveMax();

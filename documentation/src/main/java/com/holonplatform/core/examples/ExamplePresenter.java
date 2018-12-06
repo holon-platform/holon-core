@@ -36,7 +36,7 @@ public class ExamplePresenter {
 	public void present() {
 		String presented = StringValuePresenter.getDefault().present("stringValue"); // <1>
 		presented = StringValuePresenter.getDefault().present("stringValue",
-				ParameterSet.builder().parameter(StringValuePresenter.MAX_LENGTH, 6).build()); // <2>
+				ParameterSet.builder().withParameter(StringValuePresenter.MAX_LENGTH, 6).build()); // <2>
 		presented = StringValuePresenter.getDefault().present(MyEnum.VALUE1); // <3>
 		presented = StringValuePresenter.getDefault().present(new MyEnum[] { MyEnum.VALUE1, MyEnum.VALUE2 }); // <4>
 	}

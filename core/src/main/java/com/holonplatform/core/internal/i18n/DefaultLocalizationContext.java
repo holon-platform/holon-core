@@ -923,10 +923,11 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.Builder#messageProvider(com.holonplatform.core.i18n.MessageProvider)
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withMessageProvider(com.holonplatform.core.i18n.
+		 * MessageProvider)
 		 */
 		@Override
-		public Builder messageProvider(MessageProvider messageProvider) {
+		public Builder withMessageProvider(MessageProvider messageProvider) {
 			context.addMessageProvider(messageProvider);
 			return this;
 		}

@@ -45,7 +45,7 @@ public class TestQueryConfigurationProvider {
 	private static final QuerySort SORT = PROPERTY.desc();
 	private static final QuerySort SORT2 = PROPERTY.asc();
 
-	private static final ParameterSet PARAMETERS = ParameterSet.builder().parameter("testp", "TESTVAL").build();
+	private static final ParameterSet PARAMETERS = ParameterSet.builder().withParameter("testp", "TESTVAL").build();
 
 	private static final ConfigProperty<Integer> CP = ConfigProperty.create("cp", Integer.class);
 

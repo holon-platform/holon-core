@@ -60,7 +60,8 @@ public class TestAuthz {
 		permissions.add(p2);
 		permissions.add(p3);
 
-		Authentication auth = Authentication.builder("test").permission(p1).permission(p2).permission(p3).build();
+		Authentication auth = Authentication.builder("test").withPermission(p1).withPermission(p2).withPermission(p3)
+				.build();
 
 		assertTrue(Arrays.equals(permissions.toArray(new Permission[0]),
 				auth.getPermissions().toArray(new Permission[0])));
@@ -80,7 +81,7 @@ public class TestAuthz {
 		permissions.add(p1);
 		permissions.add(p2);
 
-		Authentication authc = Authentication.builder("test").permission(p1).permission(p2).build();
+		Authentication authc = Authentication.builder("test").withPermission(p1).withPermission(p2).build();
 
 		Authorizer<Permission> authz = Authorizer.create();
 

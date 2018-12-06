@@ -297,7 +297,7 @@ public class ExampleDatastore {
 
 		// tag::datamappable2[]
 		PropertySet<?> PROPERTIES = PropertySet.builderOf(P1, P2) //
-				.configuration(DataMappable.PATH, "mapping-name") // <1>
+				.withConfiguration(DataMappable.PATH, "mapping-name") // <1>
 				.build();
 
 		Optional<String> mapping = PROPERTIES.getConfiguration().getParameter(DataMappable.PATH); // <2>

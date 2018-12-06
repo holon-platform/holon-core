@@ -46,8 +46,8 @@ public class TestCloneableProperty {
 	public void testClone() {
 
 		PathProperty<String> property = PathProperty.create("test", String.class).message("msg").messageCode("msg.code")
-				.dataPath("dp").configuration(CP, 7).temporalType(TemporalType.DATE_TIME).validator(Validator.max(3))
-				.converter(Long.class, v -> String.valueOf(v), v -> Long.valueOf(v))
+				.dataPath("dp").withConfiguration(CP, 7).temporalType(TemporalType.DATE_TIME)
+				.withValidator(Validator.max(3)).converter(Long.class, v -> String.valueOf(v), v -> Long.valueOf(v))
 				.hashCodeProvider(p -> Optional.of(1)).equalsHandler((p1, p2) -> p1.getConfiguration().getParameter(CP,
 						0) == ((Property<?>) p2).getConfiguration().getParameter(CP, 0));
 
@@ -69,7 +69,7 @@ public class TestCloneableProperty {
 
 		assertEquals(1, cloned.hashCode());
 
-		PathProperty<String> p2 = PathProperty.create("p2", String.class).configuration(CP, 7);
+		PathProperty<String> p2 = PathProperty.create("p2", String.class).withConfiguration(CP, 7);
 
 		assertTrue(cloned.equals(p2));
 

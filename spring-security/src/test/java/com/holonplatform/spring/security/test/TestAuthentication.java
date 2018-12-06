@@ -54,10 +54,10 @@ public class TestAuthentication {
 		at1.setDetails("testdetails");
 
 		SpringSecurityAuthentication sa1 = SpringSecurityAuthentication.create(at1);
-		
+
 		assertEquals(at1.getPrincipal(), sa1.getPrincipal());
 		assertEquals(at1.getCredentials(), sa1.getCredentials());
-		
+
 		assertEquals("usr", sa1.getName());
 		assertNotNull(sa1.getAuthorities());
 		assertEquals(1, sa1.getAuthorities().size());
@@ -67,19 +67,19 @@ public class TestAuthentication {
 		assertTrue(sa1.getParameter(SpringSecurityAuthentication.AUTHENTICATION_DETAILS_KEY).isPresent());
 		assertEquals("testdetails", sa1.getParameter(SpringSecurityAuthentication.AUTHENTICATION_DETAILS_KEY).get());
 	}
-	
+
 	@Test
 	public void testAuthenticationAdapter() {
-		
-		final Authentication a = Authentication.builder("myname").permission("myrole").build();
-		
+
+		final Authentication a = Authentication.builder("myname").withPermission("myrole").build();
+
 		org.springframework.security.core.Authentication sa = new SpringSecurityAuthenticationAdapter(a);
-		
+
 		assertEquals("myname", sa.getName());
 		assertNotNull(sa.getAuthorities());
 		assertEquals(1, sa.getAuthorities().size());
 		assertEquals("myrole", sa.getAuthorities().iterator().next().getAuthority());
-		
+
 	}
 
 }

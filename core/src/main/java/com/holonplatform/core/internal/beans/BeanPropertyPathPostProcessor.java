@@ -55,13 +55,13 @@ public class BeanPropertyPathPostProcessor implements BeanPropertyPostProcessor 
 		final Optional<DataPath> methodPath = property.getReadMethod().map(m -> m.getAnnotation(DataPath.class))
 				.filter(a -> a.value().trim().length() > 0);
 		if (methodPath.isPresent()) {
-			property.configuration(DataMappable.PATH, methodPath.get().value());
+			property.withConfiguration(DataMappable.PATH, methodPath.get().value());
 			LOGGER.debug(() -> "BeanPropertyPathPostProcessor: setted property [" + property + "] data path to ["
 					+ methodPath.get().value() + "]");
 		} else {
 			// check property field
 			property.getAnnotation(DataPath.class).filter(a -> a.value().trim().length() > 0).ifPresent(a -> {
-				property.configuration(DataMappable.PATH, a.value());
+				property.withConfiguration(DataMappable.PATH, a.value());
 				LOGGER.debug(() -> "BeanPropertyPathPostProcessor: setted property [" + property + "] data path to ["
 						+ a.value() + "]");
 			});

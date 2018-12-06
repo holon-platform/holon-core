@@ -33,8 +33,10 @@ public class ExampleAuthContext {
 	public void authContext() {
 		// tag::authctx[]
 		AccountProvider provider = id -> Optional.of(Account.builder(id).enabled(true)
-				.credentials(Credentials.builder().secret("pwd").base64Encoded().build()).permission("role1").build()); // <1>
-		Realm realm = Realm.builder().authenticator(Account.authenticator(provider)).withDefaultAuthorizer().build(); // <2>
+				.credentials(Credentials.builder().secret("pwd").base64Encoded().build()).withPermission("role1")
+				.build()); // <1>
+		Realm realm = Realm.builder().withAuthenticator(Account.authenticator(provider)).withDefaultAuthorizer()
+				.build(); // <2>
 
 		AuthContext context = AuthContext.create(realm); // <3>
 

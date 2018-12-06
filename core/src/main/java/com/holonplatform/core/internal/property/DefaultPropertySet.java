@@ -292,10 +292,11 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#configuration(java.lang.String, java.lang.Object)
+		 * @see com.holonplatform.core.property.PropertySet.Builder#withConfiguration(java.lang.String,
+		 * java.lang.Object)
 		 */
 		@Override
-		public Builder<P> configuration(String name, Object value) {
+		public Builder<P> withConfiguration(String name, Object value) {
 			this.instance.addConfigurationParameter(name, value);
 			return this;
 		}

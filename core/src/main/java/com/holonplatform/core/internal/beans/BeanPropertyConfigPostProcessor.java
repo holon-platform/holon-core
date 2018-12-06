@@ -69,7 +69,7 @@ public class BeanPropertyConfigPostProcessor implements BeanPropertyPostProcesso
 			for (Config annotation : annotations) {
 				String key = AnnotationUtils.getStringValue(annotation.key());
 				if (key != null) {
-					property.configuration(key, annotation.value());
+					property.withConfiguration(key, annotation.value());
 					LOGGER.debug(() -> "BeanPropertyConfigPostProcessor: added configuration value to property ["
 							+ property + "]: [" + key + ":" + annotation.value() + "]");
 				}

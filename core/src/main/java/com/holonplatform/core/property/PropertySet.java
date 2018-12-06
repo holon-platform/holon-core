@@ -328,7 +328,19 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		 * @param value The configuration parameter value
 		 * @return this
 		 */
-		Builder<P> configuration(String name, Object value);
+		Builder<P> withConfiguration(String name, Object value);
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter
+		 * @param name The parameter name to add (not null)
+		 * @param value The configuration parameter value
+		 * @return this
+		 * @deprecated Use {@link #withConfiguration(String, Object)}
+		 */
+		@Deprecated
+		default Builder<P> configuration(String name, Object value) {
+			return withConfiguration(name, value);
+		}
 
 		/**
 		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
@@ -338,9 +350,24 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		 * @param value The configuration property value
 		 * @return this
 		 */
+		default <C> Builder<P> withConfiguration(ConfigProperty<C> configurationProperty, C value) {
+			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+			return withConfiguration(configurationProperty.getKey(), value);
+		}
+
+		/**
+		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
+		 * {@link ConfigProperty#getKey()} as parameter name.
+		 * @param <C> Config property type
+		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
+		 * @param value The configuration property value
+		 * @return this
+		 * @deprecated Use {@link #withConfiguration(ConfigProperty, Object)}
+		 */
+		@Deprecated
 		default <C> Builder<P> configuration(ConfigProperty<C> configurationProperty, C value) {
 			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
-			return configuration(configurationProperty.getKey(), value);
+			return withConfiguration(configurationProperty.getKey(), value);
 		}
 
 		/**

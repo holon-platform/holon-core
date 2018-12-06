@@ -211,7 +211,19 @@ public interface Property<T> extends Validatable<T>, Localizable, HasConfigurati
 		 * @param value Configuration parameter value
 		 * @return this
 		 */
-		B configuration(String parameterName, Object value);
+		B withConfiguration(String parameterName, Object value);
+
+		/**
+		 * Add a property configuration parameter
+		 * @param parameterName Parameter name to add to property configuration (not null)
+		 * @param value Configuration parameter value
+		 * @return this
+		 * @deprecated Use {@link #withConfiguration(String, Object)}
+		 */
+		@Deprecated
+		default B configuration(String parameterName, Object value) {
+			return withConfiguration(parameterName, value);
+		}
 
 		/**
 		 * Add a property configuration parameter using a {@link ConfigProperty}, with {@link ConfigProperty#getKey()}
@@ -221,9 +233,24 @@ public interface Property<T> extends Validatable<T>, Localizable, HasConfigurati
 		 * @param value Configuration parameter value
 		 * @return this
 		 */
+		default <C> B withConfiguration(ConfigProperty<C> configurationProperty, C value) {
+			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
+			return withConfiguration(configurationProperty.getKey(), value);
+		}
+
+		/**
+		 * Add a property configuration parameter using a {@link ConfigProperty}, with {@link ConfigProperty#getKey()}
+		 * as parameter name.
+		 * @param <C> Config property type
+		 * @param configurationProperty ConfigProperty to add to property configuration (not null)
+		 * @param value Configuration parameter value
+		 * @return this
+		 * @deprecated Use {@link #withConfiguration(ConfigProperty, Object)}
+		 */
+		@Deprecated
 		default <C> B configuration(ConfigProperty<C> configurationProperty, C value) {
 			ObjectUtils.argumentNotNull(configurationProperty, "Configuration property must be not null");
-			return configuration(configurationProperty.getKey(), value);
+			return withConfiguration(configurationProperty.getKey(), value);
 		}
 
 		/**
@@ -243,7 +270,7 @@ public interface Property<T> extends Validatable<T>, Localizable, HasConfigurati
 		B converter(PropertyValueConverter<T, ?> converter);
 
 		/**
-		 * Create a {@link PropertyValueConverter} for given <code>modelType</code> using given conversion
+		 * Set a {@link PropertyValueConverter} for given <code>modelType</code> using given conversion
 		 * {@link Function}s: the <code>fromModel</code> function to convert a model type value into property value
 		 * type, and the <code>toModel</code> function to perform the inverse operation, i.e. convert the property value
 		 * type into model type. Then set this converter as {@link PropertyValueConverter} for the property.
@@ -260,7 +287,18 @@ public interface Property<T> extends Validatable<T>, Localizable, HasConfigurati
 		 * @param validator Validator to add (not null)
 		 * @return this
 		 */
-		B validator(Validator<T> validator);
+		B withValidator(Validator<T> validator);
+
+		/**
+		 * Add a property value {@link Validator}
+		 * @param validator Validator to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withValidator(Validator)}
+		 */
+		@Deprecated
+		default B validator(Validator<T> validator) {
+			return withValidator(validator);
+		}
 
 		/**
 		 * Set the predicate to use to check the property equality using the {@link Object#equals(Object)} method.

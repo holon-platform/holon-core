@@ -316,10 +316,10 @@ public class DefaultAccount implements Account {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.account.AccountBuilder#detail(java.lang.String, java.lang.Object)
+		 * @see com.holonplatform.auth.Account.Builder#withDetail(java.lang.String, java.lang.Object)
 		 */
 		@Override
-		public Builder detail(String key, Object value) {
+		public Builder withDetail(String key, Object value) {
 			this.account.setDetail(key, value);
 			return this;
 		}
@@ -336,10 +336,10 @@ public class DefaultAccount implements Account {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.account.AccountBuilder#permission(com.holonplatform.auth.Permission)
+		 * @see com.holonplatform.auth.Account.Builder#withPermission(com.holonplatform.auth.Permission)
 		 */
 		@Override
-		public Builder permission(Permission permission) {
+		public Builder withPermission(Permission permission) {
 			this.account.addPermission(permission);
 			return this;
 		}
@@ -362,10 +362,10 @@ public class DefaultAccount implements Account {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.account.AccountBuilder#permission(java.lang.String)
+		 * @see com.holonplatform.auth.Account.Builder#withPermission(java.lang.String)
 		 */
 		@Override
-		public Builder permission(String permission) {
+		public Builder withPermission(String permission) {
 			if (permission != null) {
 				this.account.addPermission(Permission.create(permission));
 			}

@@ -151,7 +151,7 @@ public class ExampleBeans {
 	public void postProcessor() {
 		// tag::postprocessor[]
 		BeanIntrospector.get()
-				.addBeanPropertyPostProcessor((property, cls) -> property.configuration("test", "testValue")); // <1>
+				.addBeanPropertyPostProcessor((property, cls) -> property.withConfiguration("test", "testValue")); // <1>
 		// end::postprocessor[]
 	}
 

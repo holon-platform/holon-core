@@ -148,7 +148,7 @@ public class TestParameters {
 	@Test
 	public void testParameterType() {
 		Assertions.assertThrows(TypeMismatchException.class, () -> {
-			ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
+			ParameterSet ps = ParameterSet.builder().withParameter("test2", Integer.valueOf(3)).build();
 			ps.getParameter("test2", String.class);
 		});
 	}
@@ -156,7 +156,7 @@ public class TestParameters {
 	@Test
 	public void testParameterTypeDft() {
 		Assertions.assertThrows(TypeMismatchException.class, () -> {
-			ParameterSet ps = ParameterSet.builder().parameter("test2", Integer.valueOf(3)).build();
+			ParameterSet ps = ParameterSet.builder().withParameter("test2", Integer.valueOf(3)).build();
 			ps.getParameter("test2", String.class, "dft");
 		});
 	}
@@ -164,8 +164,8 @@ public class TestParameters {
 	@Test
 	public void testParameterBuilder() {
 
-		ParameterSet ps = ParameterSet.builder().parameter("test", "TEST").parameter("test2", Integer.valueOf(3))
-				.build();
+		ParameterSet ps = ParameterSet.builder().withParameter("test", "TEST")
+				.withParameter("test2", Integer.valueOf(3)).build();
 
 		assertTrue(ps.hasParameter("test"));
 		assertTrue(ps.hasNotNullParameter("test"));
@@ -183,7 +183,7 @@ public class TestParameters {
 		assertNotNull(iv);
 		assertEquals(Integer.valueOf(3), iv);
 
-		ParameterSet ps2 = ParameterSet.builder().parameters(ps).build();
+		ParameterSet ps2 = ParameterSet.builder().withParameters(ps).build();
 
 		assertTrue(ps2.hasParameters());
 		assertTrue(ps2.hasParameter("test"));

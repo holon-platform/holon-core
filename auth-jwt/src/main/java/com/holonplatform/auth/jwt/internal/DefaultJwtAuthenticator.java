@@ -240,10 +240,10 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 			if (AuthenticationClaims.CLAIM_NAME_PERMISSIONS.equals(n)) {
 				Collection<String> permissions = (Collection<String>) v;
 				if (permissions != null) {
-					permissions.forEach(p -> auth.permission(Permission.create(p)));
+					permissions.forEach(p -> auth.withPermission(Permission.create(p)));
 				}
 			} else {
-				auth.parameter(n, v);
+				auth.withParameter(n, v);
 			}
 		});
 
@@ -292,10 +292,10 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.jwt.internal.JwtAuthenticatorBuilder#requiredClaim(java.lang.String)
+		 * @see com.holonplatform.auth.jwt.JwtAuthenticator.Builder#withRequiredClaim(java.lang.String)
 		 */
 		@Override
-		public Builder requiredClaim(String claim) {
+		public Builder withRequiredClaim(String claim) {
 			ObjectUtils.argumentNotNull(claim, "Claim must be not null");
 			this.authenticator.addRequiredClaim(claim);
 			return this;

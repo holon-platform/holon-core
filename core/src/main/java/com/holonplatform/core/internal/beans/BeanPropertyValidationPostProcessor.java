@@ -66,7 +66,7 @@ public class BeanPropertyValidationPostProcessor implements BeanPropertyPostProc
 			for (com.holonplatform.core.beans.Validator annotation : annotations) {
 				try {
 
-					property.validator(annotation.value().newInstance());
+					property.withValidator(annotation.value().newInstance());
 
 					LOGGER.debug(() -> "BeanPropertyValidationPostProcessor: added validator to property [" + property
 							+ "]: [" + annotation.value().getName() + "]");

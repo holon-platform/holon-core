@@ -78,7 +78,7 @@ public class TestMessageAuthenticator {
 
 		final AtomicInteger counter = new AtomicInteger(0);
 
-		final Realm realm = Realm.builder().resolver(new AuthenticationTokenResolver<TestMessage>() {
+		final Realm realm = Realm.builder().withResolver(new AuthenticationTokenResolver<TestMessage>() {
 
 			@SuppressWarnings("rawtypes")
 			@Override
@@ -97,12 +97,12 @@ public class TestMessageAuthenticator {
 				return Optional.of(AccountCredentialsToken.create(request.getPayload().orElse(null), ""));
 			}
 
-		}).authenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
+		}).withAuthenticator(Authenticator.create(AccountCredentialsToken.class, token -> {
 			if ("myself".equals(token.getPrincipal())) {
 				return Authentication.builder("myself").build();
 			}
 			throw new UnknownAccountException("" + token.getPrincipal());
-		})).listener(authc -> counter.incrementAndGet()).build();
+		})).withAuthenticationListener(authc -> counter.incrementAndGet()).build();
 
 		TestUtils.expectedException(UnexpectedAuthenticationException.class,
 				() -> realm.authenticate((Message<?, ?>) null));

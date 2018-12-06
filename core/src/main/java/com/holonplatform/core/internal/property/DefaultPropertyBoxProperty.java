@@ -43,7 +43,7 @@ public class DefaultPropertyBoxProperty
 	public DefaultPropertyBoxProperty(String name, PropertySet<?> propertySet) {
 		super(name, PropertyBox.class);
 		ObjectUtils.argumentNotNull(propertySet, "PropertySet must be not null");
-		configuration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE, propertySet);
+		withConfiguration(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE, propertySet);
 	}
 
 	/*

@@ -96,7 +96,7 @@ public interface Authenticator<T extends AuthenticationToken> {
 
 		/**
 		 * Add an {@link AuthenticationTokenResolver} to translate messages into {@link AuthenticationToken}s.
-		 * @param authenticationTokenResolver Resolver to add
+		 * @param authenticationTokenResolver The {@link AuthenticationTokenResolver} to add (not null)
 		 */
 		void addAuthenticationTokenResolver(AuthenticationTokenResolver<?> authenticationTokenResolver);
 

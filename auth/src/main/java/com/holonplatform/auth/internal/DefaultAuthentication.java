@@ -251,10 +251,10 @@ public class DefaultAuthentication extends DefaultParameterSet implements Authen
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.Authentication.Builder#parameter(java.lang.String, java.lang.Object)
+		 * @see com.holonplatform.auth.Authentication.Builder#withParameter(java.lang.String, java.lang.Object)
 		 */
 		@Override
-		public Authentication.Builder parameter(String name, Object value) {
+		public Authentication.Builder withParameter(String name, Object value) {
 			ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
 			this.authentication.addParameter(name, value);
 			return this;
@@ -262,11 +262,12 @@ public class DefaultAuthentication extends DefaultParameterSet implements Authen
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.Authentication.Builder#parameter(com.holonplatform.core.config.ConfigProperty,
+		 * @see
+		 * com.holonplatform.auth.Authentication.Builder#withParameter(com.holonplatform.core.config.ConfigProperty,
 		 * java.lang.Object)
 		 */
 		@Override
-		public <T> Authentication.Builder parameter(ConfigProperty<T> property, T value) {
+		public <T> Authentication.Builder withParameter(ConfigProperty<T> property, T value) {
 			ObjectUtils.argumentNotNull(property, "ConfigProperty must be not null");
 			this.authentication.addParameter(property.getKey(), value);
 			return this;
@@ -274,10 +275,10 @@ public class DefaultAuthentication extends DefaultParameterSet implements Authen
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.AuthenticationBuilder#permission(com.holonplatform.auth.Permission)
+		 * @see com.holonplatform.auth.Authentication.Builder#withPermission(com.holonplatform.auth.Permission)
 		 */
 		@Override
-		public Authentication.Builder permission(Permission permission) {
+		public Authentication.Builder withPermission(Permission permission) {
 			ObjectUtils.argumentNotNull(permission, "Permission must be not null");
 			this.authentication.addPermission(permission);
 			return this;
@@ -285,10 +286,10 @@ public class DefaultAuthentication extends DefaultParameterSet implements Authen
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.internal.AuthenticationBuilder#permissionStrings(java.lang.String[])
+		 * @see com.holonplatform.auth.Authentication.Builder#withPermission(java.lang.String)
 		 */
 		@Override
-		public Authentication.Builder permission(String permission) {
+		public Authentication.Builder withPermission(String permission) {
 			ObjectUtils.argumentNotNull(permission, "Permission must be not null");
 			this.authentication.addPermission(Permission.create(permission));
 			return this;

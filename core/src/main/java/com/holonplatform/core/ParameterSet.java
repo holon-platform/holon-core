@@ -226,35 +226,82 @@ public interface ParameterSet extends Serializable {
 	public interface Builder<S extends ParameterSet> {
 
 		/**
-		 * Add a parameter
+		 * Add a parameter.
 		 * @param name Parameter name
 		 * @param value Parameter value
 		 * @return this
 		 */
-		Builder<S> parameter(String name, Object value);
+		Builder<S> withParameter(String name, Object value);
 
 		/**
-		 * Add a parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name
+		 * Add a parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name.
 		 * @param <T> Property type
 		 * @param property ConfigProperty (not null) to obtain parameter name
 		 * @param value Parameter value
 		 * @return this
 		 */
-		<T> Builder<S> parameter(ConfigProperty<T> property, T value);
+		<T> Builder<S> withParameter(ConfigProperty<T> property, T value);
 
 		/**
-		 * Add all given parameters to the set
+		 * Add all given parameters to the set.
 		 * @param parameters Parameters to add
 		 * @return this
 		 */
-		Builder<S> parameters(Map<String, Object> parameters);
+		Builder<S> withParameters(Map<String, Object> parameters);
 
 		/**
-		 * Add all parameters of the given <code>parameters</code> set
+		 * Add all parameters of the given <code>parameters</code> set.
 		 * @param parameters Parameters to add
 		 * @return this
 		 */
-		Builder<S> parameters(ParameterSet parameters);
+		Builder<S> withParameters(ParameterSet parameters);
+
+		/**
+		 * Add a parameter.
+		 * @param name Parameter name
+		 * @param value Parameter value
+		 * @return this
+		 * @deprecated Use {@link #withParameter(String, Object)}
+		 */
+		@Deprecated
+		default Builder<S> parameter(String name, Object value) {
+			return withParameter(name, value);
+		}
+
+		/**
+		 * Add a parameter using a {@link ConfigProperty} and {@link ConfigProperty#getKey()} as parameter name.
+		 * @param <T> Property type
+		 * @param property ConfigProperty (not null) to obtain parameter name
+		 * @param value Parameter value
+		 * @return this
+		 * @deprecated Use {@link #withParameter(ConfigProperty, Object)}
+		 */
+		@Deprecated
+		default <T> Builder<S> parameter(ConfigProperty<T> property, T value) {
+			return withParameter(property, value);
+		}
+
+		/**
+		 * Add all given parameters to the set.
+		 * @param parameters Parameters to add
+		 * @return this
+		 * @deprecated Use {@link #withParameters(Map)}
+		 */
+		@Deprecated
+		default Builder<S> parameters(Map<String, Object> parameters) {
+			return withParameters(parameters);
+		}
+
+		/**
+		 * Add all parameters of the given <code>parameters</code> set.
+		 * @param parameters Parameters to add
+		 * @return this
+		 * @deprecated Use {@link #withParameters(ParameterSet)}
+		 */
+		@Deprecated
+		default Builder<S> parameters(ParameterSet parameters) {
+			return withParameters(parameters);
+		}
 
 		/**
 		 * Build ParameterSet

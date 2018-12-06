@@ -85,7 +85,18 @@ public interface JwtAuthenticator extends Authenticator<BearerAuthenticationToke
 		 * @param claim Claim to add (not null)
 		 * @return this
 		 */
-		Builder requiredClaim(String claim);
+		Builder withRequiredClaim(String claim);
+
+		/**
+		 * Add a required JWT claim: specified claim must exist in JWT token, otherwise authentication will fail.
+		 * @param claim Claim to add (not null)
+		 * @return this
+		 * @deprecated Use {@link #withRequiredClaim(String)}
+		 */
+		@Deprecated
+		default Builder requiredClaim(String claim) {
+			return withRequiredClaim(claim);
+		}
 
 		/**
 		 * Build the JwtAuthenticator
