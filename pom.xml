@@ -79,7 +79,7 @@
 		<spring.boot.version>2.1.1.RELEASE</spring.boot.version>
 
 		<!-- Test -->
-		<jackson.test.version>2.9.7</jackson.test.version>
+		<jackson.test.version>2.9.8</jackson.test.version>
 		<jersey.test.version>2.27</jersey.test.version>
 		<mockito.version>2.23.0</mockito.version>
 
