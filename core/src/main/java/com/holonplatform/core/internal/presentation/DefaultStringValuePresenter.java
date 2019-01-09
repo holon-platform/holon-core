@@ -113,7 +113,7 @@ public enum DefaultStringValuePresenter implements StringValuePresenter {
 					.ofNullable(convertArray(((Collection<?>) valueToPresent).toArray(), presentationParameters));
 		} else {
 			// single value
-			stringValue = Optional.ofNullable(convertValue(valueToPresent, valueType, presentationParameters));
+			stringValue = Optional.ofNullable(convertValue(valueToPresent, type, presentationParameters));
 		}
 
 		LOGGER.debug(() -> "Presented value [" + valueToPresent + "] of type [" + type + "] is ["
