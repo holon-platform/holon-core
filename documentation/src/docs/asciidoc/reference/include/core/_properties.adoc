@@ -581,6 +581,7 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleProperty.java[tag=
 <1> Present the `1` value for the `ID` property using the current `Context` presenters registry or the default one
 <2> The same operation made using the `PropertyValuePresenterRegistry` directly
 
+[[PropertyRenderer]]
 === Property rendering
 
 A further property handling concept is made available by the Holon platform: the property _renderers_.
