@@ -1,6 +1,6 @@
 # Holon platform Core module
 
-> Latest release: [5.1.2](#obtain-the-artifacts)
+> Latest release: [5.2.0](#obtain-the-artifacts)
 
 This is the __core__ module of the [Holon Platform](https://holon-platform.com) and represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
@@ -46,7 +46,7 @@ public interface Subject {
 _Property configuration:_
 ```java
 static StringProperty NAME = StringProperty.create("name").message("Name").messageCode("localization.name")
-			.configuration("my-config", "my-value");
+			.withConfiguration("my-config", "my-value");
 ```
 
 _Property value converter:_
@@ -58,7 +58,7 @@ static StringProperty INTEGER_MODEL = StringProperty.create("integer_value").con
 _Property validators:_
 ```java
 static StringProperty NAME = StringProperty.create("name")
-			.validator(Validator.notBlank()).validator(Validator.max(50));
+			.withValidator(Validator.notBlank()).withValidator(Validator.max(50));
 ```
 
 _Property presenters and renderers:_
@@ -121,15 +121,15 @@ datastore.save(new MyBean());
 
 _Realm:_
 ```java
-Realm realm = Realm.builder().authenticator(Authenticator.create(MyAuthenticationToken.class, token -> {
+Realm realm = Realm.builder().withAuthenticator(Authenticator.create(MyAuthenticationToken.class, token -> {
 	if ("test".equals(token.getPrincipal())) {
-		return Authentication.builder("test").permission("ROLE1").build();
+		return Authentication.builder("test").withPermission("ROLE1").build();
 	}
 	throw new UnknownAccountException();
 }))
 .withDefaultAuthorizer().build();
 
-Realm.builder().authenticator(Account.authenticator(id -> Optional.of(Account.builder(id).build()))).build();
+Realm.builder().withAuthenticator(Account.authenticator(id -> Optional.of(Account.builder(id).build()))).build();
 ```
 
 _AuthContext:_
@@ -168,7 +168,7 @@ Optional<PropertyBox> propertyBox = client.request().path("test2")
 _LocalizationContext:_
 ```java
 LocalizationContext localizationContext = LocalizationContext.builder()
-	.messageProvider(MessageProvider.fromProperties("messages").build())
+	.withMessageProvider(MessageProvider.fromProperties("messages").build())
 	.withDefaultDateTemporalFormat(TemporalFormat.MEDIUM)
 	.withInitialLocale(Locale.US)
 	.build();
@@ -199,9 +199,9 @@ The Holon Platform is built using __Java 8__, so you need a JRE/JDK version 8 or
 
 See [releases](https://github.com/holon-platform/holon-core/releases) for the available releases. Each release tag provides a link to the closed issues.
 
-#### 5.1.x release notes
+#### 5.2.x release notes
 
-See [What's new in version 5.1.x](https://docs.holon-platform.com/current/reference/holon-core.html#WhatsNew51x) to learn about the new features and API operations of the 5.1 minor release.
+See [What's new in version 5.2.x](https://docs.holon-platform.com/current/reference/holon-core.html#WhatsNew52x) to learn about the new features and API operations of the 5.2 minor release.
 
 ### Obtain the artifacts
 
@@ -215,7 +215,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.core</groupId>
         <artifactId>holon-bom</artifactId>
-        <version>5.1.2</version>
+        <version>5.2.0</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
@@ -282,6 +282,8 @@ Artifact id | Description
 ----------- | -----------
 `holon-core` | Platform core components, services and APIs
 `holon-http` | HTTP messages support
+`holon-async-http` | Asynchronous HTTP messages support
+`holon-async-datastore` | Asynchronous Datastore API
 `holon-auth` | Authentication and Authorization
 `holon-auth-jwt` | JSON Web Tokens support 
 `holon-spring` | Spring integration
