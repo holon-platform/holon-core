@@ -158,7 +158,7 @@ public class DefaultParameterSet implements MutableParameterSet {
 	@Override
 	public boolean hasParameterValue(String name, Object value) {
 		ObjectUtils.argumentNotNull(name, "Parameter name must be not null");
-		if (parameters.containsKey(name)) {
+		if (parameters != null && parameters.containsKey(name)) {
 			return Objects.equals(parameters.get(name), value);
 		}
 		return false;
