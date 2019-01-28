@@ -97,7 +97,7 @@ public interface Logger extends Serializable {
 	 * @param throwable Exception to log
 	 */
 	default void info(String message, Throwable throwable) {
-		log(Level.INFORMATION, message);
+		log(Level.INFORMATION, message, throwable);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public interface Logger extends Serializable {
 	 * @param throwable Exception to log
 	 */
 	default void warn(String message, Throwable throwable) {
-		log(Level.WARNING, message);
+		log(Level.WARNING, message, throwable);
 	}
 
 	/**
@@ -131,7 +131,7 @@ public interface Logger extends Serializable {
 	 * @param throwable Exception to log
 	 */
 	default void error(String message, Throwable throwable) {
-		log(Level.ERROR, message);
+		log(Level.ERROR, message, throwable);
 	}
 
 	/**
