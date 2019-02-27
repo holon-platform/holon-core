@@ -32,6 +32,7 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 /**
  * Default {@link JwtTokenBuilder} implementation.
@@ -184,9 +185,9 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 				throw new IllegalArgumentException("Null signature algorithm");
 			}
 			if (privateKey != null) {
-				builder.signWith(algorithm, privateKey);
+				builder.signWith(privateKey, algorithm);
 			} else {
-				builder.signWith(algorithm, signingKey);
+				builder.signWith(Keys.hmacShaKeyFor(signingKey), algorithm);
 			}
 		}
 

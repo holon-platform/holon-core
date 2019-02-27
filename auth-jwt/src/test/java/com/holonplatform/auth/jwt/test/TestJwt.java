@@ -22,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
@@ -60,7 +58,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.crypto.MacProvider;
+import io.jsonwebtoken.security.Keys;
 
 public class TestJwt {
 
@@ -272,7 +270,7 @@ public class TestJwt {
 	@Test
 	public void testJWTAuthentication_signed_symmetric() throws Exception {
 
-		SecretKey key = MacProvider.generateKey(SignatureAlgorithm.HS256);
+		SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
 		JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.HS256)
 				.sharedKey(key.getEncoded()).build();
@@ -356,11 +354,9 @@ public class TestJwt {
 	@Test
 	public void testJWTAuthentication_signed_asymmetric() throws Exception {
 
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-		keyGen.initialize(512);
-		KeyPair keyPair = keyGen.genKeyPair();
-		PrivateKey privateKey = keyPair.getPrivate();
-		PublicKey publicKey = keyPair.getPublic();
+		final KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256);
+		final PrivateKey privateKey = keyPair.getPrivate();
+		final PublicKey publicKey = keyPair.getPublic();
 
 		final JwtConfiguration cfg = JwtConfiguration.builder().signatureAlgorithm(JwtSignatureAlgorithm.RS256)
 				.privateKey(privateKey).publicKey(publicKey).build();
@@ -416,12 +412,7 @@ public class TestJwt {
 	}
 
 	private static byte[] generateKey() throws Exception {
-		String random = UUID.randomUUID().toString();
-		MessageDigest algorithm = MessageDigest.getInstance("MD5");
-		algorithm.reset();
-		algorithm.update(random.getBytes());
-		byte[] messageDigest = algorithm.digest();
-		return Base64.getEncoder().encode(messageDigest);
+		return Base64.getEncoder().encode(Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded());
 	}
 
 }
