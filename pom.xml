@@ -88,7 +88,7 @@
 
 		<!-- Test -->
 		<jersey.test.version>2.27</jersey.test.version>
-		<mockito.version>2.23.0</mockito.version>
+		<mockito.version>2.24.5</mockito.version>
 
 	</properties>
 
