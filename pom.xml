@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -69,6 +71,9 @@
 		<!-- Bean validation -->
 		<bean.validation.version>2.0.1.Final</bean.validation.version>
 
+		<!-- JWT -->
+		<jsonwebtoken.version>0.9.1</jsonwebtoken.version>
+
 		<!-- Spring -->
 		<spring.version>5.1.4.RELEASE</spring.version>
 
@@ -78,8 +83,10 @@
 		<!-- Spring Boot -->
 		<spring.boot.version>2.1.2.RELEASE</spring.boot.version>
 
+		<!-- Jackson test/provided -->
+		<jackson.version>2.9.8</jackson.version>
+		
 		<!-- Test -->
-		<jackson.test.version>2.9.8</jackson.test.version>
 		<jersey.test.version>2.27</jersey.test.version>
 		<mockito.version>2.23.0</mockito.version>
 
