@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Base64;
@@ -50,7 +51,6 @@ import com.holonplatform.auth.internal.AccountAuthenticator;
 import com.holonplatform.auth.internal.DefaultAccount;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.internal.utils.Hash;
-import com.holonplatform.test.TestUtils;
 
 public class TestAccount {
 
@@ -185,15 +185,15 @@ public class TestAccount {
 		Authentication authc = resolver.authenticate(new AccountCredentialsToken("test", "testpwd"));
 		assertNotNull(authc);
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, () -> {
+		assertThrows(UnexpectedAuthenticationException.class, () -> {
 			new AccountAuthenticator(service).authenticate(null);
 		});
 
-		TestUtils.expectedException(UnknownAccountException.class, () -> {
+		assertThrows(UnknownAccountException.class, () -> {
 			new AccountAuthenticator(service).authenticate(new AccountCredentialsToken("testx", "testpwd"));
 		});
 
-		TestUtils.expectedException(InvalidCredentialsException.class, () -> {
+		assertThrows(InvalidCredentialsException.class, () -> {
 			new AccountAuthenticator(service).authenticate(new AccountCredentialsToken(null, "testpwd"));
 		});
 
@@ -214,13 +214,13 @@ public class TestAccount {
 			}
 		};
 
-		TestUtils.expectedException(DisabledAccountException.class, () -> {
+		assertThrows(DisabledAccountException.class, () -> {
 			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("enb", "testpwd"));
 		});
-		TestUtils.expectedException(LockedAccountException.class, () -> {
+		assertThrows(LockedAccountException.class, () -> {
 			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("lck", "testpwd"));
 		});
-		TestUtils.expectedException(ExpiredCredentialsException.class, () -> {
+		assertThrows(ExpiredCredentialsException.class, () -> {
 			new AccountAuthenticator(service2).authenticate(new AccountCredentialsToken("exp", "testpwd"));
 		});
 
@@ -231,7 +231,7 @@ public class TestAccount {
 				throw new RuntimeException("test");
 			}
 		};
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, () -> {
+		assertThrows(UnexpectedAuthenticationException.class, () -> {
 			new AccountAuthenticator(service4).authenticate(new AccountCredentialsToken("test", "testpwd"));
 		});
 

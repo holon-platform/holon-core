@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.security.KeyPair;
@@ -52,7 +53,6 @@ import com.holonplatform.auth.jwt.JwtSignatureAlgorithm;
 import com.holonplatform.auth.jwt.JwtTokenBuilder;
 import com.holonplatform.auth.jwt.JwtTokenParser;
 import com.holonplatform.auth.jwt.internal.AuthenticationClaimsImpl;
-import com.holonplatform.test.TestUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
@@ -85,7 +85,7 @@ public class TestJwt {
 		Authentication authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
 		assertNotNull(authenticated);
 
-		TestUtils.expectedException(InvalidTokenException.class, () -> {
+		assertThrows(InvalidTokenException.class, () -> {
 			String tjwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("InvalidIssuer").build(),
 					authc);
 			realm.authenticate(AuthenticationToken.bearer(tjwt));
@@ -95,7 +95,7 @@ public class TestJwt {
 				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").withRequiredClaim("testReq")
 				.build();
 
-		TestUtils.expectedException(InvalidTokenException.class, () -> {
+		assertThrows(InvalidTokenException.class, () -> {
 			String tjwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc);
 			Realm.builder().withAuthenticator(jwtAuthenticator2).build().authenticate(AuthenticationToken.bearer(tjwt));
 		});
@@ -107,21 +107,20 @@ public class TestJwt {
 		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
 		assertNotNull(authenticated);
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class, () -> JwtAuthenticator.builder()
+		assertThrows(UnexpectedAuthenticationException.class, () -> JwtAuthenticator.builder()
 				.configuration(JwtConfiguration.builder().build()).build().authenticate(null));
 
 		AuthenticationClaims cs = new AuthenticationClaimsImpl(null);
 		assertNull(cs.get("test", String.class));
 
-		TestUtils.expectedException(ExpiredCredentialsException.class, () -> {
+		assertThrows(ExpiredCredentialsException.class, () -> {
 			String tjwt = JwtTokenBuilder.get().buildJwt(
 					JwtConfiguration.builder().issuer("TestUnit").includeDetails(true).expireTime(1L).build(), authc2);
 			Thread.sleep(2L);
 			realm.authenticate(AuthenticationToken.bearer(tjwt));
 		});
 
-		TestUtils.expectedException(InvalidTokenException.class,
-				() -> realm.authenticate(AuthenticationToken.bearer("x")));
+		assertThrows(InvalidTokenException.class, () -> realm.authenticate(AuthenticationToken.bearer("x")));
 
 	}
 

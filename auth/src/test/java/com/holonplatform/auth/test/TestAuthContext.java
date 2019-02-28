@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashSet;
@@ -40,7 +41,6 @@ import com.holonplatform.auth.exceptions.AuthenticationException;
 import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
-import com.holonplatform.test.TestUtils;
 
 public class TestAuthContext {
 
@@ -207,11 +207,11 @@ public class TestAuthContext {
 	@Test
 	public void testAuthContextResource() {
 
-		TestUtils.expectedException(IllegalStateException.class, () -> AuthContext.require());
+		assertThrows(IllegalStateException.class, () -> AuthContext.require());
 
 		final AuthContext ac = AuthContext.create(Realm.builder().build());
 
-		TestUtils.expectedException(IllegalStateException.class, () -> ac.requireAuthentication());
+		assertThrows(IllegalStateException.class, () -> ac.requireAuthentication());
 
 		boolean ia = Context.get().executeThreadBound(AuthContext.CONTEXT_KEY,
 				AuthContext.create(Realm.builder().withDefaultAuthorizer().build()), () -> {

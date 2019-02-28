@@ -18,6 +18,7 @@ package com.holonplatform.auth.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -45,7 +46,6 @@ import com.holonplatform.auth.exceptions.UnsupportedTokenException;
 import com.holonplatform.auth.internal.DefaultPermission;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.Context;
-import com.holonplatform.test.TestUtils;
 
 public class TestRealm {
 
@@ -119,8 +119,7 @@ public class TestRealm {
 		assertTrue(realm.isPermitted(authc, "p1", "p2"));
 		assertTrue(realm.isPermittedAny(authc, "p1", "p3"));
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class,
-				() -> realm.authenticate((AuthenticationToken) null));
+		assertThrows(UnexpectedAuthenticationException.class, () -> realm.authenticate((AuthenticationToken) null));
 
 		Realm xrealm = Realm.builder().build();
 
@@ -139,14 +138,14 @@ public class TestRealm {
 			}
 		};
 
-		TestUtils.expectedException(UnsupportedTokenException.class, () -> realm.authenticate(at));
+		assertThrows(UnsupportedTokenException.class, () -> realm.authenticate(at));
 
 	}
 
 	@Test
 	public void testRealmContext() {
 
-		TestUtils.expectedException(IllegalStateException.class, () -> Realm.require());
+		assertThrows(IllegalStateException.class, () -> Realm.require());
 
 		String name = Context.get().executeThreadBound(Realm.CONTEXT_KEY,
 				Realm.builder().name("rlm").withDefaultAuthorizer().build(), () -> {

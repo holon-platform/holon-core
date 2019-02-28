@@ -17,6 +17,7 @@ package com.holonplatform.core.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
@@ -35,7 +36,6 @@ import com.holonplatform.core.property.PropertyValueConverter;
 import com.holonplatform.core.property.PropertyValueConverter.PropertyConversionException;
 import com.holonplatform.core.property.TemporalProperty;
 import com.holonplatform.core.test.TestProperty.TestEnum;
-import com.holonplatform.test.TestUtils;
 
 public class TestPropertyValueConverter {
 
@@ -240,7 +240,7 @@ public class TestPropertyValueConverter {
 
 	@Test
 	public void testPropertyConverterErrors() {
-		TestUtils.expectedException(PropertyConversionException.class, () -> {
+		assertThrows(PropertyConversionException.class, () -> {
 			NumericBooleanConverter<InvalidNumberClass> pc = new NumericBooleanConverter<>(InvalidNumberClass.class);
 			pc.toModel(Boolean.TRUE, null);
 		});

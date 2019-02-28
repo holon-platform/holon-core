@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -55,23 +56,11 @@ import com.holonplatform.core.test.data.TestMetaAnnotated;
 import com.holonplatform.core.test.data.TestMetaAnnotated2;
 import com.holonplatform.core.test.data.TestMetaAnnotation;
 import com.holonplatform.core.test.data.TestNested;
-import com.holonplatform.test.TestUtils;
 
 /**
  * Utility classes test
  */
 public class TestUtilities {
-
-	@Test
-	public void testWellDefined() {
-		TestUtils.checkUtilityClass(TestUtils.class);
-		TestUtils.checkUtilityClass(AnnotationUtils.class);
-		TestUtils.checkUtilityClass(ClassUtils.class);
-		TestUtils.checkUtilityClass(ConversionUtils.class);
-		TestUtils.checkUtilityClass(FormatUtils.class);
-		TestUtils.checkUtilityClass(TypeUtils.class);
-		TestUtils.checkUtilityClass(CalendarUtils.class);
-	}
 
 	@Test
 	public void testFormatUtils() {
@@ -117,7 +106,7 @@ public class TestUtilities {
 		escaped = FormatUtils.escapeRegexCharacters(null);
 		assertNull(escaped);
 
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> FormatUtils.resolveMessageArguments(null, "msg", new Object[] { "a" }));
 
 		String resolved = FormatUtils.resolveMessageArguments("&", "msg&", new Object[] { "a" });
@@ -419,13 +408,13 @@ public class TestUtilities {
 		assertNotNull(bd);
 		assertEquals(1, bd.intValue());
 
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MAX_VALUE + 1), short.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MIN_VALUE - 1), short.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MAX_VALUE + 1), byte.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MIN_VALUE - 1), byte.class));
 
 		// stream
@@ -440,25 +429,20 @@ public class TestUtilities {
 
 	@Test
 	public void testConversionUtilsErrors() {
-		TestUtils.expectedException(IllegalArgumentException.class,
-				() -> ConversionUtils.convertStringValue("test", null));
-		TestUtils.expectedException(IllegalArgumentException.class,
-				() -> ConversionUtils.convertStringValue("aa", char.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
-				() -> ConversionUtils.convertStringValue("xxx", boolean.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
-				() -> ConversionUtils.convertEnumValue(null, TestEnum.ONE));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.convertStringValue("test", null));
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.convertStringValue("aa", char.class));
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.convertStringValue("xxx", boolean.class));
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.convertEnumValue(null, TestEnum.ONE));
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertEnumValue(TestEnum.class, Boolean.TRUE));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(new Integer(3), null));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(null, long.class));
-		TestUtils.expectedException(IllegalArgumentException.class,
+		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertStringValue("invalid", TestNested.class));
-		TestUtils.expectedException(IllegalArgumentException.class, () -> ConversionUtils.parseNumber("invalid", null));
-		TestUtils.expectedException(IllegalArgumentException.class,
-				() -> ConversionUtils.parseNumber(null, Integer.class));
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.parseNumber("invalid", null));
+		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.parseNumber(null, Integer.class));
 	}
 
 	@SuppressWarnings("boxing")
@@ -597,7 +581,7 @@ public class TestUtilities {
 	@Test
 	public void testObjectUtils() {
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> ObjectUtils.argumentNotNull(null, "null"));
+		assertThrows(IllegalArgumentException.class, () -> ObjectUtils.argumentNotNull(null, "null"));
 
 		assertTrue(ObjectUtils.isEmpty(""));
 		assertTrue(ObjectUtils.isEmpty(null));

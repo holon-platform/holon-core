@@ -18,6 +18,7 @@ package com.holonplatform.auth.test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
@@ -38,7 +39,6 @@ import com.holonplatform.auth.exceptions.UnknownAccountException;
 import com.holonplatform.auth.exceptions.UnsupportedMessageException;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.core.messaging.Message;
-import com.holonplatform.test.TestUtils;
 
 public class TestMessageAuthenticator {
 
@@ -73,7 +73,7 @@ public class TestMessageAuthenticator {
 
 		final Realm realmx = Realm.builder().build();
 
-		TestUtils.expectedException(UnsupportedMessageException.class,
+		assertThrows(UnsupportedMessageException.class,
 				() -> realmx.authenticate(new TestMessage("myself")));
 
 		final AtomicInteger counter = new AtomicInteger(0);
@@ -104,7 +104,7 @@ public class TestMessageAuthenticator {
 			throw new UnknownAccountException("" + token.getPrincipal());
 		})).withAuthenticationListener(authc -> counter.incrementAndGet()).build();
 
-		TestUtils.expectedException(UnexpectedAuthenticationException.class,
+		assertThrows(UnexpectedAuthenticationException.class,
 				() -> realm.authenticate((Message<?, ?>) null));
 
 		assertTrue(realm.supportsMessage(TestMessage.class));
@@ -119,7 +119,7 @@ public class TestMessageAuthenticator {
 		assertNotNull(authc);
 		assertEquals(2, counter.get());
 
-		TestUtils.expectedException(UnsupportedMessageException.class,
+		assertThrows(UnsupportedMessageException.class,
 				() -> realm.authenticate(new TestMessage("myself"), "xxx"));
 
 	}

@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
@@ -30,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import com.holonplatform.auth.Authentication;
 import com.holonplatform.auth.Authorizer;
 import com.holonplatform.auth.Permission;
-import com.holonplatform.test.TestUtils;
 
 public class TestAuthz {
 
@@ -66,7 +66,7 @@ public class TestAuthz {
 		assertTrue(Arrays.equals(permissions.toArray(new Permission[0]),
 				auth.getPermissions().toArray(new Permission[0])));
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> Permission.create(null));
+		assertThrows(IllegalArgumentException.class, () -> Permission.create(null));
 
 	}
 

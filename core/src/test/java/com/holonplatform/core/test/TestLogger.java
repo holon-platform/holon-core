@@ -1,13 +1,13 @@
 package com.holonplatform.core.test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.Logger.Level;
-import com.holonplatform.test.TestUtils;
 
 /**
  * {@link Logger} unit tests.
@@ -50,7 +50,7 @@ public class TestLogger {
 
 		logger.debug(() -> "test" + " logger");
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> {
+		assertThrows(IllegalArgumentException.class, () -> {
 			logger.debug(null);
 			logger.debug(null, new Exception());
 

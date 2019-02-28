@@ -28,15 +28,11 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.http.internal.HttpUtils;
-import com.holonplatform.test.TestUtils;
 
 public class TestHttp {
 
 	@Test
 	public void testHttp() throws URISyntaxException {
-
-		TestUtils.checkUtilityClass(HttpUtils.class);
-
 		assertFalse(HttpUtils.isSecure(null));
 		assertTrue(HttpUtils.isSecure(new URI("https://example.com/test")));
 	}

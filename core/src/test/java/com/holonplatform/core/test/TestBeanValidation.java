@@ -16,6 +16,7 @@
 package com.holonplatform.core.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -24,7 +25,6 @@ import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanPropertySet;
 import com.holonplatform.core.test.data.TestBeanPropertyBean;
-import com.holonplatform.test.TestUtils;
 
 public class TestBeanValidation {
 
@@ -49,9 +49,9 @@ public class TestBeanValidation {
 
 		set.property("name").validate("xxx");
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate(null));
+		assertThrows(ValidationException.class, () -> set.property("name").validate(null));
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("name").validate("   "));
+		assertThrows(ValidationException.class, () -> set.property("name").validate("   "));
 
 		try {
 			set.property("name").validate(null);
@@ -61,23 +61,23 @@ public class TestBeanValidation {
 
 		set.property("text").validate("x");
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("text").validate(null));
+		assertThrows(ValidationException.class, () -> set.property("text").validate(null));
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("text").validate(""));
+		assertThrows(ValidationException.class, () -> set.property("text").validate(""));
 
 		set.property("required").validate("");
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("required").validate(null));
+		assertThrows(ValidationException.class, () -> set.property("required").validate(null));
 
 		set.property("email").validate("abc@test.org");
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("email").validate("abc"));
+		assertThrows(ValidationException.class, () -> set.property("email").validate("abc"));
 
 		set.property("numbool").validate(0);
 		set.property("numbool").validate(1);
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(-1));
-		TestUtils.expectedException(ValidationException.class, () -> set.property("intval").validate(11));
+		assertThrows(ValidationException.class, () -> set.property("intval").validate(-1));
+		assertThrows(ValidationException.class, () -> set.property("intval").validate(11));
 
 		try {
 			set.property("intval").validate(11);
@@ -88,7 +88,7 @@ public class TestBeanValidation {
 
 		set.property("lng").validate(7L);
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("lng").validate(3L));
+		assertThrows(ValidationException.class, () -> set.property("lng").validate(3L));
 
 		try {
 			set.property("lng").validate(0L);
@@ -96,9 +96,9 @@ public class TestBeanValidation {
 			assertEquals("Must be 7", e.getMessage());
 		}
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("notneg").validate(-1));
+		assertThrows(ValidationException.class, () -> set.property("notneg").validate(-1));
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("notneg").validate(0));
+		assertThrows(ValidationException.class, () -> set.property("notneg").validate(0));
 
 		assertTrue(set.property("notneg").getConfiguration().hasNotNullParameter("k1"));
 		assertEquals("v1", set.property("notneg").getConfiguration().getParameter("k1", String.class, null));
@@ -108,7 +108,7 @@ public class TestBeanValidation {
 
 		set.property("notnegzero").validate(0);
 
-		TestUtils.expectedException(ValidationException.class, () -> set.property("notnegzero").validate(-1));
+		assertThrows(ValidationException.class, () -> set.property("notnegzero").validate(-1));
 
 	}
 

@@ -17,6 +17,7 @@ package com.holonplatform.spring.security.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Optional;
 
@@ -43,7 +44,6 @@ import com.holonplatform.auth.Account.AccountProvider;
 import com.holonplatform.auth.Credentials;
 import com.holonplatform.auth.token.AccountCredentialsToken;
 import com.holonplatform.spring.security.SpringSecurity;
-import com.holonplatform.test.TestUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestAuthenticationProvider.Config.class)
@@ -113,16 +113,16 @@ public class TestAuthenticationProvider {
 	@Test
 	public void testAuthenticatorExceptions() {
 
-		TestUtils.expectedException(UsernameNotFoundException.class,
+		assertThrows(UsernameNotFoundException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("ux", "ux")));
 
-		TestUtils.expectedException(BadCredentialsException.class,
+		assertThrows(BadCredentialsException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u1", "xxx")));
 
-		TestUtils.expectedException(LockedException.class,
+		assertThrows(LockedException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u3", "u3")));
 
-		TestUtils.expectedException(DisabledException.class,
+		assertThrows(DisabledException.class,
 				() -> authenticationManager.authenticate(new UsernamePasswordAuthenticationToken("u4", "u4")));
 
 	}

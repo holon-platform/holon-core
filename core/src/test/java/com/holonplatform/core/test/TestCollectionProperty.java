@@ -17,6 +17,7 @@ package com.holonplatform.core.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
@@ -39,7 +40,6 @@ import com.holonplatform.core.property.SetPathProperty;
 import com.holonplatform.core.property.SetVirtualProperty;
 import com.holonplatform.core.property.StringProperty;
 import com.holonplatform.core.test.data.TestPropertySet;
-import com.holonplatform.test.TestUtils;
 
 public class TestCollectionProperty {
 
@@ -89,7 +89,7 @@ public class TestCollectionProperty {
 		assertNotNull(v);
 		assertEquals(list, v);
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> SetPathProperty.propertyBox("test", null));
+		assertThrows(IllegalArgumentException.class, () -> SetPathProperty.propertyBox("test", null));
 
 		final SetPathProperty<PropertyBox> p2 = SetPathProperty.propertyBox("test", TestPropertySet.PROPERTIES);
 		assertNotNull(p2);

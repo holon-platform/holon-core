@@ -31,14 +31,11 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.temporal.TemporalType;
-import com.holonplatform.test.TestUtils;
 
 public class TestTemporalType {
 
 	@Test
 	public void testTemporalType() {
-
-		TestUtils.checkEnum(TemporalType.class);
 
 		assertFalse(TemporalType.getTemporalType((Temporal) null).isPresent());
 

@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -30,18 +31,11 @@ import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.beans.BeanConfigProperties;
 import com.holonplatform.core.config.ConfigPropertyProvider;
-import com.holonplatform.core.internal.config.DefaultConfig;
 import com.holonplatform.core.internal.config.PrefixedConfigPropertyProvider;
 import com.holonplatform.core.internal.config.PropertiesConfigProvider;
 import com.holonplatform.core.internal.utils.ClassUtils;
-import com.holonplatform.test.TestUtils;
 
 public class TestConfig {
-
-	@Test
-	public void testUtils() {
-		TestUtils.checkUtilityClass(DefaultConfig.class);
-	}
 
 	@Test
 	public void testConfig() throws IOException {
@@ -61,9 +55,9 @@ public class TestConfig {
 		assertNotNull(props);
 		assertEquals("test", props.getProperty("holon.test.property"));
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> ClassUtils.loadProperties(null, false));
+		assertThrows(IllegalArgumentException.class, () -> ClassUtils.loadProperties(null, false));
 
-		TestUtils.expectedException(IOException.class, () -> ClassUtils.loadProperties("notexists.properties", false));
+		assertThrows(IOException.class, () -> ClassUtils.loadProperties("notexists.properties", false));
 
 		cpp = ConfigPropertyProvider.using("holon.properties", ClassUtils.getDefaultClassLoader());
 		assertEquals("test", cpp.getProperty("holon.test.property", String.class));
@@ -99,7 +93,7 @@ public class TestConfig {
 		val = cfg.getProperty("z", String.class);
 		assertNull(val);
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> cfg.getProperty(null, null));
+		assertThrows(IllegalArgumentException.class, () -> cfg.getProperty(null, null));
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("other", "test");

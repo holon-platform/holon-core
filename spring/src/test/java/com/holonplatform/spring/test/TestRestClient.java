@@ -17,6 +17,7 @@ package com.holonplatform.spring.test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -63,7 +64,6 @@ import com.holonplatform.http.rest.RestClient;
 import com.holonplatform.spring.EnableBeanContext;
 import com.holonplatform.spring.SpringRestClient;
 import com.holonplatform.test.JerseyTest5;
-import com.holonplatform.test.TestUtils;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestRestClient.Config.class)
@@ -398,7 +398,7 @@ public class TestRestClient extends JerseyTest5 {
 		assertNotNull(error);
 		assertEquals("ERR000", error.getCode());
 
-		TestUtils.expectedException(UnsuccessfulResponseException.class, () -> {
+		assertThrows(UnsuccessfulResponseException.class, () -> {
 			client.request().path("test").path("data2/{id}").resolve("id", -1).getForEntity(TestData.class)
 					.orElse(null);
 		});

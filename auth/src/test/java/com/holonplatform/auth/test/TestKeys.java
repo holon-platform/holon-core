@@ -31,7 +31,6 @@ import com.holonplatform.auth.keys.KeyEncoding;
 import com.holonplatform.auth.keys.KeyFormat;
 import com.holonplatform.auth.keys.KeyReader;
 import com.holonplatform.auth.keys.KeySource;
-import com.holonplatform.test.TestUtils;
 
 public class TestKeys {
 
@@ -78,9 +77,6 @@ public class TestKeys {
 
 	@Test
 	public void testBase() {
-		TestUtils.checkEnum(KeyFormat.class);
-		TestUtils.checkEnum(KeyEncoding.class);
-
 		assertNotNull(KeyReader.getDefault());
 	}
 

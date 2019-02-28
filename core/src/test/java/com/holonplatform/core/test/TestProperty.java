@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -42,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.holonplatform.core.Context;
@@ -86,7 +88,6 @@ import com.holonplatform.core.test.data.TestBean3;
 import com.holonplatform.core.test.data.TestIdentifiablePropertySet;
 import com.holonplatform.core.test.data.TestNested;
 import com.holonplatform.core.test.data.TestPropertySet;
-import com.holonplatform.test.TestUtils;
 
 /**
  * Property architecture test
@@ -293,9 +294,8 @@ public class TestProperty {
 		assertEquals(String.class, qp.getType());
 		assertEquals("test", qp.getName());
 
-		TestUtils.assertInstanceOf(qp, Localizable.class);
-		assertEquals("Test caption", ((Localizable) qp).getMessage());
-		assertEquals("test.message", ((Localizable) qp).getMessageCode());
+		assertEquals("Test caption", qp.getMessage());
+		assertEquals("test.message", qp.getMessageCode());
 	}
 
 	@SuppressWarnings("serial")
@@ -327,9 +327,9 @@ public class TestProperty {
 		assertFalse(pb.containsValue(TestPropertySet.NESTED_DATE));
 		assertEquals("test", pb.getValue(TestPropertySet.NAME));
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> pb.containsValue(null));
+		assertThrows(IllegalArgumentException.class, () -> pb.containsValue(null));
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> pb.getValue(null));
+		assertThrows(IllegalArgumentException.class, () -> pb.getValue(null));
 
 		final PathProperty<Integer> cp = PathProperty.create("testConv", Integer.class)
 				.converter(new PropertyValueConverter<Integer, String>() {
@@ -387,9 +387,8 @@ public class TestProperty {
 
 		pb2.getValue(vp);
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> pb2.setValue(null, ""));
-		TestUtils.expectedException(PropertyNotFoundException.class,
-				() -> pb2.setValue(TestPropertySet.NESTED_ID, Long.valueOf(1L)));
+		assertThrows(IllegalArgumentException.class, () -> pb2.setValue(null, ""));
+		assertThrows(PropertyNotFoundException.class, () -> pb2.setValue(TestPropertySet.NESTED_ID, Long.valueOf(1L)));
 
 		Property<String> vrtChain = VirtualProperty.create(String.class).valueProvider(b -> chain(b));
 
@@ -448,8 +447,7 @@ public class TestProperty {
 
 		final PropertyBox pbro = PropertyBox.builder(TestPropertySet.PROPERTIES).build();
 
-		TestUtils.expectedException(PropertyReadOnlyException.class,
-				() -> pbro.setValue(TestPropertySet.VIRTUAL, "readonly"));
+		assertThrows(PropertyReadOnlyException.class, () -> pbro.setValue(TestPropertySet.VIRTUAL, "readonly"));
 
 		PropertyBox pb6 = PropertyBox.create(TestPropertySet.PROPERTIES);
 		pb6.setValue(TestPropertySet.NAME, "theName");
@@ -488,7 +486,7 @@ public class TestProperty {
 		int cs = ((DefaultBeanIntrospector) BeanIntrospector.get()).getCacheSize();
 		assertEquals(0, cs);
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> BeanIntrospector.get().getPropertySet(null));
+		assertThrows(IllegalArgumentException.class, () -> BeanIntrospector.get().getPropertySet(null));
 
 		BeanPropertySet<TestBean> beanPropertySet = BeanIntrospector.get().getPropertySet(TestBean.class);
 
@@ -695,7 +693,7 @@ public class TestProperty {
 		value = box.getValue(TestPropertySet.NESTED_DATE);
 		assertNotNull(value);
 
-		TestUtils.expectedException(PropertyNotFoundException.class, () -> {
+		assertThrows(PropertyNotFoundException.class, () -> {
 			PathProperty<String> px = PathProperty.create("px", String.class);
 			box.getValue(px);
 		});
@@ -913,9 +911,9 @@ public class TestProperty {
 		property = StringProperty.create(sp);
 		assertEquals("testp", property.getName());
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> StringProperty.create((Path<String>) null));
+		assertThrows(IllegalArgumentException.class, () -> StringProperty.create((Path<String>) null));
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> PathProperty.create(null));
+		assertThrows(IllegalArgumentException.class, () -> PathProperty.create(null));
 
 		property2 = PathProperty.create(sp);
 		assertEquals("testp", property.getName());
@@ -923,12 +921,12 @@ public class TestProperty {
 		// sorts
 
 		QuerySort sort = property.asc();
-		TestUtils.assertInstanceOf(sort, PathQuerySort.class);
+		assertInstanceOf(sort, PathQuerySort.class);
 		assertNotNull(((PathQuerySort) sort).getPath());
 		assertEquals(SortDirection.ASCENDING, ((PathQuerySort) sort).getDirection());
 
 		sort = property.desc();
-		TestUtils.assertInstanceOf(sort, PathQuerySort.class);
+		assertInstanceOf(sort, PathQuerySort.class);
 		assertNotNull(((PathQuerySort) sort).getPath());
 		assertEquals(SortDirection.DESCENDING, ((PathQuerySort) sort).getDirection());
 
@@ -936,89 +934,89 @@ public class TestProperty {
 
 		QueryFilter flt = property.isNull();
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NULL, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.isNotNull();
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NOT_NULL, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.eq("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.EQUAL, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.neq("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NOT_EQUAL, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.gt("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.GREATER_THAN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.goe("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.GREATER_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.lt("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_THAN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.loe("x");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.contains("x", false);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.MATCH, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.contains("x", true);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.MATCH, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.in("x", "y");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.IN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.nin("x", "y");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NOT_IN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.between("x", "y");
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.BETWEEN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
@@ -1028,51 +1026,51 @@ public class TestProperty {
 
 		flt = property.in(col);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.IN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.nin(col);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NOT_IN, ((OperationQueryFilter) flt).getOperator());
 		assertTrue(((OperationQueryFilter) flt).getRightOperand().isPresent());
 
 		flt = property.eq(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.EQUAL, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.neq(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.NOT_EQUAL, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.gt(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.GREATER_THAN, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.goe(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.GREATER_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.lt(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_THAN, ((OperationQueryFilter) flt).getOperator());
 
 		flt = property.loe(property2);
 		assertNotNull(flt);
-		TestUtils.assertInstanceOf(flt, OperationQueryFilter.class);
+		assertInstanceOf(flt, OperationQueryFilter.class);
 		assertNotNull(((OperationQueryFilter) flt).getLeftOperand());
 		assertEquals(FilterOperator.LESS_OR_EQUAL, ((OperationQueryFilter) flt).getOperator());
 
@@ -1087,7 +1085,7 @@ public class TestProperty {
 		bp = BooleanProperty.create(Path.of("test", boolean.class));
 		assertEquals(Boolean.class, bp.getType());
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> BooleanProperty.create((Path<Boolean>) null));
+		assertThrows(IllegalArgumentException.class, () -> BooleanProperty.create((Path<Boolean>) null));
 
 		bp = BooleanProperty.create("test", Integer.class);
 		assertTrue(bp.getConverter().isPresent());
@@ -1105,7 +1103,7 @@ public class TestProperty {
 		NumericProperty<Integer> ip = NumericProperty.create(Path.of("test", Integer.class));
 		assertEquals(Integer.class, ip.getType());
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> NumericProperty.create((Path) null));
+		assertThrows(IllegalArgumentException.class, () -> NumericProperty.create((Path) null));
 
 		NumericProperty<?> np = NumericProperty.integerType("test");
 		assertEquals(Integer.class, np.getType());
@@ -1133,7 +1131,7 @@ public class TestProperty {
 		TemporalProperty<Date> dp = TemporalProperty.create(Path.of("test", Date.class));
 		assertEquals(Date.class, dp.getType());
 
-		TestUtils.expectedException(IllegalArgumentException.class, () -> TemporalProperty.create((Path) null));
+		assertThrows(IllegalArgumentException.class, () -> TemporalProperty.create((Path) null));
 
 		TemporalProperty<?> tp = TemporalProperty.date("test");
 		assertEquals(Date.class, tp.getType());
@@ -1163,6 +1161,13 @@ public class TestProperty {
 		assertEquals(PropertyBox.class, p2.getType());
 		assertNotNull(p2.getConfiguration().getParameter(PropertySet.PROPERTY_CONFIGURATION_ATTRIBUTE).orElse(null));
 
+	}
+
+	private static void assertInstanceOf(Object object, Class<?> type) {
+		if (!type.isInstance(object)) {
+			Assertions.fail("Expected object type [" + type + "] but got type ["
+					+ ((object == null) ? "NULL" : object.getClass().getName() + "]"));
+		}
 	}
 
 	static enum TestEnum {
