@@ -187,7 +187,7 @@ public class ExampleProperty {
 
 	public final static PathProperty<String> A_PROPERTY = PathProperty.create("child", String.class)
 			.parent(PARENT_PROPERTY); // <1>
-	// end::pathpropert2y[]
+	// end::pathpropert2[]
 
 	// tag::pathproperty3[]
 	public final static StringProperty STRING_PROPERTY = StringProperty.create("name"); // <1>
@@ -197,7 +197,7 @@ public class ExampleProperty {
 	public final static TemporalProperty<Date> DATE_PROPERTY = TemporalProperty.date("name")
 			.temporalType(TemporalType.DATE); // <5>
 	public final static BooleanProperty BOOLEAN_PROPERTY = BooleanProperty.create("name"); // <6>
-	// end::pathpropert3y[]
+	// end::pathpropert3[]
 
 	// tag::vrtproperty[]
 	public final static VirtualProperty<Integer> ALWAYS_ONE = VirtualProperty.create(Integer.class, propertyBox -> 1); // <1>
