@@ -63,7 +63,7 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 
 	/**
 	 * Add one or more {@link PropertyBox} values to insert.
-	 * @param propertyBox The values to add to the bulk insert operation (not null)
+	 * @param values The values to add to the bulk insert operation (not null)
 	 * @return this
 	 */
 	default O add(PropertyBox... values) {
@@ -74,7 +74,7 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 	 * Add a path - value map to insert.
 	 * @param values Value map to add to the bulk insert operation (not null)
 	 * @return this
-	 * @deprecated Use {@link #add(PropertyBox)}
+	 * @deprecated Use {@link #add(Iterable)}
 	 */
 	@Deprecated
 	O add(Map<Path<?>, Object> values);
