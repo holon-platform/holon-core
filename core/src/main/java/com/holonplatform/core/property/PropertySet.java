@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.property;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -321,6 +322,23 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		 * @since 5.1.0
 		 */
 		<PT extends P> Builder<P> identifiers(Iterable<PT> properties);
+
+		/**
+		 * Set given <code>properties</code> as property set identifiers. Any previously declared identifier property
+		 * will be replaced by given identifier properties.
+		 * <p>
+		 * The properties to declare as identifiers must be already present in the property set.
+		 * </p>
+		 * @param properties The properties to declare as property set identifiers (not null)
+		 * @return this
+		 * @throws IllegalStateException If one of the properties to declare as identifier is not part of the property
+		 *         set
+		 * @since 5.2.2
+		 */
+		@SuppressWarnings("unchecked")
+		default Builder<P> identifiers(P... properties) {
+			return identifiers(Arrays.asList(properties));
+		}
 
 		/**
 		 * Add a {@link PropertySet} configuration parameter

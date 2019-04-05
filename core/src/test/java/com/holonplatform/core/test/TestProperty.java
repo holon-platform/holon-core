@@ -801,6 +801,13 @@ public class TestProperty {
 		assertTrue(set2.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
 		assertTrue(set2.getFirstIdentifier().isPresent());
 		assertEquals(TestIdentifiablePropertySet.ID, set2.getFirstIdentifier().get());
+
+		PropertySet<?> set3 = PropertySet.builder().add(P1).add(P2).add(P3).identifiers(P1, P2).build();
+		assertEquals(2, set3.getIdentifiers().size());
+		assertTrue(set3.getIdentifiers().contains(P1));
+		assertTrue(set3.getIdentifiers().contains(P2));
+		assertTrue(set3.getFirstIdentifier().isPresent());
+		assertEquals(P1, set3.getFirstIdentifier().get());
 	}
 
 	@Test
