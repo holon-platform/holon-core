@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.datastore.operation.commons;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.holonplatform.core.Path;
@@ -54,11 +55,20 @@ public interface BulkInsertOperation<R, O extends BulkInsertOperation<R, O>>
 	}
 
 	/**
-	 * Add a {@link PropertyBox} to insert.
-	 * @param propertyBox PropertyBox to add to the bulk insert operation (not null)
+	 * Add one or more {@link PropertyBox} values to insert.
+	 * @param values The values to add to the bulk insert operation (not null)
 	 * @return this
 	 */
-	O add(PropertyBox propertyBox);
+	O add(Iterable<PropertyBox> values);
+
+	/**
+	 * Add one or more {@link PropertyBox} values to insert.
+	 * @param propertyBox The values to add to the bulk insert operation (not null)
+	 * @return this
+	 */
+	default O add(PropertyBox... values) {
+		return add(Arrays.asList(values));
+	}
 
 	/**
 	 * Add a path - value map to insert.

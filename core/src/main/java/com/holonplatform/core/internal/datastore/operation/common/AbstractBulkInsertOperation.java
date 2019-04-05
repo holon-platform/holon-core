@@ -68,13 +68,14 @@ public abstract class AbstractBulkInsertOperation<R, O extends BulkInsertOperati
 		return getActualOperation();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.bulk.BulkInsertOperation#add(com.holonplatform.core.property.PropertyBox)
-	 */
 	@Override
-	public O add(PropertyBox propertyBox) {
-		getDefinition().addValue(propertyBox);
+	public O add(Iterable<PropertyBox> values) {
+		ObjectUtils.argumentNotNull(values, "Values to add must be not null");
+		for (PropertyBox value : values) {
+			if (value != null) {
+				getDefinition().addValue(value);
+			}
+		}
 		return getActualOperation();
 	}
 
