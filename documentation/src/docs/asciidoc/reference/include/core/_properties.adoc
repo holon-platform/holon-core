@@ -473,7 +473,7 @@ In a typical data model mapping scenario, a `PropertyBox` is used to represent a
 [[PropertyBoxIdentification]]
 ==== PropertyBox instances identification
 
-As a standard Java object, a `PropertyBox` instance is identified by its memory address. This makes each `PropertyBox` instance "different" form one another, in the Java objects sense, regardless of the property set and the property values contained in the `PropertyBox`.
+As a standard Java object, a `PropertyBox` instance is identified by its memory address. This makes each `PropertyBox` instance "different" from one another, in the Java objects sense, regardless of the property set and the property values contained in the `PropertyBox`.
 
 This may not always be the desired behavior. In many situations is it appropriate to implement a `PropertyBox` identification strategy relying on its property set and the corresponding property values. According to this vision, two `PropertyBox` with the same property set and the same property values should be considered _equal_.
 
@@ -564,7 +564,7 @@ IMPORTANT: When a `PropertyValuePresenter` is registered using service extension
 
 ==== Default PropertyValuePresenter
 
-A _default_ property value presenter is provided by the platform and automatically registered in the registry. The default presenter is used when no other suitable presenter is available form the registry.
+A _default_ property value presenter is provided by the platform and automatically registered in the registry. The default presenter is used when no other suitable presenter is available from the registry.
 
 The default property value presenter uses a default implementation of link:{apidir}/com/holonplatform/core/presentation/StringValuePresenter.html[StringValuePresenter^] to convert property values into `String`. See <<StringValuePresenter>> for further information on the presentation strategy.
 

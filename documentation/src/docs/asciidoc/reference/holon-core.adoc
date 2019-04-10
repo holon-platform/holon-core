@@ -130,7 +130,7 @@ Furthermore, the `TransactionException` class hierarchy was moved from the link:
 
 * The new <<BeanPropertySetPostProcessor>> interface can be used to extend the <<BeanIntrospector>> Bean introspection strategy at Bean property set level, allowing for example to customize the Bean property set configuration. See <<BeanPropertySetPostProcessor>>.
 
-* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different form the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition. See <<BeanDataPath>>.
+* The <<BeanDataPath,@DataPath>> annotation can be used on Bean classes to declare a *data path mapping* name different from the Bean class or property name, when the Bean class is used in a persistence context and it is bound to a data model definition. See <<BeanDataPath>>.
 
 === Datastore
 

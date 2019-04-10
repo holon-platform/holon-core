@@ -114,6 +114,6 @@ include::{examplesdir}/com/holonplatform/core/examples/ExampleContext.java[tag=m
 
 *2.* Create a file named _com.holonplatform.core.ContextScope_ containing the fully qualified class name(s) of the scope implementation and put it under the `META-INF/services` folder of your project to register the scope in the default Context. When a jar with a valid _com.holonplatform.core.ContextScope_ file is available from classpath, the context scope is automatically registered and made available from the `Context` API.
 
-NOTE: Some Holon platform modules provides specific context scope implementations, which are automatically registered when the module is available form classpath. See each module reference documentation to learn about the available additional platform context scopes. 
+NOTE: Some Holon platform modules provides specific context scope implementations, which are automatically registered when the module is available from classpath. See each module reference documentation to learn about the available additional platform context scopes. 
 
 TIP: The *core* module itself provides a _Spring bean factory_ based context scope, which uses the _Spring framework_ bean registry to provide bean references as context resources. See the <<SpringIntegration>> section for further information and the <<SpringContextScope, Spring context scope>> section for details.
