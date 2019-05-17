@@ -93,13 +93,12 @@ public class ExampleProperty {
 		// tag::config[]
 		final ConfigProperty<Long> EXAMPLE_CFG = ConfigProperty.create("exampleConfig", Long.class);
 
-		Property.Builder<String, Property<String>, ?> builder = getPropertyBuilder();
-
-		builder.temporalType(TemporalType.DATE_TIME) // <1>
+		final PathProperty<LocalDate> PROPERTY = PathProperty.create("example", LocalDate.class)
+				.temporalType(TemporalType.DATE_TIME) // <1>
 				.withConfiguration("myAttribute", "myValue") // <2>
 				.withConfiguration(EXAMPLE_CFG, 7L); // <3>
 
-		PropertyConfiguration cfg = aProperty().getConfiguration(); // <4>
+		PropertyConfiguration cfg = PROPERTY.getConfiguration(); // <4>
 		Optional<String> value1 = cfg.getParameter("myAttribute", String.class); // <5>
 		Long value2 = cfg.getParameter(EXAMPLE_CFG, 0L); // <6>
 		// end::config[]
