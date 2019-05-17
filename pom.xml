@@ -61,7 +61,7 @@
 		<slf4j.version>1.7.26</slf4j.version>
 
 		<!-- Apache commons lang -->
-		<commons.lang.version>3.8.1</commons.lang.version>
+		<commons.lang.version>3.9</commons.lang.version>
 
 		<!-- Bean validation -->
 		<bean.validation.version>2.0.1.Final</bean.validation.version>
@@ -70,13 +70,13 @@
 		<jsonwebtoken.version>0.10.6</jsonwebtoken.version>
 
 		<!-- Spring -->
-		<spring.version>5.1.6.RELEASE</spring.version>
+		<spring.version>5.1.7.RELEASE</spring.version>
 
 		<!-- Spring Security -->
 		<spring.security.version>5.1.5.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.1.4.RELEASE</spring.boot.version>
+		<spring.boot.version>2.1.5.RELEASE</spring.boot.version>
 
 		<!-- Jackson test/provided -->
 		<jackson.version>2.9.8</jackson.version>
