@@ -334,7 +334,6 @@ public class TestProperty {
 		final PathProperty<Integer> cp = PathProperty.create("testConv", Integer.class)
 				.converter(new PropertyValueConverter<Integer, String>() {
 
-					@SuppressWarnings("boxing")
 					@Override
 					public Integer fromModel(String value, Property<Integer> property)
 							throws PropertyConversionException {
@@ -478,7 +477,6 @@ public class TestProperty {
 		box.setValue(property, value);
 	}
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testBeanProperty() {
 
@@ -627,7 +625,6 @@ public class TestProperty {
 
 	}
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testIgnoreProperty() {
 
@@ -855,7 +852,6 @@ public class TestProperty {
 		assertTrue(box1.equals(box3));
 		assertFalse(box1.equals(box2));
 		assertFalse(box1.equals(null));
-		assertFalse(box1.equals("a"));
 		assertFalse(box1.equals(box4));
 		assertFalse(box4.equals(box2));
 		assertTrue(box1.equals(box1));

@@ -223,7 +223,6 @@ public class TestUtilities {
 
 	}
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testConversionUtils() throws IOException {
 
@@ -445,7 +444,6 @@ public class TestUtilities {
 		assertThrows(IllegalArgumentException.class, () -> ConversionUtils.parseNumber(null, Integer.class));
 	}
 
-	@SuppressWarnings("boxing")
 	@Test
 	public void testTypeUtils() {
 
