@@ -58,7 +58,7 @@
 		<annotation-api.version>1.3.2</annotation-api.version>
 
 		<!-- slf4j -->
-		<slf4j.version>1.7.26</slf4j.version>
+		<slf4j.version>1.7.28</slf4j.version>
 
 		<!-- Apache commons lang -->
 		<commons.lang.version>3.9</commons.lang.version>
