@@ -67,7 +67,7 @@
 		<bean.validation.version>2.0.1.Final</bean.validation.version>
 
 		<!-- JWT -->
-		<jsonwebtoken.version>0.10.6</jsonwebtoken.version>
+		<jsonwebtoken.version>0.10.7</jsonwebtoken.version>
 
 		<!-- Spring -->
 		<spring.version>5.1.7.RELEASE</spring.version>
