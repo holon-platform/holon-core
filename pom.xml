@@ -72,7 +72,7 @@
 		<jsonwebtoken.version>0.10.7</jsonwebtoken.version>
 
 		<!-- Spring -->
-		<spring.version>5.1.7.RELEASE</spring.version>
+		<spring.version>5.1.9.RELEASE</spring.version>
 
 		<!-- Spring Security -->
 		<spring.security.version>5.1.5.RELEASE</spring.security.version>
