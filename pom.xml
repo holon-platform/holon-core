@@ -85,7 +85,7 @@
 		<jackson.jaxrs.version>2.9.9</jackson.jaxrs.version>
 
 		<!-- Test -->
-		<jersey.test.version>2.27</jersey.test.version>
+		<jersey.test.version>2.29</jersey.test.version>
 		<mockito.version>2.24.5</mockito.version>
 
 	</properties>
