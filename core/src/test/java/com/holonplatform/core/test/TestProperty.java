@@ -826,6 +826,36 @@ public class TestProperty {
 	}
 
 	@Test
+	public void testPropertySetBuilder() {
+
+		PropertySet set = PropertySet.builderOf(TestIdentifiablePropertySet.PROPERTIES).build();
+		assertNotNull(set);
+		assertTrue(set.contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set.contains(TestIdentifiablePropertySet.TEXT));
+		assertTrue(set.contains(TestIdentifiablePropertySet.ENM));
+		assertEquals(1, set.getIdentifiers().size());
+		assertTrue(set.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set.getConfiguration().hasNotNullParameter("test"));
+		assertEquals("TEST", set.getConfiguration().getParameter("test").orElse(null));
+
+		final StringProperty TEXT2 = StringProperty.create("text2");
+
+		set = PropertySet.builderOf(TestIdentifiablePropertySet.PROPERTIES).add(TEXT2)
+				.remove(TestIdentifiablePropertySet.TEXT).withConfiguration("test2", "TEST2").build();
+		assertNotNull(set);
+		assertTrue(set.contains(TestIdentifiablePropertySet.ID));
+		assertFalse(set.contains(TestIdentifiablePropertySet.TEXT));
+		assertTrue(set.contains(TEXT2));
+		assertTrue(set.contains(TestIdentifiablePropertySet.ENM));
+		assertEquals(1, set.getIdentifiers().size());
+		assertTrue(set.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
+		assertTrue(set.getConfiguration().hasNotNullParameter("test"));
+		assertEquals("TEST", set.getConfiguration().getParameter("test").orElse(null));
+		assertTrue(set.getConfiguration().hasNotNullParameter("test2"));
+		assertEquals("TEST2", set.getConfiguration().getParameter("test2").orElse(null));
+	}
+
+	@Test
 	public void testPropertyBoxIdentifier() {
 
 		PropertyBox box = PropertyBox.create(TestIdentifiablePropertySet.PROPERTIES);

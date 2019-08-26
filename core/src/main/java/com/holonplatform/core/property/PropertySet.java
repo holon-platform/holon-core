@@ -176,6 +176,26 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
+	 * Get a builder to create a new {@link PropertySet} from given <code>propertySet</code>, cloning configuration,
+	 * identifiers and properties of the provided <code>propertySet</code>.
+	 * @param <P> Property type
+	 * @param propertySet The property set to clone for the new builder (not null)
+	 * @return A new {@link PropertySet} builder
+	 * @since 5.3.0
+	 */
+	static <P extends Property> Builder<Property<?>> builderOf(PropertySet<P> propertySet) {
+		ObjectUtils.argumentNotNull(propertySet, "PropertySet must be not null");
+		Builder<Property<?>> builder = builder();
+		// identifiers
+		propertySet.identifiers().forEach(i -> builder.withIdentifier(i));
+		// configuration
+		propertySet.getConfiguration().forEachParameter((n, v) -> builder.withConfiguration(n, v));
+		// properties
+		propertySet.forEach(p -> builder.add(p));
+		return builder;
+	}
+
+	/**
 	 * Create a new PropertySet containing given <code>properties</code>.
 	 * @param <P> Type of the property managed by the property set
 	 * @param properties Properties of the set
