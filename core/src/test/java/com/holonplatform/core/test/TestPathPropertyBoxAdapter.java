@@ -34,7 +34,7 @@ public class TestPathPropertyBoxAdapter {
 	private static final NumericProperty<Integer> P2 = NumericProperty.integerType("p2");
 	private static final StringProperty P3 = StringProperty.create("p3").parent(P1);
 
-	private static final PropertySet<?> SET = PropertySet.builderOf(P1, P2, P3).identifier(P1).build();
+	private static final PropertySet<?> SET = PropertySet.builderOf(P1, P2, P3).withIdentifier(P1).build();
 
 	@Test
 	public void testAdapter() {

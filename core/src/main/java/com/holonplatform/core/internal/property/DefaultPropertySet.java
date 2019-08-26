@@ -272,10 +272,11 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#identifier(com.holonplatform.core.property.Property)
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#withIdentifier(com.holonplatform.core.property.Property)
 		 */
 		@Override
-		public <PT extends P> Builder<P> identifier(PT property) {
+		public <PT extends P> Builder<P> withIdentifier(PT property) {
 			this.instance.addIdentifier(property);
 			return this;
 		}

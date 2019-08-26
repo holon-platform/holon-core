@@ -768,7 +768,7 @@ public class TestProperty {
 		assertEquals(1, ps2.size());
 
 		PropertySet<Property<?>> pbo = PropertySet.builderOf(TestPropertySet.NAME, TestPropertySet.SEQUENCE)
-				.identifier(TestPropertySet.SEQUENCE).build();
+				.withIdentifier(TestPropertySet.SEQUENCE).build();
 		assertTrue(pbo.contains(TestPropertySet.NAME));
 		assertTrue(pbo.contains(TestPropertySet.SEQUENCE));
 
@@ -787,7 +787,7 @@ public class TestProperty {
 				.get());
 
 		PropertySet<?> set = PropertySet.builder().add(TestIdentifiablePropertySet.ID)
-				.identifier(TestIdentifiablePropertySet.ID).build();
+				.withIdentifier(TestIdentifiablePropertySet.ID).build();
 
 		assertTrue(set.getIdentifiers().contains(TestIdentifiablePropertySet.ID));
 		assertTrue(set.getFirstIdentifier().isPresent());
@@ -836,7 +836,7 @@ public class TestProperty {
 		assertTrue(TestIdentifiablePropertySet.ID == box.identifiers().findFirst().get());
 
 		box = PropertyBox.create(PropertySet.builderOf(TestIdentifiablePropertySet.ID, TestIdentifiablePropertySet.ENM)
-				.identifier(TestIdentifiablePropertySet.ENM).build());
+				.withIdentifier(TestIdentifiablePropertySet.ENM).build());
 		assertTrue(box.getFirstIdentifier().isPresent());
 		assertEquals(TestIdentifiablePropertySet.ENM, box.getFirstIdentifier().get());
 

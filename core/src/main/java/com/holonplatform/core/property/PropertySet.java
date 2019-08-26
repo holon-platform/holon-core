@@ -304,9 +304,26 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		 * @param property The property to declare as property set identifier (not null)
 		 * @return this
 		 * @throws IllegalStateException If the property to declare as identifier is not part of the property set
-		 * @since 5.1.0
+		 * @since 5.3.0
 		 */
-		<PT extends P> Builder<P> identifier(PT property);
+		<PT extends P> Builder<P> withIdentifier(PT property);
+
+		/**
+		 * Add given <code>property</code> to the property set identifiers.
+		 * <p>
+		 * The property to declare as identifier must be already present in the property set.
+		 * </p>
+		 * @param <PT> Actual property type
+		 * @param property The property to declare as property set identifier (not null)
+		 * @return this
+		 * @throws IllegalStateException If the property to declare as identifier is not part of the property set
+		 * @since 5.1.0
+		 * @deprecated Use {@link #withIdentifier(Property)}
+		 */
+		@Deprecated
+		default <PT extends P> Builder<P> identifier(PT property) {
+			return withIdentifier(property);
+		}
 
 		/**
 		 * Set given <code>properties</code> as property set identifiers. Any previously declared identifier property
