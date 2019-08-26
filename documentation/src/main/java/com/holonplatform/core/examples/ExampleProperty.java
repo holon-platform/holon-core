@@ -239,9 +239,9 @@ public class ExampleProperty {
 		final NumericProperty<Long> ID = NumericProperty.longType("id");
 		final StringProperty NAME = StringProperty.create("name");
 
-		PropertySet<Property<?>> SET = PropertySet.builder().add(ID).add(NAME).identifier(ID).build(); // <1>
+		PropertySet<Property<?>> SET = PropertySet.builder().add(ID).add(NAME).withIdentifier(ID).build(); // <1>
 
-		SET = PropertySet.builderOf(ID, NAME).identifier(ID).build(); // <2>
+		SET = PropertySet.builderOf(ID, NAME).withIdentifier(ID).build(); // <2>
 
 		Set<Property<?>> ids = SET.getIdentifiers(); // <3>
 		Optional<Property<?>> id = SET.getFirstIdentifier(); // <4>
@@ -313,7 +313,7 @@ public class ExampleProperty {
 		final NumericProperty<Long> ID = NumericProperty.longType("id");
 		final StringProperty NAME = StringProperty.create("name");
 
-		final PropertySet<?> PROPERTIES = PropertySet.builderOf(ID, NAME).identifier(ID).build(); // <1>
+		final PropertySet<?> PROPERTIES = PropertySet.builderOf(ID, NAME).withIdentifier(ID).build(); // <1>
 
 		PropertyBox propertyBox1 = PropertyBox.builder(PROPERTIES).set(ID, 1L).set(NAME, "name1").build();
 		PropertyBox propertyBox2 = PropertyBox.builder(PROPERTIES).set(ID, 1L).set(NAME, "name2").build();
