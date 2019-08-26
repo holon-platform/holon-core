@@ -78,7 +78,7 @@
 		<spring.security.version>5.1.6.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.1.5.RELEASE</spring.boot.version>
+		<spring.boot.version>2.1.7.RELEASE</spring.boot.version>
 
 		<!-- Jackson test/provided -->
 		<jackson.databind.version>2.9.9.3</jackson.databind.version>
