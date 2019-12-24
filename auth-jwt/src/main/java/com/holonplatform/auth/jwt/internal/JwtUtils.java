@@ -239,7 +239,6 @@ public final class JwtUtils implements Serializable {
 	/*
 	 * KeyFactory algorithm name for given SignatureAlgorithm
 	 */
-	@SuppressWarnings("incomplete-switch")
 	private static Optional<String> getAsymmetricKeyAlgorithm(SignatureAlgorithm sa) {
 		switch (sa) {
 		case ES256:
