@@ -70,21 +70,21 @@
 		<jsonwebtoken.version>0.10.7</jsonwebtoken.version>
 
 		<!-- Spring -->
-		<spring.version>5.1.9.RELEASE</spring.version>
+		<spring.version>5.2.2.RELEASE</spring.version>
 
 		<!-- Spring Security -->
-		<spring.security.version>5.1.6.RELEASE</spring.security.version>
+		<spring.security.version>5.2.1.RELEASE</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.1.7.RELEASE</spring.boot.version>
+		<spring.boot.version>2.2.2.RELEASE</spring.boot.version>
 
 		<!-- Jackson test/provided -->
-		<jackson.databind.version>2.9.9.3</jackson.databind.version>
-		<jackson.jaxrs.version>2.9.9</jackson.jaxrs.version>
+		<jackson.databind.version>2.10.1</jackson.databind.version>
+		<jackson.jaxrs.version>2.10.1</jackson.jaxrs.version>
 
 		<!-- Test -->
-		<jersey.test.version>2.29</jersey.test.version>
-		<mockito.version>2.24.5</mockito.version>
+		<jersey.test.version>2.29.1</jersey.test.version>
+		<mockito.version>2.28.2</mockito.version>
 
 	</properties>
 
