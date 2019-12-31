@@ -199,10 +199,6 @@ The Holon Platform is built using __Java 8__, so you need a JRE/JDK version 8 or
 
 See [releases](https://github.com/holon-platform/holon-core/releases) for the available releases. Each release tag provides a link to the closed issues.
 
-#### 5.2.x release notes
-
-See [What's new in version 5.2.x](https://docs.holon-platform.com/current/reference/holon-core.html#WhatsNew52x) to learn about the new features and API operations of the 5.2 minor release.
-
 ### Obtain the artifacts
 
 The [Holon Platform](https://holon-platform.com) is open source and licensed under the [Apache 2.0 license](LICENSE.md). All the artifacts (including binaries, sources and javadocs) are available from the [Maven Central](https://mvnrepository.com/repos/central) repository.
