@@ -36,7 +36,6 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -162,28 +161,27 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 		Claims claims = null;
 
 		try {
-
-			JwtParser parser = Jwts.parser();
-
+			
 			if (getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
 				if (getConfiguration().getSignatureAlgorithm().isSymmetric()) {
-					parser = parser.setSigningKey(getConfiguration().getSharedKey()
+					claims = Jwts.parserBuilder().setSigningKey(getConfiguration().getSharedKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
 											+ getConfiguration().getSignatureAlgorithm().getDescription()
-											+ "] - JWT configuration: [" + getConfiguration() + "]")));
+											+ "] - JWT configuration: [" + getConfiguration() + "]")))
+					.build().parseClaimsJws(jwt).getBody();
 				} else {
-					parser = parser.setSigningKey(getConfiguration().getPublicKey()
+					claims = Jwts.parserBuilder().setSigningKey(getConfiguration().getPublicKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
 											+ getConfiguration().getSignatureAlgorithm().getDescription()
-											+ "] - JWT configuration: [" + getConfiguration() + "]")));
+											+ "] - JWT configuration: [" + getConfiguration() + "]")))
+					.build().parseClaimsJws(jwt).getBody();
 				}
-				claims = parser.parseClaimsJws(jwt).getBody();
 			} else {
 				// not signed (JWT)
-				claims = parser.parseClaimsJwt(jwt).getBody();
+				claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
 			}
 
 		} catch (@SuppressWarnings("unused") ExpiredJwtException eje) {
@@ -219,14 +217,14 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 		// check issuer
 
-		Collection<String> issuers = getIssuers();
-		if (issuers != null && !issuers.isEmpty()) {
+		Collection<String> tokenIssuers = getIssuers();
+		if (tokenIssuers != null && !tokenIssuers.isEmpty()) {
 			String tokenIssuer = claims.getIssuer();
 			if (tokenIssuer == null) {
 				throw new InvalidTokenException("Missing required JWT Issuer");
 			}
 
-			if (!issuers.contains(tokenIssuer)) {
+			if (!tokenIssuers.contains(tokenIssuer)) {
 				throw new InvalidTokenException("JWT Issuer mismatch");
 			}
 		}

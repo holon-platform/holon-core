@@ -36,7 +36,7 @@ import com.holonplatform.auth.keys.KeySource;
 import com.holonplatform.core.config.ConfigPropertyProvider;
 
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.JwtParserBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -52,7 +52,8 @@ public final class JwtUtils implements Serializable {
 	private static final long serialVersionUID = -1006362108842428239L;
 
 	/*
-	 * Empty private constructor: this class is intended only to provide constants ad utility methods.
+	 * Empty private constructor: this class is intended only to provide constants
+	 * ad utility methods.
 	 */
 	private JwtUtils() {
 	}
@@ -68,7 +69,7 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token (signed)
-	 * @param token Token to check
+	 * @param token      Token to check
 	 * @param signingKey Signing key
 	 * @return <code>true</code> if it is a JWT token
 	 */
@@ -78,7 +79,7 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token (signed)
-	 * @param token Token to check
+	 * @param token      Token to check
 	 * @param signingKey Signing key
 	 * @return <code>true</code> if it is a JWT token
 	 * @throws ExpiredCredentialsException If token is a JWT token but has expired
@@ -89,7 +90,7 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token
-	 * @param token Token to check
+	 * @param token      Token to check
 	 * @param signingKey Optional signing key
 	 * @return <code>true</code> if it is a JWT token
 	 */
@@ -97,25 +98,21 @@ public final class JwtUtils implements Serializable {
 	private static boolean checkJWT(String token, Object signingKey) {
 		if (token != null && !token.trim().equals("")) {
 
-			JwtParser parser = Jwts.parser();
+			JwtParserBuilder parser = Jwts.parserBuilder();
 
 			if (signingKey != null) {
 				if (Key.class.isAssignableFrom(signingKey.getClass())) {
-					parser.setSigningKey((Key) signingKey);
+					parser = parser.setSigningKey((Key) signingKey);
 				} else {
-					parser.setSigningKey((byte[]) signingKey);
+					parser = parser.setSigningKey((byte[]) signingKey);
 				}
 			}
 
 			try {
-				parser.parse(token);
-			} catch (ExpiredJwtException e) {
+				parser.build().parse(token);
+			} catch (ExpiredJwtException | SignatureException e) {
 				// ignore
-			} catch (MalformedJwtException e) {
-				return false;
-			} catch (SignatureException e) {
-				// ignore
-			} catch (IllegalArgumentException e) {
+			} catch (MalformedJwtException | IllegalArgumentException e) {
 				return false;
 			}
 
@@ -126,8 +123,9 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Build a {@link JwtConfiguration} instance form given {@link ConfigPropertyProvider} using configuration property
-	 * keys listed in {@link JwtConfiguration}.
+	 * Build a {@link JwtConfiguration} instance form given
+	 * {@link ConfigPropertyProvider} using configuration property keys listed in
+	 * {@link JwtConfiguration}.
 	 * @param config ConfigPropertyProvider
 	 * @return JwtConfiguration
 	 * @throws InvalidJwtConfigurationException Error building configuration
@@ -221,8 +219,8 @@ public final class JwtUtils implements Serializable {
 							.orElseThrow(() -> new InvalidJwtConfigurationException(
 									"Unsupported JWT signature algorithm: " + signatureAlgorithm.getValue()));
 
-					loadPrivateKey(keyAlgorithm, config).ifPresent(key -> cfg.setPrivateKey(key));
-					loadPublicKey(keyAlgorithm, config).ifPresent(key -> cfg.setPublicKey(key));
+					loadPrivateKey(keyAlgorithm, config).ifPresent(cfg::setPrivateKey);
+					loadPublicKey(keyAlgorithm, config).ifPresent(cfg::setPublicKey);
 
 				}
 
@@ -266,9 +264,10 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Load a private key for given signing algorithm and using given JWT configuration properties.
+	 * Load a private key for given signing algorithm and using given JWT
+	 * configuration properties.
 	 * @param algorithm Signing algorithm
-	 * @param config JWT configuration properties
+	 * @param config    JWT configuration properties
 	 * @return The private key, if available
 	 */
 	private static Optional<PrivateKey> loadPrivateKey(String algorithm, JwtConfigProperties config)
@@ -296,9 +295,10 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Load a public key for given signing algorithm and using given JWT configuration properties.
+	 * Load a public key for given signing algorithm and using given JWT
+	 * configuration properties.
 	 * @param algorithm Signing algorithm
-	 * @param config JWT configuration properties
+	 * @param config    JWT configuration properties
 	 * @return The public key, if available
 	 */
 	private static Optional<PublicKey> loadPublicKey(String algorithm, JwtConfigProperties config) {
@@ -327,7 +327,7 @@ public final class JwtUtils implements Serializable {
 	/**
 	 * Build a {@link KeySource} using given JWT configuration properties.
 	 * @param privateKey Whether to build a key source for a private key
-	 * @param config JWT configuration propertie
+	 * @param config     JWT configuration propertie
 	 * @return Optional key source
 	 */
 	@SuppressWarnings("deprecation")

@@ -36,7 +36,6 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -53,8 +52,10 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.jwt.JwtTokenParser#parseJwt(com.holonplatform.auth.jwt.JwtConfiguration,
-	 * java.lang.String)
+	 * 
+	 * @see
+	 * com.holonplatform.auth.jwt.JwtTokenParser#parseJwt(com.holonplatform.auth.jwt
+	 * .JwtConfiguration, java.lang.String)
 	 */
 	@Override
 	public Builder parseJwt(JwtConfiguration configuration, String jwt)
@@ -69,27 +70,26 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 
 		try {
 
-			JwtParser parser = Jwts.parser();
-
 			if (configuration.getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
 				if (configuration.getSignatureAlgorithm().isSymmetric()) {
-					parser = parser.setSigningKey(configuration.getSharedKey()
+					claims = Jwts.parserBuilder().setSigningKey(configuration.getSharedKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
 											+ configuration.getSignatureAlgorithm().getDescription()
-											+ "] - JWT configuration: [" + configuration + "]")));
+											+ "] - JWT configuration: [" + configuration + "]")))
+							.build().parseClaimsJws(jwt).getBody();
 				} else {
-					parser = parser.setSigningKey(configuration.getPublicKey()
+					claims = Jwts.parserBuilder().setSigningKey(configuration.getPublicKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
 											+ configuration.getSignatureAlgorithm().getDescription()
-											+ "] - JWT configuration: [" + configuration + "]")));
+											+ "] - JWT configuration: [" + configuration + "]")))
+							.build().parseClaimsJws(jwt).getBody();
 				}
-				claims = parser.parseClaimsJws(jwt).getBody();
 			} else {
 				// not signed (JWT)
-				claims = parser.parseClaimsJwt(jwt).getBody();
+				claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
 			}
 
 		} catch (@SuppressWarnings("unused") ExpiredJwtException eje) {

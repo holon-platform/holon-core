@@ -55,7 +55,6 @@ import com.holonplatform.auth.jwt.JwtTokenParser;
 import com.holonplatform.auth.jwt.internal.AuthenticationClaimsImpl;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -141,8 +140,7 @@ public class TestJwt {
 
 		String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.build(cfg), authc);
 
-		JwtParser parser = Jwts.parser();
-		Claims claims = parser.parseClaimsJwt(jwt).getBody();
+		Claims claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
 		assertNotNull(claims.get("nbf", Date.class));
 
 		authc = JwtTokenParser.get()

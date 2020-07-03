@@ -185,6 +185,15 @@ public class TestProperty {
 		assertTrue(p1.equals(p2));
 		assertEquals(p1.hashCode(), p2.hashCode());
 
+		PropertySet<?> set1 = PropertySet.builderOf(p1, p2).build();
+		assertEquals(1, set1.size());
+
+		PropertySet<?> set2 = PropertySet.of(p1, p2);
+		assertEquals(1, set2.size());
+
+		PropertySet<?> set3 = PropertySet.builder().add(p1).add(p2).build();
+		assertEquals(1, set3.size());
+
 	}
 
 	@Test

@@ -30,7 +30,8 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertySet;
 
 /**
- * Default {@link PropertySet} implementation using an {@link ArrayList} instance.
+ * Default {@link PropertySet} implementation using an {@link ArrayList}
+ * instance.
  * 
  * @param <P> Concrete type of the properties contained in the set
  * 
@@ -59,18 +60,20 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 	}
 
 	/**
-	 * Constructs a property set containing the elements of the specified collection, in the order they are returned by
-	 * the collection's iterator.
-	 * @param <C> Actual property type
-	 * @param properties Property collection whose elements are to be placed into this set
+	 * Constructs a property set containing the elements of the specified
+	 * collection, in the order they are returned by the collection's iterator.
+	 * @param <C>        Actual property type
+	 * @param properties Property collection whose elements are to be placed into
+	 *                   this set
 	 */
 	public <C extends P> DefaultPropertySet(Collection<C> properties) {
 		super(properties);
 	}
 
 	/**
-	 * Constructs a property set containing the elements of the specified array, in the given order.
-	 * @param <C> Actual property type
+	 * Constructs a property set containing the elements of the specified array, in
+	 * the given order.
+	 * @param <C>        Actual property type
 	 * @param properties Property list
 	 */
 	@SafeVarargs
@@ -78,14 +81,17 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		super();
 		if (properties != null) {
 			for (C property : properties) {
-				add(property);
+				if (property != null && !contains(property)) {
+					add(property);
+				}
 			}
 		}
 	}
 
 	/**
-	 * Constructs a property set containing the elements of the specified Iterable, in the given order.
-	 * @param <C> Actual property type
+	 * Constructs a property set containing the elements of the specified Iterable,
+	 * in the given order.
+	 * @param <C>        Actual property type
 	 * @param properties Property set iterator
 	 */
 	public <C extends P> DefaultPropertySet(Iterable<C> properties) {
@@ -111,7 +117,10 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertySet#contains(com.holonplatform.core.property.Property)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PropertySet#contains(com.holonplatform.core.
+	 * property.Property)
 	 */
 	@Override
 	public boolean contains(Property property) {
@@ -120,6 +129,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.util.Collection#stream()
 	 */
 	@Override
@@ -129,6 +139,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertySet#getIdentifiers()
 	 */
 	@Override
@@ -138,6 +149,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertySet#getConfiguration()
 	 */
 	@Override
@@ -147,7 +159,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/**
 	 * Add a parameter to the property set configuration.
-	 * @param name Parameter name (not null)
+	 * @param name  Parameter name (not null)
 	 * @param value Parameter value
 	 */
 	protected void addConfigurationParameter(String name, Object value) {
@@ -172,7 +184,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/**
 	 * Set given properties as property set identifiers.
-	 * @param <PT> Actual property type
+	 * @param <PT>       Actual property type
 	 * @param properties Identifier properties (not null)
 	 */
 	protected <PT extends P> void setIdentifers(Iterable<PT> properties) {
@@ -183,6 +195,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -222,7 +235,10 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#add(com.holonplatform.core.property.Property)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#add(com.holonplatform.
+		 * core.property.Property)
 		 */
 		@Override
 		public <PT extends P> Builder<P> add(PT property) {
@@ -235,7 +251,9 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#add(java.lang.Iterable)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#add(java.lang.Iterable)
 		 */
 		@Override
 		public <PT extends P> Builder<P> add(Iterable<PT> properties) {
@@ -250,7 +268,10 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#remove(com.holonplatform.core.property.Property)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#remove(com.holonplatform.
+		 * core.property.Property)
 		 */
 		@Override
 		public <PT extends P> Builder<P> remove(PT property) {
@@ -261,7 +282,9 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#remove(java.lang.Iterable)
+		 * 
+		 * @see com.holonplatform.core.property.PropertySet.Builder#remove(java.lang.
+		 * Iterable)
 		 */
 		@Override
 		public <PT extends P> Builder<P> remove(Iterable<PT> properties) {
@@ -272,8 +295,9 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.core.property.PropertySet.Builder#withIdentifier(com.holonplatform.core.property.Property)
+		 * 
+		 * @see com.holonplatform.core.property.PropertySet.Builder#withIdentifier(com.
+		 * holonplatform.core.property.Property)
 		 */
 		@Override
 		public <PT extends P> Builder<P> withIdentifier(PT property) {
@@ -283,7 +307,10 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#identifiers(java.lang.Iterable)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#identifiers(java.lang.
+		 * Iterable)
 		 */
 		@Override
 		public <PT extends P> Builder<P> identifiers(Iterable<PT> properties) {
@@ -293,8 +320,10 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertySet.Builder#withConfiguration(java.lang.String,
-		 * java.lang.Object)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertySet.Builder#withConfiguration(java.
+		 * lang.String, java.lang.Object)
 		 */
 		@Override
 		public Builder<P> withConfiguration(String name, Object value) {
@@ -304,6 +333,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.internal.datastore.PropertySetBuilder#build()
 		 */
 		@Override
