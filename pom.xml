@@ -9,7 +9,7 @@
 
 	<groupId>com.holon-platform.core</groupId>
 	<artifactId>holon-root</artifactId>
-	<version>5.5.0</version>
+	<version>5.5.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>${project.groupId}:${project.artifactId}</name>
@@ -48,7 +48,7 @@
 		<connection>scm:git:https://github.com/holon-platform/holon-core.git</connection>
 		<url>https://github.com/holon-platform/holon-core</url>
 		<developerConnection>scm:git:https://github.com/holon-platform/holon-core.git</developerConnection>
-		<tag>5.5.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<properties>
