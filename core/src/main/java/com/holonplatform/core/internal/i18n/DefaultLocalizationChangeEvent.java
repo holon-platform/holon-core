@@ -28,7 +28,7 @@ public class DefaultLocalizationChangeEvent implements LocalizationChangeEvent {
 
 	private static final long serialVersionUID = 8959321114274963919L;
 
-	private final LocalizationContext source;
+	private final transient LocalizationContext source;
 
 	/**
 	 * Constructor.
@@ -42,7 +42,9 @@ public class DefaultLocalizationChangeEvent implements LocalizationChangeEvent {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext.LocalizationChangeEvent#getSource()
+	 * 
+	 * @see com.holonplatform.core.i18n.LocalizationContext.LocalizationChangeEvent#
+	 * getSource()
 	 */
 	@Override
 	public LocalizationContext getSource() {

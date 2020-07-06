@@ -25,7 +25,7 @@ import com.holonplatform.core.presentation.StringValuePresenter;
  */
 public interface PresentationLogger {
 
-	final static String NAME = StringValuePresenter.class.getPackage().getName();
+	static final String NAME = StringValuePresenter.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

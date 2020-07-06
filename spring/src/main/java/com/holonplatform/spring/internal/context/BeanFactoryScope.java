@@ -34,16 +34,19 @@ import com.holonplatform.spring.internal.SpringLogger;
  * A {@link ContextScope} bound to a Spring {@link BeanFactory} context.
  * 
  * <p>
- * When a context resource is requested, the strategy to provide the a matching Spring bean is defined as follow:
+ * When a context resource is requested, the strategy to provide the a matching
+ * Spring bean is defined as follow:
  * <ul>
- * <li>If a Spring bean with a name equal to the context resource key and with the same required type is found, this is
- * returned;</li>
- * <li>Otherwise, if {@link #lookupByType} is <code>true</code> and a Spring bean of the required type, ignoring the
- * name, is present and only one candidate is available, this instance is returned.</li>
+ * <li>If a Spring bean with a name equal to the context resource key and with
+ * the same required type is found, this is returned;</li>
+ * <li>Otherwise, if {@link #lookupByType} is <code>true</code> and a Spring
+ * bean of the required type, ignoring the name, is present and only one
+ * candidate is available, this instance is returned.</li>
  * </ul>
  * 
  * <p>
- * This scope is not manageable, i.e. put/remove/clear operations are not supported.
+ * This scope is not manageable, i.e. put/remove/clear operations are not
+ * supported.
  * </p>
  * 
  * @since 5.0.0
@@ -53,12 +56,12 @@ public class BeanFactoryScope implements ContextScope {
 	/**
 	 * Scope name
 	 */
-	public final static String NAME = "spring-context";
+	public static final String NAME = "spring-context";
 
 	/**
 	 * Scope order
 	 */
-	public final static int ORDER = Integer.MIN_VALUE + 2000;
+	public static final int ORDER = Integer.MIN_VALUE + 2000;
 
 	/**
 	 * Logger
@@ -90,6 +93,7 @@ public class BeanFactoryScope implements ContextScope {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.context.ContextScope#getName()
 	 */
 	@Override
@@ -99,6 +103,7 @@ public class BeanFactoryScope implements ContextScope {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.context.ContextScope#getOrder()
 	 */
 	@Override
@@ -108,16 +113,20 @@ public class BeanFactoryScope implements ContextScope {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.context.ContextScope#get(java.lang.String, java.lang.Class)
+	 * 
+	 * @see com.holonplatform.core.context.ContextScope#get(java.lang.String,
+	 * java.lang.Class)
 	 */
 	@Override
 	public <T> Optional<T> get(String resourceKey, Class<T> resourceType) throws TypeMismatchException {
-		return checkBeanFactory().map((bf) -> getResource(resourceKey, resourceType, bf, lookupByType));
+		return checkBeanFactory().map(bf -> getResource(resourceKey, resourceType, bf, lookupByType));
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.context.ContextScope#put(java.lang.String, java.lang.Object)
+	 * 
+	 * @see com.holonplatform.core.context.ContextScope#put(java.lang.String,
+	 * java.lang.Object)
 	 */
 	@Override
 	public <T> Optional<T> put(String resourceKey, T value) throws UnsupportedOperationException {
@@ -126,7 +135,10 @@ public class BeanFactoryScope implements ContextScope {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.context.ContextScope#putIfAbsent(java.lang.String, java.lang.Object)
+	 * 
+	 * @see
+	 * com.holonplatform.core.context.ContextScope#putIfAbsent(java.lang.String,
+	 * java.lang.Object)
 	 */
 	@Override
 	public <T> Optional<T> putIfAbsent(String resourceKey, T value) throws UnsupportedOperationException {
@@ -135,6 +147,7 @@ public class BeanFactoryScope implements ContextScope {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.context.ContextScope#remove(java.lang.String)
 	 */
 	@Override
@@ -143,11 +156,11 @@ public class BeanFactoryScope implements ContextScope {
 	}
 
 	/**
-	 * Try to obtain a context resource from bean factory, using resource key as bean name or trying to retrieve the
-	 * resource by type.
-	 * @param key Resource key
-	 * @param type Resource type
-	 * @param beanFactory Bean factory
+	 * Try to obtain a context resource from bean factory, using resource key as
+	 * bean name or trying to retrieve the resource by type.
+	 * @param key          Resource key
+	 * @param type         Resource type
+	 * @param beanFactory  Bean factory
 	 * @param lookupByType Enable lookup by type
 	 * @return Resource reference, or <code>null</code> if not available
 	 */
@@ -187,7 +200,8 @@ public class BeanFactoryScope implements ContextScope {
 	}
 
 	/**
-	 * Get the {@link BeanFactory} instance, unregistering the scope if the reference is no longer valid
+	 * Get the {@link BeanFactory} instance, unregistering the scope if the
+	 * reference is no longer valid
 	 * @return BeanFactory, or <code>null</code> if no more available
 	 */
 	private Optional<ConfigurableListableBeanFactory> checkBeanFactory() {

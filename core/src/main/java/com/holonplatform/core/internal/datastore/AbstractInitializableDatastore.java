@@ -35,7 +35,7 @@ public abstract class AbstractInitializableDatastore<X extends DatastoreCommodit
 	/**
 	 * Initialization ClassLoader
 	 */
-	private transient volatile WeakReference<ClassLoader> initializationClassLoader;
+	private WeakReference<ClassLoader> initializationClassLoader;
 
 	/**
 	 * Whether the datastore was initialized

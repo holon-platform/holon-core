@@ -66,7 +66,7 @@ public class PropertiesMessageProvider implements MessageProvider {
 	/*
 	 * ClassLoader
 	 */
-	private ClassLoader resourceClassLoader;
+	private transient ClassLoader resourceClassLoader;
 
 	/*
 	 * Basenames for properties files

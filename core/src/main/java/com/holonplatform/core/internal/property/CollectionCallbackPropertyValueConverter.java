@@ -28,11 +28,11 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
- * A {@link PropertyValueConverter} implementation which uses two provided {@link Function}s to perform actual
- * conversions.
+ * A {@link PropertyValueConverter} implementation which uses two provided
+ * {@link Function}s to perform actual conversions.
  *
- * @param <E> Collection element type
- * @param <C> Collection type
+ * @param <E>     Collection element type
+ * @param <C>     Collection type
  * @param <MODEL> Model element type
  *
  * @since 5.2.0
@@ -44,9 +44,9 @@ public class CollectionCallbackPropertyValueConverter<E, C extends Collection<E>
 
 	private final Class<? extends C> propertyType;
 	private final Class<MODEL> modelElementType;
-	private final Function<MODEL, E> fromModel;
-	private final Function<E, MODEL> toModel;
-	private final Supplier<C> instanceProvider;
+	private final transient Function<MODEL, E> fromModel;
+	private final transient Function<E, MODEL> toModel;
+	private final transient Supplier<C> instanceProvider;
 
 	public CollectionCallbackPropertyValueConverter(Class<? extends C> propertyType, Class<MODEL> modelElementType,
 			Function<MODEL, E> fromModel, Function<E, MODEL> toModel, Supplier<C> instanceProvider) {
@@ -70,8 +70,10 @@ public class CollectionCallbackPropertyValueConverter<E, C extends Collection<E>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertyValueConverter#fromModel(java.lang.Object,
-	 * com.holonplatform.core.property.Property)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PropertyValueConverter#fromModel(java.lang.
+	 * Object, com.holonplatform.core.property.Property)
 	 */
 	@Override
 	public C fromModel(Collection<MODEL> value, Property<C> property) throws PropertyConversionException {
@@ -93,8 +95,10 @@ public class CollectionCallbackPropertyValueConverter<E, C extends Collection<E>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertyValueConverter#toModel(java.lang.Object,
-	 * com.holonplatform.core.property.Property)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PropertyValueConverter#toModel(java.lang.
+	 * Object, com.holonplatform.core.property.Property)
 	 */
 	@Override
 	public Collection<MODEL> toModel(C value, Property<C> property) throws PropertyConversionException {
@@ -117,6 +121,7 @@ public class CollectionCallbackPropertyValueConverter<E, C extends Collection<E>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertyValueConverter#getPropertyType()
 	 */
 	@SuppressWarnings("unchecked")
@@ -127,6 +132,7 @@ public class CollectionCallbackPropertyValueConverter<E, C extends Collection<E>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertyValueConverter#getModelType()
 	 */
 	@SuppressWarnings("unchecked")

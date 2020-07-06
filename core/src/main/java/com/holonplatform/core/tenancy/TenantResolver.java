@@ -36,15 +36,17 @@ public interface TenantResolver {
 
 	/**
 	 * Gets the current tenant id, if available
-	 * @return Optional tenant id, an empty Optional if current tenant is not available
+	 * @return Optional tenant id, an empty Optional if current tenant is not
+	 *         available
 	 */
 	Optional<String> getTenantId();
 
 	/**
-	 * Convenience method to obtain the current {@link TenantResolver} made available as {@link Context} resource, using
-	 * default {@link ClassLoader}.
+	 * Convenience method to obtain the current {@link TenantResolver} made
+	 * available as {@link Context} resource, using default {@link ClassLoader}.
 	 * <p>
-	 * See {@link Context#resource(String, Class)} for details about context resources availability conditions.
+	 * See {@link Context#resource(String, Class)} for details about context
+	 * resources availability conditions.
 	 * </p>
 	 * @return Optional TenantResolver, empty if not available as context resource
 	 */
@@ -53,7 +55,8 @@ public interface TenantResolver {
 	}
 
 	/**
-	 * Build a static {@link TenantResolver}, returning always the given <code>tenantId</code> as current tenant id.
+	 * Build a static {@link TenantResolver}, returning always the given
+	 * <code>tenantId</code> as current tenant id.
 	 * @param tenantId Static tenant id to be returned by the resolver
 	 * @return Static TenantResolver
 	 */
@@ -62,10 +65,11 @@ public interface TenantResolver {
 	}
 
 	/**
-	 * Execute given {@link Runnable} <code>operation</code> on behalf of given <code>tenantId</code>, binding to
-	 * current thread a static {@link TenantResolver} context resource with default {@link TenantResolver#CONTEXT_KEY}
-	 * key providing the specified tenant id.
-	 * @param tenantId Tenant id
+	 * Execute given {@link Runnable} <code>operation</code> on behalf of given
+	 * <code>tenantId</code>, binding to current thread a static
+	 * {@link TenantResolver} context resource with default
+	 * {@link TenantResolver#CONTEXT_KEY} key providing the specified tenant id.
+	 * @param tenantId  Tenant id
 	 * @param operation Operation to execute (not null)
 	 * @throws RuntimeException Exception during operation execution
 	 */
@@ -73,21 +77,22 @@ public interface TenantResolver {
 		ObjectUtils.argumentNotNull(operation, "Runnable operation must be not null");
 		try {
 			Context.get().threadScope()
-					.map(s -> s.put(TenantResolver.CONTEXT_KEY, TenantResolver.staticTenantResolver(tenantId)));
+					.ifPresent(s -> s.put(TenantResolver.CONTEXT_KEY, TenantResolver.staticTenantResolver(tenantId)));
 			operation.run();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			Context.get().threadScope().map(s -> s.remove(TenantResolver.CONTEXT_KEY));
+			Context.get().threadScope().ifPresent(s -> s.remove(TenantResolver.CONTEXT_KEY));
 		}
 	}
 
 	/**
-	 * Execute given {@link Callable} <code>operation</code> on behalf of given <code>tenantId</code>, binding to
-	 * current thread a static {@link TenantResolver} context resource with default {@link TenantResolver#CONTEXT_KEY}
-	 * key providing the specified tenant id.
-	 * @param <V> Operation result type
-	 * @param tenantId Tenant id
+	 * Execute given {@link Callable} <code>operation</code> on behalf of given
+	 * <code>tenantId</code>, binding to current thread a static
+	 * {@link TenantResolver} context resource with default
+	 * {@link TenantResolver#CONTEXT_KEY} key providing the specified tenant id.
+	 * @param <V>       Operation result type
+	 * @param tenantId  Tenant id
 	 * @param operation Operation to execute
 	 * @return Operation result
 	 * @throws RuntimeException Exception during operation execution
@@ -96,12 +101,12 @@ public interface TenantResolver {
 		ObjectUtils.argumentNotNull(operation, "Runnable operation must be not null");
 		try {
 			Context.get().threadScope()
-					.map(s -> s.put(TenantResolver.CONTEXT_KEY, TenantResolver.staticTenantResolver(tenantId)));
+					.ifPresent(s -> s.put(TenantResolver.CONTEXT_KEY, TenantResolver.staticTenantResolver(tenantId)));
 			return operation.call();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} finally {
-			Context.get().threadScope().map(s -> s.remove(TenantResolver.CONTEXT_KEY));
+			Context.get().threadScope().ifPresent(s -> s.remove(TenantResolver.CONTEXT_KEY));
 		}
 	}
 

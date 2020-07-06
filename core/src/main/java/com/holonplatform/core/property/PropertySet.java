@@ -28,6 +28,7 @@ import com.holonplatform.core.HasConfiguration;
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.config.ConfigProperty;
 import com.holonplatform.core.internal.property.DefaultPropertySet;
+import com.holonplatform.core.internal.utils.CommonMessages;
 import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
@@ -180,7 +181,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	 */
 	@SafeVarargs
 	static <P extends Property> Builder<Property<?>> builderOf(P... properties) {
-		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		ObjectUtils.argumentNotNull(properties, CommonMessages.MSG_PROPERTIES_NOT_NULL);
 		Builder<Property<?>> builder = builder();
 		for (P property : properties) {
 			builder.add(property);
@@ -201,11 +202,11 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		ObjectUtils.argumentNotNull(propertySet, "PropertySet must be not null");
 		Builder<Property<?>> builder = builder();
 		// identifiers
-		propertySet.identifiers().forEach(i -> builder.withIdentifier(i));
+		propertySet.identifiers().forEach(builder::withIdentifier);
 		// configuration
-		propertySet.getConfiguration().forEachParameter((n, v) -> builder.withConfiguration(n, v));
+		propertySet.getConfiguration().forEachParameter(builder::withConfiguration);
 		// properties
-		propertySet.forEach(p -> builder.add(p));
+		propertySet.forEach(builder::add);
 		return builder;
 	}
 
@@ -217,7 +218,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	 */
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> of(P... properties) {
-		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		ObjectUtils.argumentNotNull(properties, CommonMessages.MSG_PROPERTIES_NOT_NULL);
 		return of(Arrays.asList(properties));
 	}
 
@@ -229,7 +230,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	 * @return PropertySet instance
 	 */
 	static <P extends Property> PropertySet<P> of(Iterable<P> properties) {
-		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		ObjectUtils.argumentNotNull(properties, CommonMessages.MSG_PROPERTIES_NOT_NULL);
 		final Builder<P> builder = new DefaultPropertySet.DefaultBuilder<>();
 		for (P property : properties) {
 			if (property != null) {
@@ -259,12 +260,12 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	static <P extends Property> PropertySet<P> of(PropertySet<? extends P> propertySet, P... properties) {
 		ObjectUtils.argumentNotNull(propertySet, "Source property set must be not null");
 		final Builder builder = builder();
-		propertySet.forEach(p -> builder.add(p));
+		propertySet.forEach(builder::add);
 		// identifiers
-		propertySet.identifiers().forEach(i -> builder.identifier(i));
+		propertySet.identifiers().forEach(builder::withIdentifier);
 		// configuration
 		if (propertySet.getConfiguration().hasParameters()) {
-			propertySet.getConfiguration().forEachParameter((n, v) -> builder.configuration(n, v));
+			propertySet.getConfiguration().forEachParameter(builder::withConfiguration);
 		}
 		// additional properties
 		if (properties != null && properties.length > 0) {
@@ -297,7 +298,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		}
 		Builder builder = builder();
 		for (PropertySet<? extends P> ps : propertySets) {
-			ps.forEach(p -> builder.add(p));
+			ps.forEach(builder::add);
 		}
 		return builder.build();
 	}

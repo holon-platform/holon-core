@@ -25,7 +25,7 @@ import com.holonplatform.core.property.Property;
  */
 public interface PropertyLogger {
 
-	final static String NAME = Property.class.getPackage().getName();
+	static final String NAME = Property.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

@@ -15,6 +15,7 @@
  */
 package com.holonplatform.core.objects;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
@@ -25,7 +26,7 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface HashCodeProvider<T> {
+public interface HashCodeProvider<T> extends Serializable {
 
 	/**
 	 * Get the hash code of given object.

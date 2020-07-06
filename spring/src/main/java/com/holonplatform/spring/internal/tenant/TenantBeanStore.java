@@ -37,11 +37,11 @@ class TenantBeanStore implements Serializable {
 	/**
 	 * Bean instances
 	 */
-	private final Map<String, Object> objectMap = new ConcurrentHashMap<>();
+	private final transient Map<String, Object> objectMap = new ConcurrentHashMap<>();
 	/**
 	 * Destruction callbacks
 	 */
-	private final Map<String, Runnable> destructionCallbacks = new ConcurrentHashMap<>();
+	private final transient Map<String, Runnable> destructionCallbacks = new ConcurrentHashMap<>();
 
 	/**
 	 * Store name
@@ -57,7 +57,7 @@ class TenantBeanStore implements Serializable {
 
 	/**
 	 * Constructor with store destruction callback
-	 * @param name Bean store name
+	 * @param name                Bean store name
 	 * @param destructionCallback Destruction callback
 	 */
 	public TenantBeanStore(String name, DestructionCallback destructionCallback) {
@@ -75,10 +75,10 @@ class TenantBeanStore implements Serializable {
 
 	/**
 	 * Get the bean instance with given <code>beanName</code>.
-	 * @param beanName Bean name to obtain
+	 * @param beanName      Bean name to obtain
 	 * @param objectFactory Spring ObjectFactory
-	 * @return The bean instance present in this store. If not yet available, a new instance will be created, stored and
-	 *         returned
+	 * @return The bean instance present in this store. If not yet available, a new
+	 *         instance will be created, stored and returned
 	 */
 	public Object get(String beanName, ObjectFactory<?> objectFactory) {
 		LOGGER.debug(() -> "Getting bean with name [" + beanName + "] from: " + this);
@@ -88,7 +88,7 @@ class TenantBeanStore implements Serializable {
 
 	/**
 	 * Create a new bean instance for given <code>beanName</code>.
-	 * @param beanName Bean name
+	 * @param beanName      Bean name
 	 * @param objectFactory Spring ObjectFactory
 	 * @return New bean instance
 	 */

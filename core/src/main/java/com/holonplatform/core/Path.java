@@ -108,7 +108,7 @@ public interface Path<T> extends TypedExpression<T>, DataMappable, Serializable 
 	 */
 	default String fullName(Function<Path<?>, String> nameMapper) {
 		ObjectUtils.argumentNotNull(nameMapper, "Path name mapper function must be not null");
-		return getParent().map(pr -> stream().map(p -> nameMapper.apply(p))
+		return getParent().map(pr -> stream().map(nameMapper::apply)
 				.collect(LinkedList<String>::new, LinkedList::addFirst, (a, b) -> a.addAll(0, b)).stream()
 				.collect(Collectors.joining("."))).orElse(getName());
 	}

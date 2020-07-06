@@ -15,6 +15,8 @@
  */
 package com.holonplatform.core.objects;
 
+import java.io.Serializable;
+
 /**
  * Handler to check objects equality.
  * 
@@ -23,7 +25,7 @@ package com.holonplatform.core.objects;
  * @since 5.1.0
  */
 @FunctionalInterface
-public interface EqualsHandler<T> {
+public interface EqualsHandler<T> extends Serializable {
 
 	/**
 	 * Gets whether given <code>object</code> is <em>equal to</em> to another object.

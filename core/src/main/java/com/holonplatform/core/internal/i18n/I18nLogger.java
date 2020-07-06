@@ -25,7 +25,7 @@ import com.holonplatform.core.internal.Logger;
  */
 public interface I18nLogger {
 
-	final static String NAME = LocalizationContext.class.getPackage().getName();
+	static final String NAME = LocalizationContext.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

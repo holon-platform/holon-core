@@ -22,8 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation to declare the caption (display name or short description) for an element, with internationalization
- * support using {@link #messageCode()}.
+ * Annotation to declare the caption (display name or short description) for an
+ * element, with internationalization support using {@link #messageCode()}.
  * 
  * @since 5.0.0
  */
@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Caption {
 
-	final static String NO_VALUE = "";
+	static final String NO_VALUE = "";
 
 	/**
 	 * Get the caption text.
@@ -42,7 +42,8 @@ public @interface Caption {
 
 	/**
 	 * Get the optional caption localization message code.
-	 * @return Caption localization message code, or {@link #NO_VALUE} if no localization code is provided
+	 * @return Caption localization message code, or {@link #NO_VALUE} if no
+	 *         localization code is provided
 	 */
 	String messageCode() default NO_VALUE;
 

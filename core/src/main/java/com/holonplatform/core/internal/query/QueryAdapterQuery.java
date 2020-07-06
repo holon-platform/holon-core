@@ -40,7 +40,7 @@ public class QueryAdapterQuery<D extends QueryDefinition> extends AbstractQuery<
 	/*
 	 * Adapter (immutable)
 	 */
-	private final QueryAdapter<? super D> queryAdapter;
+	private final transient QueryAdapter<? super D> queryAdapter;
 
 	/**
 	 * Constructor.

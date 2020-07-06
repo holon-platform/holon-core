@@ -39,7 +39,7 @@ public enum DefaultPathConverter implements PathConverter {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> Optional<Path<T>> convert(Property<T> property) {
-		if (property != null && property instanceof Path) {
+		if (property instanceof Path) {
 			return Optional.of((Path<T>) property);
 		}
 		return Optional.empty();

@@ -41,41 +41,41 @@ public class DefaultQueryDefinition extends DefaultParameterSet implements Query
 	/*
 	 * Query target
 	 */
-	protected DataTarget<?> target;
+	private DataTarget<?> target;
 
 	/*
 	 * Results limit
 	 */
-	protected Integer limit;
+	private Integer limit;
 	/*
 	 * Results offset
 	 */
-	protected Integer offset;
+	private Integer offset;
 
 	/*
 	 * Query sort
 	 */
-	protected QuerySort sort;
+	private QuerySort sort;
 	/*
 	 * Query filter
 	 */
-	protected QueryFilter filter;
+	private QueryFilter filter;
 
 	/*
 	 * Query aggregation
 	 */
-	protected QueryAggregation aggregation;
+	private QueryAggregation aggregation;
 
 	/*
 	 * Distinct
 	 */
-	protected boolean distinct = false;
+	private boolean distinct = false;
 
 	/*
 	 * Expression resolvers
 	 */
 	@SuppressWarnings("rawtypes")
-	protected Set<ExpressionResolver> expressionResolvers = null;
+	private Set<ExpressionResolver> expressionResolvers = null;
 
 	/**
 	 * Construct a new DefaultQueryDefinition.

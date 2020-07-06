@@ -27,7 +27,8 @@ import com.holonplatform.core.query.QueryFilter;
 import com.holonplatform.core.query.QuerySort;
 
 /**
- * Base {@link QueryBuilder} implementation providing support for {@link QueryDefinition} management.
+ * Base {@link QueryBuilder} implementation providing support for
+ * {@link QueryDefinition} management.
  * 
  * @param <Q> Concrete QueryBuilder
  * @param <D> Query definition type
@@ -48,7 +49,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 	 */
 	public AbstractQueryBuilder(D queryDefinition) {
 		super();
-		assert queryDefinition != null : "QueryDefinition must be not null";
+		ObjectUtils.argumentNotNull(queryDefinition, "QueryDefinition must be not null");
 		this.queryDefinition = queryDefinition;
 	}
 
@@ -68,6 +69,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.query.QueryBuilder#getQueryConfiguration()
 	 */
 	@Override
@@ -77,8 +79,10 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
-	 * com.holonplatform.core.datastore.DataTarget.DataTargetSupport#target(com.holonplatform.core.datastore.DataTarget)
+	 * com.holonplatform.core.datastore.DataTarget.DataTargetSupport#target(com.
+	 * holonplatform.core.datastore.DataTarget)
 	 */
 	@Override
 	public Q target(DataTarget<?> target) {
@@ -88,7 +92,10 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFilterClause#filter(com.holonplatform.core.query.QueryFilter)
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.QueryFilterClause#filter(com.holonplatform.core.
+	 * query.QueryFilter)
 	 */
 	@Override
 	public Q filter(QueryFilter filter) {
@@ -100,7 +107,9 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QuerySort.QuerySortSupport#sort(com.holonplatform.core.query.QuerySort)
+	 * 
+	 * @see com.holonplatform.core.query.QuerySort.QuerySortSupport#sort(com.
+	 * holonplatform.core.query.QuerySort)
 	 */
 	@Override
 	public Q sort(QuerySort sort) {
@@ -112,6 +121,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.query.Query#limit(int)
 	 */
 	@Override
@@ -122,6 +132,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.query.Query#offset(int)
 	 */
 	@Override
@@ -132,6 +143,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.query.Query#restrict(int, int)
 	 */
 	@Override
@@ -143,9 +155,9 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.query.QueryAggregation.QueryAggregationSupport#aggregate(com.holonplatform.core.query.
-	 * QueryAggregation)
+	 * 
+	 * @see com.holonplatform.core.query.QueryAggregation.QueryAggregationSupport#
+	 * aggregate(com.holonplatform.core.query. QueryAggregation)
 	 */
 	@Override
 	public Q aggregate(QueryAggregation aggregation) {
@@ -155,7 +167,9 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.Query#parameter(java.lang.String, java.lang.Object)
+	 * 
+	 * @see com.holonplatform.core.query.Query#parameter(java.lang.String,
+	 * java.lang.Object)
 	 */
 	@Override
 	public Q parameter(String name, Object value) {
@@ -165,8 +179,10 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryBuilder#parameter(com.holonplatform.core.config.ConfigProperty,
-	 * java.lang.Object)
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.QueryBuilder#parameter(com.holonplatform.core.
+	 * config.ConfigProperty, java.lang.Object)
 	 */
 	@Override
 	public <T> Q parameter(ConfigProperty<T> property, T value) {
@@ -177,6 +193,7 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.query.QueryBuilder#distinct()
 	 */
 	@Override
@@ -187,9 +204,9 @@ public abstract class AbstractQueryBuilder<Q extends QueryBuilder<Q>, D extends 
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#withExpressionResolver(com.holonplatform.core
-	 * .ExpressionResolver)
+	 * 
+	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverBuilder#
+	 * withExpressionResolver(com.holonplatform.core .ExpressionResolver)
 	 */
 	@Override
 	public <E extends Expression, R extends Expression> Q withExpressionResolver(

@@ -25,7 +25,7 @@ import com.holonplatform.core.query.Query;
  */
 public interface QueryLogger {
 
-	final static String NAME = Query.class.getPackage().getName();
+	static final String NAME = Query.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

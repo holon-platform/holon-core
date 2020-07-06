@@ -93,8 +93,8 @@ public class PrefixedConfigPropertyProvider implements ConfigPropertyProvider {
 	 */
 	@Override
 	public Stream<String> getPropertyNames() throws UnsupportedOperationException {
-		return wrappedProvider.getPropertyNames().filter((n) -> n.startsWith(getPrefix()))
-				.map((n) -> n.substring(getPrefix().length()));
+		return wrappedProvider.getPropertyNames().filter(n -> n.startsWith(getPrefix()))
+				.map(n -> n.substring(getPrefix().length()));
 	}
 
 	/*

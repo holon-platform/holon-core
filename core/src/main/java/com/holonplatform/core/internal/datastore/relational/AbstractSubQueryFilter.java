@@ -30,7 +30,7 @@ public abstract class AbstractSubQueryFilter implements QueryFilter {
 	/**
 	 * Sub query
 	 */
-	private final SubQuery<?> subQuery;
+	private final transient SubQuery<?> subQuery;
 
 	/**
 	 * Constructor

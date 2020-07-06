@@ -48,13 +48,13 @@ import com.holonplatform.core.temporal.TemporalType;
  * Default {@link LocalizationContext} implementation.
  * 
  * <p>
- * By default, a cache is used to hold DateFormat and NumberFormat instances. Use
- * {@link #setUseDateTimeFormatsCache(boolean)} method to disable caching.
+ * By default, a cache is used to hold DateFormat and NumberFormat instances.
+ * Use {@link #setUseDateTimeFormatsCache(boolean)} method to disable caching.
  * </p>
  * 
  * <p>
- * To enable messages localization, at least one {@link MessageProvider} has to be provided using
- * {@link #addMessageProvider(MessageProvider)}.
+ * To enable messages localization, at least one {@link MessageProvider} has to
+ * be provided using {@link #addMessageProvider(MessageProvider)}.
  * </p>
  * 
  * @since 5.0.0
@@ -78,13 +78,14 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	 */
 	private final ConcurrentMap<TemporalFormat, DateFormat> dateFormatCache = new ConcurrentHashMap<>(2, 0.9f, 1);
 	private final ConcurrentMap<TemporalFormat, DateFormat> timeFormatCache = new ConcurrentHashMap<>(2, 0.9f, 1);
-	private final ConcurrentMap<DateTimeFormat, DateFormat> dateTimeFormatCache = new ConcurrentHashMap<>(2, 0.9f, 1);
-	private final ConcurrentMap<TemporalFormat, DateTimeFormatter> dateFormatterCache = new ConcurrentHashMap<>(2, 0.9f,
-			1);
-	private final ConcurrentMap<TemporalFormat, DateTimeFormatter> timeFormatterCache = new ConcurrentHashMap<>(2, 0.9f,
-			1);
-	private final ConcurrentMap<DateTimeFormat, DateTimeFormatter> dateTimeFormatterCache = new ConcurrentHashMap<>(2,
+	private final transient ConcurrentMap<DateTimeFormat, DateFormat> dateTimeFormatCache = new ConcurrentHashMap<>(2,
 			0.9f, 1);
+	private final transient ConcurrentMap<TemporalFormat, DateTimeFormatter> dateFormatterCache = new ConcurrentHashMap<>(
+			2, 0.9f, 1);
+	private final transient ConcurrentMap<TemporalFormat, DateTimeFormatter> timeFormatterCache = new ConcurrentHashMap<>(
+			2, 0.9f, 1);
+	private final transient ConcurrentMap<DateTimeFormat, DateTimeFormatter> dateTimeFormatterCache = new ConcurrentHashMap<>(
+			2, 0.9f, 1);
 
 	/**
 	 * Default dates TemporalFormat style
@@ -99,7 +100,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	/**
 	 * Default boolean localization
 	 */
-	private Map<Boolean, Localizable> defaultBooleanLocalizations;
+	private transient Map<Boolean, Localizable> defaultBooleanLocalizations;
 
 	/**
 	 * Message providers
@@ -157,6 +158,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.i18n.LocalizationContext#asMessageResolver()
 	 */
 	@Override
@@ -175,7 +177,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	/**
 	 * Set current localization
 	 * @param localization the localization to set
-	 * @param fireEvent Whether to fire the localization change event
+	 * @param fireEvent    Whether to fire the localization change event
 	 */
 	protected void setLocalization(Localization localization, boolean fireEvent) {
 		this.localization = localization;
@@ -205,17 +207,19 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	}
 
 	/**
-	 * Set whether to cache date and time format instances. Please note that standard Java {@link DateFormat} is not
-	 * thread-safe, so you must take care of any concurrency issue using cached date/time format instances.
-	 * @param useDateTimeFormatsCache <code>true</code> to cache date and time format instances
+	 * Set whether to cache date and time format instances. Please note that
+	 * standard Java {@link DateFormat} is not thread-safe, so you must take care of
+	 * any concurrency issue using cached date/time format instances.
+	 * @param useDateTimeFormatsCache <code>true</code> to cache date and time
+	 *                                format instances
 	 */
 	public void setUseDateTimeFormatsCache(boolean useDateTimeFormatsCache) {
 		this.useDateTimeFormatsCache = useDateTimeFormatsCache;
 	}
 
 	/**
-	 * Add a message provider for messages localization. MessageProviders will be invoked in the order they were added
-	 * to LocalizationContext.
+	 * Add a message provider for messages localization. MessageProviders will be
+	 * invoked in the order they were added to LocalizationContext.
 	 * @param messageProvider MessageProvider to add
 	 */
 	public void addMessageProvider(MessageProvider messageProvider) {
@@ -250,7 +254,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/**
 	 * Fires any registered {@link MissingMessageLocalizationListener}.
-	 * @param messageCode Localization message code
+	 * @param messageCode    Localization message code
 	 * @param defaultMessage Optional default message
 	 */
 	protected void fireMissingMessageLocalizationListeners(String messageCode, String defaultMessage) {
@@ -274,8 +278,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#addLocalizationChangeListener(com.holonplatform.core.i18n.
-	 * LocalizationContext.LocalizationChangeListener)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#addLocalizationChangeListener
+	 * (com.holonplatform.core.i18n. LocalizationContext.LocalizationChangeListener)
 	 */
 	@Override
 	public Registration addLocalizationChangeListener(LocalizationChangeListener listener) {
@@ -286,6 +292,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.i18n.LocalizationContext#isLocalized()
 	 */
 	@Override
@@ -295,7 +302,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#localize(com.holonplatform.core.i18n.Localization, boolean)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#localize(com.holonplatform.
+	 * core.i18n.Localization, boolean)
 	 */
 	@Override
 	public void localize(Localization localization, boolean fireEvent) {
@@ -308,6 +318,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.i18n.LocalizationContext#getLocale()
 	 */
 	@Override
@@ -317,8 +328,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#setDefaultBooleanLocalization(boolean,
-	 * com.holonplatform.core.i18n.Localizable)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#setDefaultBooleanLocalization
+	 * (boolean, com.holonplatform.core.i18n.Localizable)
 	 */
 	@Override
 	public void setDefaultBooleanLocalization(boolean value, Localizable message) {
@@ -331,7 +344,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getDefaultBooleanLocalization(boolean)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#getDefaultBooleanLocalization
+	 * (boolean)
 	 */
 	@Override
 	public Optional<Localizable> getDefaultBooleanLocalization(boolean value) {
@@ -343,7 +359,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessageArgumentsPlaceholder()
+	 * 
+	 * @see com.holonplatform.core.i18n.LocalizationContext#
+	 * getMessageArgumentsPlaceholder()
 	 */
 	@Override
 	public Optional<String> getMessageArgumentsPlaceholder() {
@@ -352,8 +370,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#format(java.lang.Number, int,
-	 * com.holonplatform.core.i18n.NumberFormatFeature[])
+	 * 
+	 * @see com.holonplatform.core.i18n.LocalizationContext#format(java.lang.Number,
+	 * int, com.holonplatform.core.i18n.NumberFormatFeature[])
 	 */
 	@Override
 	public String format(Number number, int decimalPositions, NumberFormatFeature... features) {
@@ -406,7 +425,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getNumberFormat(java.lang.Class, int, boolean)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#getNumberFormat(java.lang.
+	 * Class, int, boolean)
 	 */
 	@Override
 	public NumberFormat getNumberFormat(Class<? extends Number> numberType, int decimalPositions,
@@ -440,8 +462,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#setDefaultDateFormatStyle(com.holonplatform.core.i18n.
-	 * TemporalFormat)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#setDefaultDateFormatStyle(com
+	 * .holonplatform.core.i18n. TemporalFormat)
 	 */
 	@Override
 	public void setDefaultDateFormatStyle(TemporalFormat format) {
@@ -450,8 +474,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#setDefaultTimeFormatStyle(com.holonplatform.core.i18n.
-	 * TemporalFormat)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#setDefaultTimeFormatStyle(com
+	 * .holonplatform.core.i18n. TemporalFormat)
 	 */
 	@Override
 	public void setDefaultTimeFormatStyle(TemporalFormat format) {
@@ -476,8 +502,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.i18n.LocalizationContext#format(java.util.Date,
-	 * com.holonplatform.core.i18n.TemporalFormat, com.holonplatform.core.i18n.TemporalFormat)
+	 * com.holonplatform.core.i18n.TemporalFormat,
+	 * com.holonplatform.core.i18n.TemporalFormat)
 	 */
 	@Override
 	public String format(Date date, TemporalType type, TemporalFormat dateFormat, TemporalFormat timeFormat) {
@@ -489,8 +517,11 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getDateFormat(com.holonplatform.core.temporal.TemporalType,
-	 * com.holonplatform.core.i18n.TemporalFormat, com.holonplatform.core.i18n.TemporalFormat)
+	 * 
+	 * @see com.holonplatform.core.i18n.LocalizationContext#getDateFormat(com.
+	 * holonplatform.core.temporal.TemporalType,
+	 * com.holonplatform.core.i18n.TemporalFormat,
+	 * com.holonplatform.core.i18n.TemporalFormat)
 	 */
 	@Override
 	public DateFormat getDateFormat(TemporalType type, TemporalFormat dateFormat, TemporalFormat timeFormat) {
@@ -556,8 +587,11 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#format(java.time.temporal.Temporal,
-	 * com.holonplatform.core.i18n.TemporalFormat, com.holonplatform.core.i18n.TemporalFormat)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#format(java.time.temporal.
+	 * Temporal, com.holonplatform.core.i18n.TemporalFormat,
+	 * com.holonplatform.core.i18n.TemporalFormat)
 	 */
 	@Override
 	public String format(Temporal temporal, TemporalFormat dateFormat, TemporalFormat timeFormat) {
@@ -570,8 +604,12 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getDateTimeFormatter(com.holonplatform.core.temporal.
-	 * TemporalType, com.holonplatform.core.i18n.TemporalFormat, com.holonplatform.core.i18n.TemporalFormat)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#getDateTimeFormatter(com.
+	 * holonplatform.core.temporal. TemporalType,
+	 * com.holonplatform.core.i18n.TemporalFormat,
+	 * com.holonplatform.core.i18n.TemporalFormat)
 	 */
 	@Override
 	public DateTimeFormatter getDateTimeFormatter(TemporalType type, TemporalFormat dateFormat,
@@ -669,8 +707,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale, java.lang.String,
-	 * java.lang.Object[])
+	 * 
+	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale,
+	 * java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public Optional<String> getMessage(Locale locale, String code, Object... arguments) {
@@ -679,8 +718,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale, java.lang.String, java.lang.String,
-	 * java.lang.Object[])
+	 * 
+	 * @see com.holonplatform.core.i18n.MessageResolver#getMessage(java.util.Locale,
+	 * java.lang.String, java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public String getMessage(Locale locale, String code, String defaultMessage, Object... arguments) {
@@ -690,8 +730,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessage(java.lang.String, java.lang.String,
-	 * java.lang.Object[])
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#getMessage(java.lang.String,
+	 * java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public String getMessage(String code, String defaultMessage, Object... arguments) {
@@ -700,7 +742,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.i18n.LocalizationContext#getMessage(com.holonplatform.core.i18n.Localizable)
+	 * 
+	 * @see
+	 * com.holonplatform.core.i18n.LocalizationContext#getMessage(com.holonplatform.
+	 * core.i18n.Localizable)
 	 */
 	@Override
 	public String getMessage(Localizable localizable, boolean lenient) {
@@ -720,8 +765,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	}
 
 	/**
-	 * Check the LocalizationContext is localized and return current {@link Locale}. If LocalizationContext is not
-	 * localized, an {@link LocalizationException} is thrown.
+	 * Check the LocalizationContext is localized and return current {@link Locale}.
+	 * If LocalizationContext is not localized, an {@link LocalizationException} is
+	 * thrown.
 	 * @return Current Locale
 	 * @throws LocalizationException LocalizationContext is not localized
 	 */
@@ -730,10 +776,11 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	}
 
 	/**
-	 * Get message value using MessageProvider for given code. Parent localizations are used as fallback, if any.
-	 * @param locale Locale for which to obtain the message localization
+	 * Get message value using MessageProvider for given code. Parent localizations
+	 * are used as fallback, if any.
+	 * @param locale   Locale for which to obtain the message localization
 	 * @param provider MessageProvider
-	 * @param code Message code
+	 * @param code     Message code
 	 * @return Optional message value
 	 */
 	protected Optional<String> getMessageFromProvider(Locale locale, MessageProvider provider, String code) {
@@ -753,8 +800,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 	}
 
 	/**
-	 * Replace any message argument identified by {@link #getMessageArgumentsPlaceholder()} with given argument values.
-	 * @param message Message to process
+	 * Replace any message argument identified by
+	 * {@link #getMessageArgumentsPlaceholder()} with given argument values.
+	 * @param message   Message to process
 	 * @param arguments Arguments
 	 * @return Message with resolved arguments.
 	 */
@@ -765,6 +813,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -791,6 +840,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#hashCode()
 		 */
 		@Override
@@ -804,6 +854,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#equals(java.lang.Object)
 		 */
 		@Override
@@ -840,6 +891,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.i18n.Builder#withInitialLocale(java.util.Locale)
 		 */
 		@Override
@@ -850,7 +902,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.Builder#withInitialLocalization(com.holonplatform.core.i18n.Localization)
+		 * 
+		 * @see
+		 * com.holonplatform.core.i18n.Builder#withInitialLocalization(com.holonplatform
+		 * .core.i18n.Localization)
 		 */
 		@Override
 		public Builder withInitialLocalization(Localization localization) {
@@ -860,6 +915,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.i18n.Builder#withInitialSystemLocale()
 		 */
 		@Override
@@ -870,7 +926,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withDefaultBooleanLocalization(boolean,
+		 * 
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#
+		 * withDefaultBooleanLocalization(boolean,
 		 * com.holonplatform.core.i18n.Localizable)
 		 */
 		@Override
@@ -881,8 +939,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withDefaultDateTemporalFormat(com.holonplatform.
-		 * core.i18n.TemporalFormat)
+		 * 
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#
+		 * withDefaultDateTemporalFormat(com.holonplatform. core.i18n.TemporalFormat)
 		 */
 		@Override
 		public Builder withDefaultDateTemporalFormat(TemporalFormat format) {
@@ -892,8 +951,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withDefaultTimeTemporalFormat(com.holonplatform.
-		 * core.i18n.TemporalFormat)
+		 * 
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#
+		 * withDefaultTimeTemporalFormat(com.holonplatform. core.i18n.TemporalFormat)
 		 */
 		@Override
 		public Builder withDefaultTimeTemporalFormat(TemporalFormat format) {
@@ -903,6 +963,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.i18n.Builder#disableDateTimeFormatsCache()
 		 */
 		@Override
@@ -913,7 +974,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.Builder#messageArgumentsPlaceholder(java.lang.String)
+		 * 
+		 * @see
+		 * com.holonplatform.core.i18n.Builder#messageArgumentsPlaceholder(java.lang.
+		 * String)
 		 */
 		@Override
 		public Builder messageArgumentsPlaceholder(String placeholder) {
@@ -923,8 +987,10 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withMessageProvider(com.holonplatform.core.i18n.
-		 * MessageProvider)
+		 * 
+		 * @see
+		 * com.holonplatform.core.i18n.LocalizationContext.Builder#withMessageProvider(
+		 * com.holonplatform.core.i18n. MessageProvider)
 		 */
 		@Override
 		public Builder withMessageProvider(MessageProvider messageProvider) {
@@ -934,8 +1000,9 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.core.i18n.LocalizationContext.Builder#withLocalizationChangeListener(com.holonplatform.core
+		 * 
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#
+		 * withLocalizationChangeListener(com.holonplatform.core
 		 * .i18n.LocalizationContext.LocalizationChangeListener)
 		 */
 		@Override
@@ -946,8 +1013,11 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#withMissingMessageLocalizationListener(com.
-		 * holonplatform.core.i18n.LocalizationContext.MissingMessageLocalizationListener)
+		 * 
+		 * @see com.holonplatform.core.i18n.LocalizationContext.Builder#
+		 * withMissingMessageLocalizationListener(com.
+		 * holonplatform.core.i18n.LocalizationContext.
+		 * MissingMessageLocalizationListener)
 		 */
 		@Override
 		public Builder withMissingMessageLocalizationListener(MissingMessageLocalizationListener listener) {
@@ -957,6 +1027,7 @@ public class DefaultLocalizationContext implements LocalizationContext, MessageR
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.i18n.Builder#build()
 		 */
 		@Override

@@ -37,7 +37,7 @@ public class DefaultOperationResult implements OperationResult {
 
 	private OperationType operationType;
 	private long affectedCount = 0;
-	private Map<Path<?>, Object> insertedKeys;
+	private transient Map<Path<?>, Object> insertedKeys;
 
 	/*
 	 * (non-Javadoc)

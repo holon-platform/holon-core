@@ -140,14 +140,14 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected synchronized void loadCommodityFactories(ClassLoader classLoader) {
-		final Class<? extends DatastoreCommodityFactory> commodityFactoryType = getCommodityFactoryType();
-		if (commodityFactoryType != null) {
+		final Class<? extends DatastoreCommodityFactory> cft = getCommodityFactoryType();
+		if (cft != null) {
 			final ClassLoader cl = (classLoader != null) ? classLoader
 					: (this.getClass().getClassLoader() != null) ? this.getClass().getClassLoader()
 							: ClassUtils.getDefaultClassLoader();
 
 			LOGGER.debug(() -> "Load DatastoreCommodityFactory for classloader [" + cl
-					+ "] using ServiceLoader with service name: " + commodityFactoryType.getName());
+					+ "] using ServiceLoader with service name: " + cft.getName());
 
 			// load from META-INF/services
 			final List<DatastoreCommodityFactory> factories = new LinkedList<>();
@@ -155,7 +155,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 					.doPrivileged(new PrivilegedAction<Iterable<? extends DatastoreCommodityFactory>>() {
 						@Override
 						public Iterable<? extends DatastoreCommodityFactory> run() {
-							return ServiceLoader.load(commodityFactoryType, classLoader);
+							return ServiceLoader.load(cft, classLoader);
 						}
 					});
 			loaded.forEach(f -> {
@@ -186,21 +186,21 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected synchronized void loadExpressionResolvers(ClassLoader classLoader) {
-		final Class<? extends ExpressionResolver> expressionResolverType = getExpressionResolverType();
-		if (expressionResolverType != null) {
+		final Class<? extends ExpressionResolver> ert = getExpressionResolverType();
+		if (ert != null) {
 			final ClassLoader cl = (classLoader != null) ? classLoader
 					: (this.getClass().getClassLoader() != null) ? this.getClass().getClassLoader()
 							: ClassUtils.getDefaultClassLoader();
 
 			LOGGER.debug(() -> "Load ExpressionResolvers for classloader [" + cl
-					+ "] using ServiceLoader with service name: " + expressionResolverType.getName());
+					+ "] using ServiceLoader with service name: " + ert.getName());
 
 			// load from META-INF/services
 			Iterable<? extends ExpressionResolver> loaded = AccessController
 					.doPrivileged(new PrivilegedAction<Iterable<? extends ExpressionResolver>>() {
 						@Override
 						public Iterable<? extends ExpressionResolver> run() {
-							return ServiceLoader.load(expressionResolverType, classLoader);
+							return ServiceLoader.load(ert, classLoader);
 						}
 					});
 			loaded.forEach(er -> {

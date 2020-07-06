@@ -52,16 +52,18 @@ public final class BeanRegistryUtils implements Serializable {
 	}
 
 	/**
-	 * Build Spring bean name using optional data context id. If the given data context id is not null/empty, the bean
-	 * name is composed using default name, an underscore character and the data context id as suffix.
+	 * Build Spring bean name using optional data context id. If the given data
+	 * context id is not null/empty, the bean name is composed using default name,
+	 * an underscore character and the data context id as suffix.
 	 * <p>
-	 * For example, if default name is <code>myname</code> and the data context id is <code>test</code>, this method
-	 * will return <code>myname_test</code>.
+	 * For example, if default name is <code>myname</code> and the data context id
+	 * is <code>test</code>, this method will return <code>myname_test</code>.
 	 * </p>
 	 * @param dataContextId Data context id. May be null.
-	 * @param name Default bean name
-	 * @return Bean name with data context id suffix (prepended by an underscore), if data context id is not
-	 *         <code>null</code>. Simple bean name otherwise.
+	 * @param name          Default bean name
+	 * @return Bean name with data context id suffix (prepended by an underscore),
+	 *         if data context id is not <code>null</code>. Simple bean name
+	 *         otherwise.
 	 */
 	public static String buildBeanName(String dataContextId, String name) {
 		if (dataContextId != null && !dataContextId.trim().equals("")) {
@@ -73,8 +75,9 @@ public final class BeanRegistryUtils implements Serializable {
 	/**
 	 * Get all the bean names of given <code>type</code> in given bean factory.
 	 * @param beanFactory Bean factory (not null)
-	 * @param type Bean type (not null)
-	 * @return The list of all bean names of given <code>type</code> in given bean factory, an empty list if none.
+	 * @param type        Bean type (not null)
+	 * @return The list of all bean names of given <code>type</code> in given bean
+	 *         factory, an empty list if none.
 	 */
 	public static List<String> getBeanNames(ListableBeanFactory beanFactory, Class<?> type) {
 		ObjectUtils.argumentNotNull(beanFactory, "Bean factory must be not null");
@@ -82,11 +85,9 @@ public final class BeanRegistryUtils implements Serializable {
 
 		List<String> names = new LinkedList<>();
 		String[] beanNames = BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, type, true, false);
-		if (beanNames != null) {
-			for (String beanName : beanNames) {
-				if (isAutowireCandidate(beanFactory, beanName)) {
-					names.add((beanName.startsWith("&")) ? beanName.substring(1) : beanName);
-				}
+		for (String beanName : beanNames) {
+			if (isAutowireCandidate(beanFactory, beanName)) {
+				names.add((beanName.startsWith("&")) ? beanName.substring(1) : beanName);
 			}
 		}
 		return names;
@@ -95,8 +96,9 @@ public final class BeanRegistryUtils implements Serializable {
 	/**
 	 * Check if given bean name is an autowire candidate.
 	 * @param beanFactory Bean factory (not null)
-	 * @param beanName Bean name
-	 * @return <code>true</code> if given bean name is an autowire candidate, <code>false</code> otherwise
+	 * @param beanName    Bean name
+	 * @return <code>true</code> if given bean name is an autowire candidate,
+	 *         <code>false</code> otherwise
 	 */
 	private static boolean isAutowireCandidate(ListableBeanFactory beanFactory, String beanName) {
 		ObjectUtils.argumentNotNull(beanFactory, "Bean factory must be not null");
@@ -114,7 +116,7 @@ public final class BeanRegistryUtils implements Serializable {
 	/**
 	 * Get the bean names from provided registry of given types.
 	 * @param beanFactory Bean factory
-	 * @param types Bean types to take into account
+	 * @param types       Bean types to take into account
 	 * @return Names of the beans of given types, empty if none
 	 */
 	public static Set<String> getBeanNamesOfTypes(ListableBeanFactory beanFactory, Class<?>... types) {
@@ -126,13 +128,15 @@ public final class BeanRegistryUtils implements Serializable {
 	}
 
 	/**
-	 * Get the bean names from provided registry of given types and associated to given data context id.
-	 * @param registry Bean registry
-	 * @param beanFactory Bean factory
-	 * @param dataContextId The data context id, if <code>null</code> the name of any bean with given types will be
-	 *        returned
-	 * @param types Bean types to take into account
-	 * @return Names of the beans of given types associated to given data context id, empty if none
+	 * Get the bean names from provided registry of given types and associated to
+	 * given data context id.
+	 * @param registry      Bean registry
+	 * @param beanFactory   Bean factory
+	 * @param dataContextId The data context id, if <code>null</code> the name of
+	 *                      any bean with given types will be returned
+	 * @param types         Bean types to take into account
+	 * @return Names of the beans of given types associated to given data context
+	 *         id, empty if none
 	 */
 	public static Set<String> getDataContextBeanNames(BeanDefinitionRegistry registry, ListableBeanFactory beanFactory,
 			String dataContextId, Class<?>... types) {
@@ -149,10 +153,11 @@ public final class BeanRegistryUtils implements Serializable {
 
 	/**
 	 * Get the [name,data context id] pairs of the bean definition of given types.
-	 * @param registry Bean definitions registry
+	 * @param registry    Bean definitions registry
 	 * @param beanFactory Bean factory
-	 * @param types Bean types to take into account
-	 * @return A list of [name,data context id] pairs of the bean definition of given types, empty if none
+	 * @param types       Bean types to take into account
+	 * @return A list of [name,data context id] pairs of the bean definition of
+	 *         given types, empty if none
 	 */
 	public static List<String[]> getBeanNamesWithDataContextId(BeanDefinitionRegistry registry,
 			ListableBeanFactory beanFactory, Class<?>... types) {
@@ -161,8 +166,9 @@ public final class BeanRegistryUtils implements Serializable {
 	}
 
 	/**
-	 * If a bean with given <code>beanName</code> is available from provided registry, return the optional data context
-	 * id to which is associated, if available.
+	 * If a bean with given <code>beanName</code> is available from provided
+	 * registry, return the optional data context id to which is associated, if
+	 * available.
 	 * @param registry Bean registry
 	 * @param beanName Bean name
 	 * @return Bean definition data context id, <code>null</code> if not provided
@@ -181,10 +187,10 @@ public final class BeanRegistryUtils implements Serializable {
 
 	/**
 	 * Try to obtain the actual bean class of the bean with given name.
-	 * @param beanName Bean name
+	 * @param beanName       Bean name
 	 * @param beanDefinition Optional bean definition
-	 * @param beanFactory Bean factory (not null)
-	 * @param classLoader ClassLoader to use
+	 * @param beanFactory    Bean factory (not null)
+	 * @param classLoader    ClassLoader to use
 	 * @return The bean class, or <code>null</code> if cannot be detected
 	 */
 	public static Class<?> getBeanClass(String beanName, BeanDefinition beanDefinition,
@@ -205,9 +211,7 @@ public final class BeanRegistryUtils implements Serializable {
 		if (definition instanceof RootBeanDefinition) {
 			RootBeanDefinition rootBeanDef = (RootBeanDefinition) definition;
 			try {
-				if (rootBeanDef.getBeanClass() != null) {
-					return rootBeanDef.getBeanClass();
-				}
+				return rootBeanDef.getBeanClass();
 			} catch (@SuppressWarnings("unused") IllegalStateException e) {
 				// factory bean: ignore
 			}
@@ -247,7 +251,7 @@ public final class BeanRegistryUtils implements Serializable {
 
 	/**
 	 * Get the Factory class name which corresponds to given bean definition.
-	 * @param definition Bean definition
+	 * @param definition  Bean definition
 	 * @param beanFactory Bean factory
 	 * @return Factory class name, or <code>null</code> if not found
 	 */
@@ -270,11 +274,12 @@ public final class BeanRegistryUtils implements Serializable {
 
 	/**
 	 * Get bean class from bean class name.
-	 * @param beanName Bean name
+	 * @param beanName      Bean name
 	 * @param beanClassName Bean class naem (not null)
-	 * @param classLoader ClassLoader to use (null for default class loader)
+	 * @param classLoader   ClassLoader to use (null for default class loader)
 	 * @return Bean class
-	 * @throws CannotLoadBeanClassException Class name not found in given ClassLoader
+	 * @throws CannotLoadBeanClassException Class name not found in given
+	 *                                      ClassLoader
 	 */
 	private static Class<?> getBeanClass(final String beanName, final String beanClassName, ClassLoader classLoader)
 			throws CannotLoadBeanClassException {
@@ -288,9 +293,9 @@ public final class BeanRegistryUtils implements Serializable {
 
 	/**
 	 * Get the value of an annotation attribute
-	 * @param <T> Default value type
-	 * @param attributes Annotation attributes
-	 * @param key Attribute name
+	 * @param <T>          Default value type
+	 * @param attributes   Annotation attributes
+	 * @param key          Attribute name
 	 * @param defaultValue Default value to return when attribute has no value
 	 * @return Annotation attribute value
 	 */
@@ -307,9 +312,11 @@ public final class BeanRegistryUtils implements Serializable {
 	}
 
 	/**
-	 * Checks whether the value of an annotation attribute is <code>null</code> or an empty String.
+	 * Checks whether the value of an annotation attribute is <code>null</code> or
+	 * an empty String.
 	 * @param value Annotation attribute value
-	 * @return <code>true</code> if the value is <code>null</code> or an empty String
+	 * @return <code>true</code> if the value is <code>null</code> or an empty
+	 *         String
 	 */
 	private static boolean isNullAnnotationValue(Object value) {
 		if (value == null || (String.class.isAssignableFrom(value.getClass()) && ((String) value).trim().equals(""))) {

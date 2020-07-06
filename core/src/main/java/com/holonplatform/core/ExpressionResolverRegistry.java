@@ -42,7 +42,7 @@ public interface ExpressionResolverRegistry extends ExpressionResolverSupport, E
 	 * @return A new {@link ExpressionResolverRegistry} instance
 	 */
 	static ExpressionResolverRegistry create(boolean cacheEnabled) {
-		return new DefaultExpressionResolverRegistry();
+		return new DefaultExpressionResolverRegistry(cacheEnabled);
 	}
 
 }

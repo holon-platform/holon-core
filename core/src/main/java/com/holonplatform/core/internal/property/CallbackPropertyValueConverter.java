@@ -22,10 +22,10 @@ import com.holonplatform.core.property.Property;
 import com.holonplatform.core.property.PropertyValueConverter;
 
 /**
- * A {@link PropertyValueConverter} implementation which uses two provided {@link Function}s to perform actual
- * conversions.
+ * A {@link PropertyValueConverter} implementation which uses two provided
+ * {@link Function}s to perform actual conversions.
  *
- * @param <TYPE> Property value type
+ * @param <TYPE>  Property value type
  * @param <MODEL> Model data type
  *
  * @since 5.0.0
@@ -36,8 +36,8 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	private final Class<? extends TYPE> propertyType;
 	private final Class<MODEL> modelType;
-	private final Function<MODEL, TYPE> fromModel;
-	private final Function<TYPE, MODEL> toModel;
+	private final transient Function<MODEL, TYPE> fromModel;
+	private final transient Function<TYPE, MODEL> toModel;
 
 	public CallbackPropertyValueConverter(Class<? extends TYPE> propertyType, Class<MODEL> modelType,
 			Function<MODEL, TYPE> fromModel, Function<TYPE, MODEL> toModel) {
@@ -54,8 +54,10 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertyValueConverter#fromModel(java.lang.Object,
-	 * com.holonplatform.core.property.Property)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PropertyValueConverter#fromModel(java.lang.
+	 * Object, com.holonplatform.core.property.Property)
 	 */
 	@Override
 	public TYPE fromModel(MODEL value, Property<TYPE> property)
@@ -65,8 +67,10 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PropertyValueConverter#toModel(java.lang.Object,
-	 * com.holonplatform.core.property.Property)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PropertyValueConverter#toModel(java.lang.
+	 * Object, com.holonplatform.core.property.Property)
 	 */
 	@Override
 	public MODEL toModel(TYPE value, Property<TYPE> property)
@@ -76,6 +80,7 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertyValueConverter#getPropertyType()
 	 */
 	@SuppressWarnings("unchecked")
@@ -86,6 +91,7 @@ public class CallbackPropertyValueConverter<TYPE, MODEL> implements PropertyValu
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertyValueConverter#getModelType()
 	 */
 	@Override

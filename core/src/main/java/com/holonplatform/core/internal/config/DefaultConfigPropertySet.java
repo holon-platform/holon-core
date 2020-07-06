@@ -74,6 +74,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.config.ConfigPropertySet#getName()
 	 */
 	@Override
@@ -83,8 +84,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyName(com.holonplatform.core.config.
-	 * ConfigProperty)
+	 * 
+	 * @see
+	 * com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyName(com.
+	 * holonplatform.core.config. ConfigProperty)
 	 */
 	@Override
 	public <T> String getConfigPropertyName(ConfigProperty<T> property) {
@@ -105,7 +108,8 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 	}
 
 	/**
-	 * Add an alias property set name to lookup if a property was not found using primary property set name
+	 * Add an alias property set name to lookup if a property was not found using
+	 * primary property set name
 	 * @param alias Alias name (not null)
 	 */
 	public void addAliasName(String alias) {
@@ -115,8 +119,9 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.config.ConfigPropertySet#hasConfigProperty(com.holonplatform.core.config.ConfigProperty)
+	 * 
+	 * @see com.holonplatform.core.config.ConfigPropertySet#hasConfigProperty(com.
+	 * holonplatform.core.config.ConfigProperty)
 	 */
 	@Override
 	public <T> boolean hasConfigProperty(ConfigProperty<T> property) {
@@ -131,8 +136,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyValue(com.holonplatform.core.config.
-	 * ConfigProperty)
+	 * 
+	 * @see
+	 * com.holonplatform.core.config.ConfigPropertySet#getConfigPropertyValue(com.
+	 * holonplatform.core.config. ConfigProperty)
 	 */
 	@Override
 	public <T> Optional<T> getConfigPropertyValue(ConfigProperty<T> property) {
@@ -152,7 +159,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.config.ConfigPropertySet#getSubPropertiesUsingPrefix(java.lang.String)
+	 * 
+	 * @see
+	 * com.holonplatform.core.config.ConfigPropertySet#getSubPropertiesUsingPrefix(
+	 * java.lang.String)
 	 */
 	@Override
 	public Map<String, String> getSubPropertiesUsingPrefix(String prefix) {
@@ -166,10 +176,9 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 			try {
 				Stream<String> propertyNames = provider.getPropertyNames();
 				if (propertyNames != null) {
-					propertyNames.filter((n) -> (n.length() > subPrefix.length()) && n.startsWith(subPrefix))
-							.forEach((n) -> {
-								properties.put(n.substring(subPrefix.length()), provider.getProperty(n, String.class));
-							});
+					propertyNames.filter(n -> (n.length() > subPrefix.length()) && n.startsWith(subPrefix))
+							.forEach(n -> properties.put(n.substring(subPrefix.length()),
+									provider.getProperty(n, String.class)));
 				}
 			} catch (@SuppressWarnings("unused") UnsupportedOperationException e) {
 				// ignore
@@ -183,6 +192,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -214,33 +224,37 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withDefaultPropertySources()
+		 * 
+		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#
+		 * withDefaultPropertySources()
 		 */
 		@Override
 		public Builder<C> withDefaultPropertySources() {
-			DefaultConfig.defaultConfigPropertyProviders().forEach((p) -> withPropertySource(p));
+			DefaultConfig.defaultConfigPropertyProviders().forEach(p -> withPropertySource(p));
 			return this;
 		}
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withDefaultPropertySources(java.lang.ClassLoader)
+		 * 
+		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#
+		 * withDefaultPropertySources(java.lang.ClassLoader)
 		 */
 		@Override
 		public Builder<C> withDefaultPropertySources(ClassLoader classLoader) {
 			DefaultConfig
 					.defaultConfigPropertyProviders(
 							(classLoader != null) ? classLoader : ClassUtils.getDefaultClassLoader())
-					.forEach((p) -> withPropertySource(p));
+					.forEach(p -> withPropertySource(p));
 			return this;
 		}
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see
-		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(com.holonplatform.core.config.
-		 * ConfigPropertyProvider)
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * com.holonplatform.core.config. ConfigPropertyProvider)
 		 */
 		@Override
 		public Builder<C> withPropertySource(ConfigPropertyProvider provider) {
@@ -250,7 +264,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(java.util.Map)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * java.util.Map)
 		 */
 		@Override
 		public Builder<C> withPropertySource(Map<String, Object> propertyMap) {
@@ -260,7 +277,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(java.util.Properties)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * java.util.Properties)
 		 */
 		@Override
 		public Builder<C> withPropertySource(Properties properties) {
@@ -270,7 +290,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(java.io.InputStream)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * java.io.InputStream)
 		 */
 		@Override
 		public Builder<C> withPropertySource(InputStream propertiesInputStream) throws ConfigurationException {
@@ -284,8 +307,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(java.lang.String,
-		 * java.lang.ClassLoader, boolean)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * java.lang.String, java.lang.ClassLoader, boolean)
 		 */
 		@Override
 		public Builder<C> withPropertySource(String sourceFileName, ClassLoader classLoader, boolean lenient)
@@ -300,7 +325,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(java.lang.String)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withPropertySource(
+		 * java.lang.String)
 		 */
 		@Override
 		public Builder<C> withPropertySource(String sourceFileName) throws ConfigurationException {
@@ -309,7 +337,9 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withSystemPropertySource()
+		 * 
+		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#
+		 * withSystemPropertySource()
 		 */
 		@Override
 		public Builder<C> withSystemPropertySource() {
@@ -319,8 +349,10 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#withProperty(com.holonplatform.core.config.
-		 * ConfigProperty, java.lang.Object)
+		 * 
+		 * @see
+		 * com.holonplatform.core.config.ConfigPropertySet.Builder#withProperty(com.
+		 * holonplatform.core.config. ConfigProperty, java.lang.Object)
 		 */
 		@Override
 		public <T> Builder<C> withProperty(ConfigProperty<T> property, T value) {
@@ -334,6 +366,7 @@ public class DefaultConfigPropertySet implements ConfigPropertySet {
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.config.ConfigPropertySet.Builder#build()
 		 */
 		@SuppressWarnings("unchecked")

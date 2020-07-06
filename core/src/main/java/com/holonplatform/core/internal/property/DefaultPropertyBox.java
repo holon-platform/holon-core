@@ -31,7 +31,8 @@ import com.holonplatform.core.property.PropertySet;
 /**
  * Default {@link PropertyBox} implementation.
  * <p>
- * Property values are stored internally using a {@link HashMap}. Property value access is thread-safe.
+ * Property values are stored internally using a {@link HashMap}. Property value
+ * access is thread-safe.
  * </p>
  * 
  * @since 5.0.0
@@ -47,7 +48,8 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	protected final Map<Property<?>, Object> propertyValues;
 
 	/**
-	 * Construct a new PropertyBox using given <code>properties</code> as property set.
+	 * Construct a new PropertyBox using given <code>properties</code> as property
+	 * set.
 	 * @param properties Property set
 	 */
 	@SafeVarargs
@@ -56,8 +58,9 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	}
 
 	/**
-	 * Construct a new PropertyBox using given <code>properties</code> as property set.
-	 * @param <P> Actual property type
+	 * Construct a new PropertyBox using given <code>properties</code> as property
+	 * set.
+	 * @param <P>        Actual property type
 	 * @param properties Property set
 	 */
 	public <P extends Property> DefaultPropertyBox(Iterable<P> properties) {
@@ -65,8 +68,9 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 	}
 
 	/**
-	 * Construct a new PropertyBox using given <code>propertySet</code> as property set.
-	 * @param <P> Actual property type
+	 * Construct a new PropertyBox using given <code>propertySet</code> as property
+	 * set.
+	 * @param <P>         Actual property type
 	 * @param propertySet Property set
 	 */
 	public <P extends Property> DefaultPropertyBox(PropertySet<P> propertySet) {
@@ -76,9 +80,10 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
-	 * com.holonplatform.core.internal.property.AbstractPropertyBox#getPropertyValue(com.holonplatform.core.property.
-	 * Property)
+	 * com.holonplatform.core.internal.property.AbstractPropertyBox#getPropertyValue
+	 * (com.holonplatform.core.property. Property)
 	 */
 	@Override
 	protected <T> Object getPropertyValue(Property<T> property) throws PropertyAccessException {
@@ -89,9 +94,10 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
-	 * com.holonplatform.core.internal.property.AbstractPropertyBox#setPropertyValue(com.holonplatform.core.property.
-	 * Property, java.lang.Object)
+	 * com.holonplatform.core.internal.property.AbstractPropertyBox#setPropertyValue
+	 * (com.holonplatform.core.property. Property, java.lang.Object)
 	 */
 	@Override
 	protected <T> void setPropertyValue(Property<T> property, T value) throws PropertyAccessException {
@@ -106,6 +112,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.property.PropertyBox#propertyValues()
 	 */
 	@SuppressWarnings("unchecked")
@@ -116,6 +123,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -147,7 +155,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/**
 		 * Constructor.
-		 * @param <P> Actual property type
+		 * @param <P>        Actual property type
 		 * @param properties Iterable set of properties
 		 */
 		public <P extends Property> PropertyBoxBuilder(Iterable<P> properties) {
@@ -157,7 +165,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/**
 		 * Constructor
-		 * @param <P> Actual property type
+		 * @param <P>        Actual property type
 		 * @param properties Set of properties
 		 */
 		@SafeVarargs
@@ -168,7 +176,9 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#invalidAllowed(boolean)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertyBox.Builder#invalidAllowed(boolean)
 		 */
 		@Override
 		public Builder invalidAllowed(boolean invalidAllowed) {
@@ -178,8 +188,9 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#equalsHandler(com.holonplatform.core.objects.
-		 * EqualsHandler)
+		 * 
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#equalsHandler(com.
+		 * holonplatform.core.objects. EqualsHandler)
 		 */
 		@Override
 		public Builder equalsHandler(EqualsHandler<PropertyBox> equalsHandler) {
@@ -189,8 +200,10 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#hashCodeProvider(com.holonplatform.core.objects.
-		 * HashCodeProvider)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertyBox.Builder#hashCodeProvider(com.
+		 * holonplatform.core.objects. HashCodeProvider)
 		 */
 		@Override
 		public Builder hashCodeProvider(HashCodeProvider<PropertyBox> hashCodeProvider) {
@@ -200,8 +213,10 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#set(com.holonplatform.core.property.Property,
-		 * java.lang.Object)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertyBox.Builder#set(com.holonplatform.
+		 * core.property.Property, java.lang.Object)
 		 */
 		@Override
 		public <T> Builder set(Property<T> property, T value) {
@@ -211,8 +226,10 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.property.PropertyBox.Builder#setIgnoreReadOnly(com.holonplatform.core.property.
-		 * Property, java.lang.Object)
+		 * 
+		 * @see
+		 * com.holonplatform.core.property.PropertyBox.Builder#setIgnoreReadOnly(com.
+		 * holonplatform.core.property. Property, java.lang.Object)
 		 */
 		@Override
 		public <T> Builder setIgnoreReadOnly(Property<T> property, T value) {
@@ -222,8 +239,9 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
-		 * @see
-		 * com.holonplatform.core.property.PropertyBox.Builder#copyValues(com.holonplatform.core.property.PropertyBox)
+		 * 
+		 * @see com.holonplatform.core.property.PropertyBox.Builder#copyValues(com.
+		 * holonplatform.core.property.PropertyBox)
 		 */
 		@SuppressWarnings("unchecked")
 		@Override
@@ -239,6 +257,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.property.PropertyBox.Builder#build()
 		 */
 		@Override
@@ -263,12 +282,12 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 		/**
 		 * Property value
 		 */
-		private final T value;
+		private final transient T value;
 
 		/**
 		 * Cosntructor.
 		 * @param property Property
-		 * @param value Property value
+		 * @param value    Property value
 		 */
 		public DefaultPropertyValue(Property<T> property, T value) {
 			super();
@@ -278,6 +297,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.property.PropertyBox.PropertyValue#getProperty()
 		 */
 		@Override
@@ -287,6 +307,7 @@ public class DefaultPropertyBox extends AbstractPropertyBox {
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.property.PropertyBox.PropertyValue#getValue()
 		 */
 		@Override

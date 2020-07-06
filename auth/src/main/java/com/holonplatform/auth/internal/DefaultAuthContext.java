@@ -35,8 +35,8 @@ import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.messaging.Message;
 
 /**
- * Default {@link AuthContext} implementation using a {@link Realm} to perform authentication and authorization
- * operations.
+ * Default {@link AuthContext} implementation using a {@link Realm} to perform
+ * authentication and authorization operations.
  * 
  * @since 5.0.0
  */
@@ -59,7 +59,8 @@ public class DefaultAuthContext implements AuthContext {
 
 	/**
 	 * Constructor using the default {@link AuthenticationHolder}.
-	 * @param realm the Realm which will be used as {@link Authenticator} and {@link Authorizer} (not null)
+	 * @param realm the Realm which will be used as {@link Authenticator} and
+	 *              {@link Authorizer} (not null)
 	 */
 	public DefaultAuthContext(Realm realm) {
 		this(realm, new DefaultAuthenticationHolder());
@@ -67,7 +68,9 @@ public class DefaultAuthContext implements AuthContext {
 
 	/**
 	 * Constructor.
-	 * @param realm the Realm which will be used as {@link Authenticator} and {@link Authorizer} (not null)
+	 * @param realm                the Realm which will be used as
+	 *                             {@link Authenticator} and {@link Authorizer} (not
+	 *                             null)
 	 * @param authenticationHolder {@link Authentication} holder (not null)
 	 */
 	public DefaultAuthContext(Realm realm, AuthenticationHolder authenticationHolder) {
@@ -104,7 +107,8 @@ public class DefaultAuthContext implements AuthContext {
 
 	/**
 	 * Set the current {@link Authentication}.
-	 * @param fireEvents Whether to trigger or not any registered {@link AuthenticationListener}
+	 * @param fireEvents     Whether to trigger or not any registered
+	 *                       {@link AuthenticationListener}
 	 * @param authentication Authentication to set, may be null
 	 */
 	protected void setAuthentication(Authentication authentication, boolean fireEvents) {
@@ -117,6 +121,7 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.auth.AuthContext#getAuthentication()
 	 */
 	@Override
@@ -126,7 +131,9 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.auth.AuthenticationToken)
+	 * 
+	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.auth.
+	 * AuthenticationToken)
 	 */
 	@Override
 	public Authentication authenticate(AuthenticationToken authenticationToken) throws AuthenticationException {
@@ -140,8 +147,9 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.core.messaging.Message,
-	 * java.lang.String[])
+	 * 
+	 * @see com.holonplatform.auth.AuthContext#authenticate(com.holonplatform.core.
+	 * messaging.Message, java.lang.String[])
 	 */
 	@Override
 	public Authentication authenticate(Message<?, ?> message, String... schemes) throws AuthenticationException {
@@ -155,6 +163,7 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.auth.AuthContext#unauthenticate()
 	 */
 	@Override
@@ -177,7 +186,9 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.AuthContext#isPermitted(com.holonplatform.auth.Permission[])
+	 * 
+	 * @see com.holonplatform.auth.AuthContext#isPermitted(com.holonplatform.auth.
+	 * Permission[])
 	 */
 	@Override
 	public boolean isPermitted(Permission... permissions) {
@@ -186,54 +197,63 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.lang.String[])
 	 */
 	@Override
 	public boolean isPermitted(String... permissions) {
-		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
+		return getAuthentication().map(a -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.Permission[])
+	 * 
+	 * @see
+	 * com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.
+	 * Permission[])
 	 */
 	@Override
 	public boolean isPermittedAny(Permission... permissions) {
-		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
+		return getAuthentication().map(a -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(java.lang.String[])
 	 */
 	@Override
 	public boolean isPermittedAny(String... permissions) {
-		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
+		return getAuthentication().map(a -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.auth.AuthContext#isPermitted(java.util.Collection)
 	 */
 	@Override
 	public boolean isPermitted(Collection<? extends Permission> permissions) {
-		return getAuthentication().map((a) -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
+		return getAuthentication().map(a -> getAuthorizer().isPermitted(a, permissions)).orElse(Boolean.FALSE);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.Authentication,
-	 * java.util.Collection)
+	 * 
+	 * @see
+	 * com.holonplatform.auth.AuthContext#isPermittedAny(com.holonplatform.auth.
+	 * Authentication, java.util.Collection)
 	 */
 	@Override
 	public boolean isPermittedAny(Collection<? extends Permission> permissions) {
-		return getAuthentication().map((a) -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
+		return getAuthentication().map(a -> getAuthorizer().isPermittedAny(a, permissions)).orElse(Boolean.FALSE);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.auth.events.AuthenticationNotifier#addAuthenticationListener(com.holonplatform.auth.events.
+	 * 
+	 * @see com.holonplatform.auth.events.AuthenticationNotifier#
+	 * addAuthenticationListener(com.holonplatform.auth.events.
 	 * AuthenticationListener)
 	 */
 	@Override
@@ -248,8 +268,9 @@ public class DefaultAuthContext implements AuthContext {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.auth.events.AuthenticationNotifier#removeAuthenticationListener(com.holonplatform.auth.events
+	 * 
+	 * @see com.holonplatform.auth.events.AuthenticationNotifier#
+	 * removeAuthenticationListener(com.holonplatform.auth.events
 	 * .AuthenticationListener)
 	 */
 	@Override

@@ -27,6 +27,7 @@ import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.Validatable;
 import com.holonplatform.core.Validator.ValidationException;
 import com.holonplatform.core.exceptions.TypeMismatchException;
+import com.holonplatform.core.internal.utils.CommonMessages;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.core.internal.utils.TypeUtils;
 import com.holonplatform.core.objects.EqualsHandler;
@@ -66,7 +67,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	/*
 	 * Whether to accept invalid property values (ignore property validators)
 	 */
-	private transient boolean invalidAllowed;
+	private boolean invalidAllowed;
 
 	/**
 	 * Optional hash code provider
@@ -187,7 +188,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	@Override
 	public <T> boolean containsValue(Property<T> property) {
 
-		ObjectUtils.argumentNotNull(property, "Property must be not null");
+		ObjectUtils.argumentNotNull(property, CommonMessages.MSG_PROPERTY_NOT_NULL);
 
 		if (contains(property)) {
 			// check virtual
@@ -207,7 +208,7 @@ public abstract class AbstractPropertyBox implements PropertyBox {
 	@Override
 	public <T> T getValue(Property<T> property) throws PropertyAccessException {
 
-		ObjectUtils.argumentNotNull(property, "Property must be not null");
+		ObjectUtils.argumentNotNull(property, CommonMessages.MSG_PROPERTY_NOT_NULL);
 
 		if (!contains(property)) {
 			throw new PropertyNotFoundException(property, "Property " + property + " not found in property set");

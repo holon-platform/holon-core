@@ -25,7 +25,7 @@ import com.holonplatform.spring.EnableBeanContext;
  */
 public interface SpringLogger {
 
-	final static String NAME = EnableBeanContext.class.getPackage().getName();
+	static final String NAME = EnableBeanContext.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

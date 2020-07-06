@@ -25,7 +25,7 @@ import com.holonplatform.core.internal.Logger;
  */
 public interface DatastoreLogger {
 
-	final static String NAME = Datastore.class.getPackage().getName();
+	static final String NAME = Datastore.class.getPackage().getName();
 
 	/**
 	 * Get a {@link Logger} bound to {@link #NAME}.

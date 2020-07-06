@@ -83,7 +83,7 @@ public abstract class AbstractProperty<T, P extends Property<T>, B extends Prope
 	/**
 	 * Localizable: Message arguments
 	 */
-	private Object[] messageArguments;
+	private transient Object[] messageArguments;
 
 	/**
 	 * Optional hash code provider

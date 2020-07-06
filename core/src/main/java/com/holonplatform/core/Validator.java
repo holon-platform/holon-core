@@ -1075,7 +1075,7 @@ public interface Validator<T> extends Serializable {
 						if (string.startsWith("-")) {
 							string = string.substring(1);
 						}
-						int index = string.indexOf(".");
+						int index = string.indexOf('.');
 						int itg = index < 0 ? string.length() : index;
 						int fct = index < 0 ? 0 : string.length() - index - 1;
 						if (itg > integral) {
@@ -1560,7 +1560,7 @@ public interface Validator<T> extends Serializable {
 	/**
 	 * Validation messages for common validators
 	 */
-	static enum ValidationMessage implements Localizable {
+	enum ValidationMessage implements Localizable {
 
 		/**
 		 * Default <em>null</em> validation error message
@@ -1809,7 +1809,7 @@ public interface Validator<T> extends Serializable {
 		/**
 		 * Localizable message (may be null)
 		 */
-		private final Localizable message;
+		private final transient Localizable message;
 
 		/**
 		 * ValidationExceptions that caused this exception

@@ -51,7 +51,10 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#containsValue(com.holonplatform.core.Path)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PathPropertyBoxAdapter#containsValue(com.
+	 * holonplatform.core.Path)
 	 */
 	@Override
 	public <T> boolean containsValue(Path<T> path) {
@@ -60,7 +63,9 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#getValue(com.holonplatform.core.Path)
+	 * 
+	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#getValue(com.
+	 * holonplatform.core.Path)
 	 */
 	@Override
 	public <T> Optional<T> getValue(Path<T> path) {
@@ -69,8 +74,10 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#getValueOrElse(com.holonplatform.core.Path,
-	 * java.util.function.Consumer)
+	 * 
+	 * @see
+	 * com.holonplatform.core.property.PathPropertyBoxAdapter#getValueOrElse(com.
+	 * holonplatform.core.Path, java.util.function.Consumer)
 	 */
 	@Override
 	public <T> Optional<T> getValueOrElse(Path<T> path, Consumer<Path<T>> valueNotPresent) {
@@ -83,15 +90,14 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#setValue(com.holonplatform.core.Path,
-	 * java.lang.Object)
+	 * 
+	 * @see com.holonplatform.core.property.PathPropertyBoxAdapter#setValue(com.
+	 * holonplatform.core.Path, java.lang.Object)
 	 */
 	@Override
 	public <T> Optional<Property<T>> setValue(Path<T> path, T value) {
 		Optional<Property<T>> property = getProperty(path);
-		property.ifPresent(p -> {
-			getPropertyBox().setValue(p, value);
-		});
+		property.ifPresent(p -> getPropertyBox().setValue(p, value));
 		return property;
 	}
 
@@ -108,7 +114,9 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.core.internal.property.AbstractPathPropertySetAdapterBuilder#getBuilder()
+		 * 
+		 * @see com.holonplatform.core.internal.property.
+		 * AbstractPathPropertySetAdapterBuilder#getBuilder()
 		 */
 		@Override
 		protected PathPropertyBoxAdapterBuilder getBuilder() {
@@ -117,6 +125,7 @@ public class DefaultPathPropertyBoxAdapter extends DefaultPathPropertySetAdapter
 
 		/*
 		 * (non-Javadoc)
+		 * 
 		 * @see com.holonplatform.core.property.PathPropertySetAdapter.Builder#build()
 		 */
 		@Override

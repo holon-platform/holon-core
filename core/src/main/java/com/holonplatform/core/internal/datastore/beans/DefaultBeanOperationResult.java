@@ -33,7 +33,7 @@ public class DefaultBeanOperationResult<T> implements BeanOperationResult<T> {
 
 	private OperationType operationType;
 	private long affectedCount = 0;
-	private T result;
+	private transient T result;
 
 	/*
 	 * (non-Javadoc)

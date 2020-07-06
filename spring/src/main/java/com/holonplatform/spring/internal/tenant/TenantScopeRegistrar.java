@@ -20,7 +20,7 @@ public class TenantScopeRegistrar implements ImportBeanDefinitionRegistrar, Envi
 
 	private static final String TENANT_SCOPE_POST_PROCESSOR_NAME = TenantScopePostProcessor.class.getName();
 
-	private volatile Environment environment;
+	private Environment environment;
 
 	@Override
 	public void setEnvironment(Environment environment) {

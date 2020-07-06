@@ -35,7 +35,7 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	/**
 	 * Left hand operand
 	 */
-	private final TypedExpression<T> left;
+	private final transient TypedExpression<T> left;
 
 	/**
 	 * Operator
@@ -45,11 +45,11 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 	/**
 	 * Expression argument
 	 */
-	private final TypedExpression<? super T> right;
+	private final transient TypedExpression<? super T> right;
 
 	/**
 	 * Constructor with left hand operand only.
-	 * @param left Left hand operand (not null)
+	 * @param left     Left hand operand (not null)
 	 * @param operator Operator (not null)
 	 */
 	public AbstractOperationQueryFilter(TypedExpression<T> left, FilterOperator operator) {
@@ -58,9 +58,9 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/**
 	 * Constructor with both operands.
-	 * @param left Left hand operand (not null)
+	 * @param left     Left hand operand (not null)
 	 * @param operator Operator (not null)
-	 * @param right Right hand operand
+	 * @param right    Right hand operand
 	 */
 	public AbstractOperationQueryFilter(TypedExpression<T> left, FilterOperator operator,
 			TypedExpression<? super T> right) {
@@ -74,7 +74,10 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getLeftOperand()
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getLeftOperand(
+	 * )
 	 */
 	@Override
 	public TypedExpression<T> getLeftOperand() {
@@ -83,7 +86,10 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getRightOperand()
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getRightOperand
+	 * ()
 	 */
 	@Override
 	public Optional<TypedExpression<? super T>> getRightOperand() {
@@ -92,7 +98,9 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getOperator()
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.QueryFilter.OperationQueryFilter#getOperator()
 	 */
 	@Override
 	public FilterOperator getOperator() {
@@ -101,6 +109,7 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.Expression#validate()
 	 */
 	@Override
@@ -115,7 +124,9 @@ public abstract class AbstractOperationQueryFilter<T> implements OperationQueryF
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.query.filter.AbstractPropertyQueryFilter#toString()
+	 * 
+	 * @see
+	 * com.holonplatform.core.query.filter.AbstractPropertyQueryFilter#toString()
 	 */
 	@Override
 	public String toString() {

@@ -47,12 +47,12 @@ public class DefaultAccount implements Account {
 	/*
 	 * Credentials
 	 */
-	private Object credentials;
+	private transient Object credentials;
 
 	/*
 	 * Details
 	 */
-	private Map<String, Object> details;
+	private transient Map<String, Object> details;
 
 	/*
 	 * Permissions

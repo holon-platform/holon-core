@@ -15,9 +15,9 @@
  */
 package com.holonplatform.http.internal.rest;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -47,7 +47,7 @@ import com.holonplatform.http.rest.RestClientOperations.RequestConfiguration;
  */
 public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R>> implements RequestConfiguration<R> {
 
-	protected final static Logger LOGGER = HttpLogger.create();
+	protected static final Logger LOGGER = HttpLogger.create();
 
 	/**
 	 * Base request URI
@@ -87,7 +87,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#target(java.net.URI)
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#target(
+	 * java.net.URI)
 	 */
 	@Override
 	public R target(URI baseUri) {
@@ -98,7 +101,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#path(java.lang.String)
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#path(
+	 * java.lang.String)
 	 */
 	@Override
 	public R path(String path) {
@@ -109,8 +115,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#queryParameter(java.lang.String,
-	 * java.lang.Object[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * queryParameter(java.lang.String, java.lang.Object[])
 	 */
 	@Override
 	public R queryParameter(String name, Object... values) {
@@ -122,8 +129,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#resolve(java.lang.String,
-	 * java.lang.Object)
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#resolve
+	 * (java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public R resolve(String name, Object value) {
@@ -135,7 +144,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#resolve(java.util.Map)
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#resolve
+	 * (java.util.Map)
 	 */
 	@Override
 	public R resolve(Map<String, Object> nameAndValues) {
@@ -149,7 +161,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#accept(java.lang.String[])
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#accept(
+	 * java.lang.String[])
 	 */
 	@Override
 	public R accept(String... mediaTypes) {
@@ -161,8 +176,10 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
-	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#accept(com.holonplatform.http.MediaType[])
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#accept(
+	 * com.holonplatform.http.MediaType[])
 	 */
 	@Override
 	public R accept(MediaType... mediaTypes) {
@@ -178,7 +195,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#acceptLanguage(java.util.Locale[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * acceptLanguage(java.util.Locale[])
 	 */
 	@Override
 	public R acceptLanguage(Locale... locales) {
@@ -194,7 +213,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#acceptLanguage(java.lang.String[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * acceptLanguage(java.lang.String[])
 	 */
 	@Override
 	public R acceptLanguage(String... locales) {
@@ -206,7 +227,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#acceptEncoding(java.lang.String[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * acceptEncoding(java.lang.String[])
 	 */
 	@Override
 	public R acceptEncoding(String... encodings) {
@@ -218,7 +241,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#acceptCharset(java.lang.String[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * acceptCharset(java.lang.String[])
 	 */
 	@Override
 	public R acceptCharset(String... charsets) {
@@ -230,8 +255,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#acceptCharset(java.nio.charset.Charset[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * acceptCharset(java.nio.charset.Charset[])
 	 */
 	@Override
 	public R acceptCharset(Charset... charsets) {
@@ -247,8 +273,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#cacheControl(com.holonplatform.http.
-	 * CacheControl)
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * cacheControl(com.holonplatform.http. CacheControl)
 	 */
 	@Override
 	public R cacheControl(CacheControl cacheControl) {
@@ -259,7 +286,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#authorizationBearer(java.lang.String)
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * authorizationBearer(java.lang.String)
 	 */
 	@Override
 	public R authorizationBearer(String bearerToken) {
@@ -269,25 +298,24 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#authorizationBasic(java.lang.String,
-	 * java.lang.String)
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * authorizationBasic(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public R authorizationBasic(String username, String password) {
 		ObjectUtils.argumentNotNull(username, "Username must be not null");
 		ObjectUtils.argumentNotNull(password, "Password must be not null");
-		try {
-			return header(HttpHeaders.AUTHORIZATION, HttpHeaders.SCHEME_BASIC + " " + Base64.getEncoder()
-					.encodeToString(new String((username + ":" + password)).getBytes("ISO-8859-1")));
-		} catch (UnsupportedEncodingException e) {
-			throw new HttpClientInvocationException(e);
-		}
+		return header(HttpHeaders.AUTHORIZATION, HttpHeaders.SCHEME_BASIC + " " + Base64.getEncoder()
+				.encodeToString(new String((username + ":" + password)).getBytes(StandardCharsets.ISO_8859_1)));
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#header(java.lang.String,
-	 * java.lang.String[])
+	 * 
+	 * @see
+	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#header(
+	 * java.lang.String, java.lang.String[])
 	 */
 	@Override
 	public R header(String name, String... values) {
@@ -307,7 +335,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#propertySet(java.lang.Iterable)
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * propertySet(java.lang.Iterable)
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -318,9 +348,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#propertySet(com.holonplatform.core.property
-	 * .Property[])
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * propertySet(com.holonplatform.core.property .Property[])
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
@@ -331,7 +361,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getBaseRequestURI()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getBaseRequestURI()
 	 */
 	@Override
 	public Optional<URI> getBaseRequestURI() {
@@ -340,7 +372,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getRequestPath()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getRequestPath()
 	 */
 	@Override
 	public Optional<String> getRequestPath() {
@@ -365,7 +399,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getRequestURI()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getRequestURI()
 	 */
 	@Override
 	public String getRequestURI() {
@@ -379,7 +415,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getTemplateParameters()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getTemplateParameters()
 	 */
 	@Override
 	public Map<String, Object> getTemplateParameters() {
@@ -388,7 +426,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getQueryParameters()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getQueryParameters()
 	 */
 	@Override
 	public Map<String, Object[]> getQueryParameters() {
@@ -397,7 +437,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getHeaders()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getHeaders()
 	 */
 	@Override
 	public Map<String, String> getHeaders() {
@@ -406,7 +448,9 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#getPropertySet()
+	 * 
+	 * @see com.holonplatform.http.rest.RestClientOperations.RequestConfiguration#
+	 * getPropertySet()
 	 */
 	@Override
 	public Optional<PropertySet<?>> getPropertySet() {
@@ -415,6 +459,7 @@ public abstract class AbstractRequestDefinition<R extends RequestConfiguration<R
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

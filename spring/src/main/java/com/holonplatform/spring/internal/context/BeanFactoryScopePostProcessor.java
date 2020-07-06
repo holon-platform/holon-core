@@ -25,8 +25,9 @@ import com.holonplatform.core.internal.Logger;
 import com.holonplatform.spring.internal.SpringLogger;
 
 /**
- * {@link BeanFactoryPostProcessor} to enable a {@link BeanFactoryScope} and register it as {@link Context} scope, bound
- * to the BeanFactory beans ClassLoader.
+ * {@link BeanFactoryPostProcessor} to enable a {@link BeanFactoryScope} and
+ * register it as {@link Context} scope, bound to the BeanFactory beans
+ * ClassLoader.
  * 
  * @since 5.0.0
  */
@@ -40,7 +41,7 @@ public class BeanFactoryScopePostProcessor implements BeanFactoryPostProcessor {
 	/**
 	 * BeanFactory beans ClassLoader
 	 */
-	private transient volatile ClassLoader beanFactoryClassLoader;
+	private ClassLoader beanFactoryClassLoader;
 
 	/**
 	 * Spring bean lookup by type ignoring name
@@ -48,8 +49,8 @@ public class BeanFactoryScopePostProcessor implements BeanFactoryPostProcessor {
 	private boolean lookupByType = true;
 
 	/**
-	 * Gets whether to lookup context resource bean candidates by type, ignoring bean name, when default lookup by name
-	 * and type fails.
+	 * Gets whether to lookup context resource bean candidates by type, ignoring
+	 * bean name, when default lookup by name and type fails.
 	 * @return the lookupByType <code>true</code> if enabled
 	 */
 	public boolean isLookupByType() {
@@ -57,8 +58,8 @@ public class BeanFactoryScopePostProcessor implements BeanFactoryPostProcessor {
 	}
 
 	/**
-	 * Sets whether to lookup context resource bean candidates by type, ignoring bean name, when default lookup by name
-	 * and type fails.
+	 * Sets whether to lookup context resource bean candidates by type, ignoring
+	 * bean name, when default lookup by name and type fails.
 	 * @param lookupByType <code>true</code> to enable
 	 */
 	public void setLookupByType(boolean lookupByType) {
@@ -67,8 +68,9 @@ public class BeanFactoryScopePostProcessor implements BeanFactoryPostProcessor {
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * org.springframework.beans.factory.config.BeanFactoryPostProcessor#postProcessBeanFactory(org.springframework.
+	 * 
+	 * @see org.springframework.beans.factory.config.BeanFactoryPostProcessor#
+	 * postProcessBeanFactory(org.springframework.
 	 * beans.factory.config.ConfigurableListableBeanFactory)
 	 */
 	@Override
