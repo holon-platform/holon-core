@@ -301,6 +301,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		 */
 		@Override
 		public PropertySet<P> build() {
+			instance.trimToSize();
 			return instance;
 		}
 
