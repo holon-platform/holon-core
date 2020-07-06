@@ -66,45 +66,8 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 	 * @param properties Property collection whose elements are to be placed into
 	 *                   this set
 	 */
-	public <C extends P> DefaultPropertySet(Collection<C> properties) {
+	protected <C extends P> DefaultPropertySet(Collection<C> properties) {
 		super(properties);
-	}
-
-	/**
-	 * Constructs a property set containing the elements of the specified array, in
-	 * the given order.
-	 * @param <C>        Actual property type
-	 * @param properties Property list
-	 */
-	@SafeVarargs
-	public <C extends P> DefaultPropertySet(final C... properties) {
-		super();
-		if (properties != null) {
-			for (C property : properties) {
-				if (property != null && !contains(property)) {
-					add(property);
-				}
-			}
-		}
-	}
-
-	/**
-	 * Constructs a property set containing the elements of the specified Iterable,
-	 * in the given order.
-	 * @param <C>        Actual property type
-	 * @param properties Property set iterator
-	 */
-	public <C extends P> DefaultPropertySet(Iterable<C> properties) {
-		super();
-		if (properties != null) {
-			if (properties instanceof Collection) {
-				addAll((Collection<C>) properties);
-			} else {
-				for (C property : properties) {
-					add(property);
-				}
-			}
-		}
 	}
 
 	/**
@@ -289,7 +252,7 @@ public class DefaultPropertySet<P extends Property> extends ArrayList<P> impleme
 		@Override
 		public <PT extends P> Builder<P> remove(Iterable<PT> properties) {
 			ObjectUtils.argumentNotNull(properties, "Properties must be not null");
-			properties.forEach(p -> this.instance.remove(p));
+			properties.forEach(this.instance::remove);
 			return this;
 		}
 

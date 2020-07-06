@@ -32,7 +32,8 @@ import com.holonplatform.core.internal.utils.ConversionUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
 
 /**
- * This interface represent an {@link Iterable} and immutable set of {@link Property}s.
+ * This interface represent an {@link Iterable} and immutable set of
+ * {@link Property}s.
  * 
  * @param <P> Concrete type of the properties contained in the set
  * 
@@ -47,22 +48,23 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	public static final String CONTEXT_KEY = PropertySet.class.getName();
 
 	/**
-	 * The {@link PropertyConfiguration} attribute to use to declare the PropertySet for a PropertyBox type
-	 * {@link Property}.
+	 * The {@link PropertyConfiguration} attribute to use to declare the PropertySet
+	 * for a PropertyBox type {@link Property}.
 	 */
 	public static final ConfigProperty<PropertySet> PROPERTY_CONFIGURATION_ATTRIBUTE = ConfigProperty
 			.create(CONTEXT_KEY, PropertySet.class);
 
 	/**
-	 * Returns the number of properties in this set. If this set contains more than <tt>Integer.MAX_VALUE</tt> elements,
-	 * returns <tt>Integer.MAX_VALUE</tt>.
+	 * Returns the number of properties in this set. If this set contains more than
+	 * <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
 	 * @return the number of properties in this set
 	 */
 	int size();
 
 	/**
-	 * Return <code>true</code> if this set contains the given <code>property</code>. If the given <code>property</code>
-	 * is <code>null</code>, always returns <code>false</code>.
+	 * Return <code>true</code> if this set contains the given
+	 * <code>property</code>. If the given <code>property</code> is
+	 * <code>null</code>, always returns <code>false</code>.
 	 * @param property Property whose presence in this set is to be tested
 	 * @return <code>true</code> if this set contains the specified property
 	 */
@@ -75,20 +77,25 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	Stream<P> stream();
 
 	/**
-	 * Get the optional <em>identifier</em> properties which represent the unique identifier of this property set.
+	 * Get the optional <em>identifier</em> properties which represent the unique
+	 * identifier of this property set.
 	 * <p>
-	 * If one or more identifier property is declared, the values of such properties uniquely specify the instance of an
-	 * object bound to this property set. The identifier properties of the set can be used, for example, as a
-	 * dicriminator for object equality.
+	 * If one or more identifier property is declared, the values of such properties
+	 * uniquely specify the instance of an object bound to this property set. The
+	 * identifier properties of the set can be used, for example, as a dicriminator
+	 * for object equality.
 	 * </p>
-	 * @return A {@link Set} of identifier properties, or an empty {@link Set} if no identifier is provided
+	 * @return A {@link Set} of identifier properties, or an empty {@link Set} if no
+	 *         identifier is provided
 	 * @since 5.1.0
 	 */
 	Set<P> getIdentifiers();
 
 	/**
-	 * Get a {@link Stream} of the properties which represent the unique identifier of this property set.
-	 * @return The identifier properties stream, empty if no identifier is provided by this property set
+	 * Get a {@link Stream} of the properties which represent the unique identifier
+	 * of this property set.
+	 * @return The identifier properties stream, empty if no identifier is provided
+	 *         by this property set
 	 * @since 5.1.0
 	 */
 	default Stream<P> identifiers() {
@@ -97,7 +104,8 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 	/**
 	 * Get the first property which acts as property set identifier, if available.
-	 * @return The first <em>identifier</em> property, or an empty Optional if no identifier is provided
+	 * @return The first <em>identifier</em> property, or an empty Optional if no
+	 *         identifier is provided
 	 * @since 5.1.0
 	 */
 	default Optional<P> getFirstIdentifier() {
@@ -105,10 +113,12 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Get the property set configuration, which can be used for extensions and application-specific purposes.
+	 * Get the property set configuration, which can be used for extensions and
+	 * application-specific purposes.
 	 * <p>
-	 * This configuration is considered as immutable. The configuration parameters has to setted at {@link PropertySet}
-	 * build time, using the appropriate {@link Builder} methods: {@link Builder#configuration(String, Object)} and
+	 * This configuration is considered as immutable. The configuration parameters
+	 * has to setted at {@link PropertySet} build time, using the appropriate
+	 * {@link Builder} methods: {@link Builder#configuration(String, Object)} and
 	 * {@link Builder#configuration(ConfigProperty, Object)}.
 	 * </p>
 	 * @return The property set configuration {@link ParameterSet} (never null)
@@ -125,9 +135,10 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Execute given {@link Callable} <code>operation</code> on behalf of this PropertySet, i.e. binding this
-	 * PropertySet as {@link Context} resource to current Thread, and removing the binding after operation execution.
-	 * @param <V> Operation result type
+	 * Execute given {@link Callable} <code>operation</code> on behalf of this
+	 * PropertySet, i.e. binding this PropertySet as {@link Context} resource to
+	 * current Thread, and removing the binding after operation execution.
+	 * @param <V>       Operation result type
 	 * @param operation Operation to execute
 	 * @return Operation result
 	 */
@@ -146,9 +157,11 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Obtain a builder to create and populate a {@link PropertySet} which supports given {@link Property} type.
-	 * @param <P> Property type
-	 * @param propertyType The property type managed by the {@link PropertySet} to build (not null)
+	 * Obtain a builder to create and populate a {@link PropertySet} which supports
+	 * given {@link Property} type.
+	 * @param <P>          Property type
+	 * @param propertyType The property type managed by the {@link PropertySet} to
+	 *                     build (not null)
 	 * @return A new {@link PropertySet} builder
 	 * @since 5.1.0
 	 */
@@ -158,9 +171,9 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Obtain a builder to create and populate a {@link PropertySet}, and add given <code>properties</code> to the
-	 * property set to build.
-	 * @param <P> Property type
+	 * Obtain a builder to create and populate a {@link PropertySet}, and add given
+	 * <code>properties</code> to the property set to build.
+	 * @param <P>        Property type
 	 * @param properties Properties to initially add to the property set (not null)
 	 * @return A new {@link PropertySet} builder
 	 * @since 5.1.0
@@ -176,9 +189,10 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Get a builder to create a new {@link PropertySet} from given <code>propertySet</code>, cloning configuration,
-	 * identifiers and properties of the provided <code>propertySet</code>.
-	 * @param <P> Property type
+	 * Get a builder to create a new {@link PropertySet} from given
+	 * <code>propertySet</code>, cloning configuration, identifiers and properties
+	 * of the provided <code>propertySet</code>.
+	 * @param <P>         Property type
 	 * @param propertySet The property set to clone for the new builder (not null)
 	 * @return A new {@link PropertySet} builder
 	 * @since 5.3.0
@@ -197,37 +211,48 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 	/**
 	 * Create a new PropertySet containing given <code>properties</code>.
-	 * @param <P> Type of the property managed by the property set
-	 * @param properties Properties of the set
+	 * @param <P>        Type of the property managed by the property set
+	 * @param properties Properties of the set (not null)
 	 * @return PropertySet instance
 	 */
 	@SafeVarargs
 	static <P extends Property> PropertySet<P> of(P... properties) {
-		return new DefaultPropertySet<>(properties);
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		return of(Arrays.asList(properties));
 	}
 
 	/**
-	 * Create a new PropertySet containing all given <code>properties</code> {@link Iterable} elements.
-	 * @param <P> Type of the property managed by the property set
-	 * @param properties Properties of the set
+	 * Create a new PropertySet containing all given <code>properties</code>
+	 * {@link Iterable} elements.
+	 * @param <P>        Type of the property managed by the property set
+	 * @param properties Properties of the set (not null)
 	 * @return PropertySet instance
 	 */
 	static <P extends Property> PropertySet<P> of(Iterable<P> properties) {
-		return new DefaultPropertySet<>(properties);
+		ObjectUtils.argumentNotNull(properties, "Properties must be not null");
+		final Builder<P> builder = new DefaultPropertySet.DefaultBuilder<>();
+		for (P property : properties) {
+			if (property != null) {
+				builder.add(property);
+			}
+		}
+		return builder.build();
 	}
 
 	/**
-	 * Create a new {@link PropertySet} joining given <code>propertySet</code> with given additional
-	 * <code>properties</code>.
+	 * Create a new {@link PropertySet} joining given <code>propertySet</code> with
+	 * given additional <code>properties</code>.
 	 * <p>
-	 * Any identifier property declared by given <code>propertySet</code> will be an identifier of the new property set
-	 * too. The original property set configuration is cloned to the new {@link PropertySet} instance configuration.
+	 * Any identifier property declared by given <code>propertySet</code> will be an
+	 * identifier of the new property set too. The original property set
+	 * configuration is cloned to the new {@link PropertySet} instance
+	 * configuration.
 	 * </p>
-	 * @param <P> Property type
+	 * @param <P>         Property type
 	 * @param propertySet Source property set (not null)
-	 * @param properties Additional properties
-	 * @return A new {@link PropertySet} instance containing the properties of given <code>propertySet</code> and any
-	 *         additional provided property
+	 * @param properties  Additional properties
+	 * @return A new {@link PropertySet} instance containing the properties of given
+	 *         <code>propertySet</code> and any additional provided property
 	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
@@ -253,13 +278,15 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 	}
 
 	/**
-	 * Join given {@link PropertySet}s and return a new PropertySet containing all the properties of given sets.
-	 * @param <P> Actual property type
+	 * Join given {@link PropertySet}s and return a new PropertySet containing all
+	 * the properties of given sets.
+	 * @param <P>          Actual property type
 	 * @param propertySets PropertySet to join (not null and not empty)
 	 * @return New PropertySet containing all the properties of given sets
-	 * @deprecated Using this method causes the loss of any property set configuration and/or identifier property
-	 *             declaration. Use the default PropertySet builder to compose a new PropertySet from different property
-	 *             sources.
+	 * @deprecated Using this method causes the loss of any property set
+	 *             configuration and/or identifier property declaration. Use the
+	 *             default PropertySet builder to compose a new PropertySet from
+	 *             different property sources.
 	 */
 	@SuppressWarnings("unchecked")
 	@Deprecated
@@ -285,7 +312,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Add a property to the set.
-		 * @param <PT> Actual property type
+		 * @param <PT>     Actual property type
 		 * @param property The property to add (not null)
 		 * @return this
 		 */
@@ -293,7 +320,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Add all the properties provided by given {@link Iterable} to the set.
-		 * @param <PT> Actual property type
+		 * @param <PT>       Actual property type
 		 * @param properties Properties {@link Iterable} to add (not null)
 		 * @return this
 		 */
@@ -301,7 +328,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Remove a property from the set.
-		 * @param <PT> Actual property type
+		 * @param <PT>     Actual property type
 		 * @param property The property to remove (not null)
 		 * @return this
 		 */
@@ -309,7 +336,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Remove all the properties provided by given {@link Iterable} from the set.
-		 * @param <PT> Actual property type
+		 * @param <PT>       Actual property type
 		 * @param properties Properties {@link Iterable} to remove (not null)
 		 * @return this
 		 */
@@ -318,12 +345,14 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		/**
 		 * Add given <code>property</code> to the property set identifiers.
 		 * <p>
-		 * The property to declare as identifier must be already present in the property set.
+		 * The property to declare as identifier must be already present in the property
+		 * set.
 		 * </p>
-		 * @param <PT> Actual property type
+		 * @param <PT>     Actual property type
 		 * @param property The property to declare as property set identifier (not null)
 		 * @return this
-		 * @throws IllegalStateException If the property to declare as identifier is not part of the property set
+		 * @throws IllegalStateException If the property to declare as identifier is not
+		 *                               part of the property set
 		 * @since 5.3.0
 		 */
 		<PT extends P> Builder<P> withIdentifier(PT property);
@@ -331,12 +360,14 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		/**
 		 * Add given <code>property</code> to the property set identifiers.
 		 * <p>
-		 * The property to declare as identifier must be already present in the property set.
+		 * The property to declare as identifier must be already present in the property
+		 * set.
 		 * </p>
-		 * @param <PT> Actual property type
+		 * @param <PT>     Actual property type
 		 * @param property The property to declare as property set identifier (not null)
 		 * @return this
-		 * @throws IllegalStateException If the property to declare as identifier is not part of the property set
+		 * @throws IllegalStateException If the property to declare as identifier is not
+		 *                               part of the property set
 		 * @since 5.1.0
 		 * @deprecated Use {@link #withIdentifier(Property)}
 		 */
@@ -346,30 +377,34 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		}
 
 		/**
-		 * Set given <code>properties</code> as property set identifiers. Any previously declared identifier property
-		 * will be replaced by given identifier properties.
+		 * Set given <code>properties</code> as property set identifiers. Any previously
+		 * declared identifier property will be replaced by given identifier properties.
 		 * <p>
-		 * The properties to declare as identifiers must be already present in the property set.
+		 * The properties to declare as identifiers must be already present in the
+		 * property set.
 		 * </p>
-		 * @param <PT> Actual property type
-		 * @param properties The properties to declare as property set identifiers (not null)
+		 * @param <PT>       Actual property type
+		 * @param properties The properties to declare as property set identifiers (not
+		 *                   null)
 		 * @return this
-		 * @throws IllegalStateException If one of the properties to declare as identifier is not part of the property
-		 *         set
+		 * @throws IllegalStateException If one of the properties to declare as
+		 *                               identifier is not part of the property set
 		 * @since 5.1.0
 		 */
 		<PT extends P> Builder<P> identifiers(Iterable<PT> properties);
 
 		/**
-		 * Set given <code>properties</code> as property set identifiers. Any previously declared identifier property
-		 * will be replaced by given identifier properties.
+		 * Set given <code>properties</code> as property set identifiers. Any previously
+		 * declared identifier property will be replaced by given identifier properties.
 		 * <p>
-		 * The properties to declare as identifiers must be already present in the property set.
+		 * The properties to declare as identifiers must be already present in the
+		 * property set.
 		 * </p>
-		 * @param properties The properties to declare as property set identifiers (not null)
+		 * @param properties The properties to declare as property set identifiers (not
+		 *                   null)
 		 * @return this
-		 * @throws IllegalStateException If one of the properties to declare as identifier is not part of the property
-		 *         set
+		 * @throws IllegalStateException If one of the properties to declare as
+		 *                               identifier is not part of the property set
 		 * @since 5.2.2
 		 */
 		@SuppressWarnings("unchecked")
@@ -379,7 +414,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Add a {@link PropertySet} configuration parameter
-		 * @param name The parameter name to add (not null)
+		 * @param name  The parameter name to add (not null)
 		 * @param value The configuration parameter value
 		 * @return this
 		 */
@@ -387,7 +422,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 		/**
 		 * Add a {@link PropertySet} configuration parameter
-		 * @param name The parameter name to add (not null)
+		 * @param name  The parameter name to add (not null)
 		 * @param value The configuration parameter value
 		 * @return this
 		 * @deprecated Use {@link #withConfiguration(String, Object)}
@@ -398,11 +433,12 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		}
 
 		/**
-		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
-		 * {@link ConfigProperty#getKey()} as parameter name.
-		 * @param <C> Config property type
+		 * Add a {@link PropertySet} configuration parameter using a
+		 * {@link ConfigProperty}, with {@link ConfigProperty#getKey()} as parameter
+		 * name.
+		 * @param <C>                   Config property type
 		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
-		 * @param value The configuration property value
+		 * @param value                 The configuration property value
 		 * @return this
 		 */
 		default <C> Builder<P> withConfiguration(ConfigProperty<C> configurationProperty, C value) {
@@ -411,11 +447,12 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 		}
 
 		/**
-		 * Add a {@link PropertySet} configuration parameter using a {@link ConfigProperty}, with
-		 * {@link ConfigProperty#getKey()} as parameter name.
-		 * @param <C> Config property type
+		 * Add a {@link PropertySet} configuration parameter using a
+		 * {@link ConfigProperty}, with {@link ConfigProperty#getKey()} as parameter
+		 * name.
+		 * @param <C>                   Config property type
 		 * @param configurationProperty The {@link ConfigProperty} to add (not null)
-		 * @param value The configuration property value
+		 * @param value                 The configuration property value
 		 * @return this
 		 * @deprecated Use {@link #withConfiguration(ConfigProperty, Object)}
 		 */
