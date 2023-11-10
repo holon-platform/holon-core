@@ -93,16 +93,16 @@ public class TestPropertyPresenters {
 		Context.get().executeThreadBound(LocalizationContext.CONTEXT_KEY,
 				LocalizationContext.builder().withInitialLocale(Locale.ITALY).build(), () -> {
 
-					assertEquals("09/03/79 18.30", P7.present(c.getTime()));
+					assertEquals("09/03/79, 18:30", P7.present(c.getTime()));
 
 					final LocalDate date = LocalDate.of(1979, Month.MARCH, 9);
 					assertEquals("09/03/79", P8.present(date));
 
 					final LocalTime time = LocalTime.of(18, 30, 15);
-					assertEquals("18.30", P9.present(time));
+					assertEquals("18:30", P9.present(time));
 
 					final LocalDateTime dt = LocalDateTime.of(1979, Month.MARCH, 9, 18, 30, 15);
-					assertEquals("09/03/79 18.30", P10.present(dt));
+					assertEquals("09/03/79, 18:30", P10.present(dt));
 
 				});
 

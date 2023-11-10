@@ -256,36 +256,36 @@ public class TestI18n {
 
 		assertEquals("09/03/79", ctx.format(date));
 		assertEquals("09/03/79", ctx.format(date, TemporalFormat.SHORT));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.MEDIUM));
+		assertEquals("9 mar 1979", ctx.format(date, TemporalFormat.MEDIUM));
 		assertEquals("9 marzo 1979", ctx.format(date, TemporalFormat.LONG));
 		assertEquals("venerdì 9 marzo 1979", ctx.format(date, TemporalFormat.FULL, null));
 
-		assertEquals("18.30", ctx.format(time));
-		assertEquals("18.30.15", ctx.format(time, null, TemporalFormat.MEDIUM));
-		assertEquals("18.30.15", ctx.format(time, null, TemporalFormat.LONG));
-		assertEquals("18.30.15", ctx.format(time, null, TemporalFormat.FULL));
+		assertEquals("18:30", ctx.format(time));
+		assertEquals("18:30:15", ctx.format(time, null, TemporalFormat.MEDIUM));
+		assertEquals("18:30:15", ctx.format(time, null, TemporalFormat.LONG));
+		assertEquals("18:30:15", ctx.format(time, null, TemporalFormat.FULL));
 
-		assertEquals("09/03/79 18.30", ctx.format(dt));
-		assertEquals("09/03/79 18.30", ctx.format(dt, TemporalFormat.SHORT, null));
-		assertEquals("9-mar-1979 18.30.15", ctx.format(dt, TemporalFormat.MEDIUM, TemporalFormat.MEDIUM));
-		assertEquals("9 marzo 1979 18.30.15", ctx.format(dt, TemporalFormat.LONG, TemporalFormat.MEDIUM));
-		assertEquals("9 marzo 1979 18.30.15", ctx.format(dt, TemporalFormat.LONG, TemporalFormat.LONG));
-		assertEquals("venerdì 9 marzo 1979 18.30.15", ctx.format(dt, TemporalFormat.FULL, TemporalFormat.MEDIUM));
+		assertEquals("09/03/79, 18:30", ctx.format(dt));
+		assertEquals("09/03/79, 18:30", ctx.format(dt, TemporalFormat.SHORT, null));
+		assertEquals("9 mar 1979, 18:30:15", ctx.format(dt, TemporalFormat.MEDIUM, TemporalFormat.MEDIUM));
+		assertEquals("9 marzo 1979, 18:30:15", ctx.format(dt, TemporalFormat.LONG, TemporalFormat.MEDIUM));
+		assertEquals("9 marzo 1979, 18:30:15", ctx.format(dt, TemporalFormat.LONG, TemporalFormat.LONG));
+		assertEquals("venerdì 9 marzo 1979, 18:30:15", ctx.format(dt, TemporalFormat.FULL, TemporalFormat.MEDIUM));
 
 		ctx.localize(Localization.builder(Locale.ITALY).defaultDateTemporalFormat(TemporalFormat.MEDIUM).build());
 
-		assertEquals("9-mar-1979", ctx.format(date));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT, null));
-		assertEquals("9-mar-1979", ctx.format(date, TemporalFormat.DEFAULT));
+		assertEquals("9 mar 1979", ctx.format(date));
+		assertEquals("9 mar 1979", ctx.format(date, TemporalFormat.DEFAULT, null));
+		assertEquals("9 mar 1979", ctx.format(date, TemporalFormat.DEFAULT));
 
 		ctx.localize(Localization.builder(Locale.ITALY).defaultDateTemporalFormat(TemporalFormat.SHORT)
 				.defaultTimeTemporalFormat(TemporalFormat.MEDIUM).build());
 
-		assertEquals("18.30.15", ctx.format(time));
+		assertEquals("18:30:15", ctx.format(time));
 
-		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
+		assertEquals("18:30", ctx.format(time, TemporalFormat.SHORT));
 
-		assertEquals("18.30", ctx.format(time, TemporalFormat.SHORT));
+		assertEquals("18:30", ctx.format(time, TemporalFormat.SHORT));
 
 	}
 
