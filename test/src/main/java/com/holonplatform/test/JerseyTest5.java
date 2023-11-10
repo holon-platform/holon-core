@@ -101,18 +101,18 @@ import org.junit.jupiter.api.BeforeEach;
  * {@link #JerseyTest5(TestContainerFactory)}) or by overriding the {@link #getTestContainerFactory()} method, then a
  * default test container factory will be obtained as follows:
  * <ol>
- * <li>If a system property <tt>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</tt> is set and the
+ * <li>If a system property <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> is set and the
  * value is a fully qualified class name of a class that extends from {@code TestContainerFactory} then the test
  * container factory used by default will be an instance of that class. A {@link TestContainerException} will be thrown
  * if the class cannot be loaded or instantiated.</li>
  * <li>Otherwise, {@code META-INF/services} locations on the class path will be scanned for implementation providers of
  * {@code TestContainerFactory} SPI. If a single implementation is found, it will be used. If multiple implementations
- * are found, the default <tt>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</tt> implementation
+ * are found, the default <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> implementation
  * will be selected if present, otherwise the first found implementation will be selected and a warning message will be
  * logged.</li>
  * <li>If no {@code TestContainerFactory} has been selected in the steps above, Jersey test framework will try to
  * instantiate the default test container factory implementation (
- * <tt>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</tt>) directly. A
+ * <code>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</code>) directly. A
  * {@link TestContainerException} will be thrown if this class cannot be loaded or instantiated.</li>
  * </ol>
  * 
@@ -431,11 +431,11 @@ public abstract class JerseyTest5 {
 	 * A default implementation first searches for the {@code TestContainerFactory} set via
 	 * {@link #JerseyTest5(org.glassfish.jersey.test.spi.TestContainerFactory) constructor}, then it looks for a
 	 * {@code TestContainerFactory} implementation class name set via
-	 * <tt>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</tt> system property with a fallback to
+	 * <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> system property with a fallback to
 	 * searching for {@code TestContainerFactory} service providers on the class path. At last, if no
 	 * {@code TestContainerFactory} has been found, the method attempts to create new default
 	 * {@code TestContainerFactory} implementation instance
-	 * (<tt>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</tt>).
+	 * (<code>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</code>).
 	 * </p>
 	 * <p>
 	 * Alternatively, this method may be overridden to directly provide a custom {@code TestContainerFactory} instance.
@@ -529,7 +529,7 @@ public abstract class JerseyTest5 {
 	 * Create a JAX-RS web target whose URI refers to the {@link #getBaseUri() base URI} the tested JAX-RS / Jersey
 	 * application is deployed at, plus the path specified in the {@code path} argument.
 	 * <p>
-	 * This method is an equivalent of calling <tt>client().target(getBaseUri())</tt>.
+	 * This method is an equivalent of calling <code>client().target(getBaseUri())</code>.
 	 * </p>
 	 *
 	 * @return the created JAX-RS web target.

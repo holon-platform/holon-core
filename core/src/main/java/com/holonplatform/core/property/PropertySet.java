@@ -57,7 +57,7 @@ public interface PropertySet<P extends Property> extends Iterable<P>, HasConfigu
 
 	/**
 	 * Returns the number of properties in this set. If this set contains more than
-	 * <tt>Integer.MAX_VALUE</tt> elements, returns <tt>Integer.MAX_VALUE</tt>.
+	 * <code>Integer.MAX_VALUE</code> elements, returns <code>Integer.MAX_VALUE</code>.
 	 * @return the number of properties in this set
 	 */
 	int size();
