@@ -9,7 +9,7 @@ The module highlights are:
 * `Context` resources
 * Configuration APIs
 * Data _validation_ APIs
-* Localization and internationalization support
+* Localization and Internationalization support
 * The `Property` model and the `Datastore` API
 * Java Beans support
 * RESTful Java client
