@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import com.holonplatform.http.Cookie;
 import com.holonplatform.http.HttpMessage;

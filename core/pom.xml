@@ -34,15 +34,15 @@
 
 		<!-- Annotation api -->
 		<dependency>
-			<groupId>javax.annotation</groupId>
-			<artifactId>javax.annotation-api</artifactId>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
 			<version>${annotation-api.version}</version>
 		</dependency>
 
 		<!-- Bean validation (optional) -->
 		<dependency>
-			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
 			<version>${bean.validation.version}</version>
 			<optional>true</optional>
 		</dependency>

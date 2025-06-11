@@ -52,9 +52,7 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.auth.jwt.JwtTokenParser#parseJwt(com.holonplatform.auth.jwt
+	 * @see com.holonplatform.auth.jwt.JwtTokenParser#parseJwt(com.holonplatform.auth.jwt
 	 * .JwtConfiguration, java.lang.String)
 	 */
 	@Override
@@ -73,14 +71,14 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 			if (configuration.getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
 				if (configuration.getSignatureAlgorithm().isSymmetric()) {
-					claims = Jwts.parserBuilder().setSigningKey(configuration.getSharedKey()
+					claims = Jwts.parser().setSigningKey(configuration.getSharedKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
 											+ configuration.getSignatureAlgorithm().getDescription()
 											+ "] - JWT configuration: [" + configuration + "]")))
 							.build().parseClaimsJws(jwt).getBody();
 				} else {
-					claims = Jwts.parserBuilder().setSigningKey(configuration.getPublicKey()
+					claims = Jwts.parser().setSigningKey(configuration.getPublicKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
 											+ configuration.getSignatureAlgorithm().getDescription()
@@ -89,7 +87,13 @@ public enum DefaultJwtTokenParser implements JwtTokenParser {
 				}
 			} else {
 				// not signed (JWT)
-				claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
+
+				// if JWT configuration explicitly defines unsecured JWS allowed (alg : none)
+				if (configuration.isAllowUnsecured()) {
+					claims = Jwts.parser().unsecured().build().parseClaimsJwt(jwt).getBody();
+				} else {
+					claims = Jwts.parser().build().parseClaimsJwt(jwt).getBody();
+				}
 			}
 
 		} catch (@SuppressWarnings("unused") ExpiredJwtException eje) {

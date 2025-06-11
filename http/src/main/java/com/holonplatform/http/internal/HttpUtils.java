@@ -45,7 +45,8 @@ public final class HttpUtils implements Serializable {
 
 	/**
 	 * Request header date formats as specified in the HTTP RFC
-	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-7.1.1.1">Section 7.1.1.1 of RFC 7231</a>
+	 * @see <a href="https://tools.ietf.org/html/rfc7231#section-7.1.1.1">Section 7.1.1.1 of RFC
+	 *      7231</a>
 	 */
 	public static final String[] DATE_FORMATS = new String[] { "EEE, dd MMM yyyy HH:mm:ss zzz",
 			"EEE, dd-MMM-yy HH:mm:ss zzz", "EEE MMM dd HH:mm:ss yyyy" };
@@ -86,12 +87,12 @@ public final class HttpUtils implements Serializable {
 	}
 
 	/**
-	 * Try to get a list of {@link Locale} from HTTP request from {@link HttpHeaders#ACCEPT_LANGUAGE} header, if not
-	 * null. If more than one language is specified in Accept-Language header, returned Locales will be ordered relying
-	 * on <i>quality</i> parameter, if specified.
+	 * Try to get a list of {@link Locale} from HTTP request from {@link HttpHeaders#ACCEPT_LANGUAGE}
+	 * header, if not null. If more than one language is specified in Accept-Language header, returned
+	 * Locales will be ordered relying on <i>quality</i> parameter, if specified.
 	 * @param header Accept-Language header
-	 * @return List of Locale for the languages of the Accept-Language header, if any. If header is not present, an
-	 *         empty list is returned.
+	 * @return List of Locale for the languages of the Accept-Language header, if any. If header is not
+	 *         present, an empty list is returned.
 	 */
 	public static List<Locale> getAcceptLanguageLocales(String header) {
 		if (header != null && !header.trim().equals("")) {
@@ -122,13 +123,13 @@ public final class HttpUtils implements Serializable {
 				String[] l = splitted[0].split("_");
 				switch (l.length) {
 				case 2:
-					locale = new Locale(l[0], l[1]);
+					locale = Locale.of(l[0], l[1]);
 					break;
 				case 3:
-					locale = new Locale(l[0], l[1], l[2]);
+					locale = Locale.of(l[0], l[1], l[2]);
 					break;
 				default:
-					locale = new Locale(l[0]);
+					locale = Locale.of(l[0]);
 					break;
 				}
 				double quality = 1.0d;
@@ -205,8 +206,8 @@ public final class HttpUtils implements Serializable {
 	/**
 	 * Extract credentials from a Basic Authorization header, if valid
 	 * @param header Header value
-	 * @return A string array with username at index 0 and password at index 1, or null if header is not valid or it is
-	 *         not a Basic authorization header
+	 * @return A string array with username at index 0 and password at index 1, or null if header is not
+	 *         valid or it is not a Basic authorization header
 	 */
 	public static String[] extractAuthorizationBasicCredentials(String header) {
 		if (!HttpUtils.isEmpty(header) && header.toLowerCase().startsWith(HttpHeaders.SCHEME_BASIC.toLowerCase())) {

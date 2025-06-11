@@ -72,8 +72,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/**
 	 * Constructor.
-	 * @param <P>        Actual property type
-	 * @param beanClass  Bean class to which this property set refers
+	 * @param <P> Actual property type
+	 * @param beanClass Bean class to which this property set refers
 	 * @param properties Properties of the set
 	 */
 	public <P extends PathProperty<?>> DefaultBeanPropertySet(Class<? extends T> beanClass, Collection<P> properties) {
@@ -91,7 +91,6 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see com.holonplatform.core.beans.BeanPropertySet#getBeanClass()
 	 */
 	@Override
@@ -101,9 +100,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#contains(java.lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#contains(java.lang.String)
 	 */
 	@Override
 	public boolean contains(String propertyName) {
@@ -113,9 +110,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#getProperty(java.lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#getProperty(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -126,10 +121,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#getProperty(java.lang.String,
-	 * java.lang.Class)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#getProperty(java.lang.String, java.lang.Class)
 	 */
 	@Override
 	public <PT> Optional<PathProperty<PT>> getProperty(String propertyName, Class<PT> type) {
@@ -141,10 +133,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyString(java.
-	 * lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyString(java. lang.String)
 	 */
 	@Override
 	public Optional<StringProperty> getPropertyString(String propertyName) {
@@ -155,10 +144,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyBoolean(java.
-	 * lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyBoolean(java. lang.String)
 	 */
 	@Override
 	public Optional<BooleanProperty> getPropertyBoolean(String propertyName) {
@@ -169,10 +155,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java.
-	 * lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java. lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -184,10 +167,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java.
-	 * lang.String, java.lang.Class)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyNumeric(java. lang.String,
+	 * java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -200,10 +181,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java.
-	 * lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java. lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -215,10 +193,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java.
-	 * lang.String, java.lang.Class)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#getPropertyTemporal(java. lang.String,
+	 * java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -231,9 +207,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -245,9 +219,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String,
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#property(java.lang.String,
 	 * java.lang.Class)
 	 */
 	@Override
@@ -259,10 +231,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyString(java.lang.
-	 * String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyString(java.lang. String)
 	 */
 	@Override
 	public StringProperty propertyString(String propertyName) {
@@ -273,10 +242,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyBoolean(java.lang.
-	 * String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyBoolean(java.lang. String)
 	 */
 	@Override
 	public BooleanProperty propertyBoolean(String propertyName) {
@@ -287,10 +253,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang.
-	 * String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang. String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -302,10 +265,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang.
-	 * String, java.lang.Class)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyNumeric(java.lang. String,
+	 * java.lang.Class)
 	 */
 	@Override
 	public <N extends Number> NumericProperty<N> propertyNumeric(String propertyName, Class<N> type) {
@@ -316,10 +277,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang
-	 * .String)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang .String)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -331,10 +289,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang
-	 * .String, java.lang.Class)
+	 * @see com.holonplatform.core.beans.BeanPropertyInspector#propertyTemporal(java.lang .String,
+	 * java.lang.Class)
 	 */
 	@Override
 	public <X> TemporalProperty<X> propertyTemporal(String propertyName, Class<X> type) {
@@ -347,9 +303,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.holonplatform.core.beans.BeanPropertySet#read(java.lang.String,
-	 * java.lang.Object)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#read(java.lang.String, java.lang.Object)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -371,10 +325,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#read(com.holonplatform.core.
-	 * Path, java.lang.Object)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#read(com.holonplatform.core. Path,
+	 * java.lang.Object)
 	 */
 	@Override
 	public <V> V read(Path<V> path, T instance) {
@@ -387,9 +339,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see com.holonplatform.core.beans.BeanPropertySet#write(java.lang.String,
-	 * java.lang.Object, java.lang.Object)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#write(java.lang.String, java.lang.Object,
+	 * java.lang.Object)
 	 */
 	@Override
 	public void write(String propertyName, final Object value, T instance) {
@@ -402,10 +353,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#write(com.holonplatform.core.
-	 * Path, java.lang.Object, java.lang.Object)
+	 * @see com.holonplatform.core.beans.BeanPropertySet#write(com.holonplatform.core. Path,
+	 * java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public <P> void write(Path<P> path, P value, T instance) {
@@ -418,9 +367,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#read(com.holonplatform.core.
+	 * @see com.holonplatform.core.beans.BeanPropertySet#read(com.holonplatform.core.
 	 * property.PropertyBox, java.lang.Object, boolean)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -440,9 +387,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/*
 	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * com.holonplatform.core.beans.BeanPropertySet#write(com.holonplatform.core.
+	 * @see com.holonplatform.core.beans.BeanPropertySet#write(com.holonplatform.core.
 	 * property.PropertyBox, java.lang.Object, boolean)
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -496,8 +441,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	}
 
 	/**
-	 * Read the <code>property</code> value from given instance (if not null), using
-	 * BeanProperty configuration read method or field, if available.
+	 * Read the <code>property</code> value from given instance (if not null), using BeanProperty
+	 * configuration read method or field, if available.
 	 * @param property Property to read
 	 * @param instance Instance to read from
 	 * @return Property value
@@ -547,10 +492,10 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 	/**
 	 * Write the <code>value</code> of the given property on given bean instance.
-	 * @param property  Property to write
+	 * @param property Property to write
 	 * @param valueType Value type (may be null)
-	 * @param value     Property value to write
-	 * @param instance  Bean instance to write into
+	 * @param value Property value to write
+	 * @param instance Bean instance to write into
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void write(BeanProperty<?> property, Class<?> valueType, Object value, T instance) {
@@ -567,7 +512,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 				if (read == null) {
 					try {
 						// try to istantiate
-						read = writeValue(p, p.getType().newInstance(), instanceToWrite);
+						read = writeValue(p, p.getType().getDeclaredConstructor().newInstance(), instanceToWrite);
 					} catch (Exception e) {
 						throw new PropertyWriteException(property,
 								"Failed to istantiate nested class " + p.getType().getName(), e);
@@ -587,10 +532,10 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	}
 
 	/**
-	 * Write the <code>property</code> value into given instance using given value,
-	 * using BeanProperty configuration write method or field, if available.
+	 * Write the <code>property</code> value into given instance using given value, using BeanProperty
+	 * configuration write method or field, if available.
 	 * @param property Property to write
-	 * @param value    Value to write
+	 * @param value Value to write
 	 * @param instance Instance to write
 	 * @return Written value
 	 */
@@ -632,10 +577,10 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	}
 
 	/**
-	 * Get the value to write on bean property, converting <code>null</code> values
-	 * to <code>false</code> or <code>0</code> for primitive types.
+	 * Get the value to write on bean property, converting <code>null</code> values to
+	 * <code>false</code> or <code>0</code> for primitive types.
 	 * @param valueType Value type
-	 * @param value     Value to write
+	 * @param value Value to write
 	 * @return Actual value
 	 */
 	private static Object getValueToWrite(Class<?> valueType, Object value) {
@@ -652,13 +597,13 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	}
 
 	/**
-	 * Get the property with given <code>propertyPath</code> from bean property set
-	 * using the properties full name as matching rule.
-	 * @param propertyPath  Property path
+	 * Get the property with given <code>propertyPath</code> from bean property set using the properties
+	 * full name as matching rule.
+	 * @param propertyPath Property path
 	 * @param ignoreMissing <code>true</code> to ignore mismatches
 	 * @return Optional matching bean property
-	 * @throws PropertyNotFoundException If ignoreMissing is false and a matching
-	 *                                   bean property was not found
+	 * @throws PropertyNotFoundException If ignoreMissing is false and a matching bean property was not
+	 *         found
 	 */
 	private Optional<BeanProperty<?>> getProperty(Path<?> propertyPath, boolean ignoreMissing)
 			throws PropertyNotFoundException {
@@ -688,10 +633,9 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	/**
 	 * Check the given property is of given value type.
 	 * @param property Property to check
-	 * @param type     Required type
+	 * @param type Required type
 	 * @return Typed property
-	 * @throws TypeMismatchException If the given type is not consistent with actual
-	 *                               property type
+	 * @throws TypeMismatchException If the given type is not consistent with actual property type
 	 */
 	@SuppressWarnings("unchecked")
 	private static <PT> PathProperty<PT> checkPropertyType(PathProperty<?> property, Class<PT> type) {
@@ -705,10 +649,9 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 	/**
 	 * Check the given {@link PathProperty} is of given type.
 	 * @param property Property to check
-	 * @param type     Required property type
+	 * @param type Required property type
 	 * @return Typed property
-	 * @throws TypeMismatchException If the given type is not consistent with actual
-	 *                               property type
+	 * @throws TypeMismatchException If the given type is not consistent with actual property type
 	 */
 	@SuppressWarnings("unchecked")
 	private static <X extends PathProperty<?>> X checkPathPropertyType(PathProperty<?> property, Class<X> type) {
@@ -732,8 +675,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 		/**
 		 * Constructor.
-		 * @param <P>        Actual property type
-		 * @param beanClass  Bean class to which this property set refers
+		 * @param <P> Actual property type
+		 * @param beanClass Bean class to which this property set refers
 		 * @param properties Properties of the set
 		 */
 		public <P extends PathProperty<?>> DefaultBuilder(Class<? extends T> beanClass, Collection<P> properties) {
@@ -743,7 +686,6 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see com.holonplatform.core.HasConfiguration#getConfiguration()
 		 */
 		@Override
@@ -753,10 +695,7 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 		/*
 		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.holonplatform.core.beans.BeanPropertySet.Builder#identifiers(java.lang.
-		 * String[])
+		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#identifiers(java.lang. String[])
 		 */
 		@Override
 		public BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> identifiers(String... propertyNames) {
@@ -775,10 +714,8 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 		/*
 		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * com.holonplatform.core.beans.BeanPropertySet.Builder#configuration(java.lang.
-		 * String, java.lang.Object)
+		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#configuration(java.lang. String,
+		 * java.lang.Object)
 		 */
 		@Override
 		public BeanPropertySet.Builder<T, DefaultBeanPropertySet<T>> configuration(String name, Object value) {
@@ -788,7 +725,6 @@ public class DefaultBeanPropertySet<T> extends DefaultPropertySet<PathProperty<?
 
 		/*
 		 * (non-Javadoc)
-		 * 
 		 * @see com.holonplatform.core.beans.BeanPropertySet.Builder#build()
 		 */
 		@Override

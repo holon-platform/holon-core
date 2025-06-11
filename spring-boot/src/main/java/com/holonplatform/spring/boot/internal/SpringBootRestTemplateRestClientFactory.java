@@ -17,7 +17,7 @@ package com.holonplatform.spring.boot.internal;
 
 import java.util.Optional;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 

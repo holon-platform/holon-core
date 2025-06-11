@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.async.http.AsyncRestClient;
 import com.holonplatform.async.http.AsyncRestClientFactory;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.http.exceptions.RestClientCreationException;
 import com.holonplatform.http.internal.HttpLogger;
+
+import jakarta.annotation.Priority;
 
 /**
  * {@link AsyncRestClientFactory} registry.
@@ -55,7 +55,8 @@ public enum AsyncRestClientFactoryRegistry {
 					: AsyncRestClientFactory.DEFAULT_PRIORITY);
 
 	/**
-	 * The {@link AsyncRestClientFactory}s by class name organized by the {@link ClassLoader} was used to load them.
+	 * The {@link AsyncRestClientFactory}s by class name organized by the
+	 * {@link ClassLoader} was used to load them.
 	 */
 	private final WeakHashMap<ClassLoader, List<AsyncRestClientFactory>> factories;
 
@@ -64,15 +65,22 @@ public enum AsyncRestClientFactoryRegistry {
 	}
 
 	/**
-	 * Get a {@link AsyncRestClient} instance for given <code>fullyQualifiedClassName</code> and {@link ClassLoader}
-	 * using a suitable {@link AsyncRestClientFactory}.
-	 * @param fullyQualifiedClassName {@link AsyncRestClient} class name to obtain, or <code>null</code> for the default
-	 *        one
-	 * @param classLoader ClassLoader for which to obtain the {@link AsyncRestClient}
-	 * @return A new {@link AsyncRestClient} instance for given <code>fullyQualifiedClassName</code> (or the default one
-	 *         if <code>null</code>) and {@link ClassLoader}
-	 * @throws RestClientCreationException If no {@link AsyncRestClientFactory} available, or none of the available
-	 *         factories returned a not <code>null</code> instance or a creation error occurred
+	 * Get a {@link AsyncRestClient} instance for given
+	 * <code>fullyQualifiedClassName</code> and {@link ClassLoader} using a suitable
+	 * {@link AsyncRestClientFactory}.
+	 * 
+	 * @param fullyQualifiedClassName {@link AsyncRestClient} class name to obtain,
+	 *                                or <code>null</code> for the default one
+	 * @param classLoader             ClassLoader for which to obtain the
+	 *                                {@link AsyncRestClient}
+	 * @return A new {@link AsyncRestClient} instance for given
+	 *         <code>fullyQualifiedClassName</code> (or the default one if
+	 *         <code>null</code>) and {@link ClassLoader}
+	 * @throws RestClientCreationException If no {@link AsyncRestClientFactory}
+	 *                                     available, or none of the available
+	 *                                     factories returned a not
+	 *                                     <code>null</code> instance or a creation
+	 *                                     error occurred
 	 */
 	public AsyncRestClient createRestClient(String fullyQualifiedClassName, ClassLoader classLoader) {
 		ClassLoader cl = classLoader == null ? ClassUtils.getDefaultClassLoader() : classLoader;
@@ -100,14 +108,19 @@ public enum AsyncRestClientFactoryRegistry {
 	}
 
 	/**
-	 * Get the {@link AsyncRestClientFactory} for given <code>fullyQualifiedClassName</code> {@link AsyncRestClient}
-	 * instance and {@link ClassLoader}.
-	 * @param fullyQualifiedClassName {@link AsyncRestClientFactory} class name to obtain, or <code>null</code> for the
-	 *        default one
-	 * @param classLoader ClassLoader for which to obtain the factory
-	 * @return {@link AsyncRestClientFactory} for given <code>fullyQualifiedClassName</code> (or the default one if
+	 * Get the {@link AsyncRestClientFactory} for given
+	 * <code>fullyQualifiedClassName</code> {@link AsyncRestClient} instance and
+	 * {@link ClassLoader}.
+	 * 
+	 * @param fullyQualifiedClassName {@link AsyncRestClientFactory} class name to
+	 *                                obtain, or <code>null</code> for the default
+	 *                                one
+	 * @param classLoader             ClassLoader for which to obtain the factory
+	 * @return {@link AsyncRestClientFactory} for given
+	 *         <code>fullyQualifiedClassName</code> (or the default one if
 	 *         <code>null</code>) and {@link ClassLoader}
-	 * @throws RestClientCreationException If no {@link AsyncRestClientFactory} available or a creation error occurred
+	 * @throws RestClientCreationException If no {@link AsyncRestClientFactory}
+	 *                                     available or a creation error occurred
 	 */
 	public List<AsyncRestClientFactory> getRestClientFactories(String fullyQualifiedClassName,
 			ClassLoader classLoader) {
@@ -127,9 +140,13 @@ public enum AsyncRestClientFactoryRegistry {
 	}
 
 	/**
-	 * Obtain the {@link AsyncRestClientFactory}s that are available via the specified {@link ClassLoader}.
-	 * @param classLoader the {@link ClassLoader} of the returned {@link AsyncRestClientFactory}s
-	 * @return an list of {@link AsyncRestClientFactory}s loaded by the specified {@link ClassLoader}
+	 * Obtain the {@link AsyncRestClientFactory}s that are available via the
+	 * specified {@link ClassLoader}.
+	 * 
+	 * @param classLoader the {@link ClassLoader} of the returned
+	 *                    {@link AsyncRestClientFactory}s
+	 * @return an list of {@link AsyncRestClientFactory}s loaded by the specified
+	 *         {@link ClassLoader}
 	 */
 	private synchronized List<AsyncRestClientFactory> getRestClientFactories(ClassLoader classLoader) {
 

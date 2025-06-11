@@ -57,12 +57,12 @@ import java.util.logging.LogManager;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriBuilder;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.internal.ServiceFinder;
@@ -79,53 +79,60 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 /**
- * Parent class for testing JAX-RS and Jersey-based applications using Jersey test framework and JUnit 5.
+ * Parent class for testing JAX-RS and Jersey-based applications using Jersey test framework and
+ * JUnit 5.
  * <p>
- * At construction this class will obtain a {@link org.glassfish.jersey.test.spi.TestContainerFactory test container
- * factory} implementation.
+ * At construction this class will obtain a
+ * {@link org.glassfish.jersey.test.spi.TestContainerFactory test container factory} implementation.
  * </p>
  * <p>
- * Before each test method in an extending class is run the test container factory is used to obtain a configured
- * {@link org.glassfish.jersey.test.spi.TestContainer test container}. Then the {@link TestContainer#start()} method is
- * invoked on the configured test container. After each test method has run, the {@link TestContainer#stop()} method is
- * invoked on the test container. Stopped test container generally shouldn't be again started for another test, rather a
- * new test container should be created. Every test method in the {@code JerseyTest} subclass can invoke the
- * {@link #client()} to obtain a JAX-RS {@link javax.ws.rs.client.Client}, from which
- * {@link javax.ws.rs.client.WebTarget} instances can be created to send arbitrary requests. Also, one of the
- * {@code target} methods ({@link #target()} or {@link #target(String)}) may be invoked to obtain a JAX-RS
- * {@link javax.ws.rs.client.WebTarget} instances from which requests can be sent to and responses received from the Web
- * application under test.
+ * Before each test method in an extending class is run the test container factory is used to obtain
+ * a configured {@link org.glassfish.jersey.test.spi.TestContainer test container}. Then the
+ * {@link TestContainer#start()} method is invoked on the configured test container. After each test
+ * method has run, the {@link TestContainer#stop()} method is invoked on the test container. Stopped
+ * test container generally shouldn't be again started for another test, rather a new test container
+ * should be created. Every test method in the {@code JerseyTest} subclass can invoke the
+ * {@link #client()} to obtain a JAX-RS {@link jakarta.ws.rs.client.Client}, from which
+ * {@link jakarta.ws.rs.client.WebTarget} instances can be created to send arbitrary requests. Also,
+ * one of the {@code target} methods ({@link #target()} or {@link #target(String)}) may be invoked
+ * to obtain a JAX-RS {@link jakarta.ws.rs.client.WebTarget} instances from which requests can be
+ * sent to and responses received from the Web application under test.
  * </p>
  * <p>
  * If a test container factory is not explicitly declared using the appropriate constructor (see
- * {@link #JerseyTest5(TestContainerFactory)}) or by overriding the {@link #getTestContainerFactory()} method, then a
- * default test container factory will be obtained as follows:
+ * {@link #JerseyTest5(TestContainerFactory)}) or by overriding the
+ * {@link #getTestContainerFactory()} method, then a default test container factory will be obtained
+ * as follows:
  * <ol>
- * <li>If a system property <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> is set and the
- * value is a fully qualified class name of a class that extends from {@code TestContainerFactory} then the test
- * container factory used by default will be an instance of that class. A {@link TestContainerException} will be thrown
- * if the class cannot be loaded or instantiated.</li>
- * <li>Otherwise, {@code META-INF/services} locations on the class path will be scanned for implementation providers of
- * {@code TestContainerFactory} SPI. If a single implementation is found, it will be used. If multiple implementations
- * are found, the default <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> implementation
- * will be selected if present, otherwise the first found implementation will be selected and a warning message will be
- * logged.</li>
- * <li>If no {@code TestContainerFactory} has been selected in the steps above, Jersey test framework will try to
- * instantiate the default test container factory implementation (
- * <code>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</code>) directly. A
- * {@link TestContainerException} will be thrown if this class cannot be loaded or instantiated.</li>
+ * <li>If a system property
+ * <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> is set and the
+ * value is a fully qualified class name of a class that extends from {@code TestContainerFactory}
+ * then the test container factory used by default will be an instance of that class. A
+ * {@link TestContainerException} will be thrown if the class cannot be loaded or instantiated.</li>
+ * <li>Otherwise, {@code META-INF/services} locations on the class path will be scanned for
+ * implementation providers of {@code TestContainerFactory} SPI. If a single implementation is
+ * found, it will be used. If multiple implementations are found, the default
+ * <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> implementation
+ * will be selected if present, otherwise the first found implementation will be selected and a
+ * warning message will be logged.</li>
+ * <li>If no {@code TestContainerFactory} has been selected in the steps above, Jersey test
+ * framework will try to instantiate the default test container factory implementation (
+ * <code>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</code>)
+ * directly. A {@link TestContainerException} will be thrown if this class cannot be loaded or
+ * instantiated.</li>
  * </ol>
  * 
  * <p>
- * The test container is configured by a {@link DeploymentContext} that is either provided by subclass or automatically
- * created by {@code JerseyTest} based on the provided JAX-RS / Jersey {@code Application} class or instance to be
- * tested. A {@link TestContainerException} will be thrown if the configured test container factory cannot support the
- * deployment context type. Two deployment context are provided:
+ * The test container is configured by a {@link DeploymentContext} that is either provided by
+ * subclass or automatically created by {@code JerseyTest} based on the provided JAX-RS / Jersey
+ * {@code Application} class or instance to be tested. A {@link TestContainerException} will be
+ * thrown if the configured test container factory cannot support the deployment context type. Two
+ * deployment context are provided:
  * <ol>
- * <li>A basic deployment context, of type {@link DeploymentContext}, compatible with all test containers that are not
- * based on Servlet deployment model.</li>
- * <li>A Servlet-based deployment context, of type {@link ServletDeploymentContext}, compatible with Servlet-based test
- * containers.</li>
+ * <li>A basic deployment context, of type {@link DeploymentContext}, compatible with all test
+ * containers that are not based on Servlet deployment model.</li>
+ * <li>A Servlet-based deployment context, of type {@link ServletDeploymentContext}, compatible with
+ * Servlet-based test containers.</li>
  * </ol>
  * 
  */
@@ -134,9 +141,10 @@ public abstract class JerseyTest5 {
 	private static final Logger LOGGER = Logger.getLogger(JerseyTest5.class.getName());
 
 	/**
-	 * Holds the test container factory class to be used for running the tests by default (if testContainerFactory has
-	 * not been set). This static field is initialized in {@link #getDefaultTestContainerFactory()} method and is reused
-	 * by any instances of {@code JerseyTest} that are subsequently run. This is done to optimize the number of
+	 * Holds the test container factory class to be used for running the tests by default (if
+	 * testContainerFactory has not been set). This static field is initialized in
+	 * {@link #getDefaultTestContainerFactory()} method and is reused by any instances of
+	 * {@code JerseyTest} that are subsequently run. This is done to optimize the number of
 	 * TestContainerFactory service provider look-ups and class loading.
 	 */
 	private static Class<? extends TestContainerFactory> defaultTestContainerFactoryClass;
@@ -147,7 +155,8 @@ public abstract class JerseyTest5 {
 	private final DeploymentContext context;
 
 	/**
-	 * The test container factory which creates an instance of the test container on which the tests would be run.
+	 * The test container factory which creates an instance of the test container on which the tests
+	 * would be run.
 	 */
 	private TestContainerFactory testContainerFactory;
 
@@ -159,14 +168,14 @@ public abstract class JerseyTest5 {
 	private final AtomicReference<Client> client = new AtomicReference<>(null);
 
 	/**
-	 * JerseyTest property bag that can be used to configure the test behavior. These properties can be overridden with
-	 * a system property.
+	 * JerseyTest property bag that can be used to configure the test behavior. These properties can be
+	 * overridden with a system property.
 	 */
 	private final Map<String, String> propertyMap = new HashMap<>();
 
 	/**
-	 * JerseyTest forced property bag that can be used to configure the test behavior. These property cannot be
-	 * overridden with a system property.
+	 * JerseyTest forced property bag that can be used to configure the test behavior. These property
+	 * cannot be overridden with a system property.
 	 */
 	private final Map<String, String> forcedPropertyMap = new HashMap<>();
 
@@ -178,15 +187,15 @@ public abstract class JerseyTest5 {
 	 * <p>
 	 * This constructor can be used from an extending subclass.
 	 * <p>
-	 * When this constructor is used, the extending concrete subclass must implement one of the {@link #configure()} or
-	 * {@link #configureDeployment()} methods to provide the tested application configuration and deployment context.
+	 * When this constructor is used, the extending concrete subclass must implement one of the
+	 * {@link #configure()} or {@link #configureDeployment()} methods to provide the tested application
+	 * configuration and deployment context.
 	 * </p>
 	 */
 	public JerseyTest5() {
-		// Note: this must be the first call in the constructor to allow setting config
-		// properties (especially around logging) in the configure() or configureDeployment()
-		// method overridden in subclass, otherwise the properties set in the subclass would
-		// not be set soon enough
+		// Note: this must be the first call in the constructor to allow setting config properties
+		// (especially around logging) in the configure() or configureDeployment() method overridden in
+		// subclass, otherwise the properties set in the subclass would not be set soon enough
 		this.context = configureDeployment();
 		this.testContainerFactory = getTestContainerFactory();
 	}
@@ -196,17 +205,17 @@ public abstract class JerseyTest5 {
 	 * <p>
 	 * This constructor can be used from an extending subclass.
 	 * <p>
-	 * When this constructor is used, the extending concrete subclass must implement one of the {@link #configure()} or
-	 * {@link #configureDeployment()} methods to provide the tested application configuration and deployment context.
+	 * When this constructor is used, the extending concrete subclass must implement one of the
+	 * {@link #configure()} or {@link #configureDeployment()} methods to provide the tested application
+	 * configuration and deployment context.
 	 * </p>
 	 *
 	 * @param testContainerFactory the test container factory to use for testing.
 	 */
 	public JerseyTest5(final TestContainerFactory testContainerFactory) {
-		// Note: this must be the first call in the constructor to allow setting config
-		// properties (especially around logging) in the configure() or configureDeployment()
-		// method overridden in subclass, otherwise the properties set in the subclass would
-		// not be set soon enough
+		// Note: this must be the first call in the constructor to allow setting config properties
+		// (especially around logging) in the configure() or configureDeployment() method overridden in
+		// subclass, otherwise the properties set in the subclass would not be set soon enough
 		this.context = configureDeployment();
 		this.testContainerFactory = testContainerFactory;
 	}
@@ -216,16 +225,17 @@ public abstract class JerseyTest5 {
 	 * <p>
 	 * This constructor can be used from an extending subclass.
 	 * <p>
-	 * When this constructor is used, the extending concrete subclass must implement one of the {@link #configure()} or
-	 * {@link #configureDeployment()} methods are ignored.
+	 * When this constructor is used, the extending concrete subclass must implement one of the
+	 * {@link #configure()} or {@link #configureDeployment()} methods are ignored.
 	 * </p>
 	 * <p>
-	 * Please note that when this constructor is used, recording of startup logs as well as configuring other
-	 * {@code JerseyTest} properties and features may not work properly. While using this constructor should generally
-	 * be avoided, in certain scenarios it may be necessary to use this constructor. (E.g. when running parameterized
-	 * tests in which application is created based on test parameters passed in by JUnit framework via test constructor
-	 * - in such case it is not possible to propagate the necessary information to one of the overridden
-	 * {@code JerseyTest.configure...} methods).
+	 * Please note that when this constructor is used, recording of startup logs as well as configuring
+	 * other {@code JerseyTest} properties and features may not work properly. While using this
+	 * constructor should generally be avoided, in certain scenarios it may be necessary to use this
+	 * constructor. (E.g. when running parameterized tests in which application is created based on test
+	 * parameters passed in by JUnit framework via test constructor - in such case it is not possible to
+	 * propagate the necessary information to one of the overridden {@code JerseyTest.configure...}
+	 * methods).
 	 * </p>
 	 *
 	 * @param jaxrsApplication tested application.
@@ -245,9 +255,11 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Returns old test container used to run the tests in and set a new one. This method can be overridden.
+	 * Returns old test container used to run the tests in and set a new one. This method can be
+	 * overridden.
 	 *
-	 * @param testContainer a test container instance or {@code null} it the current test container should be released.
+	 * @param testContainer a test container instance or {@code null} it the current test container
+	 *        should be released.
 	 * @return old test container instance.
 	 */
 	/* package */ TestContainer setTestContainer(final TestContainer testContainer) {
@@ -261,8 +273,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically enable a feature with a given name. Enabling of the feature may be overridden via a system
-	 * property.
+	 * Programmatically enable a feature with a given name. Enabling of the feature may be overridden
+	 * via a system property.
 	 *
 	 * @param featureName name of the enabled feature.
 	 */
@@ -271,8 +283,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically disable a feature with a given name. Disabling of the feature may be overridden via a system
-	 * property.
+	 * Programmatically disable a feature with a given name. Disabling of the feature may be overridden
+	 * via a system property.
 	 *
 	 * @param featureName name of the disabled feature.
 	 */
@@ -281,8 +293,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically force-enable a feature with a given name. Force-enabling of the feature cannot be overridden via
-	 * a system property. Use with care!
+	 * Programmatically force-enable a feature with a given name. Force-enabling of the feature cannot
+	 * be overridden via a system property. Use with care!
 	 *
 	 * @param featureName name of the force-enabled feature.
 	 */
@@ -291,8 +303,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically force-disable a feature with a given name. Force-disabling of the feature cannot be overridden
-	 * via a system property. Use with care!
+	 * Programmatically force-disable a feature with a given name. Force-disabling of the feature cannot
+	 * be overridden via a system property. Use with care!
 	 *
 	 * @param featureName name of the force-disabled feature.
 	 */
@@ -301,8 +313,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically set a value of a property with a given name. The property value may be overridden via a system
-	 * property.
+	 * Programmatically set a value of a property with a given name. The property value may be
+	 * overridden via a system property.
 	 *
 	 * @param propertyName name of the property.
 	 * @param value property value.
@@ -312,8 +324,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically set a value of a property with a given name. The property value may be overridden via a system
-	 * property.
+	 * Programmatically set a value of a property with a given name. The property value may be
+	 * overridden via a system property.
 	 *
 	 * @param propertyName name of the property.
 	 * @param value property value.
@@ -323,8 +335,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Programmatically force-set a value of a property with a given name. The force-set property value cannot be
-	 * overridden via a system property.
+	 * Programmatically force-set a value of a property with a given name. The force-set property value
+	 * cannot be overridden via a system property.
 	 *
 	 * @param propertyName name of the property.
 	 * @param value property value.
@@ -368,23 +380,25 @@ public abstract class JerseyTest5 {
 	/**
 	 * Create the tested JAX-RS /Jersey application.
 	 * <p>
-	 * This method may be overridden by subclasses to provide the configured JAX-RS /Jersey application to be tested.
-	 * The method may be also used to configure {@code JerseyTest} instance properties.
+	 * This method may be overridden by subclasses to provide the configured JAX-RS /Jersey application
+	 * to be tested. The method may be also used to configure {@code JerseyTest} instance properties.
 	 * <p>
-	 * Unless {@link #configureDeployment()} method is overridden in the subclass, the {@code configure()} method is
-	 * invoked by {@code configureDeployment()} to create default deployment context for the tested application. As
-	 * such, the method is invoked in the scope of one of the {@code JerseyTest} constructors. Default implementation of
-	 * this method throws {@link UnsupportedOperationException}, so that construction of {@code JerseyTest} instance
-	 * fails unless one of the {@code configure()} or {@code configureDeployment()} methods is overridden in the
-	 * subclass.
+	 * Unless {@link #configureDeployment()} method is overridden in the subclass, the
+	 * {@code configure()} method is invoked by {@code configureDeployment()} to create default
+	 * deployment context for the tested application. As such, the method is invoked in the scope of one
+	 * of the {@code JerseyTest} constructors. Default implementation of this method throws
+	 * {@link UnsupportedOperationException}, so that construction of {@code JerseyTest} instance fails
+	 * unless one of the {@code configure()} or {@code configureDeployment()} methods is overridden in
+	 * the subclass.
 	 * </p>
 	 * <p>
-	 * Note that since the method is invoked from {@code JerseyTest} constructor, the overriding implementation of the
-	 * method must not depend on any subclass fields as those will not be initialized yet when the method is invoked.
+	 * Note that since the method is invoked from {@code JerseyTest} constructor, the overriding
+	 * implementation of the method must not depend on any subclass fields as those will not be
+	 * initialized yet when the method is invoked.
 	 * </p>
 	 * <p>
-	 * Also note that in case the {@link #JerseyTest5(javax.ws.rs.core.Application)} constructor is used, the method is
-	 * never invoked.
+	 * Also note that in case the {@link #JerseyTest5(jakarta.ws.rs.core.Application)} constructor is
+	 * used, the method is never invoked.
 	 * </p>
 	 *
 	 * @return tested JAX-RS /Jersey application.
@@ -396,21 +410,23 @@ public abstract class JerseyTest5 {
 	/**
 	 * Create and configure deployment context for the tested application.
 	 * <p>
-	 * This method may be overridden by subclasses to provide custom test container deployment context for the tested
-	 * application. The method may be also used to configure {@code JerseyTest} instance properties.
+	 * This method may be overridden by subclasses to provide custom test container deployment context
+	 * for the tested application. The method may be also used to configure {@code JerseyTest} instance
+	 * properties.
 	 * <p>
-	 * The method is invoked from {@code JerseyTest} constructors to provide deployment context for the tested
-	 * application. Default implementation of this method creates
-	 * {@link DeploymentContext#newInstance(javax.ws.rs.core.Application) new deployment context} using JAX-RS
-	 * application instance obtained by calling the {@link #configure()} method.
+	 * The method is invoked from {@code JerseyTest} constructors to provide deployment context for the
+	 * tested application. Default implementation of this method creates
+	 * {@link DeploymentContext#newInstance(jakarta.ws.rs.core.Application) new deployment context}
+	 * using JAX-RS application instance obtained by calling the {@link #configure()} method.
 	 * </p>
 	 * <p>
-	 * Note that since the method is invoked from {@code JerseyTest} constructor, the overriding implementation of the
-	 * method must not depend on any subclass fields as those will not be initialized yet when the method is invoked.
+	 * Note that since the method is invoked from {@code JerseyTest} constructor, the overriding
+	 * implementation of the method must not depend on any subclass fields as those will not be
+	 * initialized yet when the method is invoked.
 	 * </p>
 	 * <p>
-	 * Also note that in case the {@link #JerseyTest5(javax.ws.rs.core.Application)} constructor is used, the method is
-	 * never invoked.
+	 * Also note that in case the {@link #JerseyTest5(jakarta.ws.rs.core.Application)} constructor is
+	 * used, the method is never invoked.
 	 * </p>
 	 *
 	 * @return configured deployment context for the tested application.
@@ -423,28 +439,30 @@ public abstract class JerseyTest5 {
 	/**
 	 * Return an instance of {@link TestContainerFactory} class.
 	 * <p>
-	 * This method is used only once during {@code JerseyTest5} instance construction to retrieve the factory
-	 * responsible for providing {@link org.glassfish.jersey.test.spi.TestContainer} that will be used to deploy the
-	 * tested application.
+	 * This method is used only once during {@code JerseyTest5} instance construction to retrieve the
+	 * factory responsible for providing {@link org.glassfish.jersey.test.spi.TestContainer} that will
+	 * be used to deploy the tested application.
 	 * </p>
 	 * <p>
 	 * A default implementation first searches for the {@code TestContainerFactory} set via
-	 * {@link #JerseyTest5(org.glassfish.jersey.test.spi.TestContainerFactory) constructor}, then it looks for a
-	 * {@code TestContainerFactory} implementation class name set via
-	 * <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> system property with a fallback to
-	 * searching for {@code TestContainerFactory} service providers on the class path. At last, if no
-	 * {@code TestContainerFactory} has been found, the method attempts to create new default
-	 * {@code TestContainerFactory} implementation instance
+	 * {@link #JerseyTest5(org.glassfish.jersey.test.spi.TestContainerFactory) constructor}, then it
+	 * looks for a {@code TestContainerFactory} implementation class name set via
+	 * <code>{@value org.glassfish.jersey.test.TestProperties#CONTAINER_FACTORY}</code> system property
+	 * with a fallback to searching for {@code TestContainerFactory} service providers on the class
+	 * path. At last, if no {@code TestContainerFactory} has been found, the method attempts to create
+	 * new default {@code TestContainerFactory} implementation instance
 	 * (<code>{@value org.glassfish.jersey.test.TestProperties#DEFAULT_CONTAINER_FACTORY}</code>).
 	 * </p>
 	 * <p>
-	 * Alternatively, this method may be overridden to directly provide a custom {@code TestContainerFactory} instance.
-	 * Note that since the method is invoked from {@code JerseyTest} constructor, the overriding implementation of the
-	 * method must not depend on any subclass fields as those will not be initialized yet when the method is invoked.
+	 * Alternatively, this method may be overridden to directly provide a custom
+	 * {@code TestContainerFactory} instance. Note that since the method is invoked from
+	 * {@code JerseyTest} constructor, the overriding implementation of the method must not depend on
+	 * any subclass fields as those will not be initialized yet when the method is invoked.
 	 * </p>
 	 *
 	 * @return an instance of {@link TestContainerFactory} class.
-	 * @throws TestContainerException if the initialization of {@link TestContainerFactory} instance is not successful.
+	 * @throws TestContainerException if the initialization of {@link TestContainerFactory} instance is
+	 *         not successful.
 	 */
 	protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
 		if (testContainerFactory == null) {
@@ -503,7 +521,7 @@ public abstract class JerseyTest5 {
 		}
 
 		try {
-			return defaultTestContainerFactoryClass.newInstance();
+			return defaultTestContainerFactoryClass.getDeclaredConstructor().newInstance();
 		} catch (final Exception ex) {
 			throw new TestContainerException(String.format("Could not instantiate test container factory '%s'",
 					defaultTestContainerFactoryClass.getName()), ex);
@@ -526,8 +544,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Create a JAX-RS web target whose URI refers to the {@link #getBaseUri() base URI} the tested JAX-RS / Jersey
-	 * application is deployed at, plus the path specified in the {@code path} argument.
+	 * Create a JAX-RS web target whose URI refers to the {@link #getBaseUri() base URI} the tested
+	 * JAX-RS / Jersey application is deployed at, plus the path specified in the {@code path} argument.
 	 * <p>
 	 * This method is an equivalent of calling <code>client().target(getBaseUri())</code>.
 	 * </p>
@@ -539,8 +557,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Create a JAX-RS web target whose URI refers to the {@link #getBaseUri() base URI} the tested JAX-RS / Jersey
-	 * application is deployed at, plus the path specified in the {@code path} argument.
+	 * Create a JAX-RS web target whose URI refers to the {@link #getBaseUri() base URI} the tested
+	 * JAX-RS / Jersey application is deployed at, plus the path specified in the {@code path} argument.
 	 * <p>
 	 * This method is an equivalent of calling {@code target().path(path)}.
 	 * </p>
@@ -553,8 +571,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Get the JAX-RS test client that is {@link #configureClient(org.glassfish.jersey.client.ClientConfig)
-	 * pre-configured} for this test.
+	 * Get the JAX-RS test client that is
+	 * {@link #configureClient(org.glassfish.jersey.client.ClientConfig) pre-configured} for this test.
 	 *
 	 * @return the configured test client.
 	 */
@@ -563,12 +581,13 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Set up the test by creating a test container instance, {@link TestContainer#start() starting} it and by creating
-	 * a new {@link #configureClient(org.glassfish.jersey.client.ClientConfig) pre-configured} test client. The test
-	 * container is obtained from the {@link #getTestContainerFactory() test container factory}.
+	 * Set up the test by creating a test container instance, {@link TestContainer#start() starting} it
+	 * and by creating a new {@link #configureClient(org.glassfish.jersey.client.ClientConfig)
+	 * pre-configured} test client. The test container is obtained from the
+	 * {@link #getTestContainerFactory() test container factory}.
 	 *
-	 * @throws TestContainerException if the default test container factory cannot be obtained, or the test application
-	 *         deployment context is not supported by the test container factory.
+	 * @throws TestContainerException if the default test container factory cannot be obtained, or the
+	 *         test application deployment context is not supported by the test container factory.
 	 * @throws Exception if an exception is thrown during setting up the test environment.
 	 */
 	@BeforeEach
@@ -589,9 +608,10 @@ public abstract class JerseyTest5 {
 
 	/**
 	 * Tear down the test by {@link TestContainer#stop() stopping} the test container obtained from the
-	 * {@link #getTestContainerFactory() test container factory} and by {@link javax.ws.rs.client.Client#close()
-	 * closing} and discarding the {@link #configureClient(org.glassfish.jersey.client.ClientConfig) pre-configured}
-	 * test client that was {@link #setUp() set up} for the test.
+	 * {@link #getTestContainerFactory() test container factory} and by
+	 * {@link jakarta.ws.rs.client.Client#close() closing} and discarding the
+	 * {@link #configureClient(org.glassfish.jersey.client.ClientConfig) pre-configured} test client
+	 * that was {@link #setUp() set up} for the test.
 	 *
 	 * @throws Exception if an exception is thrown during tearing down the test environment.
 	 */
@@ -612,8 +632,9 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Get the JAX-RS test client that is {@link #configureClient(org.glassfish.jersey.client.ClientConfig)
-	 * pre-configured} for this test. This method can be overridden.
+	 * Get the JAX-RS test client that is
+	 * {@link #configureClient(org.glassfish.jersey.client.ClientConfig) pre-configured} for this test.
+	 * This method can be overridden.
 	 *
 	 * @return the configured test client.
 	 */
@@ -632,14 +653,15 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Create an instance of test {@link Client} using the client configuration provided by the configured
-	 * {@link org.glassfish.jersey.test.spi.TestContainer}.
+	 * Create an instance of test {@link Client} using the client configuration provided by the
+	 * configured {@link org.glassfish.jersey.test.spi.TestContainer}.
 	 * <p>
-	 * If the {@code TestContainer} does not provide any client configuration (passed {@code clientConfig} is
-	 * {@code null}), the default implementation of this method first creates an empty new
-	 * {@link org.glassfish.jersey.client.ClientConfig} instance. The client configuration (provided by test container
-	 * or created) is then passed to {@link #configureClient(org.glassfish.jersey.client.ClientConfig)} which can be
-	 * overridden in the {@code JerseyTest} subclass to provide custom client configuration. At last, new JAX-RS
+	 * If the {@code TestContainer} does not provide any client configuration (passed
+	 * {@code clientConfig} is {@code null}), the default implementation of this method first creates an
+	 * empty new {@link org.glassfish.jersey.client.ClientConfig} instance. The client configuration
+	 * (provided by test container or created) is then passed to
+	 * {@link #configureClient(org.glassfish.jersey.client.ClientConfig)} which can be overridden in the
+	 * {@code JerseyTest} subclass to provide custom client configuration. At last, new JAX-RS
 	 * {@link Client} instance is created based on the resulting client configuration.
 	 * </p>
 	 *
@@ -666,22 +688,22 @@ public abstract class JerseyTest5 {
 	/**
 	 * Configure the test client.
 	 * <p>
-	 * The method can be overridden by {@code JerseyTest} subclasses to conveniently configure the test client instance
-	 * used by Jersey test framework (either returned from {@link #client()} method or used to create
-	 * {@link javax.ws.rs.client.WebTarget} instances returned from one of the {@code target} methods ({@link #target()}
-	 * or {@link #target(String)}).
+	 * The method can be overridden by {@code JerseyTest} subclasses to conveniently configure the test
+	 * client instance used by Jersey test framework (either returned from {@link #client()} method or
+	 * used to create {@link jakarta.ws.rs.client.WebTarget} instances returned from one of the
+	 * {@code target} methods ({@link #target()} or {@link #target(String)}).
 	 * <p>
-	 * Prior to every test method run, a new client instance is configured and created using the client configuration
-	 * provided by the {@link org.glassfish.jersey.test.spi.TestContainer} as well as any internal {@code JerseyTest}
-	 * client configuration settings.
+	 * Prior to every test method run, a new client instance is configured and created using the client
+	 * configuration provided by the {@link org.glassfish.jersey.test.spi.TestContainer} as well as any
+	 * internal {@code JerseyTest} client configuration settings.
 	 * </p>
 	 * <p>
-	 * Before the actual client instance creation, Jersey test framework invokes this method in order to allow the
-	 * subclasses to further customize created client instance.
+	 * Before the actual client instance creation, Jersey test framework invokes this method in order to
+	 * allow the subclasses to further customize created client instance.
 	 * </p>
 	 * <p>
-	 * After each test method is run, the existing client instance is {@link javax.ws.rs.client.Client#close() closed}
-	 * and discarded.
+	 * After each test method is run, the existing client instance is
+	 * {@link jakarta.ws.rs.client.Client#close() closed} and discarded.
 	 * </p>
 	 * <p>
 	 * Default implementation of the method is "no-op".
@@ -745,8 +767,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Get stored {@link LogRecord log records} if enabled by setting {@link TestProperties#RECORD_LOG_LEVEL} or an
-	 * empty list.
+	 * Get stored {@link LogRecord log records} if enabled by setting
+	 * {@link TestProperties#RECORD_LOG_LEVEL} or an empty list.
 	 *
 	 * @return list of log records or an empty list.
 	 */
@@ -755,8 +777,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Get last stored {@link LogRecord log record} if enabled by setting {@link TestProperties#RECORD_LOG_LEVEL} or
-	 * {@code null}.
+	 * Get last stored {@link LogRecord log record} if enabled by setting
+	 * {@link TestProperties#RECORD_LOG_LEVEL} or {@code null}.
 	 *
 	 * @return last stored {@link LogRecord log record} or {@code null}.
 	 */
@@ -843,7 +865,8 @@ public abstract class JerseyTest5 {
 	}
 
 	/**
-	 * Returns {@link TestProperties#ASYNC_TIMEOUT_MULTIPLIER} or {@code 1} if the property is not defined.
+	 * Returns {@link TestProperties#ASYNC_TIMEOUT_MULTIPLIER} or {@code 1} if the property is not
+	 * defined.
 	 *
 	 * @return Multiplier of the async timeout for async test.
 	 */

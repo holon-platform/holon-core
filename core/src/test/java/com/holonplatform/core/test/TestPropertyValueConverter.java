@@ -62,11 +62,11 @@ public class TestPropertyValueConverter {
 
 		Integer mod = pc.toModel(Boolean.FALSE, p);
 		assertNotNull(mod);
-		assertEquals(new Integer(0), mod);
+		assertEquals(Integer.valueOf(0), mod);
 
 		mod = pc.toModel(Boolean.TRUE, p);
 		assertNotNull(mod);
-		assertEquals(new Integer(1), mod);
+		assertEquals(Integer.valueOf(1), mod);
 
 		NumericBooleanConverter<Long> pc2 = new NumericBooleanConverter<>(Long.class);
 
@@ -74,11 +74,11 @@ public class TestPropertyValueConverter {
 
 		Long lm = pc2.toModel(Boolean.FALSE, p2);
 		assertNotNull(lm);
-		assertEquals(new Long(0), lm);
+		assertEquals(Long.valueOf(0), lm);
 
 		lm = pc2.toModel(Boolean.TRUE, p2);
 		assertNotNull(lm);
-		assertEquals(new Long(1), lm);
+		assertEquals(Long.valueOf(1), lm);
 
 	}
 
@@ -93,20 +93,20 @@ public class TestPropertyValueConverter {
 
 		Long lm = pc2.toModel(Boolean.FALSE, p2);
 		assertNotNull(lm);
-		assertEquals(new Long(0), lm);
+		assertEquals(Long.valueOf(0), lm);
 
 		lm = pc2.toModel(Boolean.TRUE, p2);
 		assertNotNull(lm);
-		assertEquals(new Long(1), lm);
+		assertEquals(Long.valueOf(1), lm);
 
 		PathProperty<Boolean> p = PathProperty.create("test", boolean.class).converter(Integer.class,
 				v -> v != null && v > 0, v -> v ? 1 : 0);
 
-		assertEquals(new Integer(0), p.getConvertedValue(false));
-		assertEquals(new Integer(1), p.getConvertedValue(true));
+		assertEquals(Integer.valueOf(0), p.getConvertedValue(false));
+		assertEquals(Integer.valueOf(1), p.getConvertedValue(true));
 
 		@SuppressWarnings("unchecked")
-		PropertyBox box = PropertyBox.builder(p).set((Property) p, new Integer(1)).build();
+		PropertyBox box = PropertyBox.builder(p).set((Property) p, Integer.valueOf(1)).build();
 		assertTrue(box.getValue(p));
 
 	}
@@ -119,10 +119,10 @@ public class TestPropertyValueConverter {
 				.converter(PropertyValueConverter.enumByOrdinal());
 
 		@SuppressWarnings("unchecked")
-		PropertyBox eb = PropertyBox.builder(ENMP).set((Property) ENMP, new Integer(1)).build();
+		PropertyBox eb = PropertyBox.builder(ENMP).set((Property) ENMP, Integer.valueOf(1)).build();
 		assertEquals(TestEnum.B, eb.getValue(ENMP));
 
-		assertEquals(new Integer(0), ENMP.getConvertedValue(TestEnum.A));
+		assertEquals(Integer.valueOf(0), ENMP.getConvertedValue(TestEnum.A));
 
 		final PathProperty<TestEnum> ENMP2 = PathProperty.create("testenum", TestEnum.class)
 				.converter(PropertyValueConverter.enumByName());

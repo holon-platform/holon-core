@@ -1,4 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -16,10 +18,10 @@
 	<url>https://holon-platform.com</url>
 
 	<properties>
-		<!-- JAX-RS API -->
-		<jax-rs.api.version>2.1</jax-rs.api.version>
+		<!-- Jakarta API -->
+		<jakarta.api.version>3.1.0</jakarta.api.version>
 		<!-- Jersey -->
-		<jersey.version>2.27</jersey.version>
+		<jersey.version>3.1.10</jersey.version>
 	</properties>
 
 	<dependencies>
@@ -33,9 +35,9 @@
 
 		<!-- JAX-RS API -->
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
-			<version>${jax-rs.api.version}</version>
+			<groupId>jakarta.ws.rs</groupId>
+			<artifactId>jakarta.ws.rs-api</artifactId>
+			<version>${jakarta.api.version}</version>
 			<scope>provided</scope>
 		</dependency>
 

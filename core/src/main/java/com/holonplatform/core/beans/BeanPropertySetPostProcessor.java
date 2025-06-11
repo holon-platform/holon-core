@@ -17,17 +17,20 @@ package com.holonplatform.core.beans;
 
 import java.util.ServiceLoader;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
 
+import jakarta.annotation.Priority;
+
 /**
- * Interface for classes that can be registered in a {@link BeanIntrospector} to perform additional
- * {@link BeanPropertySet} configuration operations at bean introspection time.
+ * Interface for classes that can be registered in a {@link BeanIntrospector} to
+ * perform additional {@link BeanPropertySet} configuration operations at bean
+ * introspection time.
  * <p>
- * BeanPropertySetPostProcessor registration can be performed also using default Java extension through
- * {@link ServiceLoader}, providing a <code>com.holonplatform.core.beans.BeanPropertySetPostProcessor</code> file in
- * <code>META-INF/services</code> containing the BeanPropertySetPostProcessor concrete class names to register.
+ * BeanPropertySetPostProcessor registration can be performed also using default
+ * Java extension through {@link ServiceLoader}, providing a
+ * <code>com.holonplatform.core.beans.BeanPropertySetPostProcessor</code> file
+ * in <code>META-INF/services</code> containing the BeanPropertySetPostProcessor
+ * concrete class names to register.
  * </p>
  *
  * @since 5.1.0
@@ -36,14 +39,16 @@ import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
 public interface BeanPropertySetPostProcessor {
 
 	/**
-	 * Default {@link BeanPropertySetPostProcessor} priority if not specified using {@link Priority} annotation.
+	 * Default {@link BeanPropertySetPostProcessor} priority if not specified using
+	 * {@link Priority} annotation.
 	 */
 	public static final int DEFAULT_PRIORITY = 10000;
 
 	/**
 	 * Process given bean <code>propertySet</code>.
+	 * 
 	 * @param propertySet {@link BeanPropertySet} to process as builder
-	 * @param beanClass The property set bean class
+	 * @param beanClass   The property set bean class
 	 * @throws BeanIntrospectionException If an error occurred
 	 */
 	void processBeanPropertySet(BeanPropertySet.Builder<?, ?> propertySet, Class<?> beanClass);

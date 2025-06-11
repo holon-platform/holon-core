@@ -58,7 +58,7 @@ public class TestI18n {
 				.build();
 
 		assertEquals(Locale.ITALY, lc.getLocale());
-		assertEquals(new Integer(2), lc.getDefaultDecimalPositions().get());
+		assertEquals(Integer.valueOf(2), lc.getDefaultDecimalPositions().get());
 		assertEquals(TemporalFormat.MEDIUM, lc.getDefaultDateTemporalFormat().get());
 		assertEquals(TemporalFormat.SHORT, lc.getDefaultTimeTemporalFormat().get());
 
@@ -355,8 +355,8 @@ public class TestI18n {
 		m = ctx.getMessage("testpar", "dft");
 		assertEquals("resolved", m);
 
-		DefaultLocalization l1 = new DefaultLocalization(new Locale("it", "IT"));
-		DefaultLocalization l2 = new DefaultLocalization(new Locale("it", "IT", "var"));
+		DefaultLocalization l1 = new DefaultLocalization(Locale.of("it", "IT"));
+		DefaultLocalization l2 = new DefaultLocalization(Locale.of("it", "IT", "var"));
 		l2.setParent(l1);
 
 		ctx.localize(l2);
@@ -434,13 +434,13 @@ public class TestI18n {
 		v = mp.getMessage(Locale.US, "test.msg");
 		assertTrue(v.isPresent());
 		assertEquals("Test_en_US", v.get());
-		v = mp.getMessage(new Locale("en", "US", "var"), "test.msg");
+		v = mp.getMessage(Locale.of("en", "US", "var"), "test.msg");
 		assertTrue(v.isPresent());
 		assertEquals("Test_en_US_var", v.get());
-		v = mp.getMessage(new Locale("en", "US", "x"), "test.msg");
+		v = mp.getMessage(Locale.of("en", "US", "x"), "test.msg");
 		assertTrue(v.isPresent());
 		assertEquals("Test_en_US", v.get());
-		v = mp.getMessage(new Locale("fr"), "test.msg");
+		v = mp.getMessage(Locale.of("fr"), "test.msg");
 		assertTrue(v.isPresent());
 		assertEquals("Test", v.get());
 		v = mp.getMessage(Locale.ITALIAN, "test.msg");

@@ -79,7 +79,7 @@ public class TestAccount {
 		assertFalse(act.isLocked());
 		assertNotNull(act.getDetails());
 		assertEquals("string", act.getDetails().get("testS"));
-		assertEquals(new Integer(1), act.getDetails().get("testI"));
+		assertEquals(Integer.valueOf(1), act.getDetails().get("testI"));
 		assertNotNull(act.getPermissions());
 		assertTrue(act.getPermissions().contains(p1));
 		assertNotNull(act.getCredentials());

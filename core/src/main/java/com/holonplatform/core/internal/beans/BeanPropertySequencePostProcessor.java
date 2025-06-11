@@ -15,19 +15,20 @@
  */
 package com.holonplatform.core.internal.beans;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
 import com.holonplatform.core.beans.Sequence;
 import com.holonplatform.core.internal.Logger;
 
+import jakarta.annotation.Priority;
+
 /**
- * A {@link BeanPropertyPostProcessor} to inspect default {@link Sequence} annotation and setup the bean property
- * sequence number.
+ * A {@link BeanPropertyPostProcessor} to inspect default {@link Sequence}
+ * annotation and setup the bean property sequence number.
  * <p>
- * This post processor is automatically registered in default {@link BeanIntrospector} instances.
+ * This post processor is automatically registered in default
+ * {@link BeanIntrospector} instances.
  * </p>
  *
  * @since 5.0.0
@@ -42,8 +43,10 @@ public class BeanPropertySequencePostProcessor implements BeanPropertyPostProces
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.beans.BeanPropertyPostProcessor#processBeanProperty(com.holonplatform.core.beans.
-	 * BeanProperty.Builder, java.lang.Class)
+	 * 
+	 * @see
+	 * com.holonplatform.core.beans.BeanPropertyPostProcessor#processBeanProperty(
+	 * com.holonplatform.core.beans. BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
 	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {

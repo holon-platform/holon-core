@@ -17,6 +17,7 @@ package com.holonplatform.core.internal.property;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.LinkedList;
 import java.util.List;
@@ -158,8 +159,8 @@ public enum DefaultPropertySetRefIntrospector implements PropertySetRefIntrospec
 			// If the class itself is a PropertySet, try to instantiate it
 			if (PropertySet.class.isAssignableFrom(cls)) {
 				try {
-					return (PropertySet<?>) cls.newInstance();
-				} catch (InstantiationException | IllegalAccessException e) {
+					return (PropertySet<?>) cls.getDeclaredConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 					throw new PropertySetIntrospectionException(
 							"[PropertySetRef] Failed to instantiate PropertySet class [" + cls.getName() + "]", e);
 				}

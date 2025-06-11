@@ -17,7 +17,7 @@ package com.holonplatform.spring.internal.rest;
 
 import java.util.Optional;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import org.springframework.web.client.RestTemplate;
 

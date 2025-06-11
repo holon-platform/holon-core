@@ -27,8 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.core.Expression;
 import com.holonplatform.core.Expression.InvalidExpressionException;
 import com.holonplatform.core.ExpressionResolver;
@@ -48,6 +46,8 @@ import com.holonplatform.core.datastore.DatastoreExpressionResolverRegistrar;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.ClassUtils;
 import com.holonplatform.core.internal.utils.ObjectUtils;
+
+import jakarta.annotation.Priority;
 
 /**
  * Abstract {@link Datastore} implementation.
@@ -99,10 +99,17 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/**
 	 * Constructor
-	 * @param commodityFactoryType Base {@link DatastoreCommodityFactory} type to be loaded using standard Java
-	 *        {@link ServiceLoader} extensions, or <code>null</code> to disable automatic factory registration.
-	 * @param expressionResolverType Base {@link ExpressionResolver} type to be loaded using standard Java
-	 *        {@link ServiceLoader} extensions, or <code>null</code> to disable automatic resolvers registration.
+	 * 
+	 * @param commodityFactoryType   Base {@link DatastoreCommodityFactory} type to
+	 *                               be loaded using standard Java
+	 *                               {@link ServiceLoader} extensions, or
+	 *                               <code>null</code> to disable automatic factory
+	 *                               registration.
+	 * @param expressionResolverType Base {@link ExpressionResolver} type to be
+	 *                               loaded using standard Java
+	 *                               {@link ServiceLoader} extensions, or
+	 *                               <code>null</code> to disable automatic
+	 *                               resolvers registration.
 	 */
 	@SuppressWarnings("rawtypes")
 	public AbstractDatastore(Class<? extends DatastoreCommodityFactory> commodityFactoryType,
@@ -114,7 +121,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.DatastoreCommodityRegistrar#getCommodityFactoryType()
+	 * 
+	 * @see com.holonplatform.core.datastore.DatastoreCommodityRegistrar#
+	 * getCommodityFactoryType()
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -124,7 +133,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.datastore.DatastoreExpressionResolverRegistrar#getExpressionResolverType()
+	 * 
+	 * @see com.holonplatform.core.datastore.DatastoreExpressionResolverRegistrar#
+	 * getExpressionResolverType()
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -133,10 +144,12 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	}
 
 	/**
-	 * Load default {@link DatastoreCommodityFactory}s using Java {@link ServiceLoader} extensions only if
-	 * {@link #getCommodityFactoryType()} is not null.
-	 * @param classLoader The ClassLoader to use. If <code>null</code>, this class ClassLoader or the default
-	 *        ClassLoader will be used.
+	 * Load default {@link DatastoreCommodityFactory}s using Java
+	 * {@link ServiceLoader} extensions only if {@link #getCommodityFactoryType()}
+	 * is not null.
+	 * 
+	 * @param classLoader The ClassLoader to use. If <code>null</code>, this class
+	 *                    ClassLoader or the default ClassLoader will be used.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected synchronized void loadCommodityFactories(ClassLoader classLoader) {
@@ -179,10 +192,11 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	}
 
 	/**
-	 * Load default {@link ExpressionResolver}s using Java {@link ServiceLoader} extensions only if
-	 * {@link #getExpressionResolverType()} is not null.
-	 * @param classLoader The ClassLoader to use. If <code>null</code>, this class ClassLoader or the default
-	 *        ClassLoader will be used.
+	 * Load default {@link ExpressionResolver}s using Java {@link ServiceLoader}
+	 * extensions only if {@link #getExpressionResolverType()} is not null.
+	 * 
+	 * @param classLoader The ClassLoader to use. If <code>null</code>, this class
+	 *                    ClassLoader or the default ClassLoader will be used.
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	protected synchronized void loadExpressionResolvers(ClassLoader classLoader) {
@@ -212,6 +226,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/**
 	 * Get the Datastore {@link ExpressionResolverRegistry}.
+	 * 
 	 * @return the ExpressionResolverRegistry
 	 */
 	protected ExpressionResolverRegistry getExpressionResolverRegistry() {
@@ -220,9 +235,11 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler#resolve(com.holonplatform.core.Expression,
-	 * java.lang.Class, com.holonplatform.core.ExpressionResolver.ResolutionContext)
+	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverHandler#resolve(
+	 * com.holonplatform.core.Expression, java.lang.Class,
+	 * com.holonplatform.core.ExpressionResolver.ResolutionContext)
 	 */
 	@Override
 	public <E extends Expression, R extends Expression> Optional<R> resolve(E expression, Class<R> resolutionType,
@@ -232,6 +249,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.datastore.DataContextBound#getDataContextId()
 	 */
 	@Override
@@ -240,7 +258,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	}
 
 	/**
-	 * Optional id to distinguish this datastore data context between multiple avaialable contexts
+	 * Optional id to distinguish this datastore data context between multiple
+	 * avaialable contexts
+	 * 
 	 * @param dataContextId Data context id
 	 */
 	public void setDataContextId(String dataContextId) {
@@ -250,7 +270,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/**
 	 * Get whether to trace Datastore operations.
-	 * @return the trace <code>true</code> if tracing is enabled, <code>false</code> otherwise
+	 * 
+	 * @return the trace <code>true</code> if tracing is enabled, <code>false</code>
+	 *         otherwise
 	 */
 	public boolean isTraceEnabled() {
 		return traceEnabled;
@@ -258,6 +280,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/**
 	 * Set whether to trace Datastore operations.
+	 * 
 	 * @param trace Whether to trace Datastore operations
 	 */
 	public void setTraceEnabled(boolean trace) {
@@ -267,9 +290,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#addExpressionResolver(com.holonplatform.core.
-	 * ExpressionResolver)
+	 * 
+	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#
+	 * addExpressionResolver(com.holonplatform.core. ExpressionResolver)
 	 */
 	@Override
 	public <E extends Expression, R extends Expression> void addExpressionResolver(
@@ -280,9 +303,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#removeExpressionResolver(com.holonplatform.
-	 * core.ExpressionResolver)
+	 * 
+	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#
+	 * removeExpressionResolver(com.holonplatform. core.ExpressionResolver)
 	 */
 	@Override
 	public <E extends Expression, R extends Expression> void removeExpressionResolver(
@@ -293,7 +316,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#getExpressionResolvers()
+	 * 
+	 * @see com.holonplatform.core.ExpressionResolver.ExpressionResolverSupport#
+	 * getExpressionResolvers()
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -302,7 +327,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 	}
 
 	/**
-	 * Get the {@link DatastoreCommodityContext} to use for {@link DatastoreCommodity} setup.
+	 * Get the {@link DatastoreCommodityContext} to use for
+	 * {@link DatastoreCommodity} setup.
+	 * 
 	 * @return The {@link DatastoreCommodityContext}
 	 * @throws CommodityConfigurationException Error configuring context
 	 */
@@ -310,8 +337,9 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
-	 * @see
-	 * com.holonplatform.core.datastore.DatastoreCommodityRegistrar#registerCommodity(com.holonplatform.core.datastore.
+	 * 
+	 * @see com.holonplatform.core.datastore.DatastoreCommodityRegistrar#
+	 * registerCommodity(com.holonplatform.core.datastore.
 	 * DatastoreCommodityFactory)
 	 */
 	@Override
@@ -335,6 +363,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.datastore.Datastore#getAvailableCommodities()
 	 */
 	@Override
@@ -344,6 +373,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.core.datastore.Datastore#create(java.lang.Class)
 	 */
 	@SuppressWarnings("unchecked")
@@ -365,6 +395,7 @@ public abstract class AbstractDatastore<X extends DatastoreCommodityContext>
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override

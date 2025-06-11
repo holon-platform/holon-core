@@ -72,6 +72,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 	/**
 	 * Add an allowed JWT issuer
+	 * 
 	 * @param issuer Issuer to add
 	 */
 	protected void addIssuer(String issuer) {
@@ -80,6 +81,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 	/**
 	 * Add a required claim
+	 * 
 	 * @param requiredClaim Claim to add
 	 */
 	protected void addRequiredClaim(String requiredClaim) {
@@ -88,6 +90,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 	/**
 	 * Set the JWT configuration
+	 * 
 	 * @param configuration the JWT configuration to set
 	 */
 	protected void setConfiguration(JwtConfiguration configuration) {
@@ -132,8 +135,8 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.authc.AuthenticationTokenResolver#authenticate(com.holonplatform.auth.
-	 * AuthenticationToken)
+	 * @see com.holonplatform.auth.authc.AuthenticationTokenResolver#authenticate(com.
+	 * holonplatform.auth. AuthenticationToken)
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -161,27 +164,56 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 		Claims claims = null;
 
 		try {
-			
+
 			if (getConfiguration().getSignatureAlgorithm() != JwtSignatureAlgorithm.NONE) {
 				// Token expected to be signed (JWS)
 				if (getConfiguration().getSignatureAlgorithm().isSymmetric()) {
-					claims = Jwts.parserBuilder().setSigningKey(getConfiguration().getSharedKey()
+
+					claims = Jwts.parser().setSigningKey(getConfiguration().getSharedKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
 											+ getConfiguration().getSignatureAlgorithm().getDescription()
 											+ "] - JWT configuration: [" + getConfiguration() + "]")))
-					.build().parseClaimsJws(jwt).getBody();
+							.build().parseClaimsJws(jwt).getBody();
+
+//					claims = Jwts.parser().verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(getConfiguration()
+//							.getSharedKey()
+//							.orElseThrow(() -> new UnexpectedAuthenticationException(
+//									"JWT authenticator not correctly configured: missing shared key for symmetric signature algorithm ["
+//											+ getConfiguration().getSignatureAlgorithm().getDescription()
+//											+ "] - JWT configuration: [" + getConfiguration() + "]")))))
+//							.build().parseSignedClaims(jwt).getPayload();
 				} else {
-					claims = Jwts.parserBuilder().setSigningKey(getConfiguration().getPublicKey()
+
+					claims = Jwts.parser().setSigningKey(getConfiguration().getPublicKey()
 							.orElseThrow(() -> new UnexpectedAuthenticationException(
 									"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
 											+ getConfiguration().getSignatureAlgorithm().getDescription()
 											+ "] - JWT configuration: [" + getConfiguration() + "]")))
-					.build().parseClaimsJws(jwt).getBody();
+							.build().parseClaimsJws(jwt).getBody();
+
+//					if (!getConfiguration().getPublicKey().isEmpty()) {
+//						throw new UnexpectedAuthenticationException(
+//								"JWT authenticator not correctly configured: missing public key for asymmetric signature algorithm ["
+//										+ getConfiguration().getSignatureAlgorithm().getDescription()
+//										+ "] - JWT configuration: [" + getConfiguration() + "]");
+//					} else {
+//						claims = Jwts.parser()
+//								.verifyWith(Keys.hmacShaKeyFor(Base64.getDecoder()
+//										.decode(getConfiguration().getPublicKey().get().getEncoded())))
+//								.build().parseSignedClaims(jwt).getPayload();
+//					}
 				}
 			} else {
 				// not signed (JWT)
-				claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
+
+				// if JWT configuration explicitly defines unsecured JWS allowed (alg : none)
+				if (getConfiguration().isAllowUnsecured()) {
+					claims = Jwts.parser().unsecured().build().parseUnsecuredClaims(jwt).getPayload();
+				} else {
+					claims = Jwts.parser().build().parseUnsecuredClaims(jwt).getPayload();
+				}
+
 			}
 
 		} catch (@SuppressWarnings("unused") ExpiredJwtException eje) {
@@ -267,8 +299,8 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.jwt.JwtAuthenticator.Builder#configuration(com.holonplatform.auth.jwt.
-		 * JwtConfiguration)
+		 * @see com.holonplatform.auth.jwt.JwtAuthenticator.Builder#configuration(com.
+		 * holonplatform.auth.jwt. JwtConfiguration)
 		 */
 		@Override
 		public Builder configuration(JwtConfiguration configuration) {
@@ -279,7 +311,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.jwt.internal.JwtAuthenticatorBuilder#issuer(java.lang.String)
+		 * @see com.holonplatform.auth.jwt.internal.JwtAuthenticatorBuilder#issuer(java.lang. String)
 		 */
 		@Override
 		public Builder issuer(String issuer) {
@@ -290,7 +322,7 @@ public class DefaultJwtAuthenticator implements JwtAuthenticator {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.jwt.JwtAuthenticator.Builder#withRequiredClaim(java.lang.String)
+		 * @see com.holonplatform.auth.jwt.JwtAuthenticator.Builder#withRequiredClaim(java. lang.String)
 		 */
 		@Override
 		public Builder withRequiredClaim(String claim) {

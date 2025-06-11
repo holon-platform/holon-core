@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import com.holonplatform.core.internal.utils.ObjectUtils;
 import com.holonplatform.http.Cookie;
@@ -142,10 +142,10 @@ public class DefaultServletHttpRequest extends AbstractHttpRequest implements Se
 	@Override
 	public Optional<Cookie> getRequestCookie(String name) {
 		ObjectUtils.argumentNotNull(name, "Cookie name must be not null");
-		javax.servlet.http.Cookie[] rcookies = request.getCookies();
+		jakarta.servlet.http.Cookie[] rcookies = request.getCookies();
 		if (rcookies != null) {
-			javax.servlet.http.Cookie rcookie = null;
-			for (javax.servlet.http.Cookie cookie : rcookies) {
+			jakarta.servlet.http.Cookie rcookie = null;
+			for (jakarta.servlet.http.Cookie cookie : rcookies) {
 				if (name.equals(cookie.getName())) {
 					rcookie = cookie;
 					break;

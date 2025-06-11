@@ -283,11 +283,11 @@ public class TestUtilities {
 
 		Integer it = ConversionUtils.convertStringValue("3", Integer.class);
 		assertNotNull(it);
-		assertEquals(new Integer(3), it);
+		assertEquals(Integer.valueOf(3), it);
 
 		Double dbl = ConversionUtils.convertStringValue("3.7", Double.class);
 		assertNotNull(dbl);
-		assertEquals(new Double(3.7), dbl);
+		assertEquals(Double.valueOf(3.7), dbl);
 
 		TestEnum en = ConversionUtils.convertStringValue("ONE", TestEnum.class);
 		assertNotNull(en);
@@ -318,19 +318,19 @@ public class TestUtilities {
 
 		it = ConversionUtils.parseNumber("3", Integer.class);
 		assertNotNull(it);
-		assertEquals(new Integer(3), it);
+		assertEquals(Integer.valueOf(3), it);
 
 		Long lng = ConversionUtils.parseNumber("3600", long.class);
 		assertNotNull(lng);
-		assertEquals(new Long(3600), lng);
+		assertEquals(Long.valueOf(3600), lng);
 
 		dbl = ConversionUtils.parseNumber("3.7", Double.class);
 		assertNotNull(dbl);
-		assertEquals(new Double(3.7), dbl);
+		assertEquals(Double.valueOf(3.7), dbl);
 
 		Float fl = ConversionUtils.parseNumber("3.7", Float.class);
 		assertNotNull(fl);
-		assertEquals(new Float(3.7), fl);
+		assertEquals(Float.valueOf((float) 3.7), fl);
 
 		Byte bt = ConversionUtils.parseNumber("10", byte.class);
 		assertNotNull(bt);
@@ -359,11 +359,11 @@ public class TestUtilities {
 		BigDecimal bdn = ConversionUtils.parseNumber("12.35", BigDecimal.class);
 		assertEquals(BigDecimal.valueOf(12.35), bdn);
 
-		long lg = ConversionUtils.convertNumberToTargetClass(new Integer(3), long.class);
+		long lg = ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), long.class);
 		assertNotNull(lg);
 		assertEquals(3L, lg);
 
-		lg = ConversionUtils.convertNumberToTargetClass(new Long(3), long.class);
+		lg = ConversionUtils.convertNumberToTargetClass(Long.valueOf(3), long.class);
 		assertNotNull(lg);
 		assertEquals(3L, lg);
 
@@ -383,21 +383,21 @@ public class TestUtilities {
 		assertNotNull(bi);
 		assertEquals(3, bi.intValue());
 
-		float ft = ConversionUtils.convertNumberToTargetClass(new Integer(3), float.class);
+		float ft = ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), float.class);
 		assertNotNull(ft);
-		assertEquals(new Double(3), new Double(ft));
+		assertEquals(Double.valueOf(3), Double.valueOf(ft));
 
-		Integer same = ConversionUtils.convertNumberToTargetClass(new Integer(3), Integer.class);
+		Integer same = ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), Integer.class);
 		assertNotNull(same);
-		assertEquals(new Integer(3), same);
+		assertEquals(Integer.valueOf(3), same);
 
-		byte b = ConversionUtils.convertNumberToTargetClass(new Integer(3), byte.class);
+		byte b = ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), byte.class);
 		assertNotNull(b);
-		assertEquals(new Integer(3), new Integer(b));
+		assertEquals(Integer.valueOf(3), Integer.valueOf(b));
 
-		short shrt = ConversionUtils.convertNumberToTargetClass(new Integer(3), short.class);
+		short shrt = ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), short.class);
 		assertNotNull(shrt);
-		assertEquals(new Integer(3), new Integer(shrt));
+		assertEquals(Integer.valueOf(3), Integer.valueOf(shrt));
 
 		double db = ConversionUtils.convertNumberToTargetClass(1, double.class);
 		assertNotNull(db);
@@ -408,13 +408,13 @@ public class TestUtilities {
 		assertEquals(1, bd.intValue());
 
 		assertThrows(IllegalArgumentException.class,
-				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MAX_VALUE + 1), short.class));
+				() -> ConversionUtils.convertNumberToTargetClass(Integer.valueOf(Short.MAX_VALUE + 1), short.class));
 		assertThrows(IllegalArgumentException.class,
-				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Short.MIN_VALUE - 1), short.class));
+				() -> ConversionUtils.convertNumberToTargetClass(Integer.valueOf(Short.MIN_VALUE - 1), short.class));
 		assertThrows(IllegalArgumentException.class,
-				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MAX_VALUE + 1), byte.class));
+				() -> ConversionUtils.convertNumberToTargetClass(Integer.valueOf(Byte.MAX_VALUE + 1), byte.class));
 		assertThrows(IllegalArgumentException.class,
-				() -> ConversionUtils.convertNumberToTargetClass(new Integer(Byte.MIN_VALUE - 1), byte.class));
+				() -> ConversionUtils.convertNumberToTargetClass(Integer.valueOf(Byte.MIN_VALUE - 1), byte.class));
 
 		// stream
 
@@ -435,7 +435,7 @@ public class TestUtilities {
 		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertEnumValue(TestEnum.class, Boolean.TRUE));
 		assertThrows(IllegalArgumentException.class,
-				() -> ConversionUtils.convertNumberToTargetClass(new Integer(3), null));
+				() -> ConversionUtils.convertNumberToTargetClass(Integer.valueOf(3), null));
 		assertThrows(IllegalArgumentException.class,
 				() -> ConversionUtils.convertNumberToTargetClass(null, long.class));
 		assertThrows(IllegalArgumentException.class,
@@ -449,13 +449,13 @@ public class TestUtilities {
 
 		assertTrue(TypeUtils.isClass(Object.class));
 
-		Character cr = new Character('r');
+		Character cr = Character.valueOf('r');
 		assertTrue(TypeUtils.isCharacter(cr.getClass()));
 
 		assertTrue(TypeUtils.isBigDecimal(new BigDecimal(3).getClass()));
 		assertTrue(TypeUtils.isDecimalNumber(new BigDecimal(3).getClass()));
 
-		assertTrue(TypeUtils.isDouble(new Double(3).getClass()));
+		assertTrue(TypeUtils.isDouble(Double.valueOf(3).getClass()));
 
 		assertTrue(TypeUtils.isBoolean(Boolean.TRUE.getClass()));
 
@@ -495,8 +495,8 @@ public class TestUtilities {
 		assertTrue(TypeUtils.isDouble(o.getClass()));
 		assertTrue(TypeUtils.isDecimalNumber(o.getClass()));
 
-		assertTrue(TypeUtils.isDouble(new Double(2.7).getClass()));
-		assertTrue(TypeUtils.isDecimalNumber(new Double(2.7).getClass()));
+		assertTrue(TypeUtils.isDouble(Double.valueOf(2.7).getClass()));
+		assertTrue(TypeUtils.isDecimalNumber(Double.valueOf(2.7).getClass()));
 
 		Class<?> cl = int.class;
 		assertTrue(TypeUtils.isPrimitiveInt(cl));
@@ -525,7 +525,7 @@ public class TestUtilities {
 		cl = char.class;
 		assertTrue(TypeUtils.isCharacter(cl));
 
-		assertTrue(TypeUtils.isByte(new Byte("127").getClass()));
+		assertTrue(TypeUtils.isByte(Byte.valueOf("127").getClass()));
 
 		assertTrue(TypeUtils.isAssignable(String.class, String.class));
 		assertTrue(TypeUtils.isAssignable(Integer.class, Number.class));

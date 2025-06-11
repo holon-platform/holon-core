@@ -17,7 +17,7 @@ package com.holonplatform.core.datastore;
 
 import java.io.Serializable;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.datastore.DatastoreCommodityContext.CommodityConfigurationException;
 

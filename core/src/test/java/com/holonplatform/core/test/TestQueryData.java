@@ -522,9 +522,9 @@ public class TestQueryData {
 		final DataTarget<String> TARGET = DataTarget.named("testTarget");
 
 		PathProperty<Long> CODE = TARGET.property("pk.code", Long.class);
-		PathProperty<String> STR = TARGET.property("str", String.class);
+		PathProperty<String> STR1 = TARGET.property("str", String.class);
 
-		PropertySet<?> SET = PropertySet.of(CODE, STR);
+		PropertySet<?> SET = PropertySet.of(CODE, STR1);
 
 		BeanPropertySet<TestBoxBean> beanProperties = BeanIntrospector.get().getPropertySet(TestBoxBean.class);
 
@@ -532,7 +532,7 @@ public class TestQueryData {
 
 		assertNotNull(box);
 		assertEquals(Long.valueOf(1), box.getValue(CODE));
-		assertEquals("test", box.getValue(STR));
+		assertEquals("test", box.getValue(STR1));
 
 		TestBoxBean written = beanProperties.write(box, new TestBoxBean());
 		assertNotNull(written);
@@ -543,15 +543,15 @@ public class TestQueryData {
 
 		PathProperty<TestBoxBeanPk> PK = TARGET.property("pk", TestBoxBeanPk.class);
 		CODE = TARGET.property("code", Long.class).parent(PK);
-		STR = TARGET.property("str", String.class);
+		STR1 = TARGET.property("str", String.class);
 
-		SET = PropertySet.of(PK, CODE, STR);
+		SET = PropertySet.of(PK, CODE, STR1);
 
 		box = BeanIntrospector.get().read(PropertyBox.create(SET), bean);
 
 		assertNotNull(box);
 		assertEquals(Long.valueOf(1), box.getValue(CODE));
-		assertEquals("test", box.getValue(STR));
+		assertEquals("test", box.getValue(STR1));
 		assertEquals(pk, box.getValue(PK));
 
 		written = BeanIntrospector.get().write(box, new TestBoxBean());

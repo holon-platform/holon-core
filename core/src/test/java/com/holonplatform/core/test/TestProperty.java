@@ -322,7 +322,7 @@ public class TestProperty {
 		assertEquals(TestPropertySet.NAME.getType(), value.getClass());
 
 		Integer sv = box.getValue(TestPropertySet.SEQUENCE);
-		assertEquals(new Integer(1), sv);
+		assertEquals(Integer.valueOf(1), sv);
 		assertEquals(TestPropertySet.SEQUENCE.getType(), sv.getClass());
 
 		PropertyBox pb = PropertyBox
@@ -385,7 +385,7 @@ public class TestProperty {
 		testSetValueUsingConverter(pb2, cp, "1");
 
 		assertEquals("test", pb2.getValue(TestPropertySet.NAME));
-		assertEquals(new Integer(1), pb2.getValue(cp));
+		assertEquals(Integer.valueOf(1), pb2.getValue(cp));
 		assertEquals("1", cp.getConvertedValue(pb2.getValue(cp)));
 		assertEquals("PROVIDED:test", pb2.getValue(vp));
 		assertTrue(pb2.containsValue(TestPropertySet.NAME));

@@ -15,8 +15,6 @@
  */
 package com.holonplatform.core.internal.beans;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.core.beans.BeanIntrospector;
 import com.holonplatform.core.beans.BeanProperty;
 import com.holonplatform.core.beans.BeanPropertyPostProcessor;
@@ -25,11 +23,14 @@ import com.holonplatform.core.beans.Configs;
 import com.holonplatform.core.internal.Logger;
 import com.holonplatform.core.internal.utils.AnnotationUtils;
 
+import jakarta.annotation.Priority;
+
 /**
- * A {@link BeanPropertyPostProcessor} to inspect default {@link Config} annotation and setup property configuration
- * accordingly.
+ * A {@link BeanPropertyPostProcessor} to inspect default {@link Config}
+ * annotation and setup property configuration accordingly.
  * <p>
- * This post processor is automatically registered in default {@link BeanIntrospector} instances.
+ * This post processor is automatically registered in default
+ * {@link BeanIntrospector} instances.
  * </p>
  *
  * @since 5.0.0
@@ -44,8 +45,10 @@ public class BeanPropertyConfigPostProcessor implements BeanPropertyPostProcesso
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.core.beans.BeanPropertyPostProcessor#processBeanProperty(com.holonplatform.core.beans.
-	 * BeanProperty.Builder, java.lang.Class)
+	 * 
+	 * @see
+	 * com.holonplatform.core.beans.BeanPropertyPostProcessor#processBeanProperty(
+	 * com.holonplatform.core.beans. BeanProperty.Builder, java.lang.Class)
 	 */
 	@Override
 	public BeanProperty.Builder<?> processBeanProperty(BeanProperty.Builder<?> property, Class<?> beanOrNestedClass) {
@@ -61,7 +64,8 @@ public class BeanPropertyConfigPostProcessor implements BeanPropertyPostProcesso
 
 	/**
 	 * Setup property configuration according to given {@link Config} annotations.
-	 * @param property Property to setup
+	 * 
+	 * @param property    Property to setup
 	 * @param annotations {@link Config} annotations
 	 */
 	private static void setupPropertyConfiguration(BeanProperty.Builder<?> property, Config... annotations) {

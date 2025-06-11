@@ -78,8 +78,13 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	private boolean includePermissions;
 
 	/*
+	 * Allow unsecured JWS (alg:none)
+	 */
+	private boolean allowUnsecured;
+
+	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getIssuer()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getIssuer()
 	 */
 	@Override
 	public Optional<String> getIssuer() {
@@ -88,7 +93,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSignatureAlgorithm()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getSignatureAlgorithm()
 	 */
 	@Override
 	public JwtSignatureAlgorithm getSignatureAlgorithm() {
@@ -97,7 +102,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getSharedKey()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getSharedKey()
 	 */
 	@Override
 	public Optional<byte[]> getSharedKey() {
@@ -106,7 +111,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPublicKey()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getPublicKey()
 	 */
 	@Override
 	public Optional<Key> getPublicKey() {
@@ -115,7 +120,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getPrivateKey()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getPrivateKey()
 	 */
 	@Override
 	public Optional<Key> getPrivateKey() {
@@ -124,7 +129,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#getExpireTime()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#getExpireTime()
 	 */
 	@Override
 	public long getExpireTime() {
@@ -142,7 +147,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#isIncludeDetails()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#isIncludeDetails()
 	 */
 	@Override
 	public boolean isIncludeDetails() {
@@ -151,11 +156,20 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.jaxrs.server.jwt.JwtConfiguration#isIncludePermissions()
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#isIncludePermissions()
 	 */
 	@Override
 	public boolean isIncludePermissions() {
 		return includePermissions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.holonplatform.auth.jwt.JwtConfiguration#isAllowUnsecured()
+	 */
+	@Override
+	public boolean isAllowUnsecured() {
+		return allowUnsecured;
 	}
 
 	/**
@@ -207,9 +221,10 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 	}
 
 	/**
-	 * Set whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
-	 * @param notBeforeNow <code>true</code> to set the <code>nbf</code> (not before) JWT claim to the timestamp at
-	 *        which the token is created.
+	 * Set whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the
+	 * token is created.
+	 * @param notBeforeNow <code>true</code> to set the <code>nbf</code> (not before) JWT claim to the
+	 *        timestamp at which the token is created.
 	 */
 	public void setNotBeforeNow(boolean notBeforeNow) {
 		this.notBeforeNow = notBeforeNow;
@@ -231,6 +246,14 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		this.includePermissions = includePermissions;
 	}
 
+	/**
+	 * Set whether to allow unsecured JWS
+	 * @param allowUnsecured <code>true</code> to allow unsecured JWS
+	 */
+	public void setAllowUnsecured(boolean allowUnsecured) {
+		this.allowUnsecured = allowUnsecured;
+	}
+
 	// ------ Builder
 
 	/*
@@ -242,7 +265,7 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		return "JwtConfiguration [issuer=" + issuer + ", signatureAlgorithm=" + signatureAlgorithm + ", sharedKey="
 				+ Arrays.toString(sharedKey) + ", publicKey=" + publicKey + ", privateKey=" + privateKey
 				+ ", expireTime=" + expireTime + ", includeDetails=" + includeDetails + ", includePermissions="
-				+ includePermissions + "]";
+				+ includePermissions + ", allowUnsecured=" + allowUnsecured + "]";
 	}
 
 	/**
@@ -272,7 +295,8 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 
 		/*
 		 * (non-Javadoc)
-		 * @see com.holonplatform.auth.jwt.internal.JwtConfigurationBuilder#signatureAlgorithm(java.lang.String)
+		 * @see
+		 * com.holonplatform.auth.jwt.internal.JwtConfigurationBuilder#signatureAlgorithm(java.lang.String)
 		 */
 		@Override
 		public Builder signatureAlgorithm(JwtSignatureAlgorithm signatureAlgorithm) {
@@ -347,6 +371,16 @@ public class DefaultJwtConfiguration implements JwtConfiguration {
 		@Override
 		public Builder includePermissions(boolean includePermissions) {
 			this.configuration.setIncludePermissions(includePermissions);
+			return this;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see com.holonplatform.auth.jwt.internal.JwtConfigurationBuilder#allowUnsecuredJws(boolean)
+		 */
+		@Override
+		public Builder allowUnsecuredJws(boolean allowUnsecured) {
+			this.configuration.setAllowUnsecured(allowUnsecured);
 			return this;
 		}
 

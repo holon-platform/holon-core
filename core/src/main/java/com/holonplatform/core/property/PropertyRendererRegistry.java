@@ -19,7 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.Context;
 import com.holonplatform.core.config.ConfigProperty;

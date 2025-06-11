@@ -18,7 +18,7 @@ package com.holonplatform.core.internal.property;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.ParameterSet;
 import com.holonplatform.core.internal.utils.ObjectUtils;

@@ -54,8 +54,8 @@ public enum BeanValidationAPIVersion {
 	 */
 	public static BeanValidationAPIVersion getVersion(ClassLoader classLoader) {
 		if (classLoader != null) {
-			if (ClassUtils.isPresent("javax.validation.Validation", classLoader)) {
-				if (ClassUtils.isPresent("javax.validation.ClockProvider", classLoader)) {
+			if (ClassUtils.isPresent("jakarta.validation.Validation", classLoader)) {
+				if (ClassUtils.isPresent("jakarta.validation.ClockProvider", classLoader)) {
 					return BeanValidationAPIVersion.V_20x;
 				}
 				return BeanValidationAPIVersion.V_1x;

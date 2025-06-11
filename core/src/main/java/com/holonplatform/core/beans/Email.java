@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  *
  * @since 5.0.0
  * 
- * @deprecated Use the {@link javax.validation.constraints.Email} constraint of the Bean Validation API 2.x instead
+ * @deprecated Use the {@link jakarta.validation.constraints.Email} constraint of the Bean Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -41,6 +41,6 @@ public @interface Email {
 	 * Validation error message
 	 * @return Validation error message
 	 */
-	String message() default "{javax.validation.constraints.Email.message}";
+	String message() default "{jakarta.validation.constraints.Email.message}";
 
 }

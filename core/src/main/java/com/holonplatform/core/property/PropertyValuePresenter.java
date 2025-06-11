@@ -15,7 +15,7 @@
  */
 package com.holonplatform.core.property;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 /**
  * Presenter to obtain the value of a {@link Property} as a {@link String}.

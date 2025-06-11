@@ -45,7 +45,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.auth.jwt.JwtTokenBuilder#buildJwt(com.holonplatform.auth.jwt.JwtConfiguration,
+	 * @see
+	 * com.holonplatform.auth.jwt.JwtTokenBuilder#buildJwt(com.holonplatform.auth.jwt.JwtConfiguration,
 	 * com.holonplatform.auth.Authentication, java.lang.String)
 	 */
 	@Override
@@ -100,8 +101,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param authentication Authentication source
 	 * @param id Optional JWT id (jit)
 	 * @param issuer Optional Issuer name
-	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
-	 *        expires)
+	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0
+	 *        means token not expires)
 	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param includeParts Optional Authentication parts to include as claims in JWT
 	 * @return JWT String
@@ -117,8 +118,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param authentication Authentication source
 	 * @param id Optional JWT id (jit)
 	 * @param issuer Optional Issuer name
-	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
-	 *        expires)
+	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0
+	 *        means token not expires)
 	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>
@@ -137,8 +138,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param authentication Authentication source
 	 * @param id Optional JWT id (jit)
 	 * @param issuer Optional Issuer name
-	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
-	 *        expires)
+	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0
+	 *        means token not expires)
 	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>
@@ -157,8 +158,8 @@ public enum DefaultJwtTokenBuilder implements JwtTokenBuilder {
 	 * @param authentication Authentication (not null)
 	 * @param id Optional JWT id (jit)
 	 * @param issuer Optional Issuer name
-	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0 means token not
-	 *        expires)
+	 * @param timeToLiveMs Optional time to live for token expiration (<code>null</code> or less than 0
+	 *        means token not expires)
 	 * @param notBeforeNow Whether to set the <code>nbf</code> (not before) claim to current timestamp
 	 * @param algorithm Signature algorithm to use with given key to sign JWT. Only meaningful if
 	 *        <code>signingKey</code> is not <code>null</code>

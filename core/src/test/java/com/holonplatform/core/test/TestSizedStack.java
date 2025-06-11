@@ -39,7 +39,7 @@ public class TestSizedStack {
 		stack.push(4);
 		assertEquals(3, stack.size());
 
-		assertEquals(new Integer(2), stack.firstElement());
+		assertEquals(Integer.valueOf(2), stack.firstElement());
 	}
 
 }

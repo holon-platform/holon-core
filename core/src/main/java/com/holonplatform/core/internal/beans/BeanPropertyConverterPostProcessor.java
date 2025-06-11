@@ -19,7 +19,7 @@ package com.holonplatform.core.internal.beans;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
 import com.holonplatform.core.beans.BeanProperty;

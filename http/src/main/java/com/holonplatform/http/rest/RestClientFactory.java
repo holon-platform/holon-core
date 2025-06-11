@@ -17,7 +17,7 @@ package com.holonplatform.http.rest;
 
 import java.util.ServiceLoader;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.http.exceptions.RestClientCreationException;
 

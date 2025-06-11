@@ -17,18 +17,21 @@ package com.holonplatform.core.beans;
 
 import java.util.ServiceLoader;
 
-import javax.annotation.Priority;
-
 import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
 
+import jakarta.annotation.Priority;
+
 /**
- * Interface for classes that can be registered in a {@link BeanIntrospector} to process detected {@link BeanProperty}s
- * before returning the bean properties set, for example to setup the property configuration.
+ * Interface for classes that can be registered in a {@link BeanIntrospector} to
+ * process detected {@link BeanProperty}s before returning the bean properties
+ * set, for example to setup the property configuration.
  * 
  * <p>
- * BeanPropertyPostProcessor registration can be performed also using default Java extension through
- * {@link ServiceLoader}, providing a <code>com.holonplatform.core.beans.BeanPropertyPostProcessor</code> file in
- * <code>META-INF/services</code> containing the BeanPropertyPostProcessor concrete class names to register.
+ * BeanPropertyPostProcessor registration can be performed also using default
+ * Java extension through {@link ServiceLoader}, providing a
+ * <code>com.holonplatform.core.beans.BeanPropertyPostProcessor</code> file in
+ * <code>META-INF/services</code> containing the BeanPropertyPostProcessor
+ * concrete class names to register.
  * </p>
  *
  * @since 5.0.0
@@ -37,13 +40,15 @@ import com.holonplatform.core.beans.BeanIntrospector.BeanIntrospectionException;
 public interface BeanPropertyPostProcessor {
 
 	/**
-	 * Default {@link BeanPropertyPostProcessor} priority if not specified using {@link Priority} annotation.
+	 * Default {@link BeanPropertyPostProcessor} priority if not specified using
+	 * {@link Priority} annotation.
 	 */
 	public static final int DEFAULT_PRIORITY = 10000;
 
 	/**
 	 * Process given <code>property</code>.
-	 * @param property Property to process
+	 * 
+	 * @param property          Property to process
 	 * @param beanOrNestedClass Main or nested bean class to which property belongs
 	 * @return Processed property
 	 * @throws BeanIntrospectionException If an error occurred

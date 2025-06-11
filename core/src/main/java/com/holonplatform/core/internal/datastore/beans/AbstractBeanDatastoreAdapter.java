@@ -133,7 +133,7 @@ public abstract class AbstractBeanDatastoreAdapter<E> {
 			return null;
 		}
 		try {
-			return getBeanPropertySet(beanClass).write(propertyBox, beanClass.newInstance());
+			return getBeanPropertySet(beanClass).write(propertyBox, beanClass.getDeclaredConstructor().newInstance());
 		} catch (Exception e) {
 			throw new DataAccessException("Failed to convert PropertyBox instance [" + propertyBox
 					+ "] into a bean instance of type [" + beanClass + "]", e);

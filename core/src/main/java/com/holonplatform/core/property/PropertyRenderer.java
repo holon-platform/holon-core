@@ -17,7 +17,7 @@ package com.holonplatform.core.property;
 
 import java.util.function.Function;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.internal.property.CallbackPropertyRenderer;
 

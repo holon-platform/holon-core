@@ -1,10 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>com.holon-platform</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.2.0</version>
+		<version>2.0.0</version>
 	</parent>
 
 	<groupId>com.holon-platform.core</groupId>
@@ -47,7 +49,8 @@
 	<scm>
 		<connection>scm:git:https://github.com/holon-platform/holon-core.git</connection>
 		<url>https://github.com/holon-platform/holon-core</url>
-		<developerConnection>scm:git:https://github.com/holon-platform/holon-core.git</developerConnection>
+		<developerConnection>
+			scm:git:https://github.com/holon-platform/holon-core.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 
@@ -55,36 +58,36 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- Annotation api -->
-		<annotation-api.version>1.3.2</annotation-api.version>
+		<annotation-api.version>2.1.1</annotation-api.version>
 
 		<!-- slf4j -->
-		<slf4j.version>1.7.36</slf4j.version>
+		<slf4j.version>2.0.17</slf4j.version>
 
 		<!-- Apache commons lang -->
-		<commons.lang.version>3.10</commons.lang.version>
+		<commons.lang.version>3.17.0</commons.lang.version>
 
 		<!-- Bean validation -->
-		<bean.validation.version>2.0.1.Final</bean.validation.version>
+		<bean.validation.version>3.0.2</bean.validation.version>
 
 		<!-- JWT -->
-		<jsonwebtoken.version>0.11.2</jsonwebtoken.version>
+		<jsonwebtoken.version>0.12.6</jsonwebtoken.version>
 
 		<!-- Spring -->
-		<spring.version>5.3.29</spring.version>
+		<spring.version>6.2.6</spring.version>
 
 		<!-- Spring Security -->
-		<spring.security.version>5.7.11</spring.security.version>
+		<spring.security.version>6.4.5</spring.security.version>
 
 		<!-- Spring Boot -->
-		<spring.boot.version>2.7.14</spring.boot.version>
+		<spring.boot.version>3.4.5</spring.boot.version>
 
 		<!-- Jackson test/provided -->
-		<jackson.databind.version>2.11.1</jackson.databind.version>
-		<jackson.jaxrs.version>2.11.1</jackson.jaxrs.version>
+		<jackson.databind.version>2.18.3</jackson.databind.version>
+		<jackson.jakarta.rs.version>2.18.3</jackson.jakarta.rs.version>
 
 		<!-- Test -->
-		<jersey.test.version>2.31</jersey.test.version>
-		<mockito.version>4.5.1</mockito.version>
+		<jersey.test.version>3.1.10</jersey.test.version>
+		<mockito.version>5.14.2</mockito.version>
 
 	</properties>
 
@@ -140,6 +143,7 @@
 							<excludePackageNames>*.internal.*;*.examples.*</excludePackageNames>
 							<quiet>true</quiet>
 							<doclint>none</doclint>
+							<sourcepath>src/main/java</sourcepath>
 						</configuration>
 					</execution>
 				</executions>

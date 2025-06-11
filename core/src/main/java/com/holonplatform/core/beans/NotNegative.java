@@ -21,7 +21,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.PositiveOrZero;
 
 /**
  * Additional validation constraint to check the annotated element is not a negative number.
@@ -31,7 +31,7 @@ import javax.validation.constraints.PositiveOrZero;
  *
  * @since 5.0.0
  * 
- * @deprecated Use the {@link javax.validation.constraints.Positive} or {@link PositiveOrZero} constraint of the Bean
+ * @deprecated Use the {@link jakarta.validation.constraints.Positive} or {@link PositiveOrZero} constraint of the Bean
  *             Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -44,6 +44,6 @@ public @interface NotNegative {
 	 * Validation error message
 	 * @return Validation error message
 	 */
-	String message() default "{javax.validation.constraints.NotNegative.message}";
+	String message() default "{jakarta.validation.constraints.NotNegative.message}";
 
 }

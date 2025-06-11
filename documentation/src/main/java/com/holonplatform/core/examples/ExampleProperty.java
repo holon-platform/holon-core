@@ -394,17 +394,17 @@ public class ExampleProperty {
 
 	public void subTypes() {
 		// tag::subtypes1[]
-		final StringProperty STR = StringProperty.create("name"); // <1>
+		final StringProperty STR1 = StringProperty.create("name"); // <1>
 
-		QueryFilter filter = STR.contains("value"); // <2>
+		QueryFilter filter = STR1.contains("value"); // <2>
 		// end::subtypes1[]
 	}
 
 	public void pathPropertySetAdapter1() {
 		// tag::ppsa1[]
-		final StringProperty STR = StringProperty.create("str");
+		final StringProperty STR1 = StringProperty.create("str");
 		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
-		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+		final PropertySet<?> SET = PropertySet.of(STR1, ITG);
 
 		final Path<String> PATH = Path.of("str", String.class);
 
@@ -412,7 +412,7 @@ public class ExampleProperty {
 
 		boolean contains = adapter.contains(PATH); // <2>
 		Optional<Property<String>> property = adapter.getProperty(PATH); // <3>
-		Optional<Path<String>> path = adapter.getPath(STR); // <4>
+		Optional<Path<String>> path = adapter.getPath(STR1); // <4>
 		Stream<Path<?>> paths = adapter.paths(); // <5>
 		// end::ppsa1[]
 
@@ -426,9 +426,9 @@ public class ExampleProperty {
 
 	public void pathPropertySetAdapter2() {
 		// tag::ppsa3[]
-		final StringProperty STR = StringProperty.create("str");
+		final StringProperty STR1 = StringProperty.create("str");
 		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
-		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+		final PropertySet<?> SET = PropertySet.of(STR1, ITG);
 
 		PathPropertySetAdapter adapter = PathPropertySetAdapter.create(SET); // <1>
 
@@ -441,13 +441,13 @@ public class ExampleProperty {
 
 	public void pathPropertyBoxAdapter() {
 		// tag::ppba[]
-		final StringProperty STR = StringProperty.create("str");
+		final StringProperty STR1 = StringProperty.create("str");
 		final NumericProperty<Integer> ITG = NumericProperty.integerType("itg");
-		final PropertySet<?> SET = PropertySet.of(STR, ITG);
+		final PropertySet<?> SET = PropertySet.of(STR1, ITG);
 
 		final Path<String> PATH = Path.of("str", String.class);
 
-		PropertyBox box = PropertyBox.builder(SET).set(STR, "test1").set(ITG, 1).build();
+		PropertyBox box = PropertyBox.builder(SET).set(STR1, "test1").set(ITG, 1).build();
 
 		PathPropertyBoxAdapter adapter = PathPropertyBoxAdapter.create(box); // <1>
 
@@ -459,15 +459,15 @@ public class ExampleProperty {
 
 	public void collectionProperties() {
 		// tag::collprops[]
-		final ListPathProperty<String> STR = ListPathProperty.create("str", String.class); // <1>
+		final ListPathProperty<String> STR1 = ListPathProperty.create("str", String.class); // <1>
 		final SetPathProperty<Integer> ITG = SetPathProperty.create("str", Integer.class); // <2>
 
-		Class<?> elementType = STR.getElementType(); // <3>
+		Class<?> elementType = STR1.getElementType(); // <3>
 
-		PropertyBox box = PropertyBox.create(STR, ITG);
+		PropertyBox box = PropertyBox.create(STR1, ITG);
 
-		box.setValue(STR, Collections.singletonList("a")); // <4>
-		List<String> listValue = box.getValue(STR); // <5>
+		box.setValue(STR1, Collections.singletonList("a")); // <4>
+		List<String> listValue = box.getValue(STR1); // <5>
 
 		box.setValue(ITG, Collections.singleton(1)); // <6>
 		Set<Integer> setValue = box.getValue(ITG); // <7>
@@ -476,17 +476,17 @@ public class ExampleProperty {
 
 	public void collectionProperties2() {
 		// tag::collprops2[]
-		final ListPathProperty<String> STR = ListPathProperty.create("str", String.class) // <1>
+		final ListPathProperty<String> STR1 = ListPathProperty.create("str", String.class) // <1>
 				.elementConverter(Integer.class, v -> String.valueOf(v), v -> Integer.valueOf(v)); // <2>
 		// end::collprops2[]
 	}
 
 	// tag::vcollprops[]
-	static final StringProperty STR = StringProperty.create("test");
+	static final StringProperty STR1 = StringProperty.create("test");
 
 	static final ListVirtualProperty<String> VIRTUAL_LIST = ListVirtualProperty.create(String.class, // <1>
 			pb -> {
-				String value = pb.getValue(STR);
+				String value = pb.getValue(STR1);
 				if (value != null) {
 					List<String> l = new ArrayList<>();
 					for (char c : value.toCharArray()) {
@@ -499,7 +499,7 @@ public class ExampleProperty {
 
 	static final SetVirtualProperty<String> VIRTUAL_SET = SetVirtualProperty.create(String.class, // <2>
 			pb -> {
-				String value = pb.getValue(STR);
+				String value = pb.getValue(STR1);
 				if (value != null) {
 					Set<String> l = new HashSet<>();
 					for (char c : value.toCharArray()) {

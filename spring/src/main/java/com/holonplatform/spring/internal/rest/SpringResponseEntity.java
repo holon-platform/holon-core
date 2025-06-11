@@ -26,6 +26,7 @@ import java.util.Optional;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.HttpMessageConverterExtractor;
@@ -57,6 +58,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 
 	/**
 	 * Constructor
+	 * 
 	 * @param response Spring response entity (not null)
 	 * @param type Response type (not null)
 	 * @param messageConverters HTTP message converters
@@ -76,6 +78,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 
 	/**
 	 * Get the available HTTP message converters
+	 * 
 	 * @return the HTTP message converters list, empty if none
 	 */
 	protected List<HttpMessageConverter<?>> getMessageConverters() {
@@ -144,7 +147,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 
 	/*
 	 * (non-Javadoc)
-	 * @see com.holonplatform.http.rest.ResponseEntity#as(com.holonplatform.http.rest.ResponseType)
+	 * @see com.holonplatform.http.rest.ResponseEntity#as(com.holonplatform.http.rest. ResponseType)
 	 */
 	@Override
 	public <E> Optional<E> as(ResponseType<E> entityType) {
@@ -153,6 +156,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 
 	/**
 	 * Get the Optional {@link PropertySet} to use to deserialize a {@link PropertyBox}
+	 * 
 	 * @return the optional PropertySet
 	 */
 	protected Optional<PropertySet<?>> getPropertySet() {
@@ -160,12 +164,15 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 	}
 
 	/**
-	 * Read the message entity as an instance of the type represented by given <code>type</code> {@link ResponseType}.
+	 * Read the message entity as an instance of the type represented by given <code>type</code>
+	 * {@link ResponseType}.
+	 * 
 	 * @param <E> Response entity type
 	 * @param type Response entity type to read
-	 * @return the message entity converted to given type, or an empty Optional for empty or zero-length responses
-	 * @throws HttpEntityProcessingException If a entity processing error occurred (e.g. no message body reader
-	 *         available for the requested type)
+	 * @return the message entity converted to given type, or an empty Optional for empty or zero-length
+	 *         responses
+	 * @throws HttpEntityProcessingException If a entity processing error occurred (e.g. no message body
+	 *         reader available for the requested type)
 	 */
 	protected <E> Optional<E> readAs(ResponseType<E> type) {
 		ObjectUtils.argumentNotNull(type, "Response type must be not null");
@@ -237,7 +244,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		 * @see org.springframework.http.client.ClientHttpResponse#getStatusCode()
 		 */
 		@Override
-		public HttpStatus getStatusCode() throws IOException {
+		public HttpStatusCode getStatusCode() throws IOException {
 			return responseEntity.getStatusCode();
 		}
 
@@ -247,7 +254,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		 */
 		@Override
 		public int getRawStatusCode() throws IOException {
-			return responseEntity.getStatusCodeValue();
+			return responseEntity.getStatusCode().value();
 		}
 
 		/*
@@ -256,7 +263,7 @@ public class SpringResponseEntity<T> implements ResponseEntity<T> {
 		 */
 		@Override
 		public String getStatusText() throws IOException {
-			return responseEntity.getStatusCode().getReasonPhrase();
+			return ((HttpStatus) responseEntity.getStatusCode()).getReasonPhrase();
 		}
 
 		/*

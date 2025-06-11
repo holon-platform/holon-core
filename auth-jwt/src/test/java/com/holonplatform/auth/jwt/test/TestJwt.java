@@ -76,12 +76,23 @@ public class TestJwt {
 				.configuration(JwtConfiguration.builder().build()).issuer("TestUnit").build();
 
 		final Realm realm = Realm.builder().withAuthenticator(jwtAuthenticator).build();
+		final Realm realmAlgNone = Realm.builder().withAuthenticator(JwtAuthenticator.builder()
+				.configuration(JwtConfiguration.builder().allowUnsecuredJws(true).build()).issuer("TestUnit").build())
+				.build();
 
 		final Authentication authc = Authentication.builder("testuser").build();
 
-		String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc);
+		assertThrows(InvalidTokenException.class, () -> {
+			String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc);
+			realm.authenticate(AuthenticationToken.bearer(jwt));
+		});
 
-		Authentication authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
+		// test realm with jwtconfig alg : none (unsecure) and JWT unsecure
+		String jwt = JwtTokenBuilder.get()
+				.buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit").build(), authc);
+
+		Authentication authenticated = realmAlgNone.authenticate(AuthenticationToken.bearer(jwt));
+
 		assertNotNull(authenticated);
 
 		assertThrows(InvalidTokenException.class, () -> {
@@ -100,10 +111,11 @@ public class TestJwt {
 		});
 
 		final Authentication authc2 = Authentication.builder("testuser").withParameter("testReq", "VAL").build();
-		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").includeDetails(true).build(),
+		jwt = JwtTokenBuilder.get().buildJwt(
+				JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit").includeDetails(true).build(),
 				authc2);
 
-		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
+		authenticated = realmAlgNone.authenticate(AuthenticationToken.bearer(jwt));
 		assertNotNull(authenticated);
 
 		assertThrows(UnexpectedAuthenticationException.class, () -> JwtAuthenticator.builder()
@@ -113,10 +125,10 @@ public class TestJwt {
 		assertNull(cs.get("test", String.class));
 
 		assertThrows(ExpiredCredentialsException.class, () -> {
-			String tjwt = JwtTokenBuilder.get().buildJwt(
-					JwtConfiguration.builder().issuer("TestUnit").includeDetails(true).expireTime(1L).build(), authc2);
+			String tjwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true)
+					.issuer("TestUnit").includeDetails(true).expireTime(1L).build(), authc2);
 			Thread.sleep(2L);
-			realm.authenticate(AuthenticationToken.bearer(tjwt));
+			realmAlgNone.authenticate(AuthenticationToken.bearer(tjwt));
 		});
 
 		assertThrows(InvalidTokenException.class, () -> realm.authenticate(AuthenticationToken.bearer("x")));
@@ -129,22 +141,25 @@ public class TestJwt {
 		Properties props = new Properties();
 		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.ISSUER.getKey(), "TestIssuer");
 		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.NOT_BEFORE_NOW.getKey(), "true");
+		props.put(JwtConfigProperties.NAME + "." + JwtConfigProperties.ALLOW_UNSECURED.getKey(), "true");
 
 		JwtConfigProperties cfg = JwtConfigProperties.builder().withPropertySource(props).build();
 
 		assertEquals(JwtConfigProperties.NAME, cfg.getName());
 		assertEquals("TestIssuer", cfg.getConfigPropertyValue(JwtConfigProperties.ISSUER, null));
 		assertTrue(cfg.getConfigPropertyValue(JwtConfigProperties.NOT_BEFORE_NOW, Boolean.FALSE));
+		assertTrue(cfg.getConfigPropertyValue(JwtConfigProperties.ALLOW_UNSECURED, Boolean.FALSE));
 
 		Authentication authc = Authentication.builder("testuser").build();
 
 		String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.build(cfg), authc);
 
-		Claims claims = Jwts.parserBuilder().build().parseClaimsJwt(jwt).getBody();
+		Claims claims = Jwts.parser().unsecured().build().parseClaimsJwt(jwt).getBody();
 		assertNotNull(claims.get("nbf", Date.class));
 
-		authc = JwtTokenParser.get()
-				.parseJwt(JwtConfiguration.builder().issuer("TestIssuer").includeDetails(true).build(), jwt).build();
+		authc = JwtTokenParser.get().parseJwt(
+				JwtConfiguration.builder().issuer("TestIssuer").includeDetails(true).allowUnsecuredJws(true).build(),
+				jwt).build();
 		assertNotNull(authc);
 		assertEquals("testuser", authc.getName());
 	}
@@ -152,7 +167,8 @@ public class TestJwt {
 	@Test
 	public void testTokenParser() {
 
-		final JwtConfiguration cfg = JwtConfiguration.builder().includeDetails(true).includePermissions(true).build();
+		final JwtConfiguration cfg = JwtConfiguration.builder().includeDetails(true).includePermissions(true)
+				.allowUnsecuredJws(true).build();
 
 		Authentication authc = Authentication.builder("testuser").withParameter("test", "value").withPermission("rolex")
 				.build();
@@ -178,13 +194,13 @@ public class TestJwt {
 	@Test
 	public void testJWTAuthentication_unsigned() throws Exception {
 
-		final Realm realm = Realm.builder()
-				.withAuthenticator(JwtAuthenticator.builder().configuration(JwtConfiguration.builder().build()).build())
-				.build();
+		final Realm realm = Realm.builder().withAuthenticator(JwtAuthenticator.builder()
+				.configuration(JwtConfiguration.builder().allowUnsecuredJws(true).build()).build()).build();
 
 		Authentication authc = Authentication.builder("testuser").build();
 
-		String jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc);
+		String jwt = JwtTokenBuilder.get()
+				.buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit").build(), authc);
 		assertNotNull(jwt);
 
 		Authentication authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
@@ -195,7 +211,8 @@ public class TestJwt {
 		// with id
 		String id = UUID.randomUUID().toString();
 
-		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").build(), authc, id);
+		jwt = JwtTokenBuilder.get()
+				.buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit").build(), authc, id);
 		assertNotNull(jwt);
 
 		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
@@ -206,8 +223,9 @@ public class TestJwt {
 
 		// with expiration (10s)
 
-		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").expireTime(10000L).build(),
-				authc, id);
+		jwt = JwtTokenBuilder.get().buildJwt(
+				JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit").expireTime(10000L).build(), authc,
+				id);
 		assertNotNull(jwt);
 
 		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
@@ -215,7 +233,7 @@ public class TestJwt {
 		assertEquals(authc, authenticated);
 		assertEquals("TestUnit", authenticated.getParameter(Claims.ISSUER, String.class).get());
 		assertEquals(id, authenticated.getParameter(Claims.ID, String.class).get());
-		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Integer.class).get());
+		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Long.class).get());
 
 		// with permissions
 
@@ -230,9 +248,8 @@ public class TestJwt {
 
 		authc = Authentication.builder("testuser").withPermission(p1).withPermission(p2).withPermission(p3).build();
 
-		jwt = JwtTokenBuilder.get().buildJwt(
-				JwtConfiguration.builder().issuer("TestUnit").expireTime(10000L).includePermissions(true).build(),
-				authc, id);
+		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit")
+				.expireTime(10000L).includePermissions(true).build(), authc, id);
 		assertNotNull(jwt);
 
 		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
@@ -240,7 +257,7 @@ public class TestJwt {
 		assertEquals(authc, authenticated);
 		assertEquals("TestUnit", authenticated.getParameter(Claims.ISSUER, String.class).get());
 		assertEquals(id, authenticated.getParameter(Claims.ID, String.class).get());
-		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Integer.class).get());
+		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Long.class).get());
 		assertFalse(authenticated.getParameter(AuthenticationClaims.CLAIM_NAME_ROOT, boolean.class).get());
 
 		// with details
@@ -248,8 +265,8 @@ public class TestJwt {
 		authc = Authentication.builder("testuser").withParameter("testd", 1).withPermission(p1).withPermission(p2)
 				.withPermission(p3).build();
 
-		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().issuer("TestUnit").expireTime(10000L)
-				.includeDetails(true).includePermissions(true).build(), authc, id);
+		jwt = JwtTokenBuilder.get().buildJwt(JwtConfiguration.builder().allowUnsecuredJws(true).issuer("TestUnit")
+				.expireTime(10000L).includeDetails(true).includePermissions(true).build(), authc, id);
 		assertNotNull(jwt);
 
 		authenticated = realm.authenticate(AuthenticationToken.bearer(jwt));
@@ -257,10 +274,10 @@ public class TestJwt {
 		assertEquals(authc, authenticated);
 		assertEquals("TestUnit", authenticated.getParameter(Claims.ISSUER, String.class).get());
 		assertEquals(id, authenticated.getParameter(Claims.ID, String.class).get());
-		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Integer.class).get());
+		assertNotNull(authenticated.getParameter(Claims.EXPIRATION, Long.class).get());
 		assertFalse(authenticated.getParameter(AuthenticationClaims.CLAIM_NAME_ROOT, boolean.class).get());
 
-		assertEquals(new Integer(1), authenticated.getParameter("testd", Integer.class).get());
+		assertEquals(Integer.valueOf(1), authenticated.getParameter("testd", Integer.class).get());
 
 	}
 

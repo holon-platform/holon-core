@@ -20,22 +20,22 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.Future;
 
-import javax.annotation.Priority;
-import javax.validation.constraints.AssertFalse;
-import javax.validation.constraints.AssertTrue;
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
-import javax.validation.constraints.Past;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Pattern.Flag;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
+import jakarta.annotation.Priority;
+import jakarta.validation.constraints.AssertFalse;
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Null;
+import jakarta.validation.constraints.Past;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern.Flag;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 
 import com.holonplatform.core.Validator;
 import com.holonplatform.core.Validator.PatternFlag;
@@ -105,7 +105,7 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 			Boolean present = BEAN_VALIDATION_API_PRESENT.get(classLoader);
 			return (present != null && present.booleanValue());
 		}
-		boolean present = ClassUtils.isPresent("javax.validation.Validation", classLoader);
+		boolean present = ClassUtils.isPresent("jakarta.validation.Validation", classLoader);
 		BEAN_VALIDATION_API_PRESENT.put(classLoader, present);
 		// check version
 		BEAN_VALIDATION_API_VERSION.put(classLoader, BeanValidationAPIVersion.getVersion(classLoader));
@@ -214,7 +214,7 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 							+ property + "] for constraint [" + Past.class.getName() + "]");
 				});
 				// future
-				property.getAnnotation(javax.validation.constraints.Future.class).ifPresent(a -> {
+				property.getAnnotation(jakarta.validation.constraints.Future.class).ifPresent(a -> {
 					((Builder) property).validator(Validator.future(false,
 							getValidationMessage(property, a.message(), Validator.ValidationMessage.FUTURE)));
 					LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
@@ -243,12 +243,12 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 				});
 				// check validation API 2.0.x
 				if (version.is20xOrHigher()) {
-					property.getAnnotation(javax.validation.constraints.NotEmpty.class).ifPresent(a -> {
+					property.getAnnotation(jakarta.validation.constraints.NotEmpty.class).ifPresent(a -> {
 						((Builder) property).validator(Validator.notEmpty(
 								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_EMPTY)));
 						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 								+ property + "] for constraint ["
-								+ javax.validation.constraints.NotEmpty.class.getName() + "]");
+								+ jakarta.validation.constraints.NotEmpty.class.getName() + "]");
 					});
 				}
 
@@ -261,12 +261,12 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 				});
 				// check validation API 2.0.x
 				if (version.is20xOrHigher()) {
-					property.getAnnotation(javax.validation.constraints.NotBlank.class).ifPresent(a -> {
+					property.getAnnotation(jakarta.validation.constraints.NotBlank.class).ifPresent(a -> {
 						((Builder) property).validator(Validator.notBlank(
 								getValidationMessage(property, a.message(), Validator.ValidationMessage.NOT_BLANK)));
 						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
 								+ property + "] for constraint ["
-								+ javax.validation.constraints.NotBlank.class.getName() + "]");
+								+ jakarta.validation.constraints.NotBlank.class.getName() + "]");
 					});
 				}
 
@@ -304,11 +304,11 @@ public class BeanPropertyBeanValidationPostProcessor implements BeanPropertyPost
 				});
 				// check validation API 2.0.x
 				if (version.is20xOrHigher()) {
-					property.getAnnotation(javax.validation.constraints.Email.class).ifPresent(a -> {
+					property.getAnnotation(jakarta.validation.constraints.Email.class).ifPresent(a -> {
 						((Builder) property).validator(Validator
 								.email(getValidationMessage(property, a.message(), Validator.ValidationMessage.EMAIL)));
 						LOGGER.debug(() -> "BeanPropertyBeanValidationPostProcessor: added validator to property ["
-								+ property + "] for constraint [" + javax.validation.constraints.Email.class.getName()
+								+ property + "] for constraint [" + jakarta.validation.constraints.Email.class.getName()
 								+ "]");
 					});
 				}

@@ -17,7 +17,7 @@ package com.holonplatform.spring.test;
 
 import java.io.Serializable;
 
-import javax.annotation.PreDestroy;
+import jakarta.annotation.PreDestroy;
 
 public class TenantManagedBeanTest implements Serializable {
 

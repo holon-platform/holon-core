@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  *
  * @since 5.0.0
  * 
- * @deprecated Use the {@link javax.validation.constraints.NotBlank} constraint of the Bean Validation API 2.x instead
+ * @deprecated Use the {@link jakarta.validation.constraints.NotBlank} constraint of the Bean Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -42,6 +42,6 @@ public @interface NotBlank {
 	 * Validation error message
 	 * @return Validation error message
 	 */
-	String message() default "{javax.validation.constraints.NotBlank.message}";
+	String message() default "{jakarta.validation.constraints.NotBlank.message}";
 
 }

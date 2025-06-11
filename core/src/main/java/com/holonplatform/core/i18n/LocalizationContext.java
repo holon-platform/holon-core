@@ -316,7 +316,7 @@ public interface LocalizationContext {
 	}
 
 	/**
-	 * Get a {@link DateTimeFormatter} for javax.time.* types formatting and set it up according to context
+	 * Get a {@link DateTimeFormatter} for jakarta.time.* types formatting and set it up according to context
 	 * {@link Locale} and {@link Localization} settings.
 	 * @param type Temporal type
 	 * @param dateFormat Date format style, <code>null</code> for default
@@ -327,7 +327,7 @@ public interface LocalizationContext {
 	DateTimeFormatter getDateTimeFormatter(TemporalType type, TemporalFormat dateFormat, TemporalFormat timeFormat);
 
 	/**
-	 * Get a {@link DateTimeFormatter} for javax.time.* types formatting and set it up according to context
+	 * Get a {@link DateTimeFormatter} for jakarta.time.* types formatting and set it up according to context
 	 * {@link Locale} and {@link Localization} settings, using default format styles.
 	 * @param type Temporal type
 	 * @return DateTimeFormatter

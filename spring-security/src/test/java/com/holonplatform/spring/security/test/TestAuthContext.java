@@ -58,10 +58,19 @@ public class TestAuthContext {
 
 		@Bean
 		@Primary
-		public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
-			return auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER").and()
-					.withUser("admin").password("pwd2").authorities("USER", "ADMIN").and().and().build();
+		public AuthenticationManager authManager(AuthenticationManagerBuilder auth)
+				throws Exception {
+			auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER")
+					.and().withUser("admin").password("pwd2").authorities("USER", "ADMIN");
+			return auth.build();
 		}
+
+//		@Bean
+//		@Primary
+//		public AuthenticationManager authenticationManager(AuthenticationManagerBuilder auth) throws Exception {
+//			return auth.inMemoryAuthentication().withUser("user").password("pwd1").authorities("USER").and()
+//					.withUser("admin").password("pwd2").authorities("USER", "ADMIN").and().and().build();
+//		}
 
 		@Bean
 		public static PasswordEncoder passwordEncoder() {

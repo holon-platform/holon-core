@@ -47,7 +47,8 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	// ------- Sign
 
 	/**
-	 * JWT signature algorithm name. Must be one of those listed in the {@link JwtSignatureAlgorithm} enumeration.
+	 * JWT signature algorithm name. Must be one of those listed in the {@link JwtSignatureAlgorithm}
+	 * enumeration.
 	 * @see JwtSignatureAlgorithm
 	 */
 	public static final ConfigProperty<JwtSignatureAlgorithm> SIGNATURE_ALGORITHM = ConfigProperty
@@ -92,22 +93,22 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 			KeyEncoding.class);
 
 	/**
-	 * The key store password to use when the JWT sign private key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key store password to use when the JWT sign private key is provided using a key store format,
+	 * such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PRIVATE_KEY_STORE_PASSWORD = ConfigProperty
 			.create("privatekey.store.password", String.class);
 
 	/**
-	 * The key store alias name to use when the JWT sign private key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key store alias name to use when the JWT sign private key is provided using a key store
+	 * format, such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PRIVATE_KEY_STORE_ALIAS = ConfigProperty.create("privatekey.store.alias",
 			String.class);
 
 	/**
-	 * The key recovering password to use when the JWT sign private key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key recovering password to use when the JWT sign private key is provided using a key store
+	 * format, such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PRIVATE_KEY_STORE_ALIAS_PASSWORD = ConfigProperty
 			.create("privatekey.store.alias-password", String.class);
@@ -139,22 +140,22 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 			KeyEncoding.class);
 
 	/**
-	 * The key store password to use when the JWT sign public key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key store password to use when the JWT sign public key is provided using a key store format,
+	 * such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PUBLIC_KEY_STORE_PASSWORD = ConfigProperty
 			.create("publickey.store.password", String.class);
 
 	/**
-	 * The key store alias name to use when the JWT sign public key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key store alias name to use when the JWT sign public key is provided using a key store
+	 * format, such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PUBLIC_KEY_STORE_ALIAS = ConfigProperty.create("publickey.store.alias",
 			String.class);
 
 	/**
-	 * The key recovering password to use when the JWT sign public key is provided using a key store format, such as
-	 * {@link KeyFormat#PKCS12}
+	 * The key recovering password to use when the JWT sign public key is provided using a key store
+	 * format, such as {@link KeyFormat#PKCS12}
 	 */
 	public static final ConfigProperty<String> PUBLIC_KEY_STORE_ALIAS_PASSWORD = ConfigProperty
 			.create("publickey.store.alias-password", String.class);
@@ -163,34 +164,35 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 
 	/**
 	 * JWT sign public key (base64 encoded)
-	 * @deprecated Use {@link #PUBLIC_KEY_SOURCE} and related configuration properties to configure the JWT sign public
-	 *             key. The key encoding can be specified using the {@link #PUBLIC_KEY_ENCODING} configuration property
+	 * @deprecated Use {@link #PUBLIC_KEY_SOURCE} and related configuration properties to configure the
+	 *             JWT sign public key. The key encoding can be specified using the
+	 *             {@link #PUBLIC_KEY_ENCODING} configuration property
 	 */
 	@Deprecated
 	public static final ConfigProperty<String> PUBLIC_KEY = ConfigProperty.create("publickey-base64", String.class);
 
 	/**
 	 * JWT sign public key (file name)
-	 * @deprecated Use {@link #PUBLIC_KEY_SOURCE} and related configuration properties to configure the JWT sign public
-	 *             key. The key source can be specified using the default prefixes {@link #KEY_SOURCE_FILE_PREFIX} and
-	 *             {@link #KEY_SOURCE_CLASSPATH_PREFIX}
+	 * @deprecated Use {@link #PUBLIC_KEY_SOURCE} and related configuration properties to configure the
+	 *             JWT sign public key. The key source can be specified using the default prefixes
+	 *             {@link #KEY_SOURCE_FILE_PREFIX} and {@link #KEY_SOURCE_CLASSPATH_PREFIX}
 	 */
 	@Deprecated
 	public static final ConfigProperty<String> PUBLIC_KEY_FILE = ConfigProperty.create("publickey-file", String.class);
 
 	/**
 	 * JWT sign private key (base64 encoded)
-	 * @deprecated Use {@link #PRIVATE_KEY_SOURCE} and related configuration properties to configure the JWT sign
-	 *             private key. The key encoding can be specified using the {@link #PRIVATE_KEY_ENCODING} configuration
-	 *             property
+	 * @deprecated Use {@link #PRIVATE_KEY_SOURCE} and related configuration properties to configure the
+	 *             JWT sign private key. The key encoding can be specified using the
+	 *             {@link #PRIVATE_KEY_ENCODING} configuration property
 	 */
 	@Deprecated
 	public static final ConfigProperty<String> PRIVATE_KEY = ConfigProperty.create("privatekey-base64", String.class);
 
 	/**
 	 * JWT sign private key (file name)
-	 * @deprecated Use {@link #PRIVATE_KEY_SOURCE} and related configuration properties to configure the JWT sign
-	 *             private key. The key source can be specified using the default prefixes
+	 * @deprecated Use {@link #PRIVATE_KEY_SOURCE} and related configuration properties to configure the
+	 *             JWT sign private key. The key source can be specified using the default prefixes
 	 *             {@link #KEY_SOURCE_FILE_PREFIX} and {@link #KEY_SOURCE_CLASSPATH_PREFIX}
 	 */
 	@Deprecated
@@ -224,7 +226,8 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	// ------ nbf
 
 	/**
-	 * Whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is created.
+	 * Whether to set the <code>nbf</code> (not before) JWT claim to the timestamp at which the token is
+	 * created.
 	 */
 	public static final ConfigProperty<Boolean> NOT_BEFORE_NOW = ConfigProperty.create("not-before-now", boolean.class);
 
@@ -240,6 +243,12 @@ public interface JwtConfigProperties extends ConfigPropertySet {
 	 * Include {@link Authentication} permissions in JWT token as claims (boolean)
 	 */
 	public static final ConfigProperty<Boolean> INCLUDE_PERMISSIONS = ConfigProperty.create("include-permissions",
+			boolean.class);
+
+	/**
+	 * Allow unsecured JWT token (alg : none)
+	 */
+	public static final ConfigProperty<Boolean> ALLOW_UNSECURED = ConfigProperty.create("allow-unsecured",
 			boolean.class);
 
 	// -------

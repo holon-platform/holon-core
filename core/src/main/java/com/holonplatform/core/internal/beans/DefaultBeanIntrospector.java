@@ -33,7 +33,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.WeakHashMap;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.Path;
 import com.holonplatform.core.Path.FinalPath;

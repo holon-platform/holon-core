@@ -52,14 +52,14 @@ public final class JwtUtils implements Serializable {
 	private static final long serialVersionUID = -1006362108842428239L;
 
 	/*
-	 * Empty private constructor: this class is intended only to provide constants
-	 * ad utility methods.
+	 * Empty private constructor: this class is intended only to provide constants ad utility methods.
 	 */
 	private JwtUtils() {
 	}
 
 	/**
 	 * Check if given <code>token</code> is a JWT token (unsigned)
+	 * 
 	 * @param token Token to check
 	 * @return <code>true</code> if it is a JWT token
 	 */
@@ -69,7 +69,8 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token (signed)
-	 * @param token      Token to check
+	 * 
+	 * @param token Token to check
 	 * @param signingKey Signing key
 	 * @return <code>true</code> if it is a JWT token
 	 */
@@ -79,7 +80,8 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token (signed)
-	 * @param token      Token to check
+	 * 
+	 * @param token Token to check
 	 * @param signingKey Signing key
 	 * @return <code>true</code> if it is a JWT token
 	 * @throws ExpiredCredentialsException If token is a JWT token but has expired
@@ -90,7 +92,8 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Check if given <code>token</code> is a JWT token
-	 * @param token      Token to check
+	 * 
+	 * @param token Token to check
 	 * @param signingKey Optional signing key
 	 * @return <code>true</code> if it is a JWT token
 	 */
@@ -98,7 +101,7 @@ public final class JwtUtils implements Serializable {
 	private static boolean checkJWT(String token, Object signingKey) {
 		if (token != null && !token.trim().equals("")) {
 
-			JwtParserBuilder parser = Jwts.parserBuilder();
+			JwtParserBuilder parser = Jwts.parser();
 
 			if (signingKey != null) {
 				if (Key.class.isAssignableFrom(signingKey.getClass())) {
@@ -123,9 +126,9 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Build a {@link JwtConfiguration} instance form given
-	 * {@link ConfigPropertyProvider} using configuration property keys listed in
-	 * {@link JwtConfiguration}.
+	 * Build a {@link JwtConfiguration} instance form given {@link ConfigPropertyProvider} using
+	 * configuration property keys listed in {@link JwtConfiguration}.
+	 * 
 	 * @param config ConfigPropertyProvider
 	 * @return JwtConfiguration
 	 * @throws InvalidJwtConfigurationException Error building configuration
@@ -192,6 +195,9 @@ public final class JwtUtils implements Serializable {
 			cfg.setIncludeDetails(config.getConfigPropertyValue(JwtConfigProperties.INCLUDE_DETAILS, Boolean.TRUE));
 			cfg.setIncludePermissions(
 					config.getConfigPropertyValue(JwtConfigProperties.INCLUDE_PERMISSIONS, Boolean.TRUE));
+
+			// allow unsecured JWT (alg : none)
+			cfg.setAllowUnsecured(config.getConfigPropertyValue(JwtConfigProperties.ALLOW_UNSECURED, Boolean.FALSE));
 
 			// signing algorithm
 
@@ -264,10 +270,10 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Load a private key for given signing algorithm and using given JWT
-	 * configuration properties.
+	 * Load a private key for given signing algorithm and using given JWT configuration properties.
+	 * 
 	 * @param algorithm Signing algorithm
-	 * @param config    JWT configuration properties
+	 * @param config JWT configuration properties
 	 * @return The private key, if available
 	 */
 	private static Optional<PrivateKey> loadPrivateKey(String algorithm, JwtConfigProperties config)
@@ -295,10 +301,10 @@ public final class JwtUtils implements Serializable {
 	}
 
 	/**
-	 * Load a public key for given signing algorithm and using given JWT
-	 * configuration properties.
+	 * Load a public key for given signing algorithm and using given JWT configuration properties.
+	 * 
 	 * @param algorithm Signing algorithm
-	 * @param config    JWT configuration properties
+	 * @param config JWT configuration properties
 	 * @return The public key, if available
 	 */
 	private static Optional<PublicKey> loadPublicKey(String algorithm, JwtConfigProperties config) {
@@ -326,8 +332,9 @@ public final class JwtUtils implements Serializable {
 
 	/**
 	 * Build a {@link KeySource} using given JWT configuration properties.
+	 * 
 	 * @param privateKey Whether to build a key source for a private key
-	 * @param config     JWT configuration propertie
+	 * @param config JWT configuration propertie
 	 * @return Optional key source
 	 */
 	@SuppressWarnings("deprecation")

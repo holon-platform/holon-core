@@ -76,8 +76,8 @@ public class TestQuery {
 
 		assertTrue(qd.getLimit().isPresent());
 		assertTrue(qd.getLimit().isPresent());
-		assertEquals(new Integer(10), qd.getLimit().get());
-		assertEquals(new Integer(20), qd.getOffset().get());
+		assertEquals(Integer.valueOf(10), qd.getLimit().get());
+		assertEquals(Integer.valueOf(20), qd.getOffset().get());
 
 		qd.addFilter(TestPropertySet.NAME.isNotNull());
 		assertTrue(qd.getFilter().isPresent());
@@ -103,17 +103,17 @@ public class TestQuery {
 		assertTrue(qd.hasParameter("tp"));
 		assertTrue(qd.hasNotNullParameter("tp"));
 		assertNotNull(qd.getParameter("tp"));
-		assertEquals(new Integer(1), qd.getParameter("tp", int.class).orElse(null));
-		assertEquals(new Integer(1), qd.getParameter("tp", int.class, Integer.valueOf(2)));
+		assertEquals(Integer.valueOf(1), qd.getParameter("tp", int.class).orElse(null));
+		assertEquals(Integer.valueOf(1), qd.getParameter("tp", int.class, Integer.valueOf(2)));
 
 		q.limit(10);
-		assertEquals(new Integer(10), qd.getLimit().get());
+		assertEquals(Integer.valueOf(10), qd.getLimit().get());
 		q.offset(20);
-		assertEquals(new Integer(20), qd.getOffset().get());
+		assertEquals(Integer.valueOf(20), qd.getOffset().get());
 
 		q.restrict(20, 100);
-		assertEquals(new Integer(20), qd.getLimit().get());
-		assertEquals(new Integer(100), qd.getOffset().get());
+		assertEquals(Integer.valueOf(20), qd.getLimit().get());
+		assertEquals(Integer.valueOf(100), qd.getOffset().get());
 
 		q.filter(TestPropertySet.NAME.isNotNull());
 		assertTrue(qd.getFilter().isPresent());

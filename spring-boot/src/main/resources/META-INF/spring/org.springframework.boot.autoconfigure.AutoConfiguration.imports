@@ -1,0 +1,3 @@
+com.holonplatform.spring.boot.EnableBeanContextAutoConfiguration
+com.holonplatform.spring.boot.TenantScopeAutoConfiguration
+com.holonplatform.spring.boot.JwtAutoConfiguration

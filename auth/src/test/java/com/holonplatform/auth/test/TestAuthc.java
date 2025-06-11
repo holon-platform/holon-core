@@ -63,7 +63,7 @@ public class TestAuthc {
 		assertTrue(authc.getParameter("d1", String.class).isPresent());
 		assertEquals("test", authc.getParameter("d1", String.class).get());
 		assertTrue(authc.getParameter("d2", long.class).isPresent());
-		assertEquals(new Long(1), authc.getParameter("d2", long.class).get());
+		assertEquals(Long.valueOf(1), authc.getParameter("d2", long.class).get());
 		assertFalse(authc.getParameter("xxx", Object.class).isPresent());
 
 	}

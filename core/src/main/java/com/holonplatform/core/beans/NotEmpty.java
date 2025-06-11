@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * @since 5.0.0
  * 
- * @deprecated Use the {@link javax.validation.constraints.NotEmpty} constraint of the Bean Validation API 2.x instead
+ * @deprecated Use the {@link jakarta.validation.constraints.NotEmpty} constraint of the Bean Validation API 2.x instead
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -43,6 +43,6 @@ public @interface NotEmpty {
 	 * Validation error message
 	 * @return Validation error message
 	 */
-	String message() default "{javax.validation.constraints.NotEmpty.message}";
+	String message() default "{jakarta.validation.constraints.NotEmpty.message}";
 
 }

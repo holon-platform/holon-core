@@ -18,7 +18,7 @@ package com.holonplatform.core;
 import java.io.Serializable;
 import java.util.Optional;
 
-import javax.annotation.Priority;
+import jakarta.annotation.Priority;
 
 import com.holonplatform.core.Expression.ExpressionResolverFunction;
 import com.holonplatform.core.Expression.InvalidExpressionException;

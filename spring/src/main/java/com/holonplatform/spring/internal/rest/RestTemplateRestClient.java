@@ -53,7 +53,9 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 	private final RestTemplate restTemplate;
 
 	/**
-	 * Construct a new SpringRestClient using given {@link RestTemplate} as concrete implementation.
+	 * Construct a new SpringRestClient using given {@link RestTemplate} as concrete
+	 * implementation.
+	 * 
 	 * @param restTemplate RestTemplate
 	 */
 	public RestTemplateRestClient(RestTemplate restTemplate) {
@@ -76,6 +78,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.spring.SpringRestClient#getRestTemplate()
 	 */
 	@Override
@@ -103,7 +106,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 
 		// method
 		org.springframework.http.HttpMethod requestMethod = org.springframework.http.HttpMethod
-				.resolve(method.getMethodName());
+				.valueOf(method.getMethodName());
 		if (requestMethod == null) {
 			throw new RestClientException("Unsupported HTTP method: " + method.getMethodName());
 		}
@@ -118,7 +121,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 		}
 
 		// check error status code
-		int statusCode = response.getStatusCodeValue();
+		int statusCode = response.getStatusCode().value();
 
 		if (onlySuccessfulStatusCode && !HttpStatus.isSuccessStatusCode(statusCode)) {
 			throw new UnsuccessfulResponseException(new SpringResponseEntity<>(response, ResponseType.of(byte[].class),
@@ -131,6 +134,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see com.holonplatform.http.internal.AbstractRestClient#buildDefinition()
 	 */
 	@Override
@@ -140,11 +144,12 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 
 	/**
 	 * Invoke for a response
-	 * @param <T> Response payload type
-	 * @param uri URI
+	 * 
+	 * @param <T>           Response payload type
+	 * @param uri           URI
 	 * @param requestMethod Method
-	 * @param request Request entity
-	 * @param responseType Expected response payload type
+	 * @param request       Request entity
+	 * @param responseType  Expected response payload type
 	 * @return Response entity
 	 */
 	protected <T> org.springframework.http.ResponseEntity<Resource> invoke(String uri,
@@ -161,6 +166,7 @@ public class RestTemplateRestClient extends AbstractRestClient implements Spring
 
 	/**
 	 * Get the request entity payload
+	 * 
 	 * @param requestEntity RequestEntity
 	 * @return Request entity payload, may be null
 	 */

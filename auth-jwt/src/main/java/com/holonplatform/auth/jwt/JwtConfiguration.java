@@ -92,6 +92,13 @@ public interface JwtConfiguration extends Serializable {
 	 *         otherwise
 	 */
 	boolean isIncludePermissions();
+	
+	/**
+	 * Get whether an unsecured JWS is allowed.
+	 * @return <code>true</code> if unsecured is allowed, <code>false</code>
+	 *         otherwise
+	 */
+	boolean isAllowUnsecured();
 
 	// Context resource
 
@@ -204,6 +211,13 @@ public interface JwtConfiguration extends Serializable {
 		 * @return this
 		 */
 		Builder includePermissions(boolean includePermissions);
+		
+		/**
+		 * Set whether to allow unsecured Jws that is Jws with alg:none
+		 * @param allowUnsecured <code>true</code> to allow unsecured
+		 * @return this
+		 */
+		Builder allowUnsecuredJws(boolean allowUnsecured);
 
 		/**
 		 * Build {@link JwtConfiguration} instance
