@@ -1,6 +1,6 @@
 # Holon platform Core module
 
-> Latest release: [6.0.0](#obtain-the-artifacts)
+> Latest release: [6.0.1](#obtain-the-artifacts)
 
 This is the __core__ module of the [Holon Platform](https://holon-platform.com) and represents the platform foundation, providing the definition of the overall architecture, base structures and APIs.
 
@@ -211,7 +211,7 @@ _Maven BOM:_
     <dependency>
         <groupId>com.holon-platform.core</groupId>
         <artifactId>holon-bom</artifactId>
-        <version>6.0.0</version>
+        <version>6.0.1</version>
         <type>pom</type>
         <scope>import</scope>
     </dependency>
@@ -291,3 +291,4 @@ Artifact id | Description
 `holon-bom` | Bill Of Materials
 `holon-bom-platform` | Bill Of Materials including external dependencies
 `documentation-core` | Documentation
+
